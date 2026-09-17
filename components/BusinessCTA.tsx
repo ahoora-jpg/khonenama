@@ -16,8 +16,8 @@ export default function BusinessCTA() {
               ثبت اولیه کسب‌وکار در نسخه شروع رایگان است.
             </p>
             <div className="cta-actions">
-              <a href="#" className="pill-button light">ثبت رایگان کسب‌وکار <ArrowUpLeft size={17} /></a>
-              <a href="#" className="pill-button ghost-light">امکانات حرفه‌ای</a>
+              <a href="/register-business" className="pill-button light">ثبت رایگان کسب‌وکار <ArrowUpLeft size={17} /></a>
+              <a href="/dashboard" className="pill-button ghost-light">مشاهده داشبورد</a>
             </div>
           </div>
 
