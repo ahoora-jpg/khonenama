@@ -4,10 +4,10 @@ import { Menu, Search, Store, X } from "lucide-react";
 import { useState } from "react";
 
 const links = [
-  ["دسته‌بندی‌ها", "#categories"],
-  ["فروشگاه‌ها", "#featured"],
-  ["طراحان", "#designers"],
-  ["راهنمای خرید", "#guides"],
+  ["دسته‌بندی‌ها", "/#categories"],
+  ["فروشگاه‌ها", "/#featured"],
+  ["طراحان", "/category/interior-design"],
+  ["راهنمای خرید", "/#how-it-works"],
 ];
 
 export default function Header() {
@@ -16,7 +16,7 @@ export default function Header() {
   return (
     <header className="site-header-wrap">
       <div className="site-header shell glass-panel">
-        <a className="brand" href="#top" aria-label="خونه‌نما">
+        <a className="brand" href="/" aria-label="خونه‌نما">
           خونه<span>نما</span>
         </a>
 
@@ -29,10 +29,10 @@ export default function Header() {
         </nav>
 
         <div className="header-actions">
-          <button className="icon-button desktop-search" aria-label="جستجو">
+          <a className="icon-button desktop-search" href="/search" aria-label="جستجو">
             <Search size={19} />
-          </button>
-          <a className="pill-button dark desktop-cta" href="#join">
+          </a>
+          <a className="pill-button dark desktop-cta" href="/register-business">
             <Store size={17} />
             ثبت کسب‌وکار
           </a>
@@ -54,7 +54,7 @@ export default function Header() {
               {label}
             </a>
           ))}
-          <a className="pill-button dark" href="#join" onClick={() => setOpen(false)}>
+          <a className="pill-button dark" href="/register-business" onClick={() => setOpen(false)}>
             ثبت کسب‌وکار
           </a>
         </div>
