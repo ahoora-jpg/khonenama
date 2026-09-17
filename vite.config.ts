@@ -3,5 +3,10 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [vinext(), cloudflare()],
+  plugins: [
+    vinext(),
+    cloudflare({
+      viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
+    }),
+  ],
 });
