@@ -1,0 +1,77 @@
+"use client";
+
+import dynamic from "next/dynamic";
+import { MapPin, Search, Sparkles } from "lucide-react";
+
+const HeroScene = dynamic(() => import("./HeroScene"), {
+  ssr: false,
+  loading: () => <div className="hero-canvas hero-canvas-placeholder" aria-hidden="true" />,
+});
+
+export default function Hero() {
+  return (
+    <section className="hero" id="top">
+      <div className="hero-orb hero-orb-one" />
+      <div className="hero-orb hero-orb-two" />
+
+      <div className="shell hero-grid">
+        <div className="hero-copy">
+          <div className="eyebrow">
+            <Sparkles size={15} />
+            مرجع دکوراسیون و خدمات منزل
+          </div>
+
+          <h1>
+            خونه‌ات رو
+            <span>همون‌طوری بساز</span>
+            که دوست داری.
+          </h1>
+
+          <p>
+            پرده، موکت، کفپوش، کاغذ دیواری و متخصصان دکوراسیون را پیدا کن،
+            مقایسه کن و مستقیم با بهترین گزینه‌های اطرافت ارتباط بگیر.
+          </p>
+
+          <form className="hero-search" onSubmit={(event) => event.preventDefault()}>
+            <label>
+              <Search size={20} />
+              <span>
+                <small>چی می‌خوای؟</small>
+                <input aria-label="خدمت یا محصول" placeholder="مثلاً پرده زبرا" />
+              </span>
+            </label>
+
+            <span className="search-separator" />
+
+            <label>
+              <MapPin size={20} />
+              <span>
+                <small>کجا؟</small>
+                <input aria-label="شهر یا محله" defaultValue="کرج" />
+              </span>
+            </label>
+
+            <button type="submit">جستجو</button>
+          </form>
+
+          <div className="quick-links" aria-label="جستجوهای محبوب">
+            <span>پرمخاطب:</span>
+            {['پرده', 'موکت', 'پارکت', 'کاغذ دیواری'].map((item) => (
+              <a href="#categories" key={item}>{item}</a>
+            ))}
+          </div>
+
+          <div className="hero-trust-row">
+            <div><strong>کرج</strong><span>شروع محلی</span></div>
+            <div><strong>برغان</strong><span>نقطه شروع</span></div>
+            <div><strong>رایگان</strong><span>برای جستجوی کاربران</span></div>
+          </div>
+        </div>
+
+        <div className="hero-visual-wrap">
+          <HeroScene />
+        </div>
+      </div>
+    </section>
+  );
+}
