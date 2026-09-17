@@ -8,6 +8,13 @@ const HeroScene = dynamic(() => import("./HeroScene"), {
   loading: () => <div className="hero-canvas hero-canvas-placeholder" aria-hidden="true" />,
 });
 
+const popular = [
+  ["پرده", "/category/curtain"],
+  ["موکت", "/category/carpet"],
+  ["پارکت", "/category/flooring"],
+  ["کاغذ دیواری", "/category/wallpaper"],
+] as const;
+
 export default function Hero() {
   return (
     <section className="hero" id="top">
@@ -32,12 +39,12 @@ export default function Hero() {
             مقایسه کن و مستقیم با بهترین گزینه‌های اطرافت ارتباط بگیر.
           </p>
 
-          <form className="hero-search" onSubmit={(event) => event.preventDefault()}>
+          <form className="hero-search" action="/search" method="get">
             <label>
               <Search size={20} />
               <span>
                 <small>چی می‌خوای؟</small>
-                <input aria-label="خدمت یا محصول" placeholder="مثلاً پرده زبرا" />
+                <input name="q" aria-label="خدمت یا محصول" placeholder="مثلاً پرده زبرا" />
               </span>
             </label>
 
@@ -47,7 +54,7 @@ export default function Hero() {
               <MapPin size={20} />
               <span>
                 <small>کجا؟</small>
-                <input aria-label="شهر یا محله" defaultValue="کرج" />
+                <input name="location" aria-label="شهر یا محله" defaultValue="کرج" />
               </span>
             </label>
 
@@ -56,8 +63,8 @@ export default function Hero() {
 
           <div className="quick-links" aria-label="جستجوهای محبوب">
             <span>پرمخاطب:</span>
-            {['پرده', 'موکت', 'پارکت', 'کاغذ دیواری'].map((item) => (
-              <a href="#categories" key={item}>{item}</a>
+            {popular.map(([label, href]) => (
+              <a href={href} key={href}>{label}</a>
             ))}
           </div>
 
