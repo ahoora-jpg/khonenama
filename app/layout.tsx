@@ -1,0 +1,30 @@
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://khonenama.ir"),
+  title: {
+    default: "خونه‌نما | مرجع دکوراسیون و خدمات منزل",
+    template: "%s | خونه‌نما",
+  },
+  description:
+    "فروشگاه‌ها، متخصصان و خدمات پرده، موکت، کفپوش، کاغذ دیواری و دکوراسیون داخلی را در خونه‌نما پیدا و مقایسه کنید.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "خونه‌نما | مرجع دکوراسیون و خدمات منزل",
+    description:
+      "فروشگاه‌ها و متخصصان دکوراسیون منزل را پیدا، مقایسه و انتخاب کنید.",
+    url: "https://khonenama.ir",
+    siteName: "خونه‌نما",
+    locale: "fa_IR",
+    type: "website",
+  },
+};
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="fa" dir="rtl">
+      <body>{children}</body>
+    </html>
+  );
+}
