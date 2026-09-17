@@ -6,30 +6,35 @@ const categories = [
     description: "پارچه، زبرا، شید، پانچ، دوخت و نصب",
     className: "category-card category-large category-curtain",
     icon: PanelsTopLeft,
+    href: "/category/curtain",
   },
   {
     title: "کفپوش و پارکت",
     description: "لمینت، PVC و اجرای تخصصی",
     className: "category-card category-floor",
     icon: Layers3,
+    href: "/category/flooring",
   },
   {
     title: "موکت",
     description: "خانگی، اداری و تایلی",
     className: "category-card category-dark",
     icon: Ruler,
+    href: "/category/carpet",
   },
   {
     title: "کاغذ دیواری",
     description: "مدرن، کلاسیک و مینیمال",
     className: "category-card category-wall",
     icon: PaintRoller,
+    href: "/category/wallpaper",
   },
   {
     title: "طراحی داخلی",
     description: "طراح، معمار و مجری",
     className: "category-card category-design",
     icon: Sofa,
+    href: "/category/interior-design",
   },
 ];
 
@@ -48,8 +53,8 @@ export default function Categories() {
         </div>
 
         <div className="bento-grid">
-          {categories.map(({ title, description, className, icon: Icon }) => (
-            <a className={className} href="#featured" key={title}>
+          {categories.map(({ title, description, className, icon: Icon, href }) => (
+            <a className={className} href={href} key={href}>
               <span className="category-icon"><Icon size={21} /></span>
               <div>
                 <h3>{title}</h3>
