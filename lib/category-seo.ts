@@ -64,7 +64,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "موکت برای اتاق خواب مناسب است؟", answer: "بله، به‌خصوص وقتی نرمی زیر پا و کاهش انتقال صدا مهم باشد." },
       { question: "موکت پرزبلند بهتر است یا کوتاه؟", answer: "به کاربرد بستگی دارد؛ پرز کوتاه معمولاً نظافت و تردد آسان‌تری دارد." }
     ],
-    guides: []
+    guides: ["carpet-types-guide", "carpet-buying-guide"]
   },
   wallpaper: {
     slug: "wallpaper",
@@ -81,7 +81,7 @@ export const categorySeo: Record<string, CategorySeo> = {
     faqs: [
       { question: "کاغذ دیواری برای فضای کوچک مناسب است؟", answer: "بله، اما طرح و رنگ باید با ابعاد و نور فضا هماهنگ شود تا فضا شلوغ یا کوچک‌تر دیده نشود." }
     ],
-    guides: []
+    guides: ["wallpaper-guide", "wallpaper-vs-wallpanel"]
   },
   "interior-design": {
     slug: "interior-design",
@@ -98,7 +98,7 @@ export const categorySeo: Record<string, CategorySeo> = {
     faqs: [
       { question: "طراح داخلی چه کاری انجام می‌دهد؟", answer: "بسته به قرارداد می‌تواند از برنامه‌ریزی فضا و انتخاب متریال تا طراحی جزئیات و هماهنگی اجرای پروژه را پوشش دهد." }
     ],
-    guides: []
+    guides: ["choose-interior-designer", "interior-design-process"]
   }
 };
 
