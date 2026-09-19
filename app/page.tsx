@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import Featured from "@/components/Featured";
 import LocalDiscovery from "@/components/LocalDiscovery";
+import GuidesHome from "@/components/GuidesHome";
 import HowItWorks from "@/components/HowItWorks";
 import BusinessCTA from "@/components/BusinessCTA";
 import Footer from "@/components/Footer";
@@ -86,6 +87,7 @@ export default function HomePage() {
       <Hero />
       <Categories />
       <LocalDiscovery />
+      <GuidesHome />
       <Featured />
       <HowItWorks />
       <BusinessCTA />
