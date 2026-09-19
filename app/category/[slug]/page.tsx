@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import { businesses, getCategory } from "@/lib/demo-data";
 import { getCategorySeo } from "@/lib/category-seo";
 import { guides } from "@/lib/guides";
+import { getCategoryVisual, getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, BadgeCheck, BookOpen, MapPin, Star } from "lucide-react";
 import { notFound } from "next/navigation";
 
@@ -35,6 +36,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   const matches = businesses.filter((business) => business.category === slug);
   const relatedGuides = guides.filter((guide) => seo.guides.includes(guide.slug));
+  const visual = getCategoryVisual(slug);
 
   const itemListJsonLd = {
     "@context": "https://schema.org",
@@ -66,10 +68,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
       <section className="inner-page category-page">
         <div className="shell">
-          <div className="category-hero glass-panel">
-            <span className="section-kicker">راهنمای تخصصی خونه‌نما</span>
-            <h1>{seo.h1}</h1>
-            <p>{seo.intro}</p>
+          <div className="category-hero category-hero-with-media glass-panel">
+            <div>
+              <span className="section-kicker">راهنمای تخصصی خونه‌نما</span>
+              <h1>{seo.h1}</h1>
+              <p>{seo.intro}</p>
+            </div>
+            <img src={visual.src} alt={visual.alt} />
           </div>
 
           <section className="category-seo-copy">
@@ -93,6 +98,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               <div className="category-guide-grid">
                 {relatedGuides.slice(0, 6).map((guide) => (
                   <a className="category-guide-card" href={"/magazine/" + guide.slug} key={guide.slug}>
+                    <img className="category-guide-thumb" src={getGuideVisual(guide.category).src} alt="" loading="lazy" />
                     <BookOpen size={18} />
                     <div>
                       <h3>{guide.title}</h3>
