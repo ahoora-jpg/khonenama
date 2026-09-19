@@ -3,6 +3,7 @@ export const businessPlans = [
     code: "free",
     name: "پایه",
     priceLabel: "رایگان",
+    amountToman: 0,
     description: "برای شروع حضور کسب‌وکار در خونه‌نما",
     badge: "شروع سریع",
     features: [
@@ -17,6 +18,7 @@ export const businessPlans = [
     code: "pro",
     name: "حرفه‌ای",
     priceLabel: "قیمت هنگام فعال‌سازی",
+    amountToman: null,
     description: "برای کسب‌وکارهایی که می‌خواهند مشتری بیشتری جذب کنند",
     badge: "پیشنهادی",
     features: [
@@ -32,6 +34,7 @@ export const businessPlans = [
     code: "premium",
     name: "ویژه",
     priceLabel: "قیمت هنگام فعال‌سازی",
+    amountToman: null,
     description: "برای حضور پررنگ‌تر در دسته و شهر",
     badge: "بیشترین دیده‌شدن",
     features: [
