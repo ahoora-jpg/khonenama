@@ -970,3 +970,71 @@ button, a { -webkit-tap-highlight-color: transparent; }
     line-height: 1.9;
   }
 }
+
+
+/* Local discovery / SEO navigation */
+.local-discovery { padding-top: 58px; }
+.local-discovery-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+.local-discovery-card {
+  position:relative;
+  min-height:150px;
+  padding:20px;
+  border-radius:24px;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:14px;
+  align-items:start;
+  background:linear-gradient(145deg,rgba(255,255,255,.9),rgba(242,236,227,.84));
+  border:1px solid rgba(255,255,255,.75);
+  box-shadow:0 14px 36px rgba(52,37,24,.07);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.local-discovery-card:hover {
+  transform:translateY(-5px);
+  box-shadow:0 24px 52px rgba(52,37,24,.12);
+}
+.local-discovery-icon {
+  width:42px; height:42px; border-radius:14px; display:grid; place-items:center;
+  background:linear-gradient(145deg,#fff,#eadfd2);
+  color:var(--terracotta);
+}
+.local-discovery-card h3 {
+  margin:0 0 5px;
+  font-size:17px;
+}
+.local-discovery-card p {
+  margin:0;
+  color:var(--muted);
+  font-size:11px;
+}
+.local-discovery-arrow {
+  color:#8b7766;
+}
+.karaj-neighborhood-card {
+  min-height:130px;
+  padding:22px;
+  border-radius:24px;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:14px;
+  align-items:center;
+}
+.karaj-neighborhood-card > span {
+  width:46px; height:46px; display:grid; place-items:center; border-radius:14px;
+  background:#efe3d7; color:var(--terracotta);
+}
+.karaj-neighborhood-card h3 { margin:0 0 4px; font-size:18px; }
+.karaj-neighborhood-card p { margin:0; color:var(--muted); font-size:11px; }
+
+@media (max-width:900px) {
+  .local-discovery-grid { grid-template-columns:1fr 1fr; }
+}
+@media (max-width:650px) {
+  .local-discovery { padding-top:42px; }
+  .local-discovery-grid { grid-template-columns:1fr; }
+  .local-discovery-card { min-height:130px; }
+}
