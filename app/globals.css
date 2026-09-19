@@ -1038,3 +1038,215 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .local-discovery-grid { grid-template-columns:1fr; }
   .local-discovery-card { min-height:130px; }
 }
+
+
+/* Magazine / SEO guide system */
+.guides-home {
+  background:
+    radial-gradient(circle at 84% 18%, rgba(173,96,57,.06), transparent 18rem),
+    linear-gradient(180deg, rgba(255,255,255,.18), rgba(235,229,218,.28));
+}
+.guides-home-grid,
+.magazine-grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+.guide-preview-card,
+.magazine-card {
+  position:relative;
+  overflow:hidden;
+  min-height:220px;
+  padding:22px;
+  border-radius:25px;
+  background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(242,236,227,.84));
+  border:1px solid rgba(255,255,255,.78);
+  box-shadow:0 16px 42px rgba(52,37,24,.08);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.guide-preview-card:hover,
+.magazine-card:hover {
+  transform:translateY(-5px);
+  box-shadow:0 28px 58px rgba(52,37,24,.13);
+}
+.guide-preview-card > span,
+.magazine-category {
+  display:inline-flex;
+  margin-top:18px;
+  color:var(--terracotta);
+  font-size:9px;
+  font-weight:900;
+}
+.guide-preview-card h3,
+.magazine-card h2 {
+  margin:7px 0 7px;
+  font-size:20px;
+  line-height:1.5;
+  letter-spacing:-.35px;
+}
+.guide-preview-card p,
+.magazine-card p {
+  margin:0;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.9;
+}
+.guide-preview-card strong,
+.magazine-card > a {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:18px;
+  color:#6e5544;
+  font-size:10px;
+  font-weight:900;
+}
+.magazine-hero { margin-bottom:28px; }
+.magazine-card-top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.magazine-readtime {
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  color:#8e877d;
+  font-size:9px;
+}
+.magazine-icon { margin-top:18px; color:#9f7154; }
+
+.guide-shell { max-width:1120px; }
+.guide-breadcrumb {
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  align-items:center;
+  margin-bottom:18px;
+  color:#8c857c;
+  font-size:10px;
+}
+.guide-header {
+  max-width:820px;
+  padding:18px 0 34px;
+}
+.guide-header h1 {
+  margin:8px 0 12px;
+  font-size:clamp(38px,5vw,60px);
+  line-height:1.22;
+  letter-spacing:-1.6px;
+}
+.guide-header > p {
+  max-width:760px;
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:2;
+}
+.guide-meta {
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-top:15px;
+  color:#8a8379;
+  font-size:10px;
+}
+.guide-meta span { display:inline-flex; align-items:center; gap:5px; }
+.guide-layout {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 280px;
+  gap:34px;
+  align-items:start;
+}
+.guide-content {
+  max-width:760px;
+}
+.guide-content section {
+  padding:8px 0 22px;
+}
+.guide-content h2 {
+  margin:0 0 9px;
+  font-size:26px;
+  line-height:1.45;
+  letter-spacing:-.5px;
+}
+.guide-content p,
+.guide-content li {
+  color:#5f5a52;
+  font-size:13px;
+  line-height:2.15;
+}
+.guide-content p { margin:0 0 10px; }
+.guide-content ul { margin:8px 0 0; padding-right:20px; }
+.guide-faq details {
+  margin-bottom:8px;
+  padding:14px 16px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:rgba(255,253,248,.76);
+}
+.guide-faq summary {
+  cursor:pointer;
+  font-size:12px;
+  font-weight:900;
+}
+.guide-faq details p {
+  margin:8px 0 0;
+  font-size:11px;
+}
+.guide-side {
+  position:sticky;
+  top:100px;
+  display:grid;
+  gap:12px;
+}
+.guide-side-card {
+  padding:18px;
+  border-radius:20px;
+}
+.guide-side-card h3 {
+  margin:7px 0 6px;
+  font-size:15px;
+  line-height:1.55;
+}
+.guide-side-card p {
+  margin:0;
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.85;
+}
+.guide-side-card > a:not(.guide-related-link) {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:12px;
+  font-size:10px;
+  font-weight:900;
+  color:var(--terracotta);
+}
+.guide-related-link {
+  display:block;
+  padding:9px 0;
+  border-bottom:1px solid var(--line);
+  font-size:10px;
+  line-height:1.6;
+}
+.guide-related-link:last-child { border-bottom:0; }
+
+@media (max-width:900px) {
+  .guide-layout { grid-template-columns:1fr; }
+  .guide-side { position:static; grid-template-columns:1fr 1fr; }
+}
+@media (max-width:650px) {
+  .guides-home-grid,
+  .magazine-grid { grid-template-columns:1fr; }
+  .guide-preview-card,
+  .magazine-card { min-height:190px; padding:18px; }
+  .guide-header h1 { font-size:35px; }
+  .guide-header > p { font-size:12px; }
+  .guide-content h2 { font-size:22px; }
+  .guide-content p,
+  .guide-content li { font-size:12px; }
+  .guide-side { grid-template-columns:1fr; }
+}
