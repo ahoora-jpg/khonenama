@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { MapPin, Search, Sparkles } from "lucide-react";
+import { ArrowUpLeft, MapPin, Search, Sparkles, WandSparkles } from "lucide-react";
 
 const HeroScene = dynamic(() => import("./HeroScene"), {
   ssr: false,
@@ -17,34 +17,35 @@ const popular = [
 
 export default function Hero() {
   return (
-    <section className="hero" id="top">
+    <section className="hero premium-hero" id="top">
       <div className="hero-orb hero-orb-one" />
       <div className="hero-orb hero-orb-two" />
+      <div className="hero-grid-lines" aria-hidden="true" />
 
       <div className="shell hero-grid">
         <div className="hero-copy">
           <div className="eyebrow">
             <Sparkles size={15} />
-            مرجع دکوراسیون و خدمات منزل
+            کشف بهترین‌های دکوراسیون، نزدیک تو
           </div>
 
           <h1>
-            خونه‌ات رو
-            <span>همون‌طوری بساز</span>
-            که دوست داری.
+            برای خونه‌ات
+            <span>بهتر انتخاب کن.</span>
+            قشنگ‌تر زندگی کن.
           </h1>
 
-          <p>
-            پرده، موکت، کفپوش، کاغذ دیواری و متخصصان دکوراسیون را پیدا کن،
-            مقایسه کن و مستقیم با بهترین گزینه‌های اطرافت ارتباط بگیر.
+          <p className="hero-lead">
+            خونه‌نما یک ویترین هوشمند برای پیدا کردن فروشگاه‌ها، متخصصان و ایده‌های دکوراسیون است؛
+            با شروع از کرج و خیابان برغان.
           </p>
 
-          <form className="hero-search" action="/search" method="get">
+          <form className="hero-search premium-search" action="/search" method="get">
             <label>
               <Search size={20} />
               <span>
-                <small>چی می‌خوای؟</small>
-                <input name="q" aria-label="خدمت یا محصول" placeholder="مثلاً پرده زبرا" />
+                <small>دنبال چی هستی؟</small>
+                <input name="q" aria-label="خدمت یا محصول" placeholder="مثلاً پرده زبرا، پارکت یا طراح داخلی" />
               </span>
             </label>
 
@@ -53,12 +54,12 @@ export default function Hero() {
             <label>
               <MapPin size={20} />
               <span>
-                <small>کجا؟</small>
+                <small>کجایی؟</small>
                 <input name="location" aria-label="شهر یا محله" defaultValue="کرج" />
               </span>
             </label>
 
-            <button type="submit">جستجو</button>
+            <button type="submit">جستجو <ArrowUpLeft size={17} /></button>
           </form>
 
           <div className="quick-links" aria-label="جستجوهای محبوب">
@@ -68,15 +69,29 @@ export default function Hero() {
             ))}
           </div>
 
-          <div className="hero-trust-row">
-            <div><strong>کرج</strong><span>شروع محلی</span></div>
-            <div><strong>برغان</strong><span>نقطه شروع</span></div>
-            <div><strong>رایگان</strong><span>برای جستجوی کاربران</span></div>
+          <div className="hero-trust-row premium-trust-row">
+            <div><strong>۵ دسته اصلی</strong><span>برای شروع انتخاب</span></div>
+            <div><strong>شروع از برغان</strong><span>تمرکز محلی و واقعی</span></div>
+            <div><strong>پروفایل حرفه‌ای</strong><span>برای کسب‌وکارها</span></div>
           </div>
+
+          <a href="/#categories" className="hero-scroll-hint">
+            <WandSparkles size={16} /> دیدن دسته‌بندی‌ها
+          </a>
         </div>
 
-        <div className="hero-visual-wrap">
-          <HeroScene />
+        <div className="hero-visual-wrap premium-visual-wrap">
+          <div className="hero-visual-frame">
+            <HeroScene />
+            <div className="hero-floating-stat hero-floating-stat-one">
+              <span>پیشنهاد امروز</span>
+              <strong>پرده و دکور برغان</strong>
+            </div>
+            <div className="hero-floating-stat hero-floating-stat-two">
+              <span>جستجوی محلی</span>
+              <strong>کرج · نزدیک تو</strong>
+            </div>
+          </div>
         </div>
       </div>
     </section>
