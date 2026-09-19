@@ -1339,3 +1339,15 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .category-seo-copy-card,
   .local-intent-card { padding:17px; }
 }
+
+
+.desktop-business-login {
+  color:#6f675f;
+  font-size:10px;
+  font-weight:850;
+  white-space:nowrap;
+}
+.desktop-business-login:hover { color:var(--terracotta); }
+@media (max-width:900px) {
+  .desktop-business-login { display:none; }
+}
