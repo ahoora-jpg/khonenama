@@ -45,8 +45,8 @@ export async function POST(request: Request) {
     const instagram = cleanText(body?.instagram, 160);
     const website = cleanText(body?.website, 240);
     const description = cleanText(body?.description, 2000);
-    const requestedServices = Array.isArray(body?.services) ? body.services.map((item: unknown) => cleanText(item, 100)) : [];
-    const requestedAreas = Array.isArray(body?.serviceAreas) ? body.serviceAreas.map((item: unknown) => cleanText(item, 100)) : [];
+    const requestedServices: string[] = Array.isArray(body?.services) ? body.services.map((item: unknown) => cleanText(item, 100)) : [];
+    const requestedAreas: string[] = Array.isArray(body?.serviceAreas) ? body.serviceAreas.map((item: unknown) => cleanText(item, 100)) : [];
 
     if (ownerName.length < 2 || businessName.length < 2 || city.length < 2) {
       return Response.json({ ok: false, error: "INVALID_REQUIRED_FIELDS" }, { status: 400 });
@@ -65,8 +65,8 @@ export async function POST(request: Request) {
       return Response.json({ ok: false, error: "INVALID_CATEGORY" }, { status: 400 });
     }
 
-    const selectedServices = [...new Set(requestedServices.filter((item: string) => serviceCatalog.includes(item)))];
-    const selectedAreas = [...new Set(requestedAreas.filter(Boolean))].slice(0, 20);
+    const selectedServices: string[] = [...new Set<string>(requestedServices.filter((item) => serviceCatalog.includes(item)))];
+    const selectedAreas: string[] = [...new Set<string>(requestedAreas.filter((item) => item.length > 0))].slice(0, 20);
 
     if (!selectedServices.length || !selectedAreas.length || description.length < 20) {
       return Response.json({ ok: false, error: "INCOMPLETE_PROFILE" }, { status: 400 });
