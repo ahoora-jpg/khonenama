@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { BarChart3, Eye, MessageCircle, MousePointerClick, Store, Upload } from "lucide-react";
@@ -8,6 +9,11 @@ const stats = [
   { label: "درخواست قیمت", value: "—", icon: MessageCircle },
   { label: "رتبه محلی", value: "—", icon: BarChart3 },
 ];
+
+export const metadata: Metadata = {
+  title: "داشبورد کسب‌وکار",
+  robots: { index: false, follow: false },
+};
 
 export default function DashboardPage() {
   return (
