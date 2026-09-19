@@ -1,12 +1,7 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { ArrowUpLeft, MapPin, Search, Sparkles, WandSparkles } from "lucide-react";
-
-const HeroScene = dynamic(() => import("./HeroScene"), {
-  ssr: false,
-  loading: () => <div className="hero-canvas hero-canvas-placeholder" aria-hidden="true" />,
-});
+import { CoverFlowCarousel } from "@/components/ui/3-d-coverflow-carousel";
 
 const popular = [
   ["پرده", "/category/curtain"],
@@ -81,16 +76,8 @@ export default function Hero() {
         </div>
 
         <div className="hero-visual-wrap premium-visual-wrap">
-          <div className="hero-visual-frame">
-            <HeroScene />
-            <div className="hero-floating-stat hero-floating-stat-one">
-              <span>پیشنهاد امروز</span>
-              <strong>پرده و دکور برغان</strong>
-            </div>
-            <div className="hero-floating-stat hero-floating-stat-two">
-              <span>جستجوی محلی</span>
-              <strong>کرج · نزدیک تو</strong>
-            </div>
+          <div className="hero-visual-frame hero-coverflow-frame">
+            <CoverFlowCarousel compact className="hero-coverflow" />
           </div>
         </div>
       </div>
