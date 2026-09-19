@@ -1,4 +1,5 @@
 import { env } from "cloudflare:workers";
+import { createBusinessSession } from "@/lib/server/business-session";
 
 const allowedServices: Record<string, readonly string[]> = {
   curtain: ["پرده زبرا", "پرده شید", "پرده پارچه‌ای", "اندازه‌گیری", "دوخت", "نصب"],
@@ -157,6 +158,8 @@ export async function POST(request: Request) {
         .run();
     }
 
+    const session = await createBusinessSession(userId, request);
+
     return Response.json(
       {
         ok: true,
@@ -170,8 +173,17 @@ export async function POST(request: Request) {
           id: userId,
           phoneVerified: false,
         },
+        session: {
+          expiresAt: session.expiresAt,
+        },
       },
-      { status: 201 }
+      {
+        status: 201,
+        headers: {
+          "Set-Cookie": session.cookie,
+          "Cache-Control": "no-store",
+        },
+      }
     );
   } catch (error) {
     console.error("business registration failed", error);
