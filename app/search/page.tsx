@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { businesses } from "@/lib/demo-data";
 import { BadgeCheck, MapPin, Search, SlidersHorizontal, Star } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "جستجوی دکوراسیون",
+  robots: { index: false, follow: true },
+  alternates: { canonical: "/search" },
+};
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string; location?: string }> }) {
   const params = await searchParams;
