@@ -26,18 +26,17 @@ type StoredProfile = {
   businessName?: string;
   city?: string;
   area?: string;
+  address?: string;
+  description?: string;
   services?: string[];
+  serviceAreas?: string[];
   status?: string;
+  verificationStatus?: string;
   completion?: number;
   plan?: string;
+  leadCount?: number;
+  businessSlug?: string;
 };
-
-const stats = [
-  { label: "بازدید پروفایل", value: "—", icon: Eye },
-  { label: "کلیک تماس", value: "—", icon: MousePointerClick },
-  { label: "درخواست مشتری", value: "—", icon: MessageCircle },
-  { label: "نمایش در جستجو", value: "—", icon: BarChart3 },
-];
 
 const nav = [
   ["نمای کلی", "#overview", Store],
@@ -54,15 +53,65 @@ const nav = [
 
 export default function BusinessDashboardContent() {
   const [profile, setProfile] = useState<StoredProfile>({});
+  const [source, setSource] = useState<"server" | "browser" | "loading">("loading");
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem("khonenama-business-profile") || localStorage.getItem("khonenama-business-draft");
-      if (raw) setProfile(JSON.parse(raw));
-    } catch {}
+    let cancelled = false;
+
+    async function loadProfile() {
+      try {
+        const response = await fetch("/api/me/business", { cache: "no-store" });
+        if (response.ok) {
+          const result = await response.json();
+          if (!cancelled && result?.ok && result.business) {
+            const business = result.business;
+            setProfile({
+              ownerName: result.owner?.fullName || "",
+              businessName: business.name || "",
+              city: business.city || "",
+              area: business.area || "",
+              address: business.address || "",
+              description: business.description || "",
+              services: Array.isArray(business.services) ? business.services.map((item: any) => item.name) : [],
+              serviceAreas: Array.isArray(business.serviceAreas) ? business.serviceAreas.map((item: any) => item.area).filter(Boolean) : [],
+              status: business.status,
+              verificationStatus: business.verification_status,
+              completion: business.completion,
+              plan: business.plan?.code || "free",
+              leadCount: business.leadCount || 0,
+              businessSlug: business.slug,
+            });
+            setSource("server");
+            return;
+          }
+        }
+      } catch {}
+
+      try {
+        const raw = localStorage.getItem("khonenama-business-profile") || localStorage.getItem("khonenama-business-draft");
+        if (raw && !cancelled) {
+          setProfile(JSON.parse(raw));
+          setSource("browser");
+          return;
+        }
+      } catch {}
+
+      if (!cancelled) setSource("browser");
+    }
+
+    loadProfile();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const completion = profile.completion || (profile.businessName ? 58 : 22);
+  const stats = [
+    { label: "بازدید پروفایل", value: "—", icon: Eye },
+    { label: "کلیک تماس", value: "—", icon: MousePointerClick },
+    { label: "درخواست مشتری", value: String(profile.leadCount ?? 0), icon: MessageCircle },
+    { label: "نمایش در جستجو", value: "—", icon: BarChart3 },
+  ];
   const displayName = profile.businessName || "کسب‌وکار شما";
   const location = [profile.city || "کرج", profile.area].filter(Boolean).join("، ");
   const services = profile.services || [];
@@ -109,7 +158,7 @@ export default function BusinessDashboardContent() {
           </div>
           <div className="dashboard-heading-actions">
             <button className="icon-button" type="button" aria-label="اعلان‌ها"><Bell size={18} /></button>
-            <a className="pill-button dark" href="/register-business"><Store size={17} /> ویرایش پروفایل</a>
+            <a className="pill-button dark" href="/dashboard/profile"><Store size={17} /> ویرایش پروفایل</a>
           </div>
         </div>
 
@@ -140,7 +189,7 @@ export default function BusinessDashboardContent() {
               ))}
             </div>
 
-            <a className="pill-button dark" href="/register-business">ادامه تکمیل پروفایل</a>
+            <a className="pill-button dark" href="/dashboard/profile">ادامه تکمیل پروفایل</a>
           </section>
 
           <section className="dashboard-panel glass-panel" id="media">
@@ -186,6 +235,9 @@ export default function BusinessDashboardContent() {
             <span className="section-kicker">اعتماد و اعتبار</span>
             <h2>تأیید کسب‌وکار</h2>
             <p>تأیید شماره تماس پایه است. برای نشان تأییدشده، اطلاعات و مدارک کسب‌وکار بررسی می‌شوند و این نشان خریدنی نیست.</p>
+            {source === "browser" && (
+              <small className="dashboard-source-note">این مرورگر هنوز Session سروری ندارد؛ بعد از فعال‌شدن Session، اطلاعات مستقیماً از D1 خوانده می‌شوند.</small>
+            )}
           </div>
           <div className="dashboard-verification-steps">
             <span><ShieldCheck size={17} /> تأیید موبایل</span>
