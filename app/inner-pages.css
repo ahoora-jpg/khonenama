@@ -347,3 +347,83 @@
   line-height:1.8;
   border:1px solid rgba(138,76,64,.14);
 }
+
+
+/* D1 dashboard/profile editor */
+.dashboard-source-note {
+  display:block;
+  margin-top:10px;
+  color:#8f6d55;
+  font-size:8px;
+  line-height:1.8;
+}
+.dashboard-logout-button {
+  width:100%;
+  min-height:38px;
+  margin-top:8px;
+  border:1px solid rgba(123,78,61,.14);
+  border-radius:11px;
+  background:#fff8f4;
+  color:#8b5744;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  cursor:pointer;
+  font-size:9px;
+  font-weight:850;
+}
+.dashboard-logout-button:disabled {
+  opacity:.55;
+  cursor:not-allowed;
+}
+.business-profile-editor {
+  display:grid;
+  gap:16px;
+}
+.profile-editor-card {
+  max-width:920px;
+}
+.profile-editor-card label {
+  display:grid;
+  gap:6px;
+}
+.profile-editor-card label > span {
+  color:#625d55;
+  font-size:10px;
+  font-weight:850;
+}
+.profile-editor-card input,
+.profile-editor-card textarea {
+  width:100%;
+  border:1px solid var(--line);
+  outline:0;
+  border-radius:13px;
+  background:rgba(255,255,255,.76);
+  color:var(--ink);
+  padding:11px 12px;
+}
+.profile-editor-card input {
+  min-height:47px;
+}
+.profile-editor-actions {
+  display:flex;
+  justify-content:flex-end;
+  margin-top:16px;
+}
+.profile-editor-loading {
+  min-height:180px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border-radius:20px;
+  color:#756d64;
+  font-size:10px;
+}
+.spin {
+  animation:khonenama-spin .9s linear infinite;
+}
+@keyframes khonenama-spin {
+  to { transform:rotate(360deg); }
+}
