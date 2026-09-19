@@ -4,12 +4,18 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "fonts": "node tools/build-fonts.mjs",
+    "predev": "npm run fonts",
     "dev": "next dev",
+    "prebuild": "npm run fonts",
     "build": "next build",
     "start": "next start",
+    "predev:vinext": "npm run fonts",
     "dev:vinext": "vinext dev",
+    "prebuild:vinext": "npm run fonts",
     "build:vinext": "vinext build",
     "start:vinext": "vinext start",
+    "predeploy": "npm run fonts",
     "deploy": "vinext build && npx @vinext/cloudflare deploy",
     "check:vinext": "vinext check"
   },
