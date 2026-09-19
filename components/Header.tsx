@@ -14,6 +14,7 @@ const categories = [
 const links = [
   ["فروشگاه‌های منتخب", "/#featured"],
   ["چطور کار می‌کند؟", "/#how-it-works"],
+  ["راهنماها", "/magazine"],
   ["برغان کرج", "/karaj/baraghan"],
 ] as const;
 
