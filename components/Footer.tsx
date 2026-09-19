@@ -1,3 +1,5 @@
+import { ArrowUpLeft, Instagram, Mail, MapPin } from "lucide-react";
+
 const groups = [
   {
     title: "دسته‌ها",
@@ -12,7 +14,7 @@ const groups = [
   {
     title: "کرج",
     links: [
-      ["برغان", "/search?q=پرده&location=برغان"],
+      ["برغان", "/karaj/baraghan"],
       ["عظیمیه", "/search?location=عظیمیه"],
       ["جهانشهر", "/search?location=جهانشهر"],
       ["گوهردشت", "/search?location=گوهردشت"],
@@ -33,15 +35,22 @@ const groups = [
 
 export default function Footer() {
   return (
-    <footer className="footer-wrap">
-      <div className="shell footer glass-panel">
+    <footer className="footer-wrap premium-footer-wrap">
+      <div className="shell footer glass-panel premium-footer">
         <div className="footer-main">
           <div className="footer-brand-block">
             <a className="brand footer-brand" href="/">خونه<span>نما</span></a>
-            <p>مرجع پیدا کردن فروشگاه‌ها، متخصصان و خدمات دکوراسیون منزل؛ شروع از کرج و خیابان برغان.</p>
-            <form className="newsletter" action="#">
-              <input type="email" aria-label="ایمیل" placeholder="ایمیل شما" />
-              <button type="button">عضویت</button>
+            <p>مرجع پیدا کردن و مقایسه فروشگاه‌ها، متخصصان و خدمات دکوراسیون منزل؛ با شروع از کرج و خیابان برغان.</p>
+
+            <div className="footer-mini-meta">
+              <span><MapPin size={14} /> کرج، البرز</span>
+              <span><Mail size={14} /> khonenama.ir</span>
+              <span><Instagram size={14} /> خونه‌نما</span>
+            </div>
+
+            <form className="newsletter premium-newsletter" action="#">
+              <input type="email" aria-label="ایمیل" placeholder="برای خبرهای خونه‌نما، ایمیلت رو وارد کن" />
+              <button type="button">عضویت <ArrowUpLeft size={14} /></button>
             </form>
           </div>
 
@@ -52,9 +61,10 @@ export default function Footer() {
             </div>
           ))}
         </div>
+
         <div className="footer-bottom">
-          <span>© ۲۰۲۶ خونه‌نما</span>
-          <span>khonenama.ir</span>
+          <span>© ۲۰۲۶ خونه‌نما · همه حقوق محفوظ است.</span>
+          <span>طراحی برای تجربه بهتر انتخاب در خانه</span>
         </div>
       </div>
     </footer>
