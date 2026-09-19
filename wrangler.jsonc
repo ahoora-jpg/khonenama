@@ -9,5 +9,13 @@
   },
   "observability": {
     "enabled": true
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "khonenama-db",
+      "database_id": "a991ffd9-0044-4821-8d69-3295ab6ea398",
+      "migrations_dir": "db/migrations"
+    }
+  ]
 }
