@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "DigiHamishe";
+  src: url("/fonts/digi-hamishe.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+}
+
 :root {
   --bg: #f6f3ed;
   --surface: #fffdf8;
@@ -22,7 +30,7 @@ body {
     radial-gradient(circle at 82% 3%, rgba(195, 137, 92, 0.08), transparent 24rem),
     var(--bg);
   color: var(--ink);
-  font-family: Vazirmatn, IRANSansX, Tahoma, Arial, sans-serif;
+  font-family: "DigiHamishe", Tahoma, Arial, sans-serif;
   line-height: 1.75;
   overflow-x: hidden;
 }
@@ -48,7 +56,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   padding: 9px 12px 9px 16px;
   gap: 28px;
 }
-.brand { font-size: 22px; font-weight: 950; letter-spacing: -1.2px; white-space: nowrap; }
+.brand { font-size: 23px; font-weight: 900; letter-spacing: -0.55px; white-space: nowrap; }
 .brand span { color: var(--terracotta); }
 .desktop-nav { display: flex; gap: 24px; margin-inline-start: auto; }
 .desktop-nav a { color: #59564f; font-size: 13px; font-weight: 780; transition: color .2s ease; }
@@ -87,7 +95,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   border-radius: 999px; border: 1px solid rgba(118,80,52,.12); background: rgba(255,255,255,.58); color: #72503b;
   font-size: 12px; font-weight: 850;
 }
-.hero h1 { margin: 20px 0 18px; font-size: clamp(52px, 6.4vw, 88px); line-height: 1.04; letter-spacing: -4.7px; font-weight: 950; }
+.hero h1 { margin: 20px 0 18px; font-size: clamp(52px, 6.4vw, 88px); line-height: 1.08; letter-spacing: -2.2px; font-weight: 900; }
 .hero h1 span { display: block; color: var(--terracotta); }
 .hero-copy > p { margin: 0; max-width: 620px; color: var(--muted); font-size: 16px; }
 .hero-search {
