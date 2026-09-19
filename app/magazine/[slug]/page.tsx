@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getGuide, guides } from "@/lib/guides";
+import { getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, Clock3, Link2 } from "lucide-react";
 import { notFound } from "next/navigation";
 
@@ -13,6 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const guide = getGuide(slug);
   if (!guide) return {};
+  const visual = getGuideVisual(guide.category);
 
   return {
     title: guide.title,
@@ -25,6 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       url: "https://khonenama.ir/magazine/" + guide.slug,
       type: "article",
       locale: "fa_IR",
+      images: [{ url: visual.src, alt: visual.alt }],
     },
   };
 }
@@ -33,6 +36,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const { slug } = await params;
   const guide = getGuide(slug);
   if (!guide) notFound();
+  const visual = getGuideVisual(guide.category);
 
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -45,6 +49,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     mainEntityOfPage: "https://khonenama.ir/magazine/" + guide.slug,
     author: { "@type": "Organization", name: "خونه‌نما" },
     publisher: { "@type": "Organization", name: "خونه‌نما", url: "https://khonenama.ir" },
+    image: [visual.src],
   };
 
   const faqJsonLd = {
@@ -82,6 +87,11 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               <span>به‌روزرسانی: {guide.updated}</span>
             </div>
           </header>
+
+          <figure className="guide-hero-image">
+            <img src={visual.src} alt={visual.alt} />
+            <figcaption>تصویر نمونه برای درک بهتر موضوع؛ منبع تصویری دارای مجوز انتشار.</figcaption>
+          </figure>
 
           <div className="guide-layout">
             <div className="guide-content">
