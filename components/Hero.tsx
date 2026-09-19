@@ -19,20 +19,22 @@ export default function Hero() {
 
       <div className="shell hero-grid">
         <div className="hero-copy">
-          <div className="eyebrow">
+          <div className="eyebrow hero-brand-label">
             <Sparkles size={15} />
-            کشف بهترین‌های دکوراسیون، نزدیک تو
+            خونه‌نما؛ انتخاب آگاهانه برای خانه
           </div>
 
-          <h1>
-            برای خونه‌ات
-            <span>بهتر انتخاب کن.</span>
-            قشنگ‌تر زندگی کن.
+          <h1 className="hero-identity-title">
+            مرجع تخصصی دکوراسیون و تزئینات داخلی منزل
           </h1>
 
+          <h2 className="hero-slogan">
+            برای خونه‌ات، بهتر انتخاب کن.
+          </h2>
+
           <p className="hero-lead">
-            خونه‌نما یک ویترین هوشمند برای پیدا کردن فروشگاه‌ها، متخصصان و ایده‌های دکوراسیون است؛
-            با شروع از کرج و خیابان برغان.
+            فروشگاه‌ها، متخصصان، محصولات و ایده‌های دکوراسیون را پیدا کن، مقایسه کن
+            و مستقیم با بهترین گزینه‌های اطرافت ارتباط بگیر.
           </p>
 
           <form className="hero-search premium-search" action="/search" method="get">
@@ -65,8 +67,8 @@ export default function Hero() {
           </div>
 
           <div className="hero-trust-row premium-trust-row">
-            <div><strong>۵ دسته اصلی</strong><span>برای شروع انتخاب</span></div>
-            <div><strong>شروع از برغان</strong><span>تمرکز محلی و واقعی</span></div>
+            <div><strong>دسته‌بندی تخصصی</strong><span>محصول و خدمات خانه</span></div>
+            <div><strong>جستجوی محلی</strong><span>شروع از کرج و برغان</span></div>
             <div><strong>پروفایل حرفه‌ای</strong><span>برای کسب‌وکارها</span></div>
           </div>
 
