@@ -3,7 +3,7 @@ import { ArrowUpLeft, MapPin, Search, Store } from "lucide-react";
 const links = [
   { title: "دکوراسیون در کرج", text: "فروشگاه‌ها و متخصصان دکوراسیون در سراسر کرج", href: "/karaj", icon: MapPin },
   { title: "دکوراسیون برغان", text: "پرده، کفپوش، دیوارپوش و خدمات نزدیک خیابان برغان", href: "/karaj/baraghan", icon: Store },
-  { title: "پرده در کرج", text: "فروشگاه‌ها و خدمات پرده، دوخت و نصب", href: "/category/curtain", icon: Search },
+  { title: "پرده در کرج", text: "فروشگاه‌ها و خدمات پرده، دوخت و نصب", href: "/karaj/curtain", icon: Search },
 ];
 
 export default function LocalDiscovery() {
