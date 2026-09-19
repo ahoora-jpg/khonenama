@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (plan.amountToman === null || !plan.purchasable) {
+  if (plan.amountToman === null) {
     return Response.json(
       { ok: false, error: "PLAN_PRICING_NOT_ACTIVE" },
       { status: 409 }
