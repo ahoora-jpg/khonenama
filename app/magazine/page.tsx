@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { guides } from "@/lib/guides";
+import { getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, BookOpen, Clock3 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default function MagazinePage() {
           <div className="magazine-grid">
             {guides.map((guide) => (
               <article className="magazine-card" key={guide.slug}>
+                <img className="magazine-card-image" src={getGuideVisual(guide.category).src} alt={getGuideVisual(guide.category).alt} loading="lazy" />
                 <div className="magazine-card-top">
                   <span className="magazine-category">{guide.category}</span>
                   <span className="magazine-readtime"><Clock3 size={13} /> {guide.readTime}</span>
