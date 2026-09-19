@@ -598,3 +598,270 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .premium-feature-stack .cta-feature:nth-child(n) { transform:none; }
   .footer-mini-meta { gap:10px; }
 }
+
+
+/* 3D Coverflow hero */
+.hero-coverflow-frame {
+  transform: none;
+  border-radius: 40px;
+}
+.hero-coverflow-frame:hover { transform: none; }
+
+.coverflow-root {
+  position: relative;
+  width: 100%;
+  min-height: 590px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 40px;
+  color: #fff;
+  background: #171311;
+  user-select: none;
+  box-shadow: 0 42px 100px rgba(48,34,22,.2);
+}
+.coverflow-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.coverflow-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(.28) blur(28px) saturate(.95);
+  transform: scale(1.16);
+  transition: opacity .9s ease, filter .9s ease;
+}
+.coverflow-bg > div {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(56,39,28,.05), rgba(12,10,9,.84) 72%),
+    linear-gradient(180deg, rgba(12,10,9,.08), rgba(12,10,9,.72));
+}
+.coverflow-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 8px 16px;
+}
+.coverflow-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: #dec19c;
+}
+.coverflow-label span {
+  width: 30px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c5a880);
+}
+.coverflow-label span:last-child {
+  background: linear-gradient(90deg, #c5a880, transparent);
+}
+.coverflow-label strong {
+  font-size: 9px;
+  letter-spacing: .06em;
+  font-weight: 850;
+}
+.coverflow-stage {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.coverflow-card {
+  position: absolute;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #171311;
+  border: 1px solid rgba(255,255,255,.12);
+  transform-origin: center center;
+  transition:
+    transform .8s cubic-bezier(.25,1,.5,1),
+    opacity .8s cubic-bezier(.25,1,.5,1),
+    filter .8s cubic-bezier(.25,1,.5,1);
+}
+.coverflow-card > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.coverflow-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.22) 0%, rgba(0,0,0,.05) 28%, rgba(0,0,0,.55) 64%, rgba(0,0,0,.94) 100%);
+}
+.coverflow-content {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  height: 100%;
+  padding: 18px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  transition: opacity .5s ease, transform .5s ease;
+}
+.coverflow-tag {
+  align-self: flex-start;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.28);
+  border: 1px solid rgba(255,255,255,.15);
+  backdrop-filter: blur(8px);
+  color: rgba(255,255,255,.92);
+  font-size: 9px;
+  font-weight: 800;
+}
+.coverflow-copy {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.coverflow-copy h2 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.16;
+  color: #fff;
+  text-shadow: 0 3px 14px rgba(0,0,0,.78);
+  letter-spacing: -.7px;
+}
+.coverflow-copy > strong {
+  color: #f3eee7;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.coverflow-copy i {
+  width: 34px;
+  height: 2px;
+  margin: 4px auto;
+  background: #c5a880;
+  border-radius: 999px;
+  box-shadow: 0 0 10px rgba(197,168,128,.55);
+}
+.coverflow-copy p {
+  margin: 0 0 7px;
+  max-width: 220px;
+  color: rgba(255,255,255,.88);
+  font-size: 10px;
+  line-height: 1.7;
+}
+.coverflow-copy a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 15px;
+  border-radius: 999px;
+  background: linear-gradient(135deg,#d6b58a,#ae8357);
+  color: #17110e;
+  font-size: 9px;
+  font-weight: 900;
+  box-shadow: 0 5px 18px rgba(0,0,0,.28), 0 0 16px rgba(197,168,128,.2);
+}
+.coverflow-nav {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 40;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(0,0,0,.38);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  transition: background .2s ease, transform .2s ease;
+}
+.coverflow-nav:hover {
+  background: rgba(0,0,0,.62);
+  transform: scale(1.06);
+}
+.coverflow-prev { left: 14px; }
+.coverflow-next { right: 14px; }
+.coverflow-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  z-index: 30;
+  margin-top: 2px;
+}
+.coverflow-dots button {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255,255,255,.25);
+  cursor: pointer;
+  transition: width .25s ease, background .25s ease;
+}
+.coverflow-dots button.active {
+  width: 25px;
+  background: #c5a880;
+  box-shadow: 0 0 10px rgba(197,168,128,.5);
+}
+.hero-coverflow {
+  min-height: 590px;
+}
+.hero-coverflow .coverflow-inner {
+  padding-top: 20px;
+}
+.hero-coverflow .coverflow-card {
+  will-change: transform, opacity, filter;
+}
+
+@media (max-width: 980px) {
+  .hero-coverflow { min-height: 560px; }
+}
+@media (max-width: 650px) {
+  .coverflow-root,
+  .hero-coverflow {
+    min-height: 500px;
+    border-radius: 28px;
+  }
+  .coverflow-label { margin-bottom: 2px; }
+  .coverflow-stage { transform: scale(.88); width: 114%; }
+  .coverflow-nav {
+    width: 38px;
+    height: 38px;
+    top: 48%;
+  }
+  .coverflow-prev { left: 8px; }
+  .coverflow-next { right: 8px; }
+  .coverflow-copy h2 { font-size: 21px; }
+  .coverflow-copy > strong { font-size: 11px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coverflow-card,
+  .coverflow-copy,
+  .coverflow-dots button {
+    transition: none !important;
+  }
+}
