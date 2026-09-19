@@ -158,7 +158,12 @@ export async function POST(request: Request) {
         .run();
     }
 
-    const session = await createBusinessSession(userId, request);
+    let session: { cookie: string; expiresAt: string } | null = null;
+    try {
+      session = await createBusinessSession(userId, request);
+    } catch (sessionError) {
+      console.warn("business session not available yet", sessionError);
+    }
 
     return Response.json(
       {
@@ -173,16 +178,13 @@ export async function POST(request: Request) {
           id: userId,
           phoneVerified: false,
         },
-        session: {
-          expiresAt: session.expiresAt,
-        },
+        session: session ? { expiresAt: session.expiresAt } : null,
       },
       {
         status: 201,
-        headers: {
-          "Set-Cookie": session.cookie,
-          "Cache-Control": "no-store",
-        },
+        headers: session
+          ? { "Set-Cookie": session.cookie, "Cache-Control": "no-store" }
+          : { "Cache-Control": "no-store" },
       }
     );
   } catch (error) {
