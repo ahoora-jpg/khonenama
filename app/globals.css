@@ -2,8 +2,40 @@
   font-family: "DigiHamishe";
   src: url("/fonts/digi-hamishe.woff2") format("woff2");
   font-style: normal;
-  font-weight: 300 900;
+  font-weight: 400;
   font-display: swap;
+}
+
+
+/* Typography lock: only user-provided Digi Hamishe across the product */
+body,
+button,
+input,
+select,
+textarea,
+a,
+label,
+small,
+strong,
+span,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "DigiHamishe" !important;
+}
+
+h1, h2, h3, h4, h5, h6,
+strong,
+button,
+.pill-button,
+.brand,
+.section-kicker,
+.eyebrow {
+  font-synthesis: weight;
 }
 
 :root {
@@ -22,7 +54,11 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  font-family: "DigiHamishe";
+  font-synthesis: weight;
+}
 body {
   margin: 0;
   min-height: 100vh;
@@ -30,12 +66,12 @@ body {
     radial-gradient(circle at 82% 3%, rgba(195, 137, 92, 0.08), transparent 24rem),
     var(--bg);
   color: var(--ink);
-  font-family: "DigiHamishe", Tahoma, Arial, sans-serif;
+  font-family: "DigiHamishe";
   line-height: 1.75;
   overflow-x: hidden;
 }
 a { color: inherit; text-decoration: none; }
-button, input { font: inherit; }
+button, input, select, textarea { font: inherit; font-family: "DigiHamishe" !important; }
 button, a { -webkit-tap-highlight-color: transparent; }
 .shell { width: min(1220px, calc(100% - 32px)); margin-inline: auto; }
 .glass-panel {
