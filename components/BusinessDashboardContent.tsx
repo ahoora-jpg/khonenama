@@ -1,5 +1,7 @@
 "use client";
 
+import BusinessLogoutButton from "@/components/BusinessLogoutButton";
+
 import { useEffect, useMemo, useState } from "react";
 import {
   BarChart3,
@@ -147,6 +149,7 @@ export default function BusinessDashboardContent() {
           <strong>ارتقای پروفایل</strong>
           <small>آمار، تبلیغات و امکانات حرفه‌ای</small>
         </a>
+        <BusinessLogoutButton />
       </aside>
 
       <div className="business-dashboard-main">
