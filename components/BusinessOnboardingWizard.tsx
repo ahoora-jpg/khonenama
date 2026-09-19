@@ -78,6 +78,8 @@ export default function BusinessOnboardingWizard() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>(initialState);
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   useEffect(() => {
     try {
@@ -105,17 +107,49 @@ export default function BusinessOnboardingWizard() {
     setForm((current) => ({ ...current, [key]: value }));
   }
 
-  function finish() {
-    setSaved(true);
-    localStorage.setItem(
-      "khonenama-business-profile",
-      JSON.stringify({
+  async function finish() {
+    setSaving(true);
+    setSaveError("");
+
+    try {
+      const response = await fetch("/api/businesses/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result?.ok) {
+        const messages: Record<string, string> = {
+          INVALID_PHONE: "شماره همراه را به‌صورت 09xxxxxxxxx وارد کنید.",
+          INVALID_EMAIL: "فرمت ایمیل صحیح نیست.",
+          INCOMPLETE_PROFILE: "خدمات، محدوده فعالیت و معرفی کسب‌وکار را کامل کنید.",
+          D1_BINDING_NOT_AVAILABLE: "اتصال دیتابیس در محیط اجرا فعال نیست.",
+          CATEGORY_NOT_FOUND: "دسته انتخاب‌شده در دیتابیس پیدا نشد.",
+        };
+        throw new Error(messages[result?.error] || "ذخیره اطلاعات انجام نشد. دوباره تلاش کنید.");
+      }
+
+      const storedProfile = {
         ...form,
-        status: "draft",
+        businessId: result.business.id,
+        businessSlug: result.business.slug,
+        ownerUserId: result.owner.id,
+        status: result.business.status,
+        verificationStatus: result.business.verificationStatus,
         completion: 72,
         updatedAt: new Date().toISOString(),
-      })
-    );
+      };
+
+      localStorage.setItem("khonenama-business-profile", JSON.stringify(storedProfile));
+      localStorage.removeItem("khonenama-business-draft");
+      setSaved(true);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "ذخیره اطلاعات انجام نشد.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -329,9 +363,10 @@ export default function BusinessOnboardingWizard() {
             {saved && (
               <div className="onboarding-success">
                 <CheckCircle2 size={22} />
-                <div><strong>پیش‌نویس پروفایل ذخیره شد.</strong><small>در نسخه فعلی داده روی مرورگر نگه داشته می‌شود تا اتصال D1 و احراز هویت کامل شود.</small></div>
+                <div><strong>پیش‌نویس پروفایل در دیتابیس خونه‌نما ذخیره شد.</strong><small>تا زمان فعال‌شدن تأیید پیامکی، پروفایل در وضعیت پیش‌نویس و تأییدنشده باقی می‌ماند.</small></div>
               </div>
             )}
+            {saveError && <div className="onboarding-error">{saveError}</div>}
           </section>
         )}
 
@@ -345,8 +380,8 @@ export default function BusinessOnboardingWizard() {
               ادامه <ArrowLeft size={16} />
             </button>
           ) : (
-            <button type="button" className="pill-button dark" onClick={finish}>
-              ذخیره پیش‌نویس <Store size={16} />
+            <button type="button" className="pill-button dark" onClick={finish} disabled={saving || saved}>
+              {saving ? "در حال ذخیره..." : saved ? "ذخیره شد" : "ذخیره در خونه‌نما"} <Store size={16} />
             </button>
           )}
         </div>
