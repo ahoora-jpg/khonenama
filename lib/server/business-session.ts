@@ -57,28 +57,33 @@ export async function createBusinessSession(userId: string, request: Request) {
 }
 
 export async function getBusinessSession(request: Request) {
-  const db = (env as any).DB;
-  if (!db) return null;
+  try {
+    const db = (env as any).DB;
+    if (!db) return null;
 
-  const token = getCookieValue(request, COOKIE_NAME);
-  if (!token) return null;
+    const token = getCookieValue(request, COOKIE_NAME);
+    if (!token) return null;
 
-  const tokenHash = await sha256(token);
-  const row = await db
-    .prepare(
-      "SELECT s.id AS session_id, s.user_id, s.expires_at, u.full_name, u.phone, u.phone_verified_at FROM auth_sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ? AND s.expires_at > CURRENT_TIMESTAMP AND u.status = 'active' LIMIT 1"
-    )
-    .bind(tokenHash)
-    .first();
+    const tokenHash = await sha256(token);
+    const row = await db
+      .prepare(
+        "SELECT s.id AS session_id, s.user_id, s.expires_at, u.full_name, u.phone, u.phone_verified_at FROM auth_sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ? AND s.expires_at > CURRENT_TIMESTAMP AND u.status = 'active' LIMIT 1"
+      )
+      .bind(tokenHash)
+      .first();
 
-  if (!row?.user_id) return null;
+    if (!row?.user_id) return null;
 
-  await db
-    .prepare("UPDATE auth_sessions SET last_seen_at = CURRENT_TIMESTAMP WHERE id = ?")
-    .bind(row.session_id)
-    .run();
+    await db
+      .prepare("UPDATE auth_sessions SET last_seen_at = CURRENT_TIMESTAMP WHERE id = ?")
+      .bind(row.session_id)
+      .run();
 
-  return row;
+    return row;
+  } catch (error) {
+    console.warn("business session lookup unavailable", error);
+    return null;
+  }
 }
 
 export async function destroyBusinessSession(request: Request) {
