@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 };
 
 const categories = [
-  ["پرده در کرج", "فروشگاه‌های پرده، پارچه، دوخت و نصب", "/category/curtain", PanelsTopLeft],
-  ["کفپوش و پارکت در کرج", "لمینت، PVC، پارکت و اجرای تخصصی", "/category/flooring", Layers3],
+  ["پرده در کرج", "فروشگاه‌های پرده، پارچه، دوخت و نصب", "/karaj/curtain", PanelsTopLeft],
+  ["کفپوش و پارکت در کرج", "لمینت، PVC، پارکت و اجرای تخصصی", "/karaj/flooring", Layers3],
   ["موکت در کرج", "موکت خانگی، اداری و تایلی", "/category/carpet", Ruler],
   ["کاغذ دیواری در کرج", "دیوارپوش و کاغذ دیواری مدرن و کلاسیک", "/category/wallpaper", PaintRoller],
   ["طراحی داخلی در کرج", "طراح، معمار و مجری دکوراسیون", "/category/interior-design", Sofa],
