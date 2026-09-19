@@ -59,7 +59,8 @@ export default function Header() {
           <a className="icon-button desktop-search depth-button" href="/search" aria-label="جستجو">
             <Search size={19} />
           </a>
-          <a className="pill-button dark desktop-cta premium-cta-button" href="/register-business">
+          <a className="desktop-business-login" href="/business/login">ورود کسب‌وکار</a>
+          <a className="pill-button dark desktop-cta premium-cta-button" href="/for-business">
             <Store size={17} />
             ثبت کسب‌وکار
           </a>
@@ -83,7 +84,8 @@ export default function Header() {
           {links.map(([label, href]) => (
             <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
           ))}
-          <a className="pill-button dark" href="/register-business" onClick={() => setOpen(false)}>
+          <a href="/business/login" onClick={() => setOpen(false)}>ورود کسب‌وکار</a>
+          <a className="pill-button dark" href="/for-business" onClick={() => setOpen(false)}>
             ثبت کسب‌وکار
           </a>
         </div>
