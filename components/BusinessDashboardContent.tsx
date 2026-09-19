@@ -1,0 +1,199 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import {
+  BarChart3,
+  BadgeCheck,
+  Bell,
+  Camera,
+  CreditCard,
+  Eye,
+  FileText,
+  ImagePlus,
+  MapPin,
+  MessageCircle,
+  MousePointerClick,
+  Settings,
+  ShieldCheck,
+  Sparkles,
+  Store,
+  Upload,
+  Users,
+} from "lucide-react";
+
+type StoredProfile = {
+  ownerName?: string;
+  businessName?: string;
+  city?: string;
+  area?: string;
+  services?: string[];
+  status?: string;
+  completion?: number;
+  plan?: string;
+};
+
+const stats = [
+  { label: "بازدید پروفایل", value: "—", icon: Eye },
+  { label: "کلیک تماس", value: "—", icon: MousePointerClick },
+  { label: "درخواست مشتری", value: "—", icon: MessageCircle },
+  { label: "نمایش در جستجو", value: "—", icon: BarChart3 },
+];
+
+const nav = [
+  ["نمای کلی", "#overview", Store],
+  ["اطلاعات پروفایل", "#profile", FileText],
+  ["خدمات و محدوده", "#services", MapPin],
+  ["نمونه‌کارها", "#media", ImagePlus],
+  ["درخواست‌های مشتری", "#leads", MessageCircle],
+  ["نظرها", "#reviews", BadgeCheck],
+  ["آمار", "#analytics", BarChart3],
+  ["اشتراک و پرداخت", "/dashboard/billing", CreditCard],
+  ["اعضای تیم", "#team", Users],
+  ["تنظیمات", "#settings", Settings],
+] as const;
+
+export default function BusinessDashboardContent() {
+  const [profile, setProfile] = useState<StoredProfile>({});
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("khonenama-business-profile") || localStorage.getItem("khonenama-business-draft");
+      if (raw) setProfile(JSON.parse(raw));
+    } catch {}
+  }, []);
+
+  const completion = profile.completion || (profile.businessName ? 58 : 22);
+  const displayName = profile.businessName || "کسب‌وکار شما";
+  const location = [profile.city || "کرج", profile.area].filter(Boolean).join("، ");
+  const services = profile.services || [];
+
+  const nextTasks = useMemo(() => {
+    const tasks = [
+      { label: "تأیید شماره همراه", done: false },
+      { label: "تکمیل آدرس و محدوده", done: Boolean(profile.city && profile.area) },
+      { label: "افزودن حداقل ۳ تصویر", done: false },
+      { label: "ثبت خدمات اصلی", done: services.length > 0 },
+    ];
+    return tasks;
+  }, [profile, services.length]);
+
+  return (
+    <div className="business-dashboard-shell">
+      <aside className="business-dashboard-nav glass-panel">
+        <div className="dashboard-business-mini">
+          <span className="dashboard-business-avatar"><Store size={20} /></span>
+          <div><strong>{displayName}</strong><small>{location}</small></div>
+        </div>
+
+        <nav>
+          {nav.map(([label, href, Icon], index) => (
+            <a className={index === 0 ? "is-active" : ""} href={href} key={label}>
+              <Icon size={17} /><span>{label}</span>
+            </a>
+          ))}
+        </nav>
+
+        <a className="dashboard-upgrade-box" href="/dashboard/billing">
+          <Sparkles size={18} />
+          <strong>ارتقای پروفایل</strong>
+          <small>آمار، تبلیغات و امکانات حرفه‌ای</small>
+        </a>
+      </aside>
+
+      <div className="business-dashboard-main">
+        <div className="dashboard-heading" id="overview">
+          <div>
+            <span className="section-kicker">پنل کسب‌وکار</span>
+            <h1>{displayName}</h1>
+            <p>اطلاعات، نمونه‌کارها، درخواست‌ها و وضعیت اشتراک را از همین‌جا مدیریت کن.</p>
+          </div>
+          <div className="dashboard-heading-actions">
+            <button className="icon-button" type="button" aria-label="اعلان‌ها"><Bell size={18} /></button>
+            <a className="pill-button dark" href="/register-business"><Store size={17} /> ویرایش پروفایل</a>
+          </div>
+        </div>
+
+        <div className="dashboard-stats">
+          {stats.map(({ label, value, icon: Icon }) => (
+            <div className="dashboard-stat glass-panel" key={label}>
+              <Icon size={20} />
+              <span><strong>{value}</strong><small>{label}</small></span>
+            </div>
+          ))}
+        </div>
+
+        <div className="dashboard-grid">
+          <section className="dashboard-panel glass-panel" id="profile">
+            <div className="panel-heading">
+              <div><span className="section-kicker">آمادگی انتشار</span><h2>تکمیل پروفایل</h2></div>
+              <span className="status-pill">{profile.status === "published" ? "منتشرشده" : "پیش‌نویس"}</span>
+            </div>
+            <div className="profile-progress"><span style={{ width: completion + "%" }} /></div>
+            <div className="dashboard-progress-label"><strong>{completion}٪ تکمیل</strong><span>پروفایل‌های کامل‌تر اعتماد بیشتری ایجاد می‌کنند.</span></div>
+
+            <div className="dashboard-checklist">
+              {nextTasks.map((task) => (
+                <div className={task.done ? "is-done" : ""} key={task.label}>
+                  <span>{task.done ? <BadgeCheck size={16} /> : <span className="check-dot" />}</span>
+                  <strong>{task.label}</strong>
+                </div>
+              ))}
+            </div>
+
+            <a className="pill-button dark" href="/register-business">ادامه تکمیل پروفایل</a>
+          </section>
+
+          <section className="dashboard-panel glass-panel" id="media">
+            <div className="panel-heading">
+              <div><span className="section-kicker">نمونه‌کار</span><h2>گالری</h2></div>
+              <Camera size={20} />
+            </div>
+            <div className="dashboard-upload">
+              <Upload size={24} />
+              <strong>تصاویر پروژه را اضافه کنید</strong>
+              <small>آپلود واقعی بعد از اتصال R2 فعال می‌شود.</small>
+            </div>
+          </section>
+        </div>
+
+        <div className="dashboard-grid">
+          <section className="dashboard-panel glass-panel" id="services">
+            <div className="panel-heading">
+              <div><span className="section-kicker">خدمات و محدوده</span><h2>پوشش کسب‌وکار</h2></div>
+              <MapPin size={20} />
+            </div>
+            <div className="dashboard-service-list">
+              {(services.length ? services : ["خدمات هنوز ثبت نشده"]).map((service) => <span key={service}>{service}</span>)}
+            </div>
+            <p>موقعیت فعلی: {location || "ثبت نشده"}</p>
+          </section>
+
+          <section className="dashboard-panel glass-panel" id="leads">
+            <div className="panel-heading">
+              <div><span className="section-kicker">درخواست‌های مشتری</span><h2>Leadها</h2></div>
+              <MessageCircle size={20} />
+            </div>
+            <div className="dashboard-empty-state">
+              <MessageCircle size={22} />
+              <strong>هنوز درخواستی ثبت نشده</strong>
+              <small>وقتی مشتری درخواست مرتبط ارسال کند، اینجا نمایش داده می‌شود.</small>
+            </div>
+          </section>
+        </div>
+
+        <section className="dashboard-panel glass-panel dashboard-verification-panel">
+          <div>
+            <span className="section-kicker">اعتماد و اعتبار</span>
+            <h2>تأیید کسب‌وکار</h2>
+            <p>تأیید شماره تماس پایه است. برای نشان تأییدشده، اطلاعات و مدارک کسب‌وکار بررسی می‌شوند و این نشان خریدنی نیست.</p>
+          </div>
+          <div className="dashboard-verification-steps">
+            <span><ShieldCheck size={17} /> تأیید موبایل</span>
+            <span><FileText size={17} /> اطلاعات هویتی / صنفی</span>
+            <span><BadgeCheck size={17} /> بررسی خونه‌نما</span>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
