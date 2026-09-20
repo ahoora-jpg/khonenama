@@ -8,10 +8,12 @@ export default function BusinessLoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
+  const [credentialError, setCredentialError] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function submit() {
     setMessage("");
+    setCredentialError(false);
 
     if (phone.trim().length < 10 || password.length < 8) {
       setMessage("شماره همراه و رمز عبور را کامل وارد کنید.");
@@ -35,7 +37,11 @@ export default function BusinessLoginForm() {
           PASSWORD_SCHEMA_REQUIRED: "ورود با رمز هنوز در دیتابیس فعال نشده است.",
           D1_BINDING_NOT_AVAILABLE: "اتصال دیتابیس در دسترس نیست.",
         };
-        setMessage(messages[result?.error] || "ورود انجام نشد. دوباره تلاش کنید.");
+        const text = messages[result?.error] || "ورود انجام نشد. دوباره تلاش کنید.";
+        setMessage(text);
+        if (result?.error === "INVALID_CREDENTIALS") {
+          setCredentialError(true);
+        }
         return;
       }
 
@@ -64,11 +70,17 @@ export default function BusinessLoginForm() {
 
       <label>
         <span>رمز عبور</span>
-        <div className="form-input">
+        <div className={credentialError ? "form-input login-input-error" : "form-input"}>
           <LockKeyhole size={17} />
           <input
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (credentialError) {
+                setCredentialError(false);
+                setMessage("");
+              }
+            }}
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
             placeholder="رمز عبور"
@@ -78,13 +90,22 @@ export default function BusinessLoginForm() {
             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
         </div>
+        {credentialError && (
+          <div className="login-inline-error" role="alert" aria-live="assertive">
+            رمز عبور یا شماره همراه صحیح نیست. دوباره بررسی کنید.
+          </div>
+        )}
       </label>
 
       <button className="register-submit" type="button" onClick={submit} disabled={loading}>
         {loading ? "در حال ورود..." : "ورود به پنل"} <ArrowLeft size={16} />
       </button>
 
-      {message && <div className="business-login-message"><ShieldCheck size={16} /> {message}</div>}
+      {message && !credentialError && (
+        <div className="business-login-message" role="status" aria-live="polite">
+          <ShieldCheck size={16} /> {message}
+        </div>
+      )}
 
       <div className="business-login-links">
         <a href="/register-business">کسب‌وکار جدید؟ ثبت رایگان</a>
