@@ -119,6 +119,10 @@ export default function BusinessDashboardContent() {
   const displayName = profile.businessName || "کسب‌وکار شما";
   const location = [profile.city || "کرج", profile.area].filter(Boolean).join("، ");
   const services = profile.services || [];
+  const planLabel =
+    profile.plan === "premium" ? "ویژه" :
+    profile.plan === "pro" ? "حرفه‌ای" :
+    "پایه";
 
   const nextTasks = useMemo(() => {
     const tasks = [
@@ -135,7 +139,11 @@ export default function BusinessDashboardContent() {
       <aside className="business-dashboard-nav glass-panel">
         <div className="dashboard-business-mini">
           <span className="dashboard-business-avatar"><Store size={20} /></span>
-          <div><strong>{displayName}</strong><small>{location}</small></div>
+          <div>
+            <strong>{displayName}</strong>
+            <small>{location}</small>
+            <span className={"dashboard-plan-badge plan-" + (profile.plan || "free")}>{planLabel}</span>
+          </div>
         </div>
 
         <nav>
@@ -160,6 +168,7 @@ export default function BusinessDashboardContent() {
             <span className="section-kicker">پنل کسب‌وکار</span>
             <h1>{displayName}</h1>
             <p>اطلاعات، نمونه‌کارها، درخواست‌ها و وضعیت اشتراک را از همین‌جا مدیریت کن.</p>
+            <span className={"dashboard-current-plan plan-" + (profile.plan || "free")}>پلن فعلی: {planLabel}</span>
           </div>
           <div className="dashboard-heading-actions">
             <button className="icon-button" type="button" aria-label="اعلان‌ها"><Bell size={18} /></button>
