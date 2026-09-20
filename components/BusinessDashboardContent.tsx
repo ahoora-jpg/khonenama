@@ -250,7 +250,10 @@ export default function BusinessDashboardContent() {
           </section>
         </div>
 
-        <BusinessPublicationPanel initialStatus={(profile.status || "") as any} />
+        <BusinessPublicationPanel
+          initialStatus={(profile.status || "") as any}
+          initialVerificationStatus={profile.verificationStatus || ""}
+        />
 
         <section className="dashboard-panel glass-panel dashboard-verification-panel">
           <div>
