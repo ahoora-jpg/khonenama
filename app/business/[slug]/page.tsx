@@ -2,25 +2,70 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getBusiness } from "@/lib/demo-data";
-import { BadgeCheck, MapPin, MessageCircle, Phone, Star } from "lucide-react";
+import { getPublishedBusiness } from "@/lib/server/public-businesses";
+import { BadgeCheck, Globe2, Instagram, MapPin, MessageCircle, Phone, Star } from "lucide-react";
 import { notFound } from "next/navigation";
+
+async function resolveBusiness(slug: string) {
+  const demo = getBusiness(slug);
+  if (demo) {
+    return {
+      source: "demo" as const,
+      slug: demo.slug,
+      name: demo.name,
+      description: demo.description,
+      city: demo.city,
+      area: demo.area,
+      address: "",
+      phone: "",
+      website: "",
+      instagram: "",
+      verified: demo.verified,
+      featured: demo.featured,
+      services: demo.services,
+      rating: demo.rating,
+      reviewCount: demo.reviewCount,
+    };
+  }
+
+  const live = await getPublishedBusiness(slug);
+  if (!live) return null;
+
+  return {
+    source: "d1" as const,
+    slug: live.slug,
+    name: live.name,
+    description: live.description,
+    city: live.city,
+    area: live.area,
+    address: live.address,
+    phone: live.phone,
+    website: live.website,
+    instagram: live.instagram,
+    verified: live.verificationStatus === "verified" || live.verificationStatus === "professional",
+    featured: live.featured,
+    services: live.services,
+    rating: live.rating,
+    reviewCount: live.reviewCount,
+  };
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const business = getBusiness(slug);
+  const business = await resolveBusiness(slug);
   if (!business) return {};
 
-  const title = `${business.name} | ${business.area}، ${business.city}`;
-  const description = `${business.description} خدمات: ${business.services.join("، ")}.`;
+  const title = business.name + " | " + [business.area, business.city].filter(Boolean).join("، ");
+  const description = business.description || ("پروفایل " + business.name + " در خونه‌نما");
 
   return {
     title,
     description,
-    alternates: { canonical: `/business/${slug}` },
+    alternates: { canonical: "/business/" + slug },
     openGraph: {
       title,
       description,
-      url: `https://khonenama.ir/business/${slug}`,
+      url: "https://khonenama.ir/business/" + slug,
       locale: "fa_IR",
       type: "website",
     },
@@ -29,7 +74,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BusinessPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const business = getBusiness(slug);
+  const business = await resolveBusiness(slug);
   if (!business) notFound();
 
   const localBusinessJsonLd = {
@@ -37,11 +82,13 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
     "@type": "HomeAndConstructionBusiness",
     name: business.name,
     description: business.description,
-    url: `https://khonenama.ir/business/${business.slug}`,
+    url: "https://khonenama.ir/business/" + business.slug,
+    telephone: business.phone || undefined,
+    sameAs: [business.website, business.instagram].filter(Boolean),
     address: {
       "@type": "PostalAddress",
       addressLocality: business.city,
-      streetAddress: business.area,
+      streetAddress: business.address || business.area,
       addressCountry: "IR",
     },
     areaServed: business.city,
@@ -80,11 +127,15 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
 
               <div className="profile-meta-grid">
                 <div><MapPin size={17} /><span><strong>موقعیت</strong><small>{business.city}، {business.area}</small></span></div>
-                <div><Star size={17} fill="currentColor" /><span><strong>{business.rating}</strong><small>{business.reviewCount} نظر نمایشی</small></span></div>
+                <div><Star size={17} fill="currentColor" /><span><strong>{business.reviewCount ? business.rating : "جدید"}</strong><small>{business.reviewCount ? business.reviewCount + " نظر" : "بدون نظر"}</small></span></div>
               </div>
 
               <div className="profile-actions">
-                <a className="pill-button dark" href="#contact"><Phone size={17} /> اطلاعات تماس</a>
+                {business.phone ? (
+                  <a className="pill-button dark" href={"tel:" + business.phone}><Phone size={17} /> تماس</a>
+                ) : (
+                  <a className="pill-button dark" href="#contact"><Phone size={17} /> اطلاعات تماس</a>
+                )}
                 <a className="pill-button profile-secondary" href="#quote"><MessageCircle size={17} /> درخواست قیمت</a>
               </div>
             </div>
@@ -99,7 +150,13 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
 
             <aside className="profile-side-card glass-panel" id="contact">
               <h3>اطلاعات کسب‌وکار</h3>
-              <p>اطلاعات تماس، ساعت کاری، واتساپ، نقشه و شبکه‌های اجتماعی پس از تأیید صاحب کسب‌وکار در این بخش نمایش داده می‌شود.</p>
+              {business.address && <p><MapPin size={14} /> {business.address}</p>}
+              {business.phone && <a href={"tel:" + business.phone}><Phone size={14} /> {business.phone}</a>}
+              {business.website && <a href={business.website} target="_blank" rel="noreferrer"><Globe2 size={14} /> وب‌سایت</a>}
+              {business.instagram && <a href={business.instagram.startsWith("http") ? business.instagram : "https://instagram.com/" + business.instagram.replace(/^@/, "")} target="_blank" rel="noreferrer"><Instagram size={14} /> اینستاگرام</a>}
+              {!business.address && !business.phone && !business.website && !business.instagram && (
+                <p>اطلاعات تماس پس از تکمیل و تأیید صاحب کسب‌وکار در این بخش نمایش داده می‌شود.</p>
+              )}
             </aside>
           </div>
 
@@ -109,12 +166,13 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
             <div className="portfolio-placeholder-grid">
               <div /><div /><div />
             </div>
+            <p className="profile-media-note">آپلود تصاویر کسب‌وکار بعد از فعال‌شدن فضای ذخیره‌سازی رسانه تکمیل می‌شود.</p>
           </section>
 
           <section className="profile-section" id="quote">
             <span className="section-kicker">استعلام</span>
             <h2>درخواست قیمت</h2>
-            <p>در نسخه عملیاتی، درخواست شما مستقیماً برای کسب‌وکار ارسال و وضعیت پاسخ در حساب کاربری پیگیری می‌شود.</p>
+            <p>در مرحله بعد، درخواست مشتری مستقیماً برای همین کسب‌وکار ثبت و در پنل قابل پیگیری خواهد شد.</p>
           </section>
         </div>
       </section>
