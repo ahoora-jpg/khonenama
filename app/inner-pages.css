@@ -1077,3 +1077,14 @@
   background:#e6eee3 !important;
   color:#52684d !important;
 }
+
+.admin-purge {
+  background:#fff2ef !important;
+  color:#8f3f35 !important;
+  border-color:rgba(143,63,53,.22) !important;
+}
+.admin-business-card.status-suspended {
+  opacity:.9;
+  border-color:rgba(143,63,53,.18);
+  background:linear-gradient(145deg,rgba(255,250,248,.96),rgba(247,236,232,.82));
+}
