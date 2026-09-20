@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle2, LogOut, RefreshCw, Store, XCircle } from "lucide-react";
+import { CheckCircle2, Crown, FlaskConical, LogOut, RefreshCw, Sparkles, Store, XCircle } from "lucide-react";
 
 type BusinessRow = {
   id: number;
@@ -18,6 +18,8 @@ type BusinessRow = {
   category_name: string;
   requested_at?: string;
   review_status?: string;
+  plan_code?: "free" | "pro" | "premium";
+  plan_name?: string;
 };
 
 export default function AdminBusinessModeration() {
@@ -70,6 +72,28 @@ export default function AdminBusinessModeration() {
     await load();
   }
 
+  async function setTestPlan(id: number, planCode: "free" | "pro" | "premium") {
+    setMessage("");
+    const response = await fetch("/api/admin/businesses/" + id + "/plan", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ planCode }),
+    });
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || !result?.ok) {
+      setMessage("تغییر آزمایشی پلن انجام نشد.");
+      return;
+    }
+
+    setMessage(
+      planCode === "free"
+        ? "کسب‌وکار به پلن پایه برگشت."
+        : "پلن " + (result.plan?.name || planCode) + " برای ۳۰ روز در حالت آزمایشی فعال شد."
+    );
+    await load();
+  }
+
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
     window.location.href = "/admin/login";
@@ -116,6 +140,30 @@ export default function AdminBusinessModeration() {
                 <span>مالک: {item.owner_name || "—"}</span>
                 <span>موبایل: {item.owner_phone || item.phone || "—"}</span>
                 <span>وضعیت تأیید: {item.verification_status}</span>
+                <span className={"admin-plan-chip plan-" + (item.plan_code || "free")}>
+                  پلن: {item.plan_name || "پایه"}
+                </span>
+              </div>
+
+              <div className="admin-plan-test-box">
+                <div>
+                  <FlaskConical size={16} />
+                  <span>
+                    <strong>پیش‌نمایش درآمدی</strong>
+                    <small>فقط برای تست داخلی؛ بدون پرداخت واقعی</small>
+                  </span>
+                </div>
+                <div className="admin-plan-test-actions">
+                  <button type="button" className={(item.plan_code || "free") === "free" ? "is-active" : ""} onClick={() => setTestPlan(item.id, "free")}>
+                    پایه
+                  </button>
+                  <button type="button" className={item.plan_code === "pro" ? "is-active" : ""} onClick={() => setTestPlan(item.id, "pro")}>
+                    <Sparkles size={13} /> حرفه‌ای
+                  </button>
+                  <button type="button" className={item.plan_code === "premium" ? "is-active premium" : ""} onClick={() => setTestPlan(item.id, "premium")}>
+                    <Crown size={13} /> ویژه
+                  </button>
+                </div>
               </div>
 
               <div className="admin-business-actions">
