@@ -44,7 +44,7 @@ export async function POST(
       .bind(businessId),
     db
       .prepare(
-        "INSERT INTO subscriptions (business_id, plan_id, status, starts_at, ends_at, is_test) VALUES (?, ?, 'active', CURRENT_TIMESTAMP, " + endsAtSql + ", 1)"
+        "INSERT INTO subscriptions (business_id, plan_id, status, starts_at, ends_at) VALUES (?, ?, 'active', CURRENT_TIMESTAMP, " + endsAtSql + ")"
       )
       .bind(businessId, plan.id),
   ]);
