@@ -124,6 +124,7 @@ CREATE TABLE IF NOT EXISTS subscriptions (
   status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','past_due','cancelled','expired')),
   starts_at TEXT NOT NULL,
   ends_at TEXT,
+  is_test INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (business_id) REFERENCES businesses(id) ON DELETE CASCADE,
   FOREIGN KEY (plan_id) REFERENCES plans(id)
