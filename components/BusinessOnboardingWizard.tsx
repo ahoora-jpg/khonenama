@@ -118,7 +118,13 @@ export default function BusinessOnboardingWizard() {
         body: JSON.stringify(form),
       });
 
-      const result = await response.json();
+      const raw = await response.text();
+      let result: any = {};
+      try {
+        result = raw ? JSON.parse(raw) : {};
+      } catch {
+        result = { error: "NON_JSON_RESPONSE", detail: raw.slice(0, 160) };
+      }
 
       if (!response.ok || !result?.ok) {
         const messages: Record<string, string> = {
@@ -131,7 +137,23 @@ export default function BusinessOnboardingWizard() {
           PHONE_IN_USE: "این شماره همراه قبلاً ثبت شده است. با همان حساب وارد شوید یا ثبت را با همان شماره ادامه دهید.",
           DB_SCHEMA_OUTDATED: "ساختار دیتابیس هنوز کامل نیست؛ لطفاً چند لحظه بعد دوباره تلاش کنید.",
         };
-        throw new Error(messages[result?.error] || "ذخیره اطلاعات انجام نشد. دوباره تلاش کنید.");
+        const stageLabels: Record<string, string> = {
+          "parse-request": "خواندن فرم",
+          "category-lookup": "بررسی دسته",
+          "user-lookup": "بررسی حساب",
+          "user-save": "ذخیره حساب",
+          "business-create": "ساخت کسب‌وکار",
+          "business-relations": "اتصال دسته و محدوده",
+          "services-save": "ذخیره خدمات",
+          "subscription-save": "ساخت اشتراک",
+          "session-create": "ساخت نشست ورود",
+        };
+        const fallback =
+          result?.error === "NON_JSON_RESPONSE"
+            ? "پاسخ سرور قابل خواندن نبود. کد HTTP: " + response.status
+            : "ذخیره اطلاعات انجام نشد. کد HTTP: " + response.status +
+              (result?.stage ? " — مرحله: " + (stageLabels[result.stage] || result.stage) : "");
+        throw new Error(messages[result?.error] || fallback);
       }
 
       const storedProfile = {
