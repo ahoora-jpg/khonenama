@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle2, Crown, FlaskConical, KeyRound, Link2, LogOut, RefreshCw, RotateCcw, Search, Sparkles, Store, Trash2, XCircle } from "lucide-react";
+import { CheckCircle2, Crown, FlaskConical, KeyRound, LogOut, RefreshCw, RotateCcw, Search, Sparkles, Store, Trash2, XCircle } from "lucide-react";
 
 type BusinessRow = {
   id: number;
@@ -147,22 +147,6 @@ export default function AdminBusinessModeration() {
     await load();
   }
 
-  async function createCleanLink(id: number) {
-    setMessage("");
-    const response = await fetch("/api/admin/businesses/" + id + "/public-link", {
-      method: "POST",
-    });
-    const result = await response.json().catch(() => ({}));
-
-    if (!response.ok || !result?.ok) {
-      setMessage("ساخت لینک تمیز انجام نشد.");
-      return;
-    }
-
-    setMessage("لینک اختصاصی ساخته شد: " + result.publicUrl);
-    await load();
-  }
-
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
     window.location.href = "/admin/login";
@@ -258,9 +242,6 @@ export default function AdminBusinessModeration() {
               </div>
 
               <div className="admin-business-actions">
-                <button className="pill-button" type="button" onClick={() => createCleanLink(item.id)}>
-                  <Link2 size={15} /> ساخت لینک تمیز
-                </button>
                 {item.status === "published" && (
                   <a className="pill-button" href={"/business/" + item.slug} target="_blank" rel="noreferrer">
                     <Store size={15} /> مشاهده صفحه عمومی
