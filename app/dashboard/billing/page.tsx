@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { businessPlans } from "@/lib/business-plans";
-import { Check, CreditCard, FileText, ReceiptText, ShieldCheck, Sparkles } from "lucide-react";
+import BusinessPlanCards from "@/components/BusinessPlanCards";
+import { CreditCard, FileText, ReceiptText, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "اشتراک و پرداخت | پنل کسب‌وکار",
@@ -30,26 +30,7 @@ export default function BillingPage() {
             <span><CreditCard size={17} /> فعال‌سازی فقط بعد از Verify درگاه</span>
           </div>
 
-          <div className="business-plan-grid billing-plan-grid">
-            {businessPlans.map((plan) => (
-              <article className={"business-plan-card " + (plan.code === "pro" ? "is-highlighted" : "")} key={plan.code}>
-                <span className="business-plan-badge">{plan.badge}</span>
-                <h2>{plan.name}</h2>
-                <strong>{plan.priceLabel}</strong>
-                <p>{plan.description}</p>
-                <ul>
-                  {plan.features.map((feature) => <li key={feature}><Check size={15} /> {feature}</li>)}
-                </ul>
-                {plan.code === "free" ? (
-                  <span className="billing-current-plan"><Check size={14} /> پلن فعلی</span>
-                ) : (
-                  <button className="pill-button billing-disabled" type="button" disabled>
-                    <Sparkles size={15} /> فعال‌سازی پس از تعیین قیمت
-                  </button>
-                )}
-              </article>
-            ))}
-          </div>
+          <BusinessPlanCards />
 
           <div className="billing-grid">
             <section className="dashboard-panel glass-panel">
