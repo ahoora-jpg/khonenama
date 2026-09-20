@@ -200,7 +200,7 @@ export async function POST(request: Request) {
     const slug = await createUniqueBusinessSlug(db, businessName, city);
     const business = await db
       .prepare(
-        "INSERT INTO businesses (slug, name, description, business_type, city, area, address, phone, website, instagram, status, verification_status, owner_user_id) VALUES (?, ?, ?, ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, NULLIF(?, ''), NULLIF(?, ''), 'draft', 'unverified', ?) RETURNING id"
+        "INSERT INTO businesses (slug, name, description, business_type, city, area, address, phone, website, instagram, status, verification_status, owner_user_id) VALUES (?, ?, ?, ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, NULLIF(?, ''), NULLIF(?, ''), 'published', 'unverified', ?) RETURNING id"
       )
       .bind(slug, businessName, description, businessType, city, area, address, phone, website, instagram, userId)
       .first();
@@ -279,7 +279,7 @@ export async function POST(request: Request) {
         business: {
           id: createdBusinessId,
           slug,
-          status: "draft",
+          status: "published",
           verificationStatus: "unverified",
         },
         owner: {
