@@ -73,6 +73,9 @@ export default function BusinessLoginForm() {
         <div className={credentialError ? "form-input login-input-error" : "form-input"}>
           <LockKeyhole size={17} />
           <input
+            id="business-login-password"
+            name="password"
+            dir="ltr"
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
@@ -83,13 +86,37 @@ export default function BusinessLoginForm() {
             }}
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
+            autoCapitalize="none"
+            spellCheck={false}
             placeholder="رمز عبور"
             onKeyDown={(e) => e.key === "Enter" && submit()}
           />
-          <button className="password-visibility" type="button" onClick={() => setShowPassword((value) => !value)} aria-label="نمایش یا پنهان‌کردن رمز">
-            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+          <button
+            className="password-visibility password-visibility-inline"
+            type="button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => setShowPassword((value) => !value)}
+            aria-label={showPassword ? "پنهان کردن رمز" : "نمایش رمز"}
+            aria-pressed={showPassword}
+          >
+            {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
           </button>
         </div>
+        <button
+          className="password-visibility-text"
+          type="button"
+          onClick={() => setShowPassword((value) => !value)}
+          aria-controls="business-login-password"
+          aria-pressed={showPassword}
+        >
+          {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+          {showPassword ? "پنهان کردن رمز" : "نمایش رمز عبور"}
+        </button>
+        {showPassword && (
+          <div className="password-readable-preview" dir="ltr" aria-live="polite">
+            {password || "رمزی وارد نشده است"}
+          </div>
+        )}
         {credentialError && (
           <div className="login-inline-error" role="alert" aria-live="assertive">
             رمز عبور یا شماره همراه صحیح نیست. دوباره بررسی کنید.
