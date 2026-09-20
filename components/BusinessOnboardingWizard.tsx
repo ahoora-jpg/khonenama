@@ -95,6 +95,7 @@ export default function BusinessOnboardingWizard() {
   const [saveError, setSaveError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [serviceAreaQuery, setServiceAreaQuery] = useState("");
+  const [profileAreaOpen, setProfileAreaOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -506,18 +507,27 @@ export default function BusinessOnboardingWizard() {
                   <MapPin size={17} />
                   <input
                     value={form.area}
-                    onChange={(e) => update("area", e.target.value)}
+                    onChange={(e) => {
+                      update("area", e.target.value);
+                      setProfileAreaOpen(true);
+                    }}
+                    onFocus={() => setProfileAreaOpen(true)}
+                    onBlur={() => window.setTimeout(() => setProfileAreaOpen(false), 120)}
                     placeholder="مثلاً بر..."
                     autoComplete="off"
                   />
                 </div>
-                {form.area.trim().length > 0 && profileAreaSuggestions.length > 0 && (
+                {profileAreaOpen && form.area.trim().length > 0 && profileAreaSuggestions.length > 0 && (
                   <div className="area-suggestions">
                     {profileAreaSuggestions.map((area) => (
                       <button
                         type="button"
                         key={area}
-                        onClick={() => update("area", area)}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => {
+                          update("area", area);
+                          setProfileAreaOpen(false);
+                        }}
                       >
                         <MapPin size={13} /> {area}
                       </button>
