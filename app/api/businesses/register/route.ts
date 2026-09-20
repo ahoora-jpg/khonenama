@@ -46,6 +46,7 @@ export async function POST(request: Request) {
     const email = cleanText(body?.email, 160).toLowerCase();
     const password = typeof body?.password === "string" ? body.password : "";
     const businessName = cleanText(body?.businessName, 180);
+    const businessType = ["store", "company", "individual"].includes(body?.businessType) ? body.businessType : "store";
     const city = cleanText(body?.city, 100);
     const area = cleanText(body?.area, 100);
     const address = cleanText(body?.address, 700);
@@ -198,9 +199,9 @@ export async function POST(request: Request) {
     const slug = "business-" + crypto.randomUUID().replace(/-/g, "").slice(0, 12);
     const business = await db
       .prepare(
-        "INSERT INTO businesses (slug, name, description, city, area, address, phone, website, instagram, status, verification_status, owner_user_id) VALUES (?, ?, ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, NULLIF(?, ''), NULLIF(?, ''), 'draft', 'unverified', ?) RETURNING id"
+        "INSERT INTO businesses (slug, name, description, business_type, city, area, address, phone, website, instagram, status, verification_status, owner_user_id) VALUES (?, ?, ?, ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, NULLIF(?, ''), NULLIF(?, ''), 'draft', 'unverified', ?) RETURNING id"
       )
-      .bind(slug, businessName, description, city, area, address, phone, website, instagram, userId)
+      .bind(slug, businessName, description, businessType, city, area, address, phone, website, instagram, userId)
       .first();
 
     createdBusinessId = Number(business?.id);
