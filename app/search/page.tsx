@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { businesses as demoBusinesses } from "@/lib/demo-data";
 import { listPublishedBusinesses } from "@/lib/server/public-businesses";
-import { BadgeCheck, MapPin, Search, SlidersHorizontal, Star } from "lucide-react";
+import { BadgeCheck, BriefcaseBusiness, Crown, MapPin, Search, SlidersHorizontal, Star } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "جستجوی دکوراسیون",
@@ -41,12 +41,16 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
       verified: business.verificationStatus === "verified" || business.verificationStatus === "professional",
       rating: business.rating,
       reviewCount: business.reviewCount,
+      planCode: business.planCode,
+      promoted: business.promoted,
       source: "live" as const,
     })),
     ...filteredDemo
       .filter((business) => !liveSlugs.has(business.slug))
       .map((business) => ({
         ...business,
+        planCode: business.featured ? "premium" as const : "free" as const,
+        promoted: Boolean(business.featured),
         source: "demo" as const,
       })),
   ];
@@ -81,12 +85,18 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
             <div className="results-list">
               {results.length > 0 ? results.map((business) => (
-                <a className="result-card" href={"/business/" + business.slug} key={business.slug}>
+                <a className={"result-card plan-card-" + business.planCode} href={"/business/" + business.slug} key={business.slug}>
                   <div className="result-thumb" />
                   <div className="result-body">
                     <div className="result-title-row">
                       <h2>{business.name}</h2>
                       {business.verified && <BadgeCheck size={18} className="verified-icon" />}
+                      {business.planCode === "pro" && (
+                        <span className="plan-listing-badge is-pro"><BriefcaseBusiness size={13} /> حرفه‌ای</span>
+                      )}
+                      {business.planCode === "premium" && (
+                        <span className="plan-listing-badge is-premium"><Crown size={13} /> جایگاه ویژه</span>
+                      )}
                     </div>
                     <p>{business.description}</p>
                     <div className="result-tags">{business.services.slice(0, 4).map((service) => <span key={service}>{service}</span>)}</div>
