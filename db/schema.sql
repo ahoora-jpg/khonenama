@@ -170,6 +170,10 @@ CREATE TABLE IF NOT EXISTS users (
   full_name TEXT,
   phone_verified_at TEXT,
   email_verified_at TEXT,
+  password_hash TEXT,
+  password_salt TEXT,
+  password_iterations INTEGER,
+  password_set_at TEXT,
   status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','blocked','deleted')),
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -278,3 +282,19 @@ CREATE INDEX IF NOT EXISTS idx_service_areas_city_area ON business_service_areas
 CREATE INDEX IF NOT EXISTS idx_verification_business_status ON verification_requests(business_id, status);
 CREATE INDEX IF NOT EXISTS idx_invoices_business_status ON invoices(business_id, status, created_at);
 CREATE INDEX IF NOT EXISTS idx_payments_invoice_status ON payments(invoice_id, status);
+
+
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id TEXT NOT NULL,
+  channel TEXT NOT NULL CHECK(channel IN ('email','sms')),
+  destination TEXT NOT NULL,
+  token_hash TEXT NOT NULL UNIQUE,
+  expires_at TEXT NOT NULL,
+  used_at TEXT,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_password_reset_user
+ON password_reset_tokens(user_id, expires_at);
