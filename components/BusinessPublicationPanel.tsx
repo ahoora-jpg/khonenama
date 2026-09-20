@@ -1,12 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle2, Clock3, Send, ShieldCheck } from "lucide-react";
+import { BadgeCheck, CheckCircle2, Clock3, Send, ShieldCheck } from "lucide-react";
 
 type Status = "draft" | "pending" | "published" | "suspended" | "";
 
-export default function BusinessPublicationPanel({ initialStatus = "" }: { initialStatus?: Status }) {
+export default function BusinessPublicationPanel({
+  initialStatus = "",
+  initialVerificationStatus = "",
+}: {
+  initialStatus?: Status;
+  initialVerificationStatus?: string;
+}) {
   const [status, setStatus] = useState<Status>(initialStatus);
+  const [verificationStatus, setVerificationStatus] = useState(initialVerificationStatus);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -14,7 +21,11 @@ export default function BusinessPublicationPanel({ initialStatus = "" }: { initi
     if (initialStatus) setStatus(initialStatus);
   }, [initialStatus]);
 
-  async function submitForReview() {
+  useEffect(() => {
+    setVerificationStatus(initialVerificationStatus || "");
+  }, [initialVerificationStatus]);
+
+  async function submitForVerification() {
     setLoading(true);
     setMessage("");
     try {
@@ -22,16 +33,17 @@ export default function BusinessPublicationPanel({ initialStatus = "" }: { initi
       const result = await response.json();
       if (!response.ok || !result?.ok) {
         if (result?.error === "PROFILE_INCOMPLETE") {
-          setMessage("پروفایل هنوز برای بررسی کامل نیست. اطلاعات، خدمات و محدوده فعالیت را تکمیل کنید.");
+          setMessage("پروفایل برای درخواست نشان تأیید هنوز کامل نیست. اطلاعات، خدمات و محدوده را تکمیل کنید.");
         } else if (result?.error === "UNAUTHENTICATED") {
-          setMessage("Session پنل فعال نیست؛ یک‌بار دوباره ثبت‌نام یا ورود انجام دهید.");
+          setMessage("برای ادامه دوباره وارد پنل شوید.");
         } else {
-          setMessage("ارسال برای بررسی انجام نشد. دوباره تلاش کنید.");
+          setMessage("ارسال درخواست تأیید انجام نشد. دوباره تلاش کنید.");
         }
         return;
       }
-      setStatus(result.status);
-      setMessage("پروفایل برای بررسی خونه‌نما ارسال شد.");
+      setStatus(result.status || status);
+      setVerificationStatus(result.verificationStatus || "pending");
+      setMessage("درخواست نشان تأیید ثبت شد. پروفایل شما در این فاصله همچنان منتشر می‌ماند.");
     } catch {
       setMessage("ارتباط با سرور برقرار نشد.");
     } finally {
@@ -39,41 +51,57 @@ export default function BusinessPublicationPanel({ initialStatus = "" }: { initi
     }
   }
 
-  if (status === "published") {
+  if (status === "suspended") {
     return (
-      <section className="dashboard-panel glass-panel publication-panel is-published">
-        <CheckCircle2 size={22} />
+      <section className="dashboard-panel glass-panel publication-panel">
+        <ShieldCheck size={22} />
         <div>
-          <span className="section-kicker">وضعیت انتشار</span>
-          <h2>پروفایل منتشر شده</h2>
-          <p>پروفایل شما در صفحات عمومی خونه‌نما قابل نمایش است.</p>
+          <span className="section-kicker">وضعیت پروفایل</span>
+          <h2>نمایش عمومی متوقف شده</h2>
+          <p>این پروفایل توسط مدیریت از نمایش عمومی خارج شده است.</p>
         </div>
       </section>
     );
   }
 
-  if (status === "pending") {
+  if (verificationStatus === "verified" || verificationStatus === "professional") {
+    return (
+      <section className="dashboard-panel glass-panel publication-panel is-published">
+        <BadgeCheck size={22} />
+        <div>
+          <span className="section-kicker">اعتماد و اعتبار</span>
+          <h2>کسب‌وکار تأیید شده</h2>
+          <p>نشان تأیید خونه‌نما برای این کسب‌وکار فعال است.</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (verificationStatus === "pending") {
     return (
       <section className="dashboard-panel glass-panel publication-panel is-pending">
         <Clock3 size={22} />
         <div>
-          <span className="section-kicker">وضعیت انتشار</span>
-          <h2>در انتظار بررسی</h2>
-          <p>اطلاعات برای بررسی ارسال شده و تا تصمیم نهایی به‌صورت عمومی منتشر نمی‌شود.</p>
+          <span className="section-kicker">اعتماد و اعتبار</span>
+          <h2>درخواست تأیید در حال بررسی است</h2>
+          <p>پروفایل شما منتشر است و بررسی برای دریافت نشان تأیید جداگانه انجام می‌شود.</p>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="dashboard-panel glass-panel publication-panel">
-      <ShieldCheck size={22} />
+    <section className="dashboard-panel glass-panel publication-panel is-published">
+      <CheckCircle2 size={22} />
       <div>
-        <span className="section-kicker">مرحله بعد</span>
-        <h2>ارسال پروفایل برای بررسی</h2>
-        <p>بعد از تکمیل اطلاعات، پروفایل را برای بررسی و انتشار عمومی ارسال کنید.</p>
-        <button className="pill-button dark" type="button" onClick={submitForReview} disabled={loading}>
-          {loading ? "در حال ارسال..." : "ارسال برای بررسی"} <Send size={15} />
+        <span className="section-kicker">وضعیت پروفایل</span>
+        <h2>پروفایل شما منتشر است</h2>
+        <p>
+          برای انتشار و گرفتن لینک نیازی به تأیید مدیریت نیست. در صورت تمایل می‌توانید
+          جداگانه برای نشان تأیید خونه‌نما درخواست بدهید.
+        </p>
+        <button className="pill-button dark" type="button" onClick={submitForVerification} disabled={loading}>
+          {loading ? "در حال ارسال..." : "درخواست نشان تأیید"} <Send size={15} />
         </button>
         {message && <small className="publication-message">{message}</small>}
       </div>
