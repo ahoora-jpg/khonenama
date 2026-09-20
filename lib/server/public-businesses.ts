@@ -16,6 +16,7 @@ export type PublicBusiness = {
   featured: boolean;
   category: string;
   categoryName: string;
+  categories: { slug: string; name: string; primary: boolean }[];
   services: string[];
   rating: number;
   reviewCount: number;
@@ -31,10 +32,16 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
 
   const result: PublicBusiness[] = [];
   for (const row of rows) {
-    const [servicesResult, reviewResult] = await Promise.all([
+    const [servicesResult, categoriesResult, reviewResult] = await Promise.all([
       db
         .prepare(
           "SELECT s.name FROM business_services bs JOIN services s ON s.id = bs.service_id WHERE bs.business_id = ? ORDER BY s.id"
+        )
+        .bind(row.id)
+        .all(),
+      db
+        .prepare(
+          "SELECT c.slug, c.name, bc.is_primary FROM business_categories bc JOIN categories c ON c.id = bc.category_id WHERE bc.business_id = ? ORDER BY bc.is_primary DESC, c.sort_order, c.name"
         )
         .bind(row.id)
         .all(),
@@ -62,6 +69,11 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
       featured: Boolean(row.is_featured),
       category: row.category_slug || "",
       categoryName: row.category_name || "",
+      categories: (categoriesResult?.results || []).map((item: any) => ({
+        slug: item.slug,
+        name: item.name,
+        primary: Boolean(item.is_primary),
+      })),
       services: (servicesResult?.results || []).map((item: any) => item.name),
       rating: Number(reviewResult?.rating || 0),
       reviewCount: Number(reviewResult?.review_count || 0),
@@ -107,7 +119,9 @@ export async function listPublishedBusinesses(options: {
     const binds: any[] = [];
 
     if (options.categorySlug) {
-      where.push("c.slug = ?");
+      where.push(
+        "EXISTS (SELECT 1 FROM business_categories bcx JOIN categories cx ON cx.id = bcx.category_id WHERE bcx.business_id = b.id AND cx.slug = ?)"
+      );
       binds.push(options.categorySlug);
     }
 
