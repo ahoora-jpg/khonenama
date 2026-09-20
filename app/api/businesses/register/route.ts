@@ -33,7 +33,9 @@ function serviceSlug(category: string, index: number) {
 }
 
 export async function POST(request: Request) {
+  let stage = "start";
   try {
+    stage = "parse-request";
     const body = await request.json();
     const ownerName = cleanText(body?.ownerName, 120);
     const phone = normalizeIranPhone(cleanText(body?.phone, 32));
@@ -78,6 +80,7 @@ export async function POST(request: Request) {
       return Response.json({ ok: false, error: "D1_BINDING_NOT_AVAILABLE" }, { status: 503 });
     }
 
+    stage = "category-lookup";
     const categoryRow = await db
       .prepare("SELECT id FROM categories WHERE slug = ? AND is_active = 1 LIMIT 1")
       .bind(category)
@@ -87,6 +90,7 @@ export async function POST(request: Request) {
       return Response.json({ ok: false, error: "CATEGORY_NOT_FOUND" }, { status: 409 });
     }
 
+    stage = "user-lookup";
     const existingUser = await db.prepare("SELECT id, email FROM users WHERE phone = ? LIMIT 1").bind(phone).first();
     let userId = existingUser?.id as string | undefined;
 
@@ -100,6 +104,7 @@ export async function POST(request: Request) {
       }
     }
 
+    stage = "user-save";
     if (!userId) {
       userId = "usr_" + crypto.randomUUID();
       await db
@@ -113,6 +118,7 @@ export async function POST(request: Request) {
         .run();
     }
 
+    stage = "business-create";
     const slug = "business-" + crypto.randomUUID().replace(/-/g, "").slice(0, 12);
 
     const business = await db
@@ -127,6 +133,7 @@ export async function POST(request: Request) {
       return Response.json({ ok: false, error: "BUSINESS_CREATE_FAILED" }, { status: 500 });
     }
 
+    stage = "business-relations";
     const statements = [
       db
         .prepare("INSERT OR IGNORE INTO business_members (business_id, user_id, role, status, joined_at) VALUES (?, ?, 'owner', 'active', CURRENT_TIMESTAMP)")
@@ -143,6 +150,7 @@ export async function POST(request: Request) {
 
     await db.batch(statements);
 
+    stage = "services-save";
     for (const service of selectedServices) {
       const index = serviceCatalog.indexOf(service);
       const slugValue = serviceSlug(category, index);
@@ -160,6 +168,7 @@ export async function POST(request: Request) {
       }
     }
 
+    stage = "subscription-save";
     const freePlan = await db.prepare("SELECT id FROM plans WHERE code = 'free' AND is_active = 1 LIMIT 1").first();
     if (freePlan?.id) {
       await db
@@ -168,6 +177,7 @@ export async function POST(request: Request) {
         .run();
     }
 
+    stage = "session-create";
     let session: { cookie: string; expiresAt: string } | null = null;
     try {
       session = await createBusinessSession(userId, request);
@@ -211,6 +221,9 @@ export async function POST(request: Request) {
       return Response.json({ ok: false, error: "DB_SCHEMA_OUTDATED" }, { status: 503 });
     }
 
-    return Response.json({ ok: false, error: "INTERNAL_ERROR" }, { status: 500 });
+    return Response.json(
+      { ok: false, error: "INTERNAL_ERROR", stage },
+      { status: 500, headers: { "Cache-Control": "no-store" } }
+    );
   }
 }
