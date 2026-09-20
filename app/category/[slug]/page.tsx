@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import { businesses, getCategory } from "@/lib/demo-data";
 import { getCategorySeo } from "@/lib/category-seo";
 import { guides } from "@/lib/guides";
+import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 import { getCategoryVisual, getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, BadgeCheck, BookOpen, MapPin, Star } from "lucide-react";
 import { notFound } from "next/navigation";
@@ -34,7 +35,23 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const seo = getCategorySeo(slug);
   if (!category || !seo) notFound();
 
-  const matches = businesses.filter((business) => business.category === slug);
+  const liveBusinesses = await listPublishedBusinesses({ categorySlug: slug, limit: 50 });
+  const demoMatches = businesses.filter((business) => business.category === slug);
+  const liveSlugs = new Set(liveBusinesses.map((business) => business.slug));
+  const matches = [
+    ...liveBusinesses.map((business) => ({
+      slug: business.slug,
+      name: business.name,
+      description: business.description,
+      city: business.city,
+      area: business.area,
+      verified: business.verificationStatus === "verified" || business.verificationStatus === "professional",
+      rating: business.rating,
+      reviewCount: business.reviewCount,
+      services: business.services,
+    })),
+    ...demoMatches.filter((business) => !liveSlugs.has(business.slug)),
+  ];
   const relatedGuides = guides.filter((guide) => seo.guides.includes(guide.slug));
   const visual = getCategoryVisual(slug);
 
@@ -132,7 +149,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                       <p>{business.description}</p>
                       <div className="business-meta-row">
                         <span><MapPin size={14} /> {business.city}، {business.area}</span>
-                        <span><Star size={14} fill="currentColor" /> {business.rating}</span>
+                        <span><Star size={14} fill="currentColor" /> {business.reviewCount > 0 ? business.rating : "جدید"}</span>
                       </div>
                     </div>
                   </a>
