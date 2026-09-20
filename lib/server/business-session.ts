@@ -29,8 +29,30 @@ function getCookieValue(request: Request, name: string) {
   return "";
 }
 
+async function ensureBusinessSessionSchema(db: any) {
+  await db.prepare(
+    "CREATE TABLE IF NOT EXISTS auth_sessions (" +
+      "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+      "token_hash TEXT NOT NULL UNIQUE," +
+      "user_id TEXT NOT NULL," +
+      "expires_at TEXT NOT NULL," +
+      "created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+      "last_seen_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+      "user_agent TEXT" +
+    ")"
+  ).run();
+  await db.prepare(
+    "CREATE INDEX IF NOT EXISTS idx_auth_sessions_user ON auth_sessions(user_id, expires_at)"
+  ).run();
+  await db.prepare(
+    "CREATE INDEX IF NOT EXISTS idx_auth_sessions_expiry ON auth_sessions(expires_at)"
+  ).run();
+}
+
 export async function createBusinessSession(userId: string, request: Request) {
   const db = (env as any).DB;
+  if (!db) throw new Error("D1_BINDING_NOT_AVAILABLE");
+  await ensureBusinessSessionSchema(db);
   const bytes = new Uint8Array(32);
   crypto.getRandomValues(bytes);
   const token = toBase64Url(bytes);
