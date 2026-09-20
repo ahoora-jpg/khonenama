@@ -1,5 +1,6 @@
 import { env } from "cloudflare:workers";
 import { getBusinessSession } from "@/lib/server/business-session";
+import { createUniqueBusinessSlug } from "@/lib/business-slug";
 
 function cleanText(value: unknown, max = 500) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
@@ -22,6 +23,24 @@ export async function GET(request: Request) {
 
   if (!business?.id) {
     return Response.json({ ok: false, error: "BUSINESS_NOT_FOUND" }, { status: 404 });
+  }
+
+  if (String(business.slug || "").startsWith("business-")) {
+    try {
+      await db.prepare(
+        "CREATE TABLE IF NOT EXISTS business_slug_history (old_slug TEXT PRIMARY KEY, business_id INTEGER NOT NULL, replaced_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)"
+      ).run();
+      const newSlug = await createUniqueBusinessSlug(db, String(business.name || "business"), String(business.city || ""));
+      if (newSlug && newSlug !== business.slug) {
+        await db.batch([
+          db.prepare("INSERT OR IGNORE INTO business_slug_history (old_slug, business_id) VALUES (?, ?)").bind(business.slug, business.id),
+          db.prepare("UPDATE businesses SET slug = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?").bind(newSlug, business.id),
+        ]);
+        business.slug = newSlug;
+      }
+    } catch (error) {
+      console.warn("automatic business slug cleanup failed", error);
+    }
   }
 
   const [servicesResult, areasResult, planResult, leadCount] = await Promise.all([
