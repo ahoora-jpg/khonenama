@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { businesses } from "@/lib/demo-data";
+import { businesses as demoBusinesses } from "@/lib/demo-data";
+import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 import { BadgeCheck, MapPin, Search, SlidersHorizontal, Star } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -12,8 +13,43 @@ export const metadata: Metadata = {
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string; location?: string }> }) {
   const params = await searchParams;
-  const query = params.q?.trim() || "دکوراسیون";
+  const query = params.q?.trim() || "";
   const location = params.location?.trim() || "کرج";
+
+  const liveBusinesses = await listPublishedBusinesses({
+    query: query || undefined,
+    city: location || undefined,
+    limit: 50,
+  });
+
+  const filteredDemo = demoBusinesses.filter((business) => {
+    const haystack = [business.name, business.description, ...business.services].join(" ").toLowerCase();
+    const queryMatch = !query || haystack.includes(query.toLowerCase());
+    const locationMatch = !location || business.city.includes(location) || business.area.includes(location);
+    return queryMatch && locationMatch;
+  });
+
+  const liveSlugs = new Set(liveBusinesses.map((business) => business.slug));
+  const results = [
+    ...liveBusinesses.map((business) => ({
+      slug: business.slug,
+      name: business.name,
+      description: business.description,
+      city: business.city,
+      area: business.area,
+      services: business.services,
+      verified: business.verificationStatus === "verified" || business.verificationStatus === "professional",
+      rating: business.rating,
+      reviewCount: business.reviewCount,
+      source: "live" as const,
+    })),
+    ...filteredDemo
+      .filter((business) => !liveSlugs.has(business.slug))
+      .map((business) => ({
+        ...business,
+        source: "demo" as const,
+      })),
+  ];
 
   return (
     <main>
@@ -22,12 +58,14 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         <div className="shell">
           <div className="page-heading">
             <span className="section-kicker">نتایج جستجو</span>
-            <h1>{query} در {location}</h1>
-            <p>نتایج نمونه‌اند و در فاز دیتابیس به کسب‌وکارهای واقعی متصل می‌شوند.</p>
+            <h1>{query || "دکوراسیون"} در {location}</h1>
+            <p>
+              کسب‌وکارهای منتشرشده خونه‌نما بر اساس عبارت جستجو و موقعیت نمایش داده می‌شوند.
+            </p>
           </div>
 
           <form className="results-search">
-            <label><Search size={18} /><input name="q" defaultValue={query} /></label>
+            <label><Search size={18} /><input name="q" defaultValue={query} placeholder="مثلاً پرده زبرا" /></label>
             <label><MapPin size={18} /><input name="location" defaultValue={location} /></label>
             <button>جستجو</button>
           </form>
@@ -42,8 +80,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             </aside>
 
             <div className="results-list">
-              {businesses.map((business) => (
-                <a className="result-card" href={`/business/${business.slug}`} key={business.slug}>
+              {results.length > 0 ? results.map((business) => (
+                <a className="result-card" href={"/business/" + business.slug} key={business.slug}>
                   <div className="result-thumb" />
                   <div className="result-body">
                     <div className="result-title-row">
@@ -54,11 +92,19 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
                     <div className="result-tags">{business.services.slice(0, 4).map((service) => <span key={service}>{service}</span>)}</div>
                     <div className="result-meta">
                       <span><MapPin size={14} /> {business.city}، {business.area}</span>
-                      <span className="rating"><Star size={14} fill="currentColor" /> {business.rating} ({business.reviewCount})</span>
+                      <span className="rating">
+                        <Star size={14} fill="currentColor" />
+                        {business.reviewCount > 0 ? business.rating + " (" + business.reviewCount + ")" : "جدید"}
+                      </span>
                     </div>
                   </div>
                 </a>
-              ))}
+              )) : (
+                <div className="category-empty glass-panel">
+                  <strong>نتیجه‌ای پیدا نشد.</strong>
+                  <p>عبارت جستجو یا محدوده را کمی عمومی‌تر امتحان کنید.</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
