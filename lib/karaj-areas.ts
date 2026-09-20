@@ -74,7 +74,14 @@ export function suggestKarajAreas(query: string, limit = 8) {
   const normalized = normalizePersian(query);
   if (!normalized) return KARAJ_POPULAR_AREAS.slice(0, limit);
 
+  const direct = KARAJ_AREAS.filter((area) =>
+    normalizePersian(area).includes(normalized)
+  );
+
+  if (direct.length) return direct.slice(0, limit);
+
+  const prefix = normalized.slice(0, Math.min(2, normalized.length));
   return KARAJ_AREAS
-    .filter((area) => normalizePersian(area).includes(normalized))
+    .filter((area) => normalizePersian(area).startsWith(prefix))
     .slice(0, limit);
 }
