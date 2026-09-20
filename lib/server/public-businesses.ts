@@ -1,4 +1,5 @@
 import { env } from "cloudflare:workers";
+import { ensureBusinessMediaSchema } from "@/lib/server/business-media";
 
 export type PublicBusiness = {
   id: number;
@@ -18,6 +19,7 @@ export type PublicBusiness = {
   categoryName: string;
   categories: { slug: string; name: string; primary: boolean }[];
   services: string[];
+  media: { id: number; kind: string; url: string; thumbnailUrl: string; altText: string; sortOrder: number }[];
   planCode: "free" | "pro" | "premium";
   planName: string;
   promoted: boolean;
@@ -33,9 +35,11 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
   const db = getDb();
   if (!db || !rows.length) return [];
 
+  await ensureBusinessMediaSchema(db);
+
   const result: PublicBusiness[] = [];
   for (const row of rows) {
-    const [servicesResult, categoriesResult, reviewResult, planResult, promotionResult] = await Promise.all([
+    const [servicesResult, categoriesResult, reviewResult, planResult, promotionResult, mediaResult] = await Promise.all([
       db
         .prepare(
           "SELECT s.name FROM business_services bs JOIN services s ON s.id = bs.service_id WHERE bs.business_id = ? ORDER BY s.id"
@@ -66,6 +70,12 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         )
         .bind(row.id)
         .first(),
+      db
+        .prepare(
+          "SELECT id, kind, file_url, thumbnail_url, alt_text, sort_order FROM business_media WHERE business_id = ? AND file_url IS NOT NULL AND file_url <> '' ORDER BY CASE kind WHEN 'cover' THEN 0 WHEN 'logo' THEN 1 ELSE 2 END, sort_order, id"
+        )
+        .bind(row.id)
+        .all(),
     ]);
 
     result.push({
@@ -90,6 +100,14 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         primary: Boolean(item.is_primary),
       })),
       services: (servicesResult?.results || []).map((item: any) => item.name),
+      media: (mediaResult?.results || []).map((item: any) => ({
+        id: Number(item.id),
+        kind: item.kind || "image",
+        url: item.file_url || "",
+        thumbnailUrl: item.thumbnail_url || "",
+        altText: item.alt_text || "",
+        sortOrder: Number(item.sort_order || 0),
+      })),
       planCode: planResult?.code === "premium" ? "premium" : planResult?.code === "pro" ? "pro" : "free",
       planName: planResult?.name || "پایه",
       promoted: Boolean(promotionResult?.id) || planResult?.code === "premium",
