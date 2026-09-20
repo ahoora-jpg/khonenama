@@ -7,6 +7,7 @@ import {
   servicesForCategories,
 } from "@/lib/business-taxonomy";
 import { hashPassword, validatePassword, verifyPassword } from "@/lib/server/password";
+import { createUniqueBusinessSlug } from "@/lib/business-slug";
 
 function normalizeDigits(value: string) {
   const fa = "۰۱۲۳۴۵۶۷۸۹";
@@ -196,7 +197,7 @@ export async function POST(request: Request) {
     }
 
     stage = "business-create";
-    const slug = "business-" + crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+    const slug = await createUniqueBusinessSlug(db, businessName, city);
     const business = await db
       .prepare(
         "INSERT INTO businesses (slug, name, description, business_type, city, area, address, phone, website, instagram, status, verification_status, owner_user_id) VALUES (?, ?, ?, ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, NULLIF(?, ''), NULLIF(?, ''), 'draft', 'unverified', ?) RETURNING id"
