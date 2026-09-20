@@ -599,3 +599,14 @@
   .admin-business-card-head { display:grid; }
   .admin-business-actions .pill-button { width:100%; justify-content:center; }
 }
+
+.admin-login-entry {
+  display:flex;
+  justify-content:center;
+  margin-top:12px;
+  padding-top:11px;
+  border-top:1px solid var(--line);
+  color:#8b8178;
+  font-size:8px;
+}
+.admin-login-entry:hover { color:var(--terracotta); }
