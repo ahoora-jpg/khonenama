@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle2, Crown, FlaskConical, LogOut, RefreshCw, Sparkles, Store, XCircle } from "lucide-react";
+import { CheckCircle2, Crown, FlaskConical, KeyRound, Link2, LogOut, RefreshCw, Search, Sparkles, Store, XCircle } from "lucide-react";
 
 type BusinessRow = {
   id: number;
@@ -20,12 +20,14 @@ type BusinessRow = {
   review_status?: string;
   plan_code?: "free" | "pro" | "premium";
   plan_name?: string;
+  has_password?: number;
 };
 
 export default function AdminBusinessModeration() {
   const [items, setItems] = useState<BusinessRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [query, setQuery] = useState("");
 
   async function load() {
     setLoading(true);
@@ -94,6 +96,22 @@ export default function AdminBusinessModeration() {
     await load();
   }
 
+  async function createCleanLink(id: number) {
+    setMessage("");
+    const response = await fetch("/api/admin/businesses/" + id + "/public-link", {
+      method: "POST",
+    });
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || !result?.ok) {
+      setMessage("ساخت لینک تمیز انجام نشد.");
+      return;
+    }
+
+    setMessage("لینک اختصاصی ساخته شد: " + result.publicUrl);
+    await load();
+  }
+
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
     window.location.href = "/admin/login";
@@ -119,11 +137,30 @@ export default function AdminBusinessModeration() {
 
       {message && <div className="admin-message">{message}</div>}
 
+      <div className="admin-search-box">
+        <Search size={16} />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="جستجو بین نام کسب‌وکار یا مالک؛ مثلاً مهرعلی علایی"
+        />
+      </div>
+
       {loading ? (
         <div className="dashboard-panel glass-panel admin-loading">در حال دریافت اطلاعات...</div>
       ) : (
         <div className="admin-business-list">
-          {items.map((item) => (
+          {items
+            .filter((item) => {
+              const needle = query.trim().toLowerCase();
+              if (!needle) return true;
+              return [item.name, item.owner_name, item.owner_phone, item.phone]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase()
+                .includes(needle);
+            })
+            .map((item) => (
             <article className={"admin-business-card glass-panel status-" + item.status} key={item.id}>
               <div className="admin-business-card-head">
                 <div>
@@ -140,6 +177,9 @@ export default function AdminBusinessModeration() {
                 <span>مالک: {item.owner_name || "—"}</span>
                 <span>موبایل: {item.owner_phone || item.phone || "—"}</span>
                 <span>وضعیت تأیید: {item.verification_status}</span>
+                <span className={item.has_password ? "admin-auth-chip has-password" : "admin-auth-chip"}>
+                  <KeyRound size={12} /> {item.has_password ? "رمز فعال" : "حساب قدیمی بدون رمز"}
+                </span>
                 <span className={"admin-plan-chip plan-" + (item.plan_code || "free")}>
                   پلن: {item.plan_name || "پایه"}
                 </span>
@@ -167,6 +207,9 @@ export default function AdminBusinessModeration() {
               </div>
 
               <div className="admin-business-actions">
+                <button className="pill-button" type="button" onClick={() => createCleanLink(item.id)}>
+                  <Link2 size={15} /> ساخت لینک تمیز
+                </button>
                 {item.status === "published" && (
                   <a className="pill-button" href={"/business/" + item.slug} target="_blank" rel="noreferrer">
                     <Store size={15} /> مشاهده صفحه عمومی
