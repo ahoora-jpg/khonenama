@@ -70,7 +70,7 @@ export default function AdminBusinessModeration() {
       return;
     }
 
-    setMessage(action === "approve" ? "کسب‌وکار منتشر شد." : "کسب‌وکار برای اصلاح به پیش‌نویس برگشت.");
+    setMessage(action === "approve" ? "نشان تأیید کسب‌وکار فعال شد." : "درخواست تأیید رد شد؛ پروفایل عمومی همچنان منتشر می‌ماند.");
     await load();
   }
 
@@ -283,10 +283,10 @@ export default function AdminBusinessModeration() {
                 {item.status === "pending" && (
                   <>
                     <button className="pill-button admin-reject" type="button" onClick={() => review(item.id, "reject")}>
-                      <XCircle size={15} /> برگشت برای اصلاح
+                      <XCircle size={15} /> رد درخواست تأیید
                     </button>
                     <button className="pill-button dark" type="button" onClick={() => review(item.id, "approve")}>
-                      <CheckCircle2 size={15} /> تأیید و انتشار
+                      <CheckCircle2 size={15} /> تأیید کسب‌وکار
                     </button>
                   </>
                 )}
