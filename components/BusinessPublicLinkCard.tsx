@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, Copy, ExternalLink, Link2, Pencil, Save, X } from "lucide-react";
 
 export default function BusinessPublicLinkCard({
@@ -18,6 +18,13 @@ export default function BusinessPublicLinkCard({
   const [draftSlug, setDraftSlug] = useState(slug || "");
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (slug && slug !== currentSlug) {
+      setCurrentSlug(slug);
+      setDraftSlug(slug);
+    }
+  }, [slug, currentSlug]);
 
   const publicUrl = useMemo(() => {
     if (!currentSlug) return "";
