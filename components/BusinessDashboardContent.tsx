@@ -1,6 +1,7 @@
 "use client";
 
 import BusinessLogoutButton from "@/components/BusinessLogoutButton";
+import BusinessPublicationPanel from "@/components/BusinessPublicationPanel";
 
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -232,6 +233,8 @@ export default function BusinessDashboardContent() {
             </div>
           </section>
         </div>
+
+        <BusinessPublicationPanel initialStatus={(profile.status || "") as any} />
 
         <section className="dashboard-panel glass-panel dashboard-verification-panel">
           <div>
