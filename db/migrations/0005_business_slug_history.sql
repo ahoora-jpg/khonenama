@@ -1,5 +1,7 @@
 PRAGMA foreign_keys = ON;
 
+ALTER TABLE subscriptions ADD COLUMN is_test INTEGER NOT NULL DEFAULT 0;
+
 CREATE TABLE IF NOT EXISTS business_slug_history (
   old_slug TEXT PRIMARY KEY,
   business_id INTEGER NOT NULL,
