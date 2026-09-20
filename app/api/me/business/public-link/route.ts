@@ -20,6 +20,13 @@ export async function PATCH(request: Request) {
     return Response.json({ ok: false, error: "FORBIDDEN" }, { status: 403 });
   }
 
+  await db.prepare(
+    "CREATE TABLE IF NOT EXISTS business_slug_history (old_slug TEXT PRIMARY KEY, business_id INTEGER NOT NULL, replaced_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (business_id) REFERENCES businesses(id) ON DELETE CASCADE)"
+  ).run();
+  await db.prepare(
+    "CREATE INDEX IF NOT EXISTS idx_business_slug_history_business ON business_slug_history(business_id, replaced_at)"
+  ).run();
+
   const body = await request.json().catch(() => ({}));
   const requested = typeof body?.slug === "string" ? body.slug : "";
   const checked = validateBusinessSlug(requested);
