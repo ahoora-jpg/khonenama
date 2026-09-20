@@ -766,3 +766,20 @@
   .category-choice-grid { grid-template-columns:1fr; }
   .service-area-input-row { grid-template-columns:1fr; }
 }
+
+.login-input-error {
+  border-color:rgba(164,69,55,.7) !important;
+  background:#fff7f5 !important;
+  box-shadow:0 0 0 3px rgba(164,69,55,.08);
+}
+.login-inline-error {
+  margin-top:5px;
+  padding:7px 9px;
+  border-radius:10px;
+  background:#f8e8e4;
+  color:#9a4337;
+  border:1px solid rgba(154,67,55,.12);
+  font-size:9px;
+  line-height:1.8;
+  font-weight:850;
+}
