@@ -27,6 +27,7 @@ async function resolveBusiness(slug: string) {
       reviewCount: demo.reviewCount,
       planCode: demo.featured ? "premium" as const : "free" as const,
       planName: demo.featured ? "ویژه" : "پایه",
+      media: [],
     };
   }
 
@@ -51,6 +52,7 @@ async function resolveBusiness(slug: string) {
     reviewCount: live.reviewCount,
     planCode: live.planCode,
     planName: live.planName,
+    media: live.media,
   };
 }
 
@@ -122,7 +124,17 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
       <section className="inner-page business-profile-page">
         <div className="shell">
           <div className="business-profile-hero">
-            <div className="profile-cover"><div className="profile-cover-shape" /></div>
+            <div className="profile-cover">
+              {business.media.find((item: any) => item.kind === "cover")?.url ? (
+                <img
+                  className="profile-cover-image"
+                  src={business.media.find((item: any) => item.kind === "cover")?.url}
+                  alt={business.media.find((item: any) => item.kind === "cover")?.altText || business.name}
+                />
+              ) : (
+                <div className="profile-cover-shape" />
+              )}
+            </div>
             <div className={"profile-main-card glass-panel plan-" + business.planCode}>
               <div className="profile-title-row">
                 <div>
@@ -179,10 +191,20 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
           <section className="profile-section">
             <span className="section-kicker">نمونه‌کار</span>
             <h2>گالری پروژه‌ها</h2>
-            <div className="portfolio-placeholder-grid">
-              <div /><div /><div />
-            </div>
-            <p className="profile-media-note">آپلود تصاویر کسب‌وکار بعد از فعال‌شدن فضای ذخیره‌سازی رسانه تکمیل می‌شود.</p>
+            {business.media.length ? (
+              <div className="business-public-gallery">
+                {business.media.map((item: any) => (
+                  <figure className={item.kind === "cover" ? "is-cover" : ""} key={item.id}>
+                    <img src={item.url} alt={item.altText || business.name + " نمونه‌کار"} loading="lazy" />
+                    {item.altText && <figcaption>{item.altText}</figcaption>}
+                  </figure>
+                ))}
+              </div>
+            ) : (
+              <div className="portfolio-placeholder-grid">
+                <div /><div /><div />
+              </div>
+            )}
           </section>
 
           <section className="profile-section" id="quote">
