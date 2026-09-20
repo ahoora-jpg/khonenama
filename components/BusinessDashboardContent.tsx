@@ -167,7 +167,11 @@ export default function BusinessDashboardContent() {
           </div>
         </div>
 
-        <BusinessPublicLinkCard slug={profile.businessSlug} status={profile.status} />
+        <BusinessPublicLinkCard
+          slug={profile.businessSlug}
+          status={profile.status}
+          onSlugChange={(businessSlug) => setProfile((current) => ({ ...current, businessSlug }))}
+        />
 
         <div className="dashboard-stats">
           {stats.map(({ label, value, icon: Icon }) => (
