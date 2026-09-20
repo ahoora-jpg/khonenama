@@ -6,7 +6,7 @@ import { getCategorySeo } from "@/lib/category-seo";
 import { guides } from "@/lib/guides";
 import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 import { getCategoryVisual, getGuideVisual } from "@/lib/visuals";
-import { ArrowUpLeft, BadgeCheck, BookOpen, MapPin, Star } from "lucide-react";
+import { ArrowUpLeft, BadgeCheck, BookOpen, BriefcaseBusiness, Crown, MapPin, Star } from "lucide-react";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -49,8 +49,16 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       rating: business.rating,
       reviewCount: business.reviewCount,
       services: business.services,
+      planCode: business.planCode,
+      promoted: business.promoted,
     })),
-    ...demoMatches.filter((business) => !liveSlugs.has(business.slug)),
+    ...demoMatches
+      .filter((business) => !liveSlugs.has(business.slug))
+      .map((business) => ({
+        ...business,
+        planCode: business.featured ? "premium" as const : "free" as const,
+        promoted: Boolean(business.featured),
+      })),
   ];
   const relatedGuides = guides.filter((guide) => seo.guides.includes(guide.slug));
   const visual = getCategoryVisual(slug);
@@ -139,12 +147,18 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             {matches.length > 0 ? (
               <div className="business-grid">
                 {matches.map((business) => (
-                  <a className="business-card" href={"/business/" + business.slug} key={business.slug}>
+                  <a className={"business-card plan-card-" + business.planCode} href={"/business/" + business.slug} key={business.slug}>
                     <div className="business-media business-generic"><div className="business-media-shape" /></div>
                     <div className="business-content">
                       <div className="business-title-row">
                         <h3>{business.name}</h3>
                         {business.verified && <BadgeCheck size={18} className="verified-icon" />}
+                        {business.planCode === "pro" && (
+                          <span className="plan-listing-badge is-pro"><BriefcaseBusiness size={13} /> حرفه‌ای</span>
+                        )}
+                        {business.planCode === "premium" && (
+                          <span className="plan-listing-badge is-premium"><Crown size={13} /> جایگاه ویژه</span>
+                        )}
                       </div>
                       <p>{business.description}</p>
                       <div className="business-meta-row">
