@@ -119,9 +119,11 @@ export default function AdminBusinessModeration() {
               </div>
 
               <div className="admin-business-actions">
-                <a className="pill-button" href={"/business/" + item.slug} target="_blank" rel="noreferrer">
-                  <Store size={15} /> پیش‌نمایش
-                </a>
+                {item.status === "published" && (
+                  <a className="pill-button" href={"/business/" + item.slug} target="_blank" rel="noreferrer">
+                    <Store size={15} /> مشاهده صفحه عمومی
+                  </a>
+                )}
                 {item.status === "pending" && (
                   <>
                     <button className="pill-button admin-reject" type="button" onClick={() => review(item.id, "reject")}>
