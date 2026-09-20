@@ -3,13 +3,13 @@
 import BusinessLogoutButton from "@/components/BusinessLogoutButton";
 import BusinessPublicationPanel from "@/components/BusinessPublicationPanel";
 import BusinessPublicLinkCard from "@/components/BusinessPublicLinkCard";
+import BusinessMediaManager from "@/components/BusinessMediaManager";
 
 import { useEffect, useMemo, useState } from "react";
 import {
   BarChart3,
   BadgeCheck,
   Bell,
-  Camera,
   CreditCard,
   Eye,
   FileText,
@@ -21,7 +21,6 @@ import {
   ShieldCheck,
   Sparkles,
   Store,
-  Upload,
   Users,
 } from "lucide-react";
 
@@ -212,17 +211,7 @@ export default function BusinessDashboardContent() {
             <a className="pill-button dark" href="/dashboard/profile">ادامه تکمیل پروفایل</a>
           </section>
 
-          <section className="dashboard-panel glass-panel" id="media">
-            <div className="panel-heading">
-              <div><span className="section-kicker">نمونه‌کار</span><h2>گالری</h2></div>
-              <Camera size={20} />
-            </div>
-            <div className="dashboard-upload">
-              <Upload size={24} />
-              <strong>تصاویر پروژه را اضافه کنید</strong>
-              <small>آپلود واقعی بعد از اتصال R2 فعال می‌شود.</small>
-            </div>
-          </section>
+          <BusinessMediaManager plan={profile.plan || "free"} />
         </div>
 
         <div className="dashboard-grid">
