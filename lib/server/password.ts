@@ -26,7 +26,7 @@ async function derive(password: string, salt: Uint8Array, iterations: number) {
     {
       name: "PBKDF2",
       hash: "SHA-256",
-      salt,
+      salt: new Uint8Array(salt).buffer,
       iterations,
     },
     key,
