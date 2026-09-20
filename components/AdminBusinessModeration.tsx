@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle2, Crown, FlaskConical, KeyRound, Link2, LogOut, RefreshCw, Search, Sparkles, Store, XCircle } from "lucide-react";
+import { CheckCircle2, Crown, FlaskConical, KeyRound, Link2, LogOut, RefreshCw, RotateCcw, Search, Sparkles, Store, Trash2, XCircle } from "lucide-react";
 
 type BusinessRow = {
   id: number;
@@ -92,6 +92,57 @@ export default function AdminBusinessModeration() {
       planCode === "free"
         ? "کسب‌وکار به پلن پایه برگشت."
         : "پلن " + (result.plan?.name || planCode) + " برای ۳۰ روز در حالت آزمایشی فعال شد."
+    );
+    await load();
+  }
+
+  async function lifecycle(item: BusinessRow, action: "remove" | "restore" | "purge") {
+    setMessage("");
+
+    let reason = "";
+    if (action === "remove") {
+      reason = window.prompt("دلیل حذف از سایت را بنویسید:", "") || "";
+      if (!window.confirm("پروفایل «" + item.name + "» فوراً از نمایش عمومی حذف شود؟")) return;
+    }
+
+    if (action === "restore") {
+      if (!window.confirm("پروفایل «" + item.name + "» دوباره به سایت برگردد؟")) return;
+    }
+
+    if (action === "purge") {
+      const confirmation = window.prompt(
+        "حذف دائمی قابل برگشت نیست. برای تأیید، نام کسب‌وکار را دقیق وارد کنید:",
+        ""
+      );
+      if (confirmation !== item.name) {
+        setMessage("حذف دائمی لغو شد؛ نام واردشده با نام کسب‌وکار یکسان نبود.");
+        return;
+      }
+      reason = "permanent admin purge";
+    }
+
+    const response = await fetch("/api/admin/businesses/" + item.id + "/lifecycle", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, reason }),
+    });
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || !result?.ok) {
+      if (result?.error === "FINANCIAL_RECORDS_MUST_BE_RETAINED") {
+        setMessage("این کسب‌وکار سابقه مالی دارد؛ از سایت حذف می‌ماند اما سوابق مالی و حسابرسی نباید پاک شوند.");
+      } else {
+        setMessage("عملیات حذف/بازگردانی انجام نشد.");
+      }
+      return;
+    }
+
+    setMessage(
+      action === "remove"
+        ? "کسب‌وکار فوراً از نمایش عمومی حذف شد."
+        : action === "restore"
+          ? "کسب‌وکار دوباره فعال شد."
+          : "کسب‌وکار به‌صورت دائمی حذف شد."
     );
     await load();
   }
@@ -214,6 +265,20 @@ export default function AdminBusinessModeration() {
                   <a className="pill-button" href={"/business/" + item.slug} target="_blank" rel="noreferrer">
                     <Store size={15} /> مشاهده صفحه عمومی
                   </a>
+                )}
+                {item.status !== "suspended" ? (
+                  <button className="pill-button admin-reject" type="button" onClick={() => lifecycle(item, "remove")}>
+                    <Trash2 size={15} /> حذف از سایت
+                  </button>
+                ) : (
+                  <>
+                    <button className="pill-button" type="button" onClick={() => lifecycle(item, "restore")}>
+                      <RotateCcw size={15} /> بازگردانی
+                    </button>
+                    <button className="pill-button admin-purge" type="button" onClick={() => lifecycle(item, "purge")}>
+                      <Trash2 size={15} /> حذف دائمی
+                    </button>
+                  </>
                 )}
                 {item.status === "pending" && (
                   <>
