@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getBusiness } from "@/lib/demo-data";
-import { getPublishedBusiness } from "@/lib/server/public-businesses";
-import { BadgeCheck, Globe2, Instagram, MapPin, MessageCircle, Phone, Star } from "lucide-react";
-import { notFound } from "next/navigation";
+import { getPublishedBusiness, getBusinessSlugRedirect } from "@/lib/server/public-businesses";
+import { BadgeCheck, BriefcaseBusiness, Crown, Globe2, Instagram, MapPin, MessageCircle, Phone, Star } from "lucide-react";
+import { notFound, permanentRedirect } from "next/navigation";
 
 async function resolveBusiness(slug: string) {
   const demo = getBusiness(slug);
@@ -25,6 +25,8 @@ async function resolveBusiness(slug: string) {
       services: demo.services,
       rating: demo.rating,
       reviewCount: demo.reviewCount,
+      planCode: demo.featured ? "premium" as const : "free" as const,
+      planName: demo.featured ? "ویژه" : "پایه",
     };
   }
 
@@ -47,6 +49,8 @@ async function resolveBusiness(slug: string) {
     services: live.services,
     rating: live.rating,
     reviewCount: live.reviewCount,
+    planCode: live.planCode,
+    planName: live.planName,
   };
 }
 
@@ -75,7 +79,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function BusinessPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const business = await resolveBusiness(slug);
-  if (!business) notFound();
+  if (!business) {
+    const redirectSlug = await getBusinessSlugRedirect(slug);
+    if (redirectSlug && redirectSlug !== slug) {
+      permanentRedirect("/business/" + redirectSlug);
+    }
+    notFound();
+  }
 
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
@@ -113,16 +123,22 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
         <div className="shell">
           <div className="business-profile-hero">
             <div className="profile-cover"><div className="profile-cover-shape" /></div>
-            <div className="profile-main-card glass-panel">
+            <div className={"profile-main-card glass-panel plan-" + business.planCode}>
               <div className="profile-title-row">
                 <div>
                   <div className="profile-name-line">
                     <h1>{business.name}</h1>
                     {business.verified && <BadgeCheck size={22} className="verified-icon" />}
+                    {business.planCode === "pro" && (
+                      <span className="plan-public-badge is-pro"><BriefcaseBusiness size={14} /> حرفه‌ای</span>
+                    )}
+                    {business.planCode === "premium" && (
+                      <span className="plan-public-badge is-premium"><Crown size={14} /> ویژه</span>
+                    )}
                   </div>
                   <p>{business.description}</p>
                 </div>
-                {business.featured && <span className="featured-tag profile-featured">ویژه</span>}
+                {business.planCode === "premium" && <span className="featured-tag profile-featured">جایگاه ویژه</span>}
               </div>
 
               <div className="profile-meta-grid">
