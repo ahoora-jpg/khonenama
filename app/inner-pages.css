@@ -783,3 +783,66 @@
   line-height:1.8;
   font-weight:850;
 }
+
+
+/* Permanent public business link */
+.business-public-link-card {
+  margin-bottom:14px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(340px,.95fr);
+  gap:18px;
+  align-items:center;
+}
+.business-public-link-copy h2 {
+  margin:5px 0 7px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:20px;
+}
+.business-public-link-copy p {
+  margin:0;
+  max-width:680px;
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.9;
+}
+.business-public-link-box {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  gap:7px;
+  align-items:center;
+}
+.business-public-link-box code {
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  padding:11px 12px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fbf8f3;
+  color:#574e46;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:9px;
+}
+.business-public-link-box small {
+  grid-column:1 / -1;
+  color:#8a6c57;
+  font-size:8px;
+  line-height:1.8;
+}
+@media (max-width:900px) {
+  .business-public-link-card {
+    grid-template-columns:1fr;
+  }
+}
+@media (max-width:650px) {
+  .business-public-link-box {
+    grid-template-columns:1fr;
+  }
+  .business-public-link-box .pill-button {
+    width:100%;
+    justify-content:center;
+  }
+}
