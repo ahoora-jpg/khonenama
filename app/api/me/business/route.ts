@@ -39,7 +39,7 @@ export async function GET(request: Request) {
       .all(),
     db
       .prepare(
-        "SELECT p.code, p.name, s.status, s.starts_at, s.ends_at FROM subscriptions s JOIN plans p ON p.id = s.plan_id WHERE s.business_id = ? ORDER BY s.id DESC LIMIT 1"
+        "SELECT p.code, p.name, s.status, s.starts_at, s.ends_at, COALESCE(s.is_test, 0) AS is_test FROM subscriptions s JOIN plans p ON p.id = s.plan_id WHERE s.business_id = ? AND s.status = 'active' AND (s.ends_at IS NULL OR s.ends_at > CURRENT_TIMESTAMP) ORDER BY s.id DESC LIMIT 1"
       )
       .bind(business.id)
       .first(),
