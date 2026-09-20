@@ -21,11 +21,14 @@ export default function BusinessLoginForm() {
     }
 
     setLoading(true);
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 20000);
     try {
       const response = await fetch("/api/auth/business/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, password }),
+        signal: controller.signal,
       });
 
       const result = await response.json().catch(() => ({}));
@@ -36,6 +39,8 @@ export default function BusinessLoginForm() {
           NO_BUSINESS: "برای این حساب کسب‌وکاری ثبت نشده است.",
           PASSWORD_SCHEMA_REQUIRED: "ورود با رمز هنوز در دیتابیس فعال نشده است.",
           D1_BINDING_NOT_AVAILABLE: "اتصال دیتابیس در دسترس نیست.",
+          PASSWORD_REHASH_REQUIRED: "رمز این حساب از نسخه قدیمی سیستم است. یک‌بار از پنل مدیریت وارد شوید و دوباره همین رمز را بزنید تا خودکار به نسخه جدید منتقل شود.",
+          INTERNAL_ERROR: "ورود در سرور با خطا روبه‌رو شد. کد خطا ثبت شده و باید بررسی شود.",
         };
         const text = messages[result?.error] || "ورود انجام نشد. دوباره تلاش کنید.";
         setMessage(text);
@@ -46,15 +51,26 @@ export default function BusinessLoginForm() {
       }
 
       window.location.href = "/dashboard";
-    } catch {
-      setMessage("ارتباط با سرور برقرار نشد.");
+    } catch (error: any) {
+      if (error?.name === "AbortError") {
+        setMessage("پاسخ سرور بیش از حد طول کشید. دوباره تلاش کنید.");
+      } else {
+        setMessage("ارتباط با سرور برقرار نشد.");
+      }
     } finally {
+      window.clearTimeout(timeout);
       setLoading(false);
     }
   }
 
   return (
-    <div className="business-login-card glass-panel">
+    <form
+      className="business-login-card glass-panel"
+      onSubmit={(event) => {
+        event.preventDefault();
+        void submit();
+      }}
+    >
       <span className="business-login-icon"><KeyRound size={22} /></span>
       <span className="section-kicker">ورود امن کسب‌وکار</span>
       <h1>ورود به پنل مدیریت</h1>
@@ -89,7 +105,6 @@ export default function BusinessLoginForm() {
             autoCapitalize="none"
             spellCheck={false}
             placeholder="رمز عبور"
-            onKeyDown={(e) => e.key === "Enter" && submit()}
           />
           <button
             className="password-visibility password-visibility-inline"
@@ -124,7 +139,7 @@ export default function BusinessLoginForm() {
         )}
       </label>
 
-      <button className="register-submit" type="button" onClick={submit} disabled={loading}>
+      <button className="register-submit" type="submit" disabled={loading}>
         {loading ? "در حال ورود..." : "ورود به پنل"} <ArrowLeft size={16} />
       </button>
 
@@ -139,6 +154,6 @@ export default function BusinessLoginForm() {
         <a href="/business/forgot-password">رمز عبور را فراموش کرده‌ام</a>
       </div>
       <a className="admin-login-entry" href="/admin/login">ورود مدیریت خونه‌نما</a>
-    </div>
+    </form>
   );
 }
