@@ -71,6 +71,26 @@ export async function GET(request: Request) {
   const services = servicesResult?.results || [];
   const areas = areasResult?.results || [];
 
+  if (
+    (business.status === "draft" || business.status === "pending") &&
+    Boolean(business.name) &&
+    Boolean(business.description) &&
+    Boolean(business.city) &&
+    Boolean(business.area) &&
+    services.length > 0 &&
+    areas.length > 0
+  ) {
+    try {
+      await db
+        .prepare("UPDATE businesses SET status = 'published', updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+        .bind(business.id)
+        .run();
+      business.status = "published";
+    } catch (error) {
+      console.warn("automatic legacy publication failed", error);
+    }
+  }
+
   const completionChecks = [
     Boolean(business.name),
     Boolean(business.description),
