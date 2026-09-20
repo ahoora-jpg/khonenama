@@ -39,7 +39,7 @@ export async function POST(
   if (action === "approve") {
     await db.batch([
       db
-        .prepare("UPDATE businesses SET status = 'published', updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+        .prepare("UPDATE businesses SET status = CASE WHEN status = 'suspended' THEN status ELSE 'published' END, verification_status = 'verified', updated_at = CURRENT_TIMESTAMP WHERE id = ?")
         .bind(businessId),
       requestRow?.id
         ? db
@@ -48,12 +48,12 @@ export async function POST(
         : db
             .prepare("SELECT 1"),
     ]);
-    return Response.json({ ok: true, status: "published" });
+    return Response.json({ ok: true, status: "published", verificationStatus: "verified" });
   }
 
   await db.batch([
     db
-      .prepare("UPDATE businesses SET status = 'draft', updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+      .prepare("UPDATE businesses SET verification_status = 'unverified', updated_at = CURRENT_TIMESTAMP WHERE id = ?")
       .bind(businessId),
     requestRow?.id
       ? db
@@ -63,5 +63,5 @@ export async function POST(
           .prepare("SELECT 1"),
   ]);
 
-  return Response.json({ ok: true, status: "draft" });
+  return Response.json({ ok: true, status: business.status, verificationStatus: "unverified" });
 }
