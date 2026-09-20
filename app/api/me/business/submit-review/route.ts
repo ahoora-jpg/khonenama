@@ -19,12 +19,12 @@ export async function POST(request: Request) {
     return Response.json({ ok: false, error: "BUSINESS_NOT_FOUND" }, { status: 404 });
   }
 
-  if (business.status === "published") {
-    return Response.json({ ok: true, status: "published" });
+  if (business.verification_status === "verified" || business.verification_status === "professional") {
+    return Response.json({ ok: true, status: business.status, verificationStatus: business.verification_status });
   }
 
-  if (business.status === "pending") {
-    return Response.json({ ok: true, status: "pending" });
+  if (business.verification_status === "pending") {
+    return Response.json({ ok: true, status: business.status, verificationStatus: "pending" });
   }
 
   const [serviceCount, areaCount] = await Promise.all([
@@ -61,9 +61,9 @@ export async function POST(request: Request) {
   }
 
   await db
-    .prepare("UPDATE businesses SET status = 'pending', updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+    .prepare("UPDATE businesses SET verification_status = 'pending', updated_at = CURRENT_TIMESTAMP WHERE id = ?")
     .bind(business.id)
     .run();
 
-  return Response.json({ ok: true, status: "pending" });
+  return Response.json({ ok: true, status: business.status, verificationStatus: "pending" });
 }
