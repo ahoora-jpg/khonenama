@@ -2,6 +2,7 @@
 
 import BusinessLogoutButton from "@/components/BusinessLogoutButton";
 import BusinessPublicationPanel from "@/components/BusinessPublicationPanel";
+import BusinessPublicLinkCard from "@/components/BusinessPublicLinkCard";
 
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -165,6 +166,8 @@ export default function BusinessDashboardContent() {
             <a className="pill-button dark" href="/dashboard/profile"><Store size={17} /> ویرایش پروفایل</a>
           </div>
         </div>
+
+        <BusinessPublicLinkCard slug={profile.businessSlug} status={profile.status} />
 
         <div className="dashboard-stats">
           {stats.map(({ label, value, icon: Icon }) => (
