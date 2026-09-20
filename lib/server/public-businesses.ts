@@ -18,6 +18,9 @@ export type PublicBusiness = {
   categoryName: string;
   categories: { slug: string; name: string; primary: boolean }[];
   services: string[];
+  planCode: "free" | "pro" | "premium";
+  planName: string;
+  promoted: boolean;
   rating: number;
   reviewCount: number;
 };
@@ -32,7 +35,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
 
   const result: PublicBusiness[] = [];
   for (const row of rows) {
-    const [servicesResult, categoriesResult, reviewResult] = await Promise.all([
+    const [servicesResult, categoriesResult, reviewResult, planResult, promotionResult] = await Promise.all([
       db
         .prepare(
           "SELECT s.name FROM business_services bs JOIN services s ON s.id = bs.service_id WHERE bs.business_id = ? ORDER BY s.id"
@@ -48,6 +51,18 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
       db
         .prepare(
           "SELECT COUNT(*) AS review_count, COALESCE(AVG(rating),0) AS rating FROM reviews WHERE business_id = ? AND status = 'published'"
+        )
+        .bind(row.id)
+        .first(),
+      db
+        .prepare(
+          "SELECT p.code, p.name FROM subscriptions s JOIN plans p ON p.id = s.plan_id WHERE s.business_id = ? AND s.status = 'active' AND (s.ends_at IS NULL OR s.ends_at > CURRENT_TIMESTAMP) ORDER BY s.id DESC LIMIT 1"
+        )
+        .bind(row.id)
+        .first(),
+      db
+        .prepare(
+          "SELECT id FROM promotions WHERE business_id = ? AND status = 'active' AND starts_at <= CURRENT_TIMESTAMP AND ends_at > CURRENT_TIMESTAMP LIMIT 1"
         )
         .bind(row.id)
         .first(),
@@ -75,6 +90,9 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         primary: Boolean(item.is_primary),
       })),
       services: (servicesResult?.results || []).map((item: any) => item.name),
+      planCode: planResult?.code === "premium" ? "premium" : planResult?.code === "pro" ? "pro" : "free",
+      planName: planResult?.name || "پایه",
+      promoted: Boolean(promotionResult?.id) || planResult?.code === "premium",
       rating: Number(reviewResult?.rating || 0),
       reviewCount: Number(reviewResult?.review_count || 0),
     });
@@ -147,7 +165,7 @@ export async function listPublishedBusinesses(options: {
     const sql =
       "SELECT DISTINCT b.*, c.slug AS category_slug, c.name AS category_name FROM businesses b LEFT JOIN business_categories bc ON bc.business_id = b.id AND bc.is_primary = 1 LEFT JOIN categories c ON c.id = bc.category_id WHERE " +
       where.join(" AND ") +
-      " ORDER BY b.is_featured DESC, b.updated_at DESC, b.id DESC LIMIT " +
+      " ORDER BY CASE COALESCE((SELECT p2.code FROM subscriptions s2 JOIN plans p2 ON p2.id = s2.plan_id WHERE s2.business_id = b.id AND s2.status = 'active' AND (s2.ends_at IS NULL OR s2.ends_at > CURRENT_TIMESTAMP) ORDER BY s2.id DESC LIMIT 1), 'free') WHEN 'premium' THEN 0 WHEN 'pro' THEN 1 ELSE 2 END, b.is_featured DESC, b.updated_at DESC, b.id DESC LIMIT " +
       limit;
 
     const rows = await db.prepare(sql).bind(...binds).all();
@@ -155,5 +173,24 @@ export async function listPublishedBusinesses(options: {
   } catch (error) {
     console.warn("public business list failed", error);
     return [];
+  }
+}
+
+
+export async function getBusinessSlugRedirect(oldSlug: string): Promise<string | null> {
+  try {
+    const db = getDb();
+    if (!db) return null;
+
+    const row = await db
+      .prepare(
+        "SELECT b.slug FROM business_slug_history h JOIN businesses b ON b.id = h.business_id WHERE h.old_slug = ? LIMIT 1"
+      )
+      .bind(oldSlug)
+      .first();
+
+    return row?.slug ? String(row.slug) : null;
+  } catch {
+    return null;
   }
 }
