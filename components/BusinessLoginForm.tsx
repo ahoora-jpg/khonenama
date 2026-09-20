@@ -40,6 +40,7 @@ export default function BusinessLoginForm() {
         <a href="/register-business">کسب‌وکار جدید؟ ثبت رایگان</a>
         <a href="/for-business">آشنایی با امکانات</a>
       </div>
+      <a className="admin-login-entry" href="/admin/login">ورود مدیریت خونه‌نما</a>
     </div>
   );
 }
