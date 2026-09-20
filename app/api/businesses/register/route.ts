@@ -87,8 +87,18 @@ export async function POST(request: Request) {
       return Response.json({ ok: false, error: "CATEGORY_NOT_FOUND" }, { status: 409 });
     }
 
-    const existingUser = await db.prepare("SELECT id FROM users WHERE phone = ? LIMIT 1").bind(phone).first();
+    const existingUser = await db.prepare("SELECT id, email FROM users WHERE phone = ? LIMIT 1").bind(phone).first();
     let userId = existingUser?.id as string | undefined;
+
+    if (email) {
+      const emailOwner = await db.prepare("SELECT id, phone FROM users WHERE lower(email) = lower(?) LIMIT 1").bind(email).first();
+      if (emailOwner?.id && emailOwner.id !== userId) {
+        return Response.json(
+          { ok: false, error: "EMAIL_IN_USE" },
+          { status: 409 }
+        );
+      }
+    }
 
     if (!userId) {
       userId = "usr_" + crypto.randomUUID();
@@ -189,6 +199,18 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.error("business registration failed", error);
+    const message = error instanceof Error ? error.message : String(error);
+
+    if (/UNIQUE constraint failed: users\.email/i.test(message)) {
+      return Response.json({ ok: false, error: "EMAIL_IN_USE" }, { status: 409 });
+    }
+    if (/UNIQUE constraint failed: users\.phone/i.test(message)) {
+      return Response.json({ ok: false, error: "PHONE_IN_USE" }, { status: 409 });
+    }
+    if (/no such table/i.test(message)) {
+      return Response.json({ ok: false, error: "DB_SCHEMA_OUTDATED" }, { status: 503 });
+    }
+
     return Response.json({ ok: false, error: "INTERNAL_ERROR" }, { status: 500 });
   }
 }
