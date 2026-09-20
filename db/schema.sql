@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS businesses (
   slug TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL,
   description TEXT,
+  business_type TEXT,
   city TEXT NOT NULL,
   area TEXT,
   address TEXT,
