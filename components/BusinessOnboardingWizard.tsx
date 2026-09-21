@@ -719,7 +719,7 @@ export default function BusinessOnboardingWizard() {
             <span className="section-kicker">مرحله ۴</span>
             <h2>پروفایل را زنده و تصویری کن.</h2>
             <p>
-              توضیح واقعی و دقیق بنویسید. آپلود عکس بعد از فعال‌شدن فضای ذخیره‌سازی رسانه وصل می‌شود.
+              توضیح واقعی و دقیق بنویسید. بعد از ثبت پروفایل، گالری فعال پنل برای افزودن لوگو، کاور و نمونه‌کارها در دسترس است.
             </p>
 
             <label className="form-row">
@@ -735,22 +735,22 @@ export default function BusinessOnboardingWizard() {
               </small>
             </label>
 
-            <div className="media-upload-grid">
-              <button type="button" className="media-upload-tile">
+            <div className="media-upload-grid onboarding-media-preview">
+              <div className="media-upload-tile">
                 <Upload size={22} />
                 <strong>لوگو</strong>
-                <small>مربع، ترجیحاً PNG/WebP</small>
-              </button>
-              <button type="button" className="media-upload-tile">
+                <small>بعد از ثبت، از پنل کسب‌وکار بارگذاری کن.</small>
+              </div>
+              <div className="media-upload-tile">
                 <Camera size={22} />
-                <strong>کاور پروفایل</strong>
-                <small>تصویر واقعی فروشگاه یا پروژه</small>
-              </button>
-              <button type="button" className="media-upload-tile">
+                <strong>تصویر اصلی</strong>
+                <small>اولین تصویر گالری می‌تواند کاور پروفایل باشد.</small>
+              </div>
+              <div className="media-upload-tile">
                 <Camera size={22} />
                 <strong>نمونه‌کارها</strong>
-                <small>حداقل ۳ تصویر پیشنهاد می‌شود</small>
-              </button>
+                <small>آپلود، حذف، مرتب‌سازی و انتخاب کاور داخل پنل فعال است.</small>
+              </div>
             </div>
           </section>
         )}
@@ -823,31 +823,15 @@ export default function BusinessOnboardingWizard() {
                 <strong>رایگان</strong>
                 <small>شروع و انتشار پروفایل</small>
               </button>
-              <button
-                type="button"
-                className={
-                  form.plan === "pro"
-                    ? "plan-choice is-selected"
-                    : "plan-choice"
-                }
-                onClick={() => update("plan", "pro")}
-              >
+              <button type="button" className="plan-choice is-disabled" disabled>
                 <span>حرفه‌ای</span>
-                <strong>پس از فعال‌سازی</strong>
-                <small>آمار و ابزارهای بیشتر</small>
+                <strong>به‌زودی</strong>
+                <small>پس از اتصال پرداخت از داخل پنل فعال می‌شود.</small>
               </button>
-              <button
-                type="button"
-                className={
-                  form.plan === "premium"
-                    ? "plan-choice is-selected"
-                    : "plan-choice"
-                }
-                onClick={() => update("plan", "premium")}
-              >
+              <button type="button" className="plan-choice is-disabled" disabled>
                 <span>ویژه</span>
-                <strong>پس از فعال‌سازی</strong>
-                <small>تبلیغات و دیده‌شدن بیشتر</small>
+                <strong>به‌زودی</strong>
+                <small>پس از اتصال پرداخت از داخل پنل فعال می‌شود.</small>
               </button>
             </div>
 
@@ -857,8 +841,11 @@ export default function BusinessOnboardingWizard() {
                 <div>
                   <strong>پروفایل در دیتابیس خونه‌نما ذخیره شد.</strong>
                   <small>
-                    حساب شما از این پس با شماره همراه و رمز عبور قابل ورود است.
+                    حساب شما از این پس با شماره همراه و رمز عبور قابل ورود است. حالا می‌توانید تصاویر و اطلاعات تکمیلی را از پنل مدیریت کنید.
                   </small>
+                  <a className="pill-button dark onboarding-dashboard-link" href="/dashboard#media">
+                    رفتن به پنل و افزودن تصاویر
+                  </a>
                 </div>
               </div>
             )}
