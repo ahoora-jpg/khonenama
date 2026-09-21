@@ -5,7 +5,7 @@ import BusinessOnboardingWizard from "@/components/BusinessOnboardingWizard";
 import { BadgeCheck, MapPin, ShieldCheck, Store } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "ثبت کسب‌وکار | ساخت پروفایل در خونه‌نما",
+  title: "ثبت کسب‌وکار | ساخت پروفایل",
   description:
     "کسب‌وکار دکوراسیون خود را مرحله‌به‌مرحله ثبت کنید؛ اطلاعات، خدمات، محدوده فعالیت و نمونه‌کار را برای ساخت پروفایل خونه‌نما تکمیل کنید.",
   alternates: { canonical: "/register-business" },
