@@ -10,6 +10,7 @@ export type PublicBusiness = {
   area: string;
   address: string;
   phone: string;
+  whatsapp: string;
   website: string;
   instagram: string;
   status: string;
@@ -102,6 +103,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
       area: row.area || "",
       address: row.address || "",
       phone: row.phone || "",
+      whatsapp: row.whatsapp || "",
       website: row.website || "",
       instagram: row.instagram || "",
       status: row.status,
