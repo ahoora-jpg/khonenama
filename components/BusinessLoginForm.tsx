@@ -66,6 +66,7 @@ export default function BusinessLoginForm() {
   return (
     <form
       className="business-login-card glass-panel"
+      autoComplete="off"
       onSubmit={(event) => {
         event.preventDefault();
         void submit();
@@ -80,7 +81,14 @@ export default function BusinessLoginForm() {
         <span>شماره همراه</span>
         <div className="form-input">
           <Phone size={17} />
-          <input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" placeholder="09..." />
+          <input
+            name="khonenama_business_phone"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            inputMode="tel"
+            autoComplete="off"
+            placeholder="09..."
+          />
         </div>
       </label>
 
@@ -90,7 +98,7 @@ export default function BusinessLoginForm() {
           <LockKeyhole size={17} />
           <input
             id="business-login-password"
-            name="password"
+            name="khonenama_business_password"
             dir="ltr"
             value={password}
             onChange={(e) => {
@@ -101,7 +109,7 @@ export default function BusinessLoginForm() {
               }
             }}
             type={showPassword ? "text" : "password"}
-            autoComplete="current-password"
+            autoComplete="new-password"
             autoCapitalize="none"
             spellCheck={false}
             placeholder="رمز عبور"
@@ -115,23 +123,9 @@ export default function BusinessLoginForm() {
             aria-pressed={showPassword}
           >
             {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+            <span>{showPassword ? "پنهان" : "نمایش"}</span>
           </button>
         </div>
-        <button
-          className="password-visibility-text"
-          type="button"
-          onClick={() => setShowPassword((value) => !value)}
-          aria-controls="business-login-password"
-          aria-pressed={showPassword}
-        >
-          {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
-          {showPassword ? "پنهان کردن رمز" : "نمایش رمز عبور"}
-        </button>
-        {showPassword && (
-          <div className="password-readable-preview" dir="ltr" aria-live="polite">
-            {password || "رمزی وارد نشده است"}
-          </div>
-        )}
         {credentialError && (
           <div className="login-inline-error" role="alert" aria-live="assertive">
             رمز عبور یا شماره همراه صحیح نیست. دوباره بررسی کنید.
