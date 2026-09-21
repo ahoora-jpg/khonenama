@@ -5,7 +5,7 @@ export type Guide = {
   slug: string;
   title: string;
   excerpt: string;
-  category: "پرده" | "کفپوش" | "موکت" | "کاغذ دیواری" | "طراحی داخلی" | "راهنمای محلی";
+  category: "پرده" | "کفپوش" | "موکت" | "کاغذ دیواری" | "طراحی داخلی" | "خانه هوشمند" | "راهنمای محلی";
   keywords: string[];
   updated: string;
   readTime: string;
