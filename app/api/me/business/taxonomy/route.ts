@@ -48,21 +48,24 @@ export async function PUT(request: Request) {
   }
 
   const body = await request.json().catch(() => ({}));
-  const categories: string[] = Array.isArray(body?.categories)
-    ? [...new Set(
-        body.categories
-          .filter((item: unknown): item is string => typeof item === "string")
-          .filter((item: string) => isBusinessCategorySlug(item))
-      )]
-    : [];
+  const rawCategories: unknown[] = Array.isArray(body?.categories) ? body.categories : [];
+  const categories = Array.from(
+    new Set<string>(
+      rawCategories.filter(
+        (item): item is string => typeof item === "string" && isBusinessCategorySlug(item)
+      )
+    )
+  );
+
   const allowed = new Set<string>(servicesForCategories(categories));
-  const services: string[] = Array.isArray(body?.services)
-    ? [...new Set(
-        body.services
-          .filter((item: unknown): item is string => typeof item === "string")
-          .filter((item: string) => allowed.has(item))
-      )]
-    : [];
+  const rawServices: unknown[] = Array.isArray(body?.services) ? body.services : [];
+  const services = Array.from(
+    new Set<string>(
+      rawServices.filter(
+        (item): item is string => typeof item === "string" && allowed.has(item)
+      )
+    )
+  );
 
   if (!categories.length || !services.length) {
     return Response.json({ ok: false, error: "INCOMPLETE_SELECTION" }, { status: 400 });
