@@ -32,8 +32,8 @@ export const businesses: Business[] = [
     description: "نمونه پروفایل حرفه‌ای برای پرده، دوخت، اندازه‌گیری و نصب در خونه‌نما.",
     verified: true,
     featured: true,
-    rating: 4.9,
-    reviewCount: 38,
+    rating: 0,
+    reviewCount: 0,
     services: ["پرده زبرا", "پرده شید", "پرده پارچه‌ای", "دوخت پرده", "نصب و تعمیر پرده"],
     media: [
       { url: "https://images.unsplash.com/photo-1598242822528-182185460969?auto=format&fit=crop&w=1600&q=82", alt: "پرده مدرن در فضای روشن", cover: true },
@@ -53,8 +53,8 @@ export const businesses: Business[] = [
     description: "پارکت، لمینت، کفپوش و اجرای تخصصی با تمرکز بر زیرسازی و نصب دقیق.",
     verified: true,
     featured: false,
-    rating: 4.8,
-    reviewCount: 21,
+    rating: 0,
+    reviewCount: 0,
     services: ["پارکت چوبی", "لمینت", "کفپوش PVC", "قرنیز", "نصب کفپوش"],
     media: [
       { url: "https://images.unsplash.com/photo-1780817612741-f8f3785d9908?auto=format&fit=crop&w=1600&q=82", alt: "کف چوبی در فضای داخلی", cover: true },
@@ -95,8 +95,8 @@ export const businesses: Business[] = [
     description: "کاغذ دیواری، پوستر، دیوارپوش و اجرای حرفه‌ای با تمرکز بر زیرسازی تمیز.",
     verified: false,
     featured: false,
-    rating: 4.6,
-    reviewCount: 17,
+    rating: 0,
+    reviewCount: 0,
     services: ["کاغذ دیواری", "پوستر دیواری", "دیوارپوش PVC", "ترمووال", "نصب کاغذ دیواری و دیوارپوش"],
     media: [
       { url: "https://images.unsplash.com/photo-1742799431910-985c27143e98?auto=format&fit=crop&w=1600&q=82", alt: "دیوارپوش و کاغذ دیواری مدرن", cover: true },
