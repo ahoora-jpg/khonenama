@@ -78,4 +78,10 @@ jobs:
           review_honeypot="$(expect_status 200 POST "$BASE/api/business/alayy-dkvr-krj/reviews" '{"website":"bot-smoke"}')"
           echo "$review_honeypot" | grep -q '"ok":true'
 
+          billing="$(expect_status 409 POST "$BASE/api/billing/checkout" '{"planCode":"pro"}')"
+          echo "$billing" | grep -q '"error":"PLAN_PRICING_NOT_ACTIVE"'
+
+          registration="$(expect_status 400 POST "$BASE/api/businesses/register" '{}')"
+          echo "$registration" | grep -q '"error":"INVALID_REQUIRED_FIELDS"'
+
           echo "Live production smoke checks passed."
