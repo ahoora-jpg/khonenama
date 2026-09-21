@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import ForgotPasswordForm from "@/components/ForgotPasswordForm";
 
 export const metadata: Metadata = {
-  title: "بازیابی رمز کسب‌وکار | خونه‌نما",
+  title: "بازیابی رمز کسب‌وکار",
   robots: { index: false, follow: false },
 };
 
