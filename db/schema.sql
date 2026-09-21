@@ -161,7 +161,8 @@ INSERT OR IGNORE INTO categories (slug, name, sort_order) VALUES
   ('flooring', 'کفپوش و پارکت', 20),
   ('carpet', 'موکت', 30),
   ('wallpaper', 'کاغذ دیواری', 40),
-  ('interior-design', 'طراحی داخلی', 50);
+  ('interior-design', 'طراحی داخلی', 50),
+  ('smart-home', 'خانه هوشمند', 60);
 
 INSERT OR IGNORE INTO plans (code, name, monthly_price) VALUES
   ('free', 'پایه', 0),
