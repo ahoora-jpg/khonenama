@@ -207,6 +207,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                 <div>
                   <div className="profile-name-line">
                     <h1>{business.name}</h1>
+                    {business.isDemo && <span className="demo-profile-pill">نمونه نمایشی</span>}
                     {business.source === "demo" && <span className="demo-profile-badge">پروفایل نمونه</span>}
                     {business.verified && <BadgeCheck size={22} className="verified-icon" />}
                     {business.planCode === "pro" && (
