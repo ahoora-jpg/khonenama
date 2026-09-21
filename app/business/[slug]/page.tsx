@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import QuoteRequestForm from "@/components/QuoteRequestForm";
 import { getBusiness } from "@/lib/demo-data";
 import { getPublishedBusiness, getBusinessSlugRedirect } from "@/lib/server/public-businesses";
 import { BadgeCheck, BriefcaseBusiness, Crown, Globe2, Instagram, MapPin, MessageCircle, Phone, Star } from "lucide-react";
@@ -147,6 +148,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                 <div>
                   <div className="profile-name-line">
                     <h1>{business.name}</h1>
+                    {business.source === "demo" && <span className="demo-profile-badge">پروفایل نمونه</span>}
                     {business.verified && <BadgeCheck size={22} className="verified-icon" />}
                     {business.planCode === "pro" && (
                       <span className="plan-public-badge is-pro"><BriefcaseBusiness size={14} /> حرفه‌ای</span>
@@ -214,10 +216,16 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
             )}
           </section>
 
-          <section className="profile-section" id="quote">
+          <section className="profile-section quote-section" id="quote">
             <span className="section-kicker">استعلام</span>
             <h2>درخواست قیمت</h2>
-            <p>در مرحله بعد، درخواست مشتری مستقیماً برای همین کسب‌وکار ثبت و در پنل قابل پیگیری خواهد شد.</p>
+            {business.source === "d1" ? (
+              <QuoteRequestForm businessSlug={business.slug} businessName={business.name} />
+            ) : (
+              <div className="demo-quote-note glass-panel">
+                این یک پروفایل نمونه برای نمایش تجربه خونه‌نماست. درخواست قیمت واقعی فقط برای کسب‌وکارهای ثبت‌شده فعال می‌شود.
+              </div>
+            )}
           </section>
         </div>
       </section>
