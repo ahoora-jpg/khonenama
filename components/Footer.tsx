@@ -25,6 +25,8 @@ const groups = [
   {
     title: "خونه‌نما",
     links: [
+      ["درباره خونه‌نما", "/about"],
+      ["راهنما و پشتیبانی", "/help"],
       ["ثبت کسب‌وکار", "/register-business"],
       ["داشبورد فروشنده", "/dashboard"],
       ["جستجو", "/search"],
