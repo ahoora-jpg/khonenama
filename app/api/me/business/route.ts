@@ -16,7 +16,7 @@ export async function GET(request: Request) {
 
   const business = await db
     .prepare(
-      "SELECT b.id, b.slug, b.name, b.description, b.city, b.area, b.address, b.phone, b.website, b.instagram, b.status, b.verification_status, b.is_featured, b.created_at, c.slug AS category_slug, c.name AS category_name FROM businesses b JOIN business_members bm ON bm.business_id = b.id AND bm.user_id = ? AND bm.status = 'active' LEFT JOIN business_categories bc ON bc.business_id = b.id AND bc.is_primary = 1 LEFT JOIN categories c ON c.id = bc.category_id ORDER BY b.id DESC LIMIT 1"
+      "SELECT b.id, b.slug, b.name, b.description, b.city, b.area, b.address, b.phone, b.whatsapp, b.website, b.instagram, b.status, b.verification_status, b.is_featured, b.created_at, c.slug AS category_slug, c.name AS category_name FROM businesses b JOIN business_members bm ON bm.business_id = b.id AND bm.user_id = ? AND bm.status = 'active' LEFT JOIN business_categories bc ON bc.business_id = b.id AND bc.is_primary = 1 LEFT JOIN categories c ON c.id = bc.category_id ORDER BY b.id DESC LIMIT 1"
     )
     .bind(session.user_id)
     .first();
@@ -151,6 +151,8 @@ export async function PATCH(request: Request) {
   const city = cleanText(body?.city, 100);
   const area = cleanText(body?.area, 100);
   const address = cleanText(body?.address, 700);
+  const phone = cleanText(body?.phone, 32).replace(/[^0-9+]/g, "");
+  const whatsapp = cleanText(body?.whatsapp, 32).replace(/[^0-9+]/g, "");
   const website = cleanText(body?.website, 240);
   const instagram = cleanText(body?.instagram, 160);
 
@@ -160,9 +162,9 @@ export async function PATCH(request: Request) {
 
   await db
     .prepare(
-      "UPDATE businesses SET name = ?, description = ?, city = ?, area = NULLIF(?, ''), address = NULLIF(?, ''), website = NULLIF(?, ''), instagram = NULLIF(?, ''), updated_at = CURRENT_TIMESTAMP WHERE id = ?"
+      "UPDATE businesses SET name = ?, description = ?, city = ?, area = NULLIF(?, ''), address = NULLIF(?, ''), phone = NULLIF(?, ''), whatsapp = NULLIF(?, ''), website = NULLIF(?, ''), instagram = NULLIF(?, ''), updated_at = CURRENT_TIMESTAMP WHERE id = ?"
     )
-    .bind(name, description, city, area, address, website, instagram, membership.id)
+    .bind(name, description, city, area, address, phone, whatsapp, website, instagram, membership.id)
     .run();
 
   return Response.json({ ok: true });
