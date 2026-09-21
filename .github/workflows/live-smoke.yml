@@ -1,0 +1,78 @@
+name: Live Production Smoke
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: khonenama-live-smoke
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check live public and private routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://khonenama.ir"
+
+          expect_status() {
+            expected="$1"
+            method="$2"
+            url="$3"
+            data="${4:-}"
+            body_file="$(mktemp)"
+            if [ "$method" = "POST" ]; then
+              actual="$(curl -sS -o "$body_file" -w "%{http_code}" -X POST "$url" -H 'Content-Type: application/json' --data "$data")"
+            else
+              actual="$(curl -sS -o "$body_file" -w "%{http_code}" "$url")"
+            fi
+            if [ "$actual" != "$expected" ]; then
+              echo "Expected $expected but got $actual for $method $url"
+              cat "$body_file"
+              exit 1
+            fi
+            cat "$body_file"
+            rm -f "$body_file"
+          }
+
+          health="$(expect_status 200 GET "$BASE/api/health/db")"
+          echo "$health" | grep -q '"ok":true'
+          echo "$health" | grep -q '"database":"connected"'
+
+          expect_status 200 GET "$BASE/" >/dev/null
+          expect_status 200 GET "$BASE/category/smart-home" >/dev/null
+          expect_status 200 GET "$BASE/business/alayy-dkvr-krj" >/dev/null
+          expect_status 404 GET "$BASE/__khonenama_smoke_404__" >/dev/null
+
+          sitemap="$(expect_status 200 GET "$BASE/sitemap.xml")"
+          echo "$sitemap" | grep -q '/category/smart-home'
+          echo "$sitemap" | grep -q '/business/alayy-dkvr-krj'
+
+          robots="$(expect_status 200 GET "$BASE/robots.txt")"
+          echo "$robots" | grep -q 'Disallow: /dashboard'
+          echo "$robots" | grep -q 'Disallow: /api'
+
+          expect_status 401 GET "$BASE/api/me/business" >/dev/null
+          expect_status 401 GET "$BASE/api/me/business/leads" >/dev/null
+          expect_status 401 GET "$BASE/api/me/business/reviews" >/dev/null
+          expect_status 401 GET "$BASE/api/me/business/media/auth" >/dev/null
+          expect_status 401 GET "$BASE/api/me/business/visibility" >/dev/null
+          expect_status 401 GET "$BASE/api/admin/reviews" >/dev/null
+
+          login="$(expect_status 401 POST "$BASE/api/auth/business/login" '{"phone":"09120000000","password":"definitely-wrong-password"}')"
+          echo "$login" | grep -q '"error":"INVALID_CREDENTIALS"'
+
+          lookup="$(expect_status 404 POST "$BASE/api/lead/status" '{"requestCode":"KH-999999999","customerPhone":"09120000000"}')"
+          echo "$lookup" | grep -q '"error":"REQUEST_NOT_FOUND"'
+
+          lead_honeypot="$(expect_status 200 POST "$BASE/api/business/alayy-dkvr-krj/lead" '{"website":"bot-smoke"}')"
+          echo "$lead_honeypot" | grep -q '"ok":true'
+
+          review_honeypot="$(expect_status 200 POST "$BASE/api/business/alayy-dkvr-krj/reviews" '{"website":"bot-smoke"}')"
+          echo "$review_honeypot" | grep -q '"ok":true'
+
+          echo "Live production smoke checks passed."
