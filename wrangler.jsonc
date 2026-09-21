@@ -2,7 +2,9 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "khonenama",
   "compatibility_date": "2026-09-17",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "main": "vinext/server/app-router-entry",
   "assets": {
     "not_found_handling": "none"
@@ -17,5 +19,6 @@
       "database_id": "a991ffd9-0044-4821-8d69-3295ab6ea398",
       "migrations_dir": "db/migrations"
     }
-  ]
+  ],
+  "keep_vars": true
 }
