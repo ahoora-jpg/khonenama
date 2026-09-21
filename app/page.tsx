@@ -11,7 +11,7 @@ import Footer from "@/components/Footer";
 export const metadata = {
   title: "خونه‌نما | مرجع تخصصی دکوراسیون و تزئینات داخلی منزل",
   description:
-    "مرجع تخصصی دکوراسیون و تزئینات داخلی منزل؛ فروشگاه‌ها، متخصصان، پرده، موکت، کفپوش، کاغذ دیواری و خدمات دکوراسیون در کرج را پیدا و مقایسه کنید.",
+    "مرجع تخصصی دکوراسیون و تزئینات داخلی منزل؛ فروشگاه‌ها، متخصصان، پرده، موکت، کفپوش، کاغذ دیواری، طراحی داخلی و خانه هوشمند را پیدا و مقایسه کنید.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "خونه‌نما | مرجع تخصصی دکوراسیون و تزئینات داخلی منزل",
@@ -51,6 +51,7 @@ const categoryListJsonLd = {
     { "@type": "ListItem", position: 3, name: "موکت", url: "https://khonenama.ir/category/carpet" },
     { "@type": "ListItem", position: 4, name: "کاغذ دیواری", url: "https://khonenama.ir/category/wallpaper" },
     { "@type": "ListItem", position: 5, name: "طراحی داخلی", url: "https://khonenama.ir/category/interior-design" },
+    { "@type": "ListItem", position: 6, name: "خانه هوشمند", url: "https://khonenama.ir/category/smart-home" },
   ],
 };
 
