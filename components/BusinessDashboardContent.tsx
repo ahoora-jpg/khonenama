@@ -7,6 +7,7 @@ import BusinessMediaManager from "@/components/BusinessMediaManager";
 import BusinessLeadInbox from "@/components/BusinessLeadInbox";
 import BusinessReviewPanel from "@/components/BusinessReviewPanel";
 import BusinessAnalyticsPanel from "@/components/BusinessAnalyticsPanel";
+import BusinessVisibilitySettings from "@/components/BusinessVisibilitySettings";
 
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -239,6 +240,8 @@ export default function BusinessDashboardContent() {
         <BusinessAnalyticsPanel plan={profile.plan || "free"} />
 
         <BusinessReviewPanel />
+
+        <BusinessVisibilitySettings />
 
         <BusinessPublicationPanel
           initialStatus={(profile.status || "") as any}
