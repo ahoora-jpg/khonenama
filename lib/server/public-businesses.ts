@@ -34,6 +34,16 @@ function getDb() {
   return (env as any).DB;
 }
 
+async function ensureVisibilitySchema(db: any) {
+  await db.prepare(
+    "CREATE TABLE IF NOT EXISTS business_visibility_controls (" +
+      "business_id INTEGER PRIMARY KEY," +
+      "owner_paused INTEGER NOT NULL DEFAULT 0," +
+      "updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP" +
+    ")"
+  ).run();
+}
+
 async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
   const db = getDb();
   if (!db || !rows.length) return [];
@@ -155,9 +165,10 @@ export async function getPublishedBusiness(slug: string): Promise<PublicBusiness
     const db = getDb();
     if (!db) return null;
 
+    await ensureVisibilitySchema(db);
     const row = await db
       .prepare(
-        "SELECT b.*, c.slug AS category_slug, c.name AS category_name FROM businesses b LEFT JOIN business_categories bc ON bc.business_id = b.id AND bc.is_primary = 1 LEFT JOIN categories c ON c.id = bc.category_id WHERE b.slug = ? AND b.status = 'published' LIMIT 1"
+        "SELECT b.*, c.slug AS category_slug, c.name AS category_name FROM businesses b LEFT JOIN business_categories bc ON bc.business_id = b.id AND bc.is_primary = 1 LEFT JOIN categories c ON c.id = bc.category_id WHERE b.slug = ? AND b.status = 'published' AND NOT EXISTS (SELECT 1 FROM business_visibility_controls bvc WHERE bvc.business_id = b.id AND bvc.owner_paused = 1) LIMIT 1"
       )
       .bind(slug)
       .first();
@@ -182,7 +193,8 @@ export async function listPublishedBusinesses(options: {
     const db = getDb();
     if (!db) return [];
 
-    const where = ["b.status = 'published'"];
+    await ensureVisibilitySchema(db);
+    const where = ["b.status = 'published'", "NOT EXISTS (SELECT 1 FROM business_visibility_controls bvc WHERE bvc.business_id = b.id AND bvc.owner_paused = 1)"];
     const binds: any[] = [];
 
     if (options.categorySlug) {
