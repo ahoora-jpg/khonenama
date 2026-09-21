@@ -27,7 +27,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "برای خانه زبرا بهتر است یا شید؟", answer: "اگر تنظیم تدریجی نور مهم است زبرا انعطاف بیشتری دارد؛ اگر ظاهر یکدست و مینیمال می‌خواهید شید انتخاب خوبی است." },
       { question: "برای اتاق خواب چه پرده‌ای مناسب است؟", answer: "مدل‌های بلک‌اوت یا پارچه‌های متراکم برای کنترل بیشتر نور معمولاً مناسب‌ترند." }
     ],
-    guides: ["zebra-curtain-guide", "zebra-vs-shade", "shade-curtain-guide", "blackout-curtain-guide", "curtain-buying-guide", "best-curtain-living-room"]
+    guides: ["zebra-curtain-guide", "zebra-vs-shade", "shade-curtain-guide", "blackout-curtain-guide", "curtain-buying-guide", "best-curtain-living-room", "curtain-installation-guide", "curtain-cleaning-guide"]
   },
   flooring: {
     slug: "flooring",

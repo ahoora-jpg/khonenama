@@ -24,6 +24,7 @@ export default function KarajWallpaperPage() {
         { question: "کاغذ دیواری قابل شست‌وشو برای آشپزخانه مناسب است؟", answer: "بسته به فاصله از رطوبت و حرارت و مشخصات خود محصول؛ همه مدل‌ها مقاومت یکسانی ندارند." },
       ]}
       guides={[
+        { title: "راهنمای کاغذ دیواری در کرج", text: "تعداد رول، زیرسازی و انتخاب نصاب", href: "/magazine/wallpaper-karaj-guide" },
         { title: "کاغذ دیواری چیست؟", text: "انواع، جنس‌ها و نکات انتخاب", href: "/magazine/wallpaper-guide" },
         { title: "کاغذ دیواری یا دیوارپوش؟", text: "مقایسه دوام، نصب و هزینه", href: "/magazine/wallpaper-vs-wallpanel" },
       ]}

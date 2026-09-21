@@ -24,6 +24,7 @@ export default function KarajInteriorDesignPage() {
         { question: "طراحی داخلی شامل اجرا هم می‌شود؟", answer: "همیشه نه؛ محدوده خدمات بسته به قرارداد متفاوت است و باید قبل از شروع مشخص شود." },
       ]}
       guides={[
+        { title: "هزینه طراحی داخلی در کرج", text: "روش قیمت‌گذاری و نکات قرارداد", href: "/magazine/interior-design-karaj-cost-guide" },
         { title: "چطور طراح داخلی انتخاب کنیم؟", text: "معیارهای مهم قبل از قرارداد", href: "/magazine/choose-interior-designer" },
         { title: "مراحل طراحی داخلی منزل", text: "از نیازسنجی تا اجرا", href: "/magazine/interior-design-process" },
       ]}

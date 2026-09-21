@@ -47,6 +47,7 @@ export default function KarajSmartHomePage() {
         },
       ]}
       guides={[
+        { title: "هزینه خانه هوشمند در کرج", text: "عوامل قیمت و مقایسه پیشنهادها", href: "/magazine/smart-home-karaj-cost-guide" },
         { title: "خانه هوشمند چیست؟", text: "راهنمای شروع بدون هزینه‌های اضافه", href: "/magazine/smart-home-guide" },
         { title: "روشنایی هوشمند", text: "کلید، دیمر و سناریوی نور", href: "/magazine/smart-lighting-guide" },
         { title: "پرده برقی و هوشمند", text: "موتور، کنترل و نکات نصب", href: "/magazine/smart-curtain-guide" },

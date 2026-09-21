@@ -144,6 +144,12 @@ export default function KarajFlooringPage() {
               </div>
             </div>
             <div className="category-guide-grid">
+              <a className="category-guide-card" href="/magazine/flooring-karaj-guide">
+                <div><h3>پارکت و لمینت در کرج</h3><p>انتخاب فروشگاه، مجری و هزینه نهایی</p></div><ArrowUpLeft size={16} />
+              </a>
+              <a className="category-guide-card" href="/magazine/laminate-installation-guide">
+                <div><h3>راهنمای نصب لمینت</h3><p>زیرسازی، فوم، فاصله انبساطی و قرنیز</p></div><ArrowUpLeft size={16} />
+              </a>
               <a className="category-guide-card" href="/magazine/parquet-vs-laminate">
                 <div><h3>تفاوت پارکت و لمینت</h3><p>جنس، نصب، دوام و نگهداری</p></div><ArrowUpLeft size={16} />
               </a>
