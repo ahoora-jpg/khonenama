@@ -51,6 +51,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       services: business.services,
       planCode: business.planCode,
       promoted: business.promoted,
+      coverUrl: business.media.find((item) => item.kind === "cover")?.url || business.media[0]?.url || "",
     })),
     ...demoMatches
       .filter((business) => !liveSlugs.has(business.slug))
@@ -58,6 +59,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         ...business,
         planCode: business.featured ? "premium" as const : "free" as const,
         promoted: Boolean(business.featured),
+        coverUrl: business.media?.find((item) => item.cover)?.url || business.media?.[0]?.url || "",
       })),
   ];
   const relatedGuides = guides.filter((guide) => seo.guides.includes(guide.slug));
@@ -148,7 +150,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               <div className="business-grid">
                 {matches.map((business) => (
                   <a className={"business-card plan-card-" + business.planCode} href={"/business/" + business.slug} key={business.slug}>
-                    <div className="business-media business-generic"><div className="business-media-shape" /></div>
+                    <div className="business-media business-generic">
+                      {business.coverUrl ? (
+                        <img className="business-card-cover" src={business.coverUrl} alt={business.name} loading="lazy" />
+                      ) : (
+                        <div className="business-media-shape" />
+                      )}
+                    </div>
                     <div className="business-content">
                       <div className="business-title-row">
                         <h3>{business.name}</h3>
