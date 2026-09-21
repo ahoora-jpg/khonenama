@@ -16,8 +16,7 @@ export default function ForgotPasswordPage() {
         <div className="shell business-login-layout">
           <div className="business-login-copy">
             <span className="section-kicker">بازیابی حساب</span>
-            <h2>رمز را فراموش کردی؟ مسیر بازیابی از قبل آماده است.</h2>
-            <p>ایمیل، مسیر کم‌هزینه‌تر بازیابی خواهد بود و پیامک به‌عنوان مسیر جایگزین پس از اتصال سرویس SMS فعال می‌شود.</p>
+            <h2>رمز را فراموش کردی؟ برای Pilot از پشتیبانی کمک بگیر.</h2>\n            <p>بازیابی خودکار ایمیلی و پیامکی هنوز فعال نشده است؛ تا زمان اتصال سرویس ارسال، بازیابی حساب از مسیر پشتیبانی انجام می‌شود.</p>
           </div>
           <ForgotPasswordForm />
         </div>
