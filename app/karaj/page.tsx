@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { ArrowUpLeft, Layers3, MapPin, PaintRoller, PanelsTopLeft, Ruler, Sofa } from "lucide-react";
+import { ArrowUpLeft, Layers3, MapPin, PaintRoller, PanelsTopLeft, Ruler, Sofa, Wifi } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "دکوراسیون داخلی کرج | فروشگاه‌ها، متخصصان و خدمات",
   description:
-    "فروشگاه‌ها، متخصصان و خدمات دکوراسیون داخلی کرج را در خونه‌نما پیدا و مقایسه کنید؛ پرده، موکت، کفپوش، کاغذ دیواری و طراحی داخلی.",
+    "فروشگاه‌ها، متخصصان و خدمات دکوراسیون داخلی کرج را در خونه‌نما پیدا و مقایسه کنید؛ پرده، موکت، کفپوش، کاغذ دیواری، طراحی داخلی و خانه هوشمند.",
   alternates: { canonical: "/karaj" },
 };
 
@@ -16,6 +16,7 @@ const categories = [
   ["موکت در کرج", "موکت خانگی، اداری و تایلی", "/karaj/carpet", Ruler],
   ["کاغذ دیواری در کرج", "دیوارپوش و کاغذ دیواری مدرن و کلاسیک", "/karaj/wallpaper", PaintRoller],
   ["طراحی داخلی در کرج", "طراح، معمار و مجری دکوراسیون", "/karaj/interior-design", Sofa],
+  ["خانه هوشمند در کرج", "روشنایی، پرده برقی، قفل و اتوماسیون", "/karaj/smart-home", Wifi],
 ] as const;
 
 const jsonLd = {
