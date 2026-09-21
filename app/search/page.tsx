@@ -43,6 +43,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
       reviewCount: business.reviewCount,
       planCode: business.planCode,
       promoted: business.promoted,
+      coverUrl: business.media.find((item) => item.kind === "cover")?.url || business.media[0]?.url || "",
       source: "live" as const,
     })),
     ...filteredDemo
@@ -51,6 +52,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         ...business,
         planCode: business.featured ? "premium" as const : "free" as const,
         promoted: Boolean(business.featured),
+        coverUrl: business.media?.find((item) => item.cover)?.url || business.media?.[0]?.url || "",
         source: "demo" as const,
       })),
   ];
@@ -86,7 +88,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             <div className="results-list">
               {results.length > 0 ? results.map((business) => (
                 <a className={"result-card plan-card-" + business.planCode} href={"/business/" + business.slug} key={business.slug}>
-                  <div className="result-thumb" />
+                  <div className="result-thumb">
+                    {business.coverUrl && <img src={business.coverUrl} alt={business.name} loading="lazy" />}
+                  </div>
                   <div className="result-body">
                     <div className="result-title-row">
                       <h2>{business.name}</h2>
