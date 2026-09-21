@@ -161,6 +161,7 @@ export default function AdminBusinessModeration() {
           <p>پروفایل‌های در انتظار بررسی را تأیید، رد یا برای اصلاح برگردان.</p>
         </div>
         <div className="dashboard-heading-actions">
+          <a className="pill-button" href="/admin/reviews">مدیریت نظرها</a>
           <button className="pill-button" type="button" onClick={load} disabled={loading}>
             <RefreshCw size={15} /> بروزرسانی
           </button>
