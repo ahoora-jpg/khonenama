@@ -40,6 +40,8 @@ export const businesses: Business[] = [
       { url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=82", alt: "فضای داخلی گرم و مدرن" },
       { url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=82", alt: "نشیمن مدرن با نور طبیعی" },
       { url: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1400&q=82", alt: "دکوراسیون روشن و مینیمال" },
+      { url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=84", alt: "پرده‌های روشن در نشیمن معاصر" },
+      { url: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=84", alt: "فضای مسکونی روشن با پوشش پنجره مدرن" },
     ],
   },
   {
@@ -59,6 +61,8 @@ export const businesses: Business[] = [
       { url: "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=1400&q=82", alt: "فضای داخلی با کف گرم" },
       { url: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1400&q=82", alt: "اتاق نشیمن با متریال چوب" },
       { url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=82", alt: "ترکیب چوب و دکور مدرن" },
+      { url: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1400&q=84", alt: "کف چوبی روشن در فضای مینیمال" },
+      { url: "https://images.unsplash.com/photo-1600585152915-d208bec867a1?auto=format&fit=crop&w=1400&q=84", alt: "پارکت گرم در فضای نشیمن مدرن" },
     ],
   },
   {
@@ -77,6 +81,9 @@ export const businesses: Business[] = [
       { url: "https://images.unsplash.com/photo-1628745750110-c8ddcdad2c15?auto=format&fit=crop&w=1600&q=82", alt: "موکت و فرش در فضای نشیمن", cover: true },
       { url: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1400&q=82", alt: "نشیمن روشن با بافت نرم" },
       { url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=82", alt: "فضای مدرن با بافت گرم" },
+      { url: "https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=1400&q=84", alt: "بافت نرم کف در اتاق نشیمن" },
+      { url: "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=1400&q=84", alt: "فضای خانگی گرم با بافت کف" },
+      { url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=84", alt: "نشیمن مدرن با فرش و بافت نرم" },
     ],
   },
   {
@@ -95,6 +102,9 @@ export const businesses: Business[] = [
       { url: "https://images.unsplash.com/photo-1742799431910-985c27143e98?auto=format&fit=crop&w=1600&q=82", alt: "دیوارپوش و کاغذ دیواری مدرن", cover: true },
       { url: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1400&q=82", alt: "دیوار شاخص در فضای مدرن" },
       { url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=82", alt: "فضای داخلی با دیوار مینیمال" },
+      { url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=84", alt: "دیوار شاخص در نشیمن مدرن" },
+      { url: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=84", alt: "دیوار مینیمال با نور طبیعی" },
+      { url: "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=1400&q=84", alt: "ترکیب دیوار و نورپردازی داخلی" },
     ],
   },
   {
@@ -114,6 +124,8 @@ export const businesses: Business[] = [
       { url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=82", alt: "نشیمن مدرن و مینیمال" },
       { url: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1400&q=82", alt: "فضای روشن با چیدمان مدرن" },
       { url: "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=1400&q=82", alt: "طراحی داخلی با متریال طبیعی" },
+      { url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=84", alt: "طراحی داخلی معاصر با نور طبیعی" },
+      { url: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1400&q=84", alt: "فضای مینیمال با متریال روشن" },
     ],
   },
   {
@@ -133,6 +145,8 @@ export const businesses: Business[] = [
       { url: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1400&q=82", alt: "خانه مدرن با نورپردازی یکپارچه" },
       { url: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1400&q=82", alt: "نشیمن مدرن برای اتوماسیون خانگی" },
       { url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=82", alt: "فضای داخلی با سناریوی روشنایی" },
+      { url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=84", alt: "خانه مدرن مناسب اتوماسیون روشنایی" },
+      { url: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1400&q=84", alt: "فضای هوشمند با نورپردازی یکپارچه" },
     ],
   },
   {
@@ -151,6 +165,9 @@ export const businesses: Business[] = [
       { url: "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=1600&q=82", alt: "نورپردازی داخلی مدرن", cover: true },
       { url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=82", alt: "نور گرم در فضای داخلی" },
       { url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=82", alt: "نورپردازی مینیمال در نشیمن" },
+      { url: "https://images.unsplash.com/photo-1600585152915-d208bec867a1?auto=format&fit=crop&w=1400&q=84", alt: "نورپردازی گرم در فضای مدرن" },
+      { url: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=84", alt: "نور مخفی در فضای مسکونی" },
+      { url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=84", alt: "سناریوی نور برای نشیمن مدرن" },
     ],
   },
   {
@@ -169,6 +186,9 @@ export const businesses: Business[] = [
       { url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1600&q=82", alt: "آشپزخانه مدرن و مینیمال", cover: true },
       { url: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1400&q=82", alt: "فضای داخلی با چوب و کابینت" },
       { url: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1400&q=82", alt: "جزئیات دکور چوبی مدرن" },
+      { url: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1400&q=84", alt: "آشپزخانه روشن با کابینت مدرن" },
+      { url: "https://images.unsplash.com/photo-1600585152915-d208bec867a1?auto=format&fit=crop&w=1400&q=84", alt: "کابینت و جزئیات چوبی معاصر" },
+      { url: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=84", alt: "آشپزخانه مینیمال با نور طبیعی" },
     ],
   },
 ];
