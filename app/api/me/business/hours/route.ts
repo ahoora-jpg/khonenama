@@ -40,28 +40,30 @@ export async function PUT(request: Request) {
   }
 
   const seen = new Set<number>();
-  const normalized = raw.map((item) => {
-    const weekday = Number(item?.weekday);
-    if (!Number.isInteger(weekday) || weekday < 0 || weekday > 6 || seen.has(weekday)) {
-      throw new Error("INVALID_WEEKDAY");
-    }
-    seen.add(weekday);
-
-    const isClosed = Boolean(item?.isClosed);
-    const opensAt = isClosed ? null : item?.opensAt || null;
-    const closesAt = isClosed ? null : item?.closesAt || null;
-
-    if (!isClosed && (!validTime(opensAt) || !validTime(closesAt))) {
-      throw new Error("INVALID_TIME");
-    }
-    if (!isClosed && String(opensAt) >= String(closesAt)) {
-      throw new Error("INVALID_RANGE");
-    }
-
-    return { weekday, isClosed, opensAt, closesAt };
-  });
+  let normalized: { weekday: number; isClosed: boolean; opensAt: string | null; closesAt: string | null }[];
 
   try {
+    normalized = raw.map((item) => {
+      const weekday = Number(item?.weekday);
+      if (!Number.isInteger(weekday) || weekday < 0 || weekday > 6 || seen.has(weekday)) {
+        throw new Error("INVALID_WEEKDAY");
+      }
+      seen.add(weekday);
+
+      const isClosed = Boolean(item?.isClosed);
+      const opensAt = isClosed ? null : item?.opensAt || null;
+      const closesAt = isClosed ? null : item?.closesAt || null;
+
+      if (!isClosed && (!validTime(opensAt) || !validTime(closesAt))) {
+        throw new Error("INVALID_TIME");
+      }
+      if (!isClosed && String(opensAt) >= String(closesAt)) {
+        throw new Error("INVALID_RANGE");
+      }
+
+      return { weekday, isClosed, opensAt: opensAt as string | null, closesAt: closesAt as string | null };
+    });
+
     await owned.db.batch(
       normalized.map((item) =>
         owned.db
