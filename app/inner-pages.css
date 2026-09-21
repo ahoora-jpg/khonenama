@@ -2732,3 +2732,43 @@
   color:var(--muted);
   font-size:8px;
 }
+
+
+/* Trust pages */
+.about-feature-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin:18px 0 24px;
+}
+.about-feature-grid > div {
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:5px 9px;
+  align-items:start;
+  padding:13px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(255,255,255,.72);
+}
+.about-feature-grid svg {
+  grid-row:1 / span 2;
+  color:#79695b;
+}
+.about-feature-grid strong {
+  font-size:10px;
+}
+.about-feature-grid span {
+  color:var(--muted);
+  font-size:8px;
+  line-height:1.8;
+}
+.legal-cta-row {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:18px;
+}
+@media (max-width:720px) {
+  .about-feature-grid { grid-template-columns:1fr; }
+}
