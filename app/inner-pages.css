@@ -2149,3 +2149,16 @@
     grid-template-columns:1fr;
   }
 }
+
+.demo-profile-pill {
+  display:inline-flex;
+  align-items:center;
+  padding:4px 7px;
+  border-radius:999px;
+  background:#f0ebe4;
+  border:1px solid rgba(76,65,55,.1);
+  color:#776a5f;
+  font-size:7px;
+  font-weight:900;
+  white-space:nowrap;
+}
