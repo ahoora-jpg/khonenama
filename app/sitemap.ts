@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
 import { guides } from "@/lib/guides";
+import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 
 const baseUrl = "https://khonenama.ir";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: baseUrl, changeFrequency: "daily", priority: 1 },
     { url: baseUrl + "/karaj", changeFrequency: "daily", priority: 0.95 },
@@ -12,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: baseUrl + "/karaj/carpet", changeFrequency: "weekly", priority: 0.88 },
     { url: baseUrl + "/karaj/wallpaper", changeFrequency: "weekly", priority: 0.88 },
     { url: baseUrl + "/karaj/interior-design", changeFrequency: "weekly", priority: 0.9 },
+    { url: baseUrl + "/karaj/smart-home", changeFrequency: "weekly", priority: 0.9 },
     { url: baseUrl + "/karaj/baraghan", changeFrequency: "daily", priority: 0.92 },
     { url: baseUrl + "/category/curtain", changeFrequency: "weekly", priority: 0.9 },
     { url: baseUrl + "/category/flooring", changeFrequency: "weekly", priority: 0.88 },
@@ -21,6 +23,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: baseUrl + "/category/smart-home", changeFrequency: "weekly", priority: 0.86 },
     { url: baseUrl + "/magazine", changeFrequency: "weekly", priority: 0.86 },
     { url: baseUrl + "/for-business", changeFrequency: "monthly", priority: 0.72 },
+    { url: baseUrl + "/about", changeFrequency: "monthly", priority: 0.5 },
+    { url: baseUrl + "/help", changeFrequency: "monthly", priority: 0.45 },
     { url: baseUrl + "/privacy", changeFrequency: "monthly", priority: 0.3 },
     { url: baseUrl + "/terms", changeFrequency: "monthly", priority: 0.3 },
   ];
@@ -31,5 +35,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: guide.category === "راهنمای محلی" ? 0.82 : 0.76,
   }));
 
-  return [...staticPages, ...guidePages];
+  const liveBusinesses = await listPublishedBusinesses({ limit: 100 });
+  const businessPages: MetadataRoute.Sitemap = liveBusinesses.map((business) => ({
+    url: baseUrl + "/business/" + business.slug,
+    changeFrequency: "weekly",
+    priority: business.planCode === "premium" ? 0.86 : 0.78,
+  }));
+
+  return [...staticPages, ...guidePages, ...businessPages];
 }
