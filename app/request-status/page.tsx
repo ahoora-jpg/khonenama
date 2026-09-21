@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import CustomerRequestStatus from "@/components/CustomerRequestStatus";
 
 export const metadata: Metadata = {
-  title: "پیگیری درخواست قیمت | خونه‌نما",
+  title: "پیگیری درخواست قیمت",
   description: "پیگیری خصوصی درخواست قیمت و مشاهده پاسخ کسب‌وکار با کد درخواست و شماره همراه.",
   robots: { index: false, follow: false },
 };
