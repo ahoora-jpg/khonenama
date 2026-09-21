@@ -95,6 +95,12 @@ export default function QuoteRequestForm({
           <h3>درخواست شما خصوصی برای {businessName} ارسال شد.</h3>
           <p>کد پیگیری: <strong dir="ltr">{requestCode}</strong></p>
           <small><LockKeyhole size={13} /> اطلاعات درخواست و قیمت پیشنهادی روی صفحه عمومی نمایش داده نمی‌شوند.</small>
+          <a
+            className="pill-button dark quote-track-link"
+            href={"/request-status?code=" + encodeURIComponent(requestCode)}
+          >
+            پیگیری پاسخ کسب‌وکار
+          </a>
         </div>
       </div>
     );
