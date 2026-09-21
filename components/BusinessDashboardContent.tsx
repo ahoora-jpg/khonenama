@@ -42,6 +42,8 @@ type StoredProfile = {
   plan?: string;
   leadCount?: number;
   businessSlug?: string;
+  mediaCount?: number;
+  phoneVerified?: boolean;
 };
 
 const nav = [
@@ -86,6 +88,8 @@ export default function BusinessDashboardContent() {
               plan: business.plan?.code || "free",
               leadCount: business.leadCount || 0,
               businessSlug: business.slug,
+              mediaCount: Number(business.mediaCount || 0),
+              phoneVerified: Boolean(result.owner?.phoneVerified),
             });
             setSource("server");
             return;
@@ -128,9 +132,9 @@ export default function BusinessDashboardContent() {
 
   const nextTasks = useMemo(() => {
     const tasks = [
-      { label: "تأیید شماره همراه", done: false },
+      { label: "تأیید شماره همراه", done: Boolean(profile.phoneVerified) },
       { label: "تکمیل آدرس و محدوده", done: Boolean(profile.city && profile.area) },
-      { label: "افزودن حداقل ۳ تصویر", done: false },
+      { label: "افزودن حداقل ۳ تصویر", done: Number(profile.mediaCount || 0) >= 3 },
       { label: "ثبت خدمات اصلی", done: services.length > 0 },
     ];
     return tasks;
