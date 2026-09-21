@@ -7,13 +7,15 @@ export async function GET() {
     privateKey: Boolean(config.privateKey),
     urlEndpoint: Boolean(config.urlEndpoint),
   };
-  const configured = presence.publicKey && presence.privateKey && presence.urlEndpoint;
+  const configured = presence.privateKey && presence.urlEndpoint;
 
   return Response.json(
     {
       ok: configured,
       provider: "imagekit",
       configured,
+      uploadMode: "server",
+      clientUploadAvailable: presence.publicKey,
       presence,
     },
     {
