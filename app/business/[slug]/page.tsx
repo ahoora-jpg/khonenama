@@ -240,8 +240,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                   <a
                     className="pill-button profile-secondary"
                     data-analytics-event="whatsapp"
-                    data-analytics-event="whatsapp"
-                  href={"https://wa.me/" + business.whatsapp.replace(/\D/g, "").replace(/^0/, "98")}
+                    href={"https://wa.me/" + business.whatsapp.replace(/\D/g, "").replace(/^0/, "98")}
                     target="_blank"
                     rel="noreferrer"
                   >
