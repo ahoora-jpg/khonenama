@@ -42,6 +42,10 @@ export default function BusinessProfileEditor() {
     async function load() {
       try {
         const response = await fetch("/api/me/business", { cache: "no-store" });
+        if (response.status === 401) {
+          window.location.replace("/business/login?next=/dashboard/profile");
+          return;
+        }
         const result = await response.json();
         if (!response.ok || !result?.ok) throw new Error("SESSION_REQUIRED");
 
