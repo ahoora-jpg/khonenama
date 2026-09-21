@@ -27,7 +27,14 @@ async function resolveBusiness(slug: string) {
       reviewCount: demo.reviewCount,
       planCode: demo.featured ? "premium" as const : "free" as const,
       planName: demo.featured ? "ویژه" : "پایه",
-      media: [],
+      media: (demo.media || []).map((item, index) => ({
+        id: index + 1,
+        kind: item.cover ? "cover" : "image",
+        url: item.url,
+        thumbnailUrl: item.url,
+        altText: item.alt,
+        sortOrder: index + 1,
+      })),
     };
   }
 
