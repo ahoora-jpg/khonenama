@@ -9,6 +9,7 @@ const groups = [
       ["کفپوش", "/category/flooring"],
       ["کاغذ دیواری", "/category/wallpaper"],
       ["طراحی داخلی", "/category/interior-design"],
+      ["خانه هوشمند", "/category/smart-home"],
     ],
   },
   {
