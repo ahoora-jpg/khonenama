@@ -32,8 +32,8 @@ export default function BusinessLoginForm() {
       setPhoneError("شماره همراه را کامل وارد کنید.");
       invalid = true;
     }
-    if (actualPassword.length < 8) {
-      setPasswordError("رمز عبور باید حداقل ۸ کاراکتر باشد.");
+    if (!actualPassword) {
+      setPasswordError("رمز عبور را وارد کنید.");
       invalid = true;
     }
     if (invalid) {
