@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2, Loader2, Save, Store } from "lucide-react";
+import BusinessHoursEditor from "@/components/BusinessHoursEditor";
 
 type ProfileForm = {
   name: string;
@@ -173,6 +174,8 @@ export default function BusinessProfileEditor() {
           </button>
         </div>
       </section>
+
+      <BusinessHoursEditor />
     </div>
   );
 }
