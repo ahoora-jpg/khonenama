@@ -3,6 +3,15 @@
 import { useState } from "react";
 import { CheckCircle2, LockKeyhole, MessageCircle, Send } from "lucide-react";
 
+function track(slug: string, event: string) {
+  fetch("/api/business/" + encodeURIComponent(slug) + "/analytics", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ event }),
+    keepalive: true,
+  }).catch(() => {});
+}
+
 function digitsOnly(value: string) {
   return value.replace(/[^0-9۰-۹٠-٩]/g, "");
 }
@@ -43,6 +52,7 @@ export default function QuoteRequestForm({
       return;
     }
 
+    track(businessSlug, "quote_start");
     setLoading(true);
     try {
       const response = await fetch("/api/business/" + encodeURIComponent(businessSlug) + "/lead", {
@@ -72,6 +82,7 @@ export default function QuoteRequestForm({
         return;
       }
 
+      track(businessSlug, "quote_sent");
       setRequestCode(result.requestCode || "");
       setCustomerName("");
       setCustomerPhone("");
