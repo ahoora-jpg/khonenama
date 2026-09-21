@@ -2,7 +2,15 @@ import { ArrowUpLeft, BookOpen } from "lucide-react";
 import { guides } from "@/lib/guides";
 
 export default function GuidesHome() {
-  const selected = guides.slice(0, 4);
+  const preferredSlugs = [
+    "zebra-vs-shade",
+    "parquet-vs-laminate",
+    "wallpaper-vs-paint",
+    "smart-home-guide",
+  ];
+  const selected = preferredSlugs
+    .map((slug) => guides.find((guide) => guide.slug === slug))
+    .filter((guide): guide is (typeof guides)[number] => Boolean(guide));
 
   return (
     <section className="section guides-home" aria-labelledby="guides-home-title">
