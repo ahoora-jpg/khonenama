@@ -10,6 +10,8 @@ type ProfileForm = {
   city: string;
   area: string;
   address: string;
+  phone: string;
+  whatsapp: string;
   website: string;
   instagram: string;
 };
@@ -20,6 +22,8 @@ const emptyForm: ProfileForm = {
   city: "",
   area: "",
   address: "",
+  phone: "",
+  whatsapp: "",
   website: "",
   instagram: "",
 };
@@ -48,6 +52,8 @@ export default function BusinessProfileEditor() {
             city: business.city || "",
             area: business.area || "",
             address: business.address || "",
+            phone: business.phone || "",
+            whatsapp: business.whatsapp || "",
             website: business.website || "",
             instagram: business.instagram || "",
           });
@@ -149,6 +155,17 @@ export default function BusinessProfileEditor() {
           <label>
             <span>وب‌سایت</span>
             <input value={form.website} onChange={(e) => update("website", e.target.value)} placeholder="https://..." />
+          </label>
+        </div>
+
+        <div className="form-row two-columns">
+          <label>
+            <span>شماره تماس عمومی</span>
+            <input dir="ltr" inputMode="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="09... یا شماره ثابت" />
+          </label>
+          <label>
+            <span>واتساپ</span>
+            <input dir="ltr" inputMode="tel" value={form.whatsapp} onChange={(e) => update("whatsapp", e.target.value)} placeholder="09..." />
           </label>
         </div>
 
