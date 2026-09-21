@@ -18,6 +18,82 @@ function normalizeIranPhone(value: string) {
   return phone;
 }
 
+
+const LOGIN_WINDOW_MINUTES = 15;
+const LOGIN_MAX_FAILURES = 10;
+
+async function rateLimitKey(request: Request) {
+  const forwarded = request.headers.get("cf-connecting-ip")
+    || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+    || "unknown";
+  const bytes = new TextEncoder().encode("business-login:" + forwarded);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function ensureLoginRateLimitSchema(db: any) {
+  await db.prepare(
+    "CREATE TABLE IF NOT EXISTS auth_rate_limits (" +
+      "key_hash TEXT PRIMARY KEY," +
+      "failures INTEGER NOT NULL DEFAULT 0," +
+      "window_started TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+      "blocked_until TEXT," +
+      "updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP" +
+    ")"
+  ).run();
+}
+
+async function loginRateLimitState(db: any, keyHash: string) {
+  await ensureLoginRateLimitSchema(db);
+  const row = await db.prepare(
+    "SELECT failures, window_started, blocked_until, " +
+    "CASE WHEN blocked_until IS NOT NULL AND blocked_until > CURRENT_TIMESTAMP THEN 1 ELSE 0 END AS blocked " +
+    "FROM auth_rate_limits WHERE key_hash = ? LIMIT 1"
+  ).bind(keyHash).first();
+
+  return {
+    blocked: Boolean(row?.blocked),
+    failures: Number(row?.failures || 0),
+    windowStarted: String(row?.window_started || ""),
+  };
+}
+
+async function recordLoginFailure(db: any, keyHash: string) {
+  const current = await db.prepare(
+    "SELECT failures, window_started FROM auth_rate_limits WHERE key_hash = ? LIMIT 1"
+  ).bind(keyHash).first();
+
+  const stale = !current?.window_started || Boolean(
+    await db.prepare("SELECT CASE WHEN ? < datetime('now', ?) THEN 1 ELSE 0 END AS stale")
+      .bind(String(current?.window_started || ""), "-" + LOGIN_WINDOW_MINUTES + " minutes")
+      .first()
+      .then((row: any) => row?.stale)
+  );
+
+  const failures = stale ? 1 : Number(current?.failures || 0) + 1;
+  const blockedUntil = failures >= LOGIN_MAX_FAILURES
+    ? new Date(Date.now() + LOGIN_WINDOW_MINUTES * 60 * 1000).toISOString()
+    : null;
+
+  await db.prepare(
+    "INSERT INTO auth_rate_limits (key_hash, failures, window_started, blocked_until, updated_at) " +
+    "VALUES (?, ?, CURRENT_TIMESTAMP, ?, CURRENT_TIMESTAMP) " +
+    "ON CONFLICT(key_hash) DO UPDATE SET " +
+      "failures = excluded.failures, " +
+      "window_started = CASE WHEN ? = 1 THEN CURRENT_TIMESTAMP ELSE auth_rate_limits.window_started END, " +
+      "blocked_until = excluded.blocked_until, " +
+      "updated_at = CURRENT_TIMESTAMP"
+  ).bind(keyHash, failures, blockedUntil, stale ? 1 : 0).run();
+
+  return failures;
+}
+
+async function clearLoginFailures(db: any, keyHash: string) {
+  await db.prepare("DELETE FROM auth_rate_limits WHERE key_hash = ?").bind(keyHash).run();
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}));
@@ -33,6 +109,15 @@ export async function POST(request: Request) {
       return Response.json({ ok: false, error: "D1_BINDING_NOT_AVAILABLE" }, { status: 503 });
     }
 
+    const loginKey = await rateLimitKey(request);
+    const rateState = await loginRateLimitState(db, loginKey);
+    if (rateState.blocked) {
+      return Response.json(
+        { ok: false, error: "TOO_MANY_ATTEMPTS" },
+        { status: 429, headers: { "Retry-After": String(LOGIN_WINDOW_MINUTES * 60), "Cache-Control": "no-store" } }
+      );
+    }
+
     const user = await db
       .prepare(
         "SELECT id, password_hash, password_salt, password_iterations, status FROM users WHERE phone = ? LIMIT 1"
@@ -41,6 +126,7 @@ export async function POST(request: Request) {
       .first();
 
     if (!user?.id || user.status !== "active" || !user.password_hash) {
+      await recordLoginFailure(db, loginKey);
       return Response.json({ ok: false, error: "INVALID_CREDENTIALS" }, { status: 401 });
     }
 
@@ -84,8 +170,11 @@ export async function POST(request: Request) {
     }
 
     if (!valid) {
+      await recordLoginFailure(db, loginKey);
       return Response.json({ ok: false, error: "INVALID_CREDENTIALS" }, { status: 401 });
     }
+
+    await clearLoginFailures(db, loginKey);
 
     let membership = await db
       .prepare(
