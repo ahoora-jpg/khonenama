@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import { createBusinessSession } from "@/lib/server/business-session";
 import {
+  BUSINESS_CATEGORIES,
   BUSINESS_CATEGORY_BY_SLUG,
   categoryForService,
   isBusinessCategorySlug,
@@ -104,6 +105,17 @@ export async function POST(request: Request) {
     if (!db) {
       return Response.json({ ok: false, error: "D1_BINDING_NOT_AVAILABLE" }, { status: 503 });
     }
+
+    stage = "category-sync";
+    await db.batch(
+      BUSINESS_CATEGORIES.map((item, index) =>
+        db
+          .prepare(
+            "INSERT OR IGNORE INTO categories (slug, name, sort_order, is_active) VALUES (?, ?, ?, 1)"
+          )
+          .bind(item.slug, item.label, (index + 1) * 10)
+      )
+    );
 
     stage = "category-lookup";
     const placeholders = categories.map(() => "?").join(",");
