@@ -5,7 +5,7 @@ import QuoteRequestForm from "@/components/QuoteRequestForm";
 import BusinessAnalyticsTracker from "@/components/BusinessAnalyticsTracker";
 import BusinessReviews from "@/components/BusinessReviews";
 import { businesses as demoBusinesses, getBusiness } from "@/lib/demo-data";
-import { getPublishedBusiness, getBusinessSlugRedirect, listPublishedBusinesses } from "@/lib/server/public-businesses";
+import { getPublishedBusiness, getBusinessSlugRedirect, isInternalTestBusinessSlug, listPublishedBusinesses } from "@/lib/server/public-businesses";
 import { BadgeCheck, BriefcaseBusiness, Clock3, Crown, Globe2, Instagram, MapPin, MessageCircle, Phone, Star } from "lucide-react";
 import { notFound, permanentRedirect } from "next/navigation";
 
@@ -86,6 +86,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title,
     description,
     alternates: { canonical: "/business/" + slug },
+    robots: isInternalTestBusinessSlug(slug) ? { index: false, follow: false } : undefined,
     openGraph: {
       title,
       description,
