@@ -1,4 +1,4 @@
-import { ArrowUpLeft, Instagram, Mail, MapPin } from "lucide-react";
+import { Instagram, Mail, MapPin } from "lucide-react";
 
 const groups = [
   {
@@ -30,6 +30,8 @@ const groups = [
       ["جستجو", "/search"],
       ["دسته‌بندی‌ها", "/#categories"],
       ["فروشگاه‌های منتخب", "/#featured"],
+      ["حریم خصوصی", "/privacy"],
+      ["قوانین استفاده", "/terms"],
     ],
   },
 ] as const;
@@ -49,10 +51,10 @@ export default function Footer() {
               <span><Instagram size={14} /> خونه‌نما</span>
             </div>
 
-            <form className="newsletter premium-newsletter" action="#">
-              <input type="email" aria-label="ایمیل" placeholder="برای خبرهای خونه‌نما، ایمیلت رو وارد کن" />
-              <button type="button">عضویت <ArrowUpLeft size={14} /></button>
-            </form>
+            <div className="footer-trust-links">
+              <a href="/privacy">حریم خصوصی</a>
+              <a href="/terms">قوانین استفاده</a>
+            </div>
           </div>
 
           {groups.map((group) => (
