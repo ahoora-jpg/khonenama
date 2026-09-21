@@ -1351,3 +1351,39 @@ button, a { -webkit-tap-highlight-color: transparent; }
 @media (max-width:900px) {
   .desktop-business-login { display:none; }
 }
+
+.category-smart {
+  background:
+    radial-gradient(circle at 75% 25%, rgba(255,255,255,.7), transparent 30%),
+    linear-gradient(145deg,#dfe6e3,#eef0e8);
+}
+.category-smart .category-shape { background: rgba(61,91,84,.12); }
+
+.business-card-cover,
+.result-thumb img {
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+}
+.business-media .business-card-cover {
+  position:absolute;
+  inset:0;
+  z-index:0;
+  transition:transform .45s ease;
+}
+.business-card:hover .business-card-cover {
+  transform:scale(1.035);
+}
+.business-media .media-depth-layer {
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(15,15,12,.02),rgba(15,15,12,.16));
+}
+.demo-label,
+.featured-tag {
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
