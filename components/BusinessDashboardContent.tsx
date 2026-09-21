@@ -70,6 +70,10 @@ export default function BusinessDashboardContent() {
     async function loadProfile() {
       try {
         const response = await fetch("/api/me/business", { cache: "no-store" });
+        if (response.status === 401) {
+          window.location.replace("/business/login?next=/dashboard");
+          return;
+        }
         if (response.ok) {
           const result = await response.json();
           if (!cancelled && result?.ok && result.business) {
