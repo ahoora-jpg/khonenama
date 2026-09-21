@@ -3,7 +3,8 @@ export type BusinessCategorySlug =
   | "flooring"
   | "carpet"
   | "wallpaper"
-  | "interior-design";
+  | "interior-design"
+  | "smart-home";
 
 export type BusinessCategoryOption = {
   slug: BusinessCategorySlug;
@@ -92,6 +93,24 @@ export const BUSINESS_CATEGORIES: readonly BusinessCategoryOption[] = [
       "آینه دکوراتیو",
       "بازسازی داخلی",
       "اجرا و نظارت پروژه",
+    ],
+  },
+  {
+    slug: "smart-home",
+    label: "خانه هوشمند",
+    services: [
+      "روشنایی هوشمند",
+      "پرده برقی و موتور پرده",
+      "قفل هوشمند",
+      "دوربین و امنیت هوشمند",
+      "کنترل دما و ترموستات هوشمند",
+      "سیستم صوتی و تصویری هوشمند",
+      "سناریوهای خانه هوشمند",
+      "کلید و پریز هوشمند",
+      "کنترل از راه دور",
+      "هوشمندسازی اقتصادی",
+      "طراحی و اجرای سیستم هوشمند",
+      "پشتیبانی و ارتقای خانه هوشمند",
     ],
   },
 ] as const;
