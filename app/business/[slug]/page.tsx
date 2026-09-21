@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import QuoteRequestForm from "@/components/QuoteRequestForm";
+import BusinessReviews from "@/components/BusinessReviews";
 import { getBusiness } from "@/lib/demo-data";
 import { getPublishedBusiness, getBusinessSlugRedirect } from "@/lib/server/public-businesses";
 import { BadgeCheck, BriefcaseBusiness, Clock3, Crown, Globe2, Instagram, MapPin, MessageCircle, Phone, Star } from "lucide-react";
@@ -29,6 +30,7 @@ async function resolveBusiness(slug: string) {
       planCode: demo.featured ? "premium" as const : "free" as const,
       planName: demo.featured ? "ویژه" : "پایه",
       hours: [],
+      reviews: [],
       media: (demo.media || []).map((item, index) => ({
         id: index + 1,
         kind: item.cover ? "cover" : "image",
@@ -63,6 +65,7 @@ async function resolveBusiness(slug: string) {
     planName: live.planName,
     media: live.media,
     hours: live.hours,
+    reviews: live.reviews,
   };
 }
 
@@ -236,6 +239,15 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
               </div>
             )}
           </section>
+
+          <BusinessReviews
+            businessSlug={business.slug}
+            businessName={business.name}
+            reviews={business.reviews}
+            rating={business.rating}
+            reviewCount={business.reviewCount}
+            demo={business.source === "demo"}
+          />
 
           <section className="profile-section quote-section" id="quote">
             <span className="section-kicker">استعلام</span>
