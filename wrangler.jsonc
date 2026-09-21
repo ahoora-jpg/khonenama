@@ -20,5 +20,8 @@
       "migrations_dir": "db/migrations"
     }
   ],
-  "keep_vars": true
+  "keep_vars": true,
+  "vars": {
+    "IMAGEKIT_URL_ENDPOINT": "https://ik.imagekit.io/khonenama"
+  }
 }
