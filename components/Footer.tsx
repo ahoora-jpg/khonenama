@@ -1,4 +1,4 @@
-import { Instagram, Mail, MapPin } from "lucide-react";
+import { CircleHelp, Instagram, MapPin } from "lucide-react";
 
 const groups = [
   {
@@ -50,7 +50,7 @@ export default function Footer() {
 
             <div className="footer-mini-meta">
               <span><MapPin size={14} /> کرج، البرز</span>
-              <span><Mail size={14} /> khonenama.ir</span>
+              <a href="/help"><CircleHelp size={14} /> راهنما و پشتیبانی</a>
               <span><Instagram size={14} /> خونه‌نما</span>
             </div>
 
