@@ -43,6 +43,22 @@ jobs:
           echo "$health" | grep -q '"ok":true'
           echo "$health" | grep -q '"database":"connected"'
 
+          imagekit_ready=""
+          for attempt in $(seq 1 12); do
+            imagekit_status="$(curl -sS -o /tmp/imagekit-health.json -w "%{http_code}" "$BASE/api/health/imagekit")"
+            if [ "$imagekit_status" = "200" ] && grep -q '"ok":true' /tmp/imagekit-health.json && grep -q '"uploadMode":"server"' /tmp/imagekit-health.json; then
+              imagekit_ready="yes"
+              break
+            fi
+            echo "Waiting for live ImageKit server-upload deployment (attempt $attempt/12)..."
+            sleep 10
+          done
+          if [ "$imagekit_ready" != "yes" ]; then
+            echo "ImageKit server-upload health did not become ready."
+            cat /tmp/imagekit-health.json || true
+            exit 1
+          fi
+
           expect_status 200 GET "$BASE/" >/dev/null
           expect_status 200 GET "$BASE/category/smart-home" >/dev/null
           expect_status 200 GET "$BASE/business/alayy-dkvr-krj" >/dev/null
@@ -63,6 +79,7 @@ jobs:
           expect_status 401 GET "$BASE/api/me/business/leads" >/dev/null
           expect_status 401 GET "$BASE/api/me/business/reviews" >/dev/null
           expect_status 401 GET "$BASE/api/me/business/media/auth" >/dev/null
+          expect_status 401 POST "$BASE/api/me/business/media/upload" >/dev/null
           expect_status 401 GET "$BASE/api/me/business/visibility" >/dev/null
           expect_status 401 GET "$BASE/api/admin/reviews" >/dev/null
 
