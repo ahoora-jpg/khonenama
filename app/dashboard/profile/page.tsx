@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import BusinessProfileEditor from "@/components/BusinessProfileEditor";
 
 export const metadata: Metadata = {
-  title: "ویرایش پروفایل کسب‌وکار | خونه‌نما",
+  title: "ویرایش پروفایل کسب‌وکار",
   robots: { index: false, follow: false },
 };
 
