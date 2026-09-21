@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import BusinessLoginForm from "@/components/BusinessLoginForm";
 
 export const metadata: Metadata = {
-  title: "ورود کسب‌وکار | خونه‌نما",
+  title: "ورود کسب‌وکار",
   robots: { index: false, follow: false },
 };
 
