@@ -35,19 +35,34 @@ export default function AdminLoginForm() {
   }
 
   return (
-    <div className="admin-login-card glass-panel">
+    <form
+      className="admin-login-card glass-panel"
+      autoComplete="off"
+      onSubmit={(event) => {
+        event.preventDefault();
+        void submit();
+      }}
+    >
       <span className="business-login-icon"><KeyRound size={22} /></span>
       <span className="section-kicker">مدیریت خونه‌نما</span>
       <h1>ورود مدیر</h1>
       <p>این بخش فقط برای مدیریت داخلی خونه‌نماست.</p>
       <label>
         <span>کلید مدیریت</span>
-        <input type="password" value={key} onChange={(e) => setKey(e.target.value)} autoComplete="current-password" />
+        <input
+          type="password"
+          name="khonenama_admin_access_key"
+          value={key}
+          onChange={(e) => setKey(e.target.value)}
+          autoComplete="new-password"
+          autoCapitalize="none"
+          spellCheck={false}
+        />
       </label>
-      <button className="pill-button dark" type="button" onClick={submit} disabled={loading || key.length < 8}>
+      <button className="pill-button dark" type="submit" disabled={loading || key.length < 8}>
         {loading ? "در حال ورود..." : "ورود مدیریت"} <ShieldCheck size={16} />
       </button>
       {message && <div className="business-login-message">{message}</div>}
-    </div>
+    </form>
   );
 }
