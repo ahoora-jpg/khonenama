@@ -28,6 +28,7 @@ const groups = [
       ["ثبت کسب‌وکار", "/register-business"],
       ["داشبورد فروشنده", "/dashboard"],
       ["جستجو", "/search"],
+      ["پیگیری درخواست", "/request-status"],
       ["دسته‌بندی‌ها", "/#categories"],
       ["فروشگاه‌های منتخب", "/#featured"],
       ["حریم خصوصی", "/privacy"],
