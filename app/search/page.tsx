@@ -11,10 +11,23 @@ export const metadata: Metadata = {
   alternates: { canonical: "/search" },
 };
 
-export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string; location?: string }> }) {
+export default async function SearchPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    q?: string;
+    location?: string;
+    verified?: string;
+    media?: string;
+    premium?: string;
+  }>;
+}) {
   const params = await searchParams;
   const query = params.q?.trim() || "";
   const location = params.location?.trim() || "کرج";
+  const onlyVerified = params.verified === "1";
+  const onlyMedia = params.media === "1";
+  const onlyPremium = params.premium === "1";
 
   const liveBusinesses = await listPublishedBusinesses({
     query: query || undefined,
@@ -30,7 +43,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   });
 
   const liveSlugs = new Set(liveBusinesses.map((business) => business.slug));
-  const results = [
+  const combinedResults = [
     ...liveBusinesses.map((business) => ({
       slug: business.slug,
       name: business.name,
@@ -57,6 +70,13 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
       })),
   ];
 
+  const results = combinedResults.filter((business) => {
+    if (onlyVerified && !business.verified) return false;
+    if (onlyMedia && !business.coverUrl) return false;
+    if (onlyPremium && business.planCode !== "premium") return false;
+    return true;
+  });
+
   return (
     <main>
       <Header />
@@ -77,13 +97,29 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           </form>
 
           <div className="results-layout">
-            <aside className="filters-panel glass-panel">
+            <form className="filters-panel glass-panel" method="get">
+              <input type="hidden" name="q" value={query} />
+              <input type="hidden" name="location" value={location} />
               <div className="filters-title"><SlidersHorizontal size={17} /> فیلترها</div>
-              <label><input type="checkbox" /> فقط تأییدشده‌ها</label>
-              <label><input type="checkbox" /> دارای نمونه‌کار</label>
-              <label><input type="checkbox" /> بازدید در محل</label>
-              <label><input type="checkbox" /> فروشگاه‌های ویژه</label>
-            </aside>
+              <label>
+                <input type="checkbox" name="verified" value="1" defaultChecked={onlyVerified} />
+                فقط تأییدشده‌ها
+              </label>
+              <label>
+                <input type="checkbox" name="media" value="1" defaultChecked={onlyMedia} />
+                دارای نمونه‌کار
+              </label>
+              <label>
+                <input type="checkbox" name="premium" value="1" defaultChecked={onlyPremium} />
+                جایگاه‌های ویژه
+              </label>
+              <button className="pill-button dark filters-submit" type="submit">اعمال فیلتر</button>
+              {(onlyVerified || onlyMedia || onlyPremium) && (
+                <a className="filters-reset" href={"/search?q=" + encodeURIComponent(query) + "&location=" + encodeURIComponent(location)}>
+                  پاک‌کردن فیلترها
+                </a>
+              )}
+            </form>
 
             <div className="results-list">
               {results.length > 0 ? results.map((business) => (
@@ -95,6 +131,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
                     <div className="result-title-row">
                       <h2>{business.name}</h2>
                       {business.verified && <BadgeCheck size={18} className="verified-icon" />}
+                      {business.source === "demo" && (
+                        <span className="demo-result-badge">نمونه نمایشی</span>
+                      )}
                       {business.planCode === "pro" && (
                         <span className="plan-listing-badge is-pro"><BriefcaseBusiness size={13} /> حرفه‌ای</span>
                       )}
