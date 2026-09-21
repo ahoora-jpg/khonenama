@@ -18,6 +18,11 @@ export function imageKitConfigured() {
   return Boolean(config.publicKey && config.privateKey && config.urlEndpoint);
 }
 
+export function imageKitServerConfigured() {
+  const config = getImageKitConfig();
+  return Boolean(config.privateKey && config.urlEndpoint);
+}
+
 function imageKitAuthHeader(privateKey: string) {
   return "Basic " + btoa(privateKey + ":");
 }
@@ -52,6 +57,54 @@ export async function createImageKitUploadAuth() {
     expire,
     signature: hex(signatureBuffer),
     publicKey,
+  };
+}
+
+export async function uploadImageKitFile(
+  file: File,
+  options: { fileName: string; folder: string; tags?: string }
+) {
+  const { privateKey } = getImageKitConfig();
+  if (!privateKey) throw new Error("IMAGEKIT_NOT_CONFIGURED");
+
+  const form = new FormData();
+  form.append("file", file, options.fileName);
+  form.append("fileName", options.fileName);
+  form.append("folder", options.folder);
+  form.append("useUniqueFileName", "true");
+  if (options.tags) form.append("tags", options.tags);
+
+  const response = await fetch("https://upload.imagekit.io/api/v1/files/upload", {
+    method: "POST",
+    headers: { Authorization: imageKitAuthHeader(privateKey) },
+    body: form,
+  });
+
+  const raw = await response.text().catch(() => "");
+  let uploaded: any = {};
+  try {
+    uploaded = raw ? JSON.parse(raw) : {};
+  } catch {}
+
+  if (!response.ok || !uploaded?.fileId) {
+    throw new Error(
+      "IMAGEKIT_UPLOAD_FAILED:" +
+        response.status +
+        ":" +
+        String(uploaded?.message || raw).slice(0, 300)
+    );
+  }
+
+  return {
+    fileId: String(uploaded.fileId),
+    url: typeof uploaded.url === "string" ? uploaded.url : "",
+    filePath: typeof uploaded.filePath === "string" ? uploaded.filePath : "",
+    thumbnailUrl:
+      typeof uploaded.thumbnailUrl === "string"
+        ? uploaded.thumbnailUrl
+        : typeof uploaded.thumbnail === "string"
+          ? uploaded.thumbnail
+          : "",
   };
 }
 
