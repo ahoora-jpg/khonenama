@@ -43,7 +43,7 @@ export async function GET(request: Request) {
     }
   }
 
-  const [servicesResult, areasResult, planResult, leadCount] = await Promise.all([
+  const [servicesResult, areasResult, planResult, leadCount, mediaCount] = await Promise.all([
     db
       .prepare(
         "SELECT s.id, s.slug, s.name FROM business_services bs JOIN services s ON s.id = bs.service_id WHERE bs.business_id = ? ORDER BY s.id"
@@ -64,6 +64,10 @@ export async function GET(request: Request) {
       .first(),
     db
       .prepare("SELECT COUNT(*) AS count FROM lead_recipients WHERE business_id = ?")
+      .bind(business.id)
+      .first(),
+    db
+      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ?")
       .bind(business.id)
       .first(),
   ]);
@@ -120,6 +124,7 @@ export async function GET(request: Request) {
         serviceAreas: areas,
         plan: planResult || null,
         leadCount: Number(leadCount?.count || 0),
+        mediaCount: Number(mediaCount?.count || 0),
         completion,
       },
     },
