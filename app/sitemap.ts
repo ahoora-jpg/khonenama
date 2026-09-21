@@ -31,6 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const guidePages: MetadataRoute.Sitemap = guides.map((guide) => ({
     url: baseUrl + "/magazine/" + guide.slug,
+    lastModified: guide.modifiedAt || guide.publishedAt || "2026-09-19",
     changeFrequency: guide.category === "راهنمای محلی" ? "weekly" : "monthly",
     priority: guide.category === "راهنمای محلی" ? 0.82 : 0.76,
   }));

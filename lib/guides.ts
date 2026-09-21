@@ -1,3 +1,5 @@
+import { seoBatchGuides } from "@/lib/guides-seo-batch";
+
 export type GuideFaq = { question: string; answer: string };
 export type GuideSection = { heading: string; paragraphs: string[]; bullets?: string[] };
 
@@ -12,9 +14,12 @@ export type Guide = {
   sections: GuideSection[];
   faqs: GuideFaq[];
   relatedCategory?: string;
+  publishedAt?: string;
+  modifiedAt?: string;
 };
 
 export const guides: Guide[] = [
+  ...seoBatchGuides,
   {
     slug: "zebra-curtain-guide",
     title: "پرده زبرا چیست؟ مزایا، معایب و انواع پرده زبرا",

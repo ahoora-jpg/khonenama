@@ -20,6 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: guide.title,
     description: guide.excerpt,
     keywords: guide.keywords,
+    authors: [{ name: "خونه‌نما", url: "https://khonenama.ir/about" }],
     alternates: { canonical: "/magazine/" + guide.slug },
     openGraph: {
       title: guide.title,
@@ -43,13 +44,26 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     "@type": "Article",
     headline: guide.title,
     description: guide.excerpt,
-    dateModified: "2026-09-19",
-    datePublished: "2026-09-19",
+    dateModified: guide.modifiedAt || guide.publishedAt || "2026-09-19",
+    datePublished: guide.publishedAt || "2026-09-19",
     inLanguage: "fa-IR",
     mainEntityOfPage: "https://khonenama.ir/magazine/" + guide.slug,
     author: { "@type": "Organization", name: "خونه‌نما" },
     publisher: { "@type": "Organization", name: "خونه‌نما", url: "https://khonenama.ir" },
+    keywords: guide.keywords.join(", "),
+    articleSection: guide.category,
+    isPartOf: { "@type": "WebSite", name: "خونه‌نما", url: "https://khonenama.ir" },
     image: [visual.src],
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "خونه‌نما", item: "https://khonenama.ir" },
+      { "@type": "ListItem", position: 2, name: "مجله", item: "https://khonenama.ir/magazine" },
+      { "@type": "ListItem", position: 3, name: guide.title, item: "https://khonenama.ir/magazine/" + guide.slug },
+    ],
   };
 
   const faqJsonLd = {
@@ -66,6 +80,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <Header />
 
       <article className="inner-page guide-page">

@@ -1,0 +1,37 @@
+# خونه‌نما (Khonenama)
+
+> خونه‌نما یک مرجع فارسی برای پیدا کردن، مقایسه و شناخت فروشگاه‌ها، متخصصان و خدمات دکوراسیون و تزئینات داخلی منزل است. تمرکز اولیه سرویس روی کرج و استان البرز است.
+
+## Canonical
+- https://khonenama.ir/
+
+## Core categories
+- پرده و متعلقات: https://khonenama.ir/category/curtain
+- کفپوش و پارکت: https://khonenama.ir/category/flooring
+- موکت: https://khonenama.ir/category/carpet
+- کاغذ دیواری و دیوارپوش: https://khonenama.ir/category/wallpaper
+- طراحی داخلی: https://khonenama.ir/category/interior-design
+- خانه هوشمند: https://khonenama.ir/category/smart-home
+
+## Local discovery
+- دکوراسیون داخلی کرج: https://khonenama.ir/karaj
+- پرده در کرج: https://khonenama.ir/karaj/curtain
+- کفپوش و پارکت در کرج: https://khonenama.ir/karaj/flooring
+- موکت در کرج: https://khonenama.ir/karaj/carpet
+- کاغذ دیواری در کرج: https://khonenama.ir/karaj/wallpaper
+- طراحی داخلی در کرج: https://khonenama.ir/karaj/interior-design
+- خانه هوشمند در کرج: https://khonenama.ir/karaj/smart-home
+- خیابان برغان کرج: https://khonenama.ir/karaj/baraghan
+
+## Editorial guides
+- Magazine: https://khonenama.ir/magazine
+- راهنماها تفاوت گزینه‌ها، نصب، نگهداری، خرید محلی و معیارهای انتخاب فروشگاه یا متخصص را توضیح می‌دهند.
+- پروفایل‌های نمایشی با برچسب نمونه مشخص می‌شوند و نباید کسب‌وکار واقعی تلقی شوند.
+- امتیاز عمومی فقط از نظرهای منتشرشده ساخته می‌شود و نشان تأیید از پلن پولی جداست.
+
+## Trust
+- درباره خونه‌نما: https://khonenama.ir/about
+- راهنما و پشتیبانی: https://khonenama.ir/help
+- حریم خصوصی: https://khonenama.ir/privacy
+- قوانین: https://khonenama.ir/terms
+- Sitemap: https://khonenama.ir/sitemap.xml
