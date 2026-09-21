@@ -3,8 +3,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import QuoteRequestForm from "@/components/QuoteRequestForm";
 import BusinessReviews from "@/components/BusinessReviews";
-import { getBusiness } from "@/lib/demo-data";
-import { getPublishedBusiness, getBusinessSlugRedirect } from "@/lib/server/public-businesses";
+import { businesses as demoBusinesses, getBusiness } from "@/lib/demo-data";
+import { getPublishedBusiness, getBusinessSlugRedirect, listPublishedBusinesses } from "@/lib/server/public-businesses";
 import { BadgeCheck, BriefcaseBusiness, Clock3, Crown, Globe2, Instagram, MapPin, MessageCircle, Phone, Star } from "lucide-react";
 import { notFound, permanentRedirect } from "next/navigation";
 
@@ -25,6 +25,7 @@ async function resolveBusiness(slug: string) {
       verified: demo.verified,
       featured: demo.featured,
       services: demo.services,
+      category: demo.category,
       rating: demo.rating,
       reviewCount: demo.reviewCount,
       planCode: demo.featured ? "premium" as const : "free" as const,
@@ -59,6 +60,7 @@ async function resolveBusiness(slug: string) {
     verified: live.verificationStatus === "verified" || live.verificationStatus === "professional",
     featured: live.featured,
     services: live.services,
+    category: live.category,
     rating: live.rating,
     reviewCount: live.reviewCount,
     planCode: live.planCode,
@@ -87,6 +89,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       url: "https://khonenama.ir/business/" + slug,
       locale: "fa_IR",
       type: "website",
+      images: business.media[0]?.url ? [{ url: business.media[0].url, alt: business.media[0].altText || business.name }] : undefined,
     },
   };
 }
@@ -101,6 +104,43 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
     }
     notFound();
   }
+
+  const liveRelated = business.category
+    ? await listPublishedBusinesses({ categorySlug: business.category, city: business.city, limit: 6 })
+    : [];
+  const relatedLive = liveRelated
+    .filter((item) => item.slug !== business.slug)
+    .map((item) => ({
+      slug: item.slug,
+      name: item.name,
+      city: item.city,
+      area: item.area,
+      verified: item.verificationStatus === "verified" || item.verificationStatus === "professional",
+      rating: item.rating,
+      reviewCount: item.reviewCount,
+      coverUrl: item.media.find((media) => media.kind === "cover")?.url || item.media[0]?.url || "",
+      demo: false,
+    }));
+  const relatedSlugs = new Set(relatedLive.map((item) => item.slug));
+  const relatedDemo = demoBusinesses
+    .filter(
+      (item) =>
+        item.slug !== business.slug &&
+        item.category === business.category &&
+        !relatedSlugs.has(item.slug)
+    )
+    .map((item) => ({
+      slug: item.slug,
+      name: item.name,
+      city: item.city,
+      area: item.area,
+      verified: item.verified,
+      rating: item.rating,
+      reviewCount: item.reviewCount,
+      coverUrl: item.media?.find((media) => media.cover)?.url || item.media?.[0]?.url || "",
+      demo: true,
+    }));
+  const relatedBusinesses = [...relatedLive, ...relatedDemo].slice(0, 4);
 
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
@@ -124,6 +164,12 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
       bestRating: 5,
       worstRating: 1,
     } : undefined,
+    review: business.reviews.slice(0, 5).map((item: any) => ({
+      "@type": "Review",
+      author: { "@type": "Person", name: item.name },
+      reviewRating: { "@type": "Rating", ratingValue: item.rating, bestRating: 5, worstRating: 1 },
+      reviewBody: item.body,
+    })),
     knowsAbout: business.services,
     openingHoursSpecification: business.hours
       .filter((item: any) => !item.isClosed && item.opensAt && item.closesAt)
@@ -260,6 +306,32 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
               </div>
             )}
           </section>
+
+          {relatedBusinesses.length > 0 && (
+            <section className="profile-section related-businesses-section">
+              <div className="section-heading compact-heading">
+                <div>
+                  <span className="section-kicker">گزینه‌های مشابه</span>
+                  <h2>کسب‌وکارهای مرتبط</h2>
+                </div>
+              </div>
+              <div className="related-business-grid">
+                {relatedBusinesses.map((item) => (
+                  <a className="related-business-card glass-panel" href={"/business/" + item.slug} key={item.slug}>
+                    <div className="related-business-media">
+                      {item.coverUrl ? <img src={item.coverUrl} alt={item.name} loading="lazy" /> : <span />}
+                      {item.demo && <small>نمونه</small>}
+                    </div>
+                    <div>
+                      <h3>{item.name} {item.verified && <BadgeCheck size={14} className="verified-icon" />}</h3>
+                      <p><MapPin size={12} /> {item.city}، {item.area}</p>
+                      <span><Star size={12} fill={item.reviewCount ? "currentColor" : "none"} /> {item.reviewCount ? item.rating : "جدید"}</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </section>
       <Footer />
