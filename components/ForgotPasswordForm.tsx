@@ -11,8 +11,8 @@ export default function ForgotPasswordForm() {
   function submit() {
     setMessage(
       method === "email"
-        ? "ساختار بازیابی ایمیلی آماده شده است؛ ارسال لینک بعد از اتصال سرویس ایمیل فعال می‌شود."
-        : "ساختار بازیابی پیامکی آماده شده است؛ ارسال کد بعد از اتصال سرویس SMS فعال می‌شود."
+        ? "ارسال لینک بازیابی ایمیلی هنوز فعال نیست. از راهنمای پشتیبانی برای بازیابی حساب استفاده کنید."
+        : "ارسال کد پیامکی هنوز فعال نیست. از راهنمای پشتیبانی برای بازیابی حساب استفاده کنید."
     );
   }
 
@@ -21,7 +21,7 @@ export default function ForgotPasswordForm() {
       <span className="business-login-icon"><RotateCcw size={22} /></span>
       <span className="section-kicker">بازیابی رمز</span>
       <h1>انتخاب روش بازیابی</h1>
-      <p>در زمان بهره‌برداری، ایمیل مسیر اصلی و پیامک مسیر جایگزین خواهد بود.</p>
+      <p>بازیابی خودکار هنوز فعال نشده است. برای حساب‌های Pilot می‌توانید از پشتیبانی خونه‌نما برای بازیابی امن حساب کمک بگیرید.</p>
 
       <div className="recovery-methods">
         <button type="button" className={method === "email" ? "is-active" : ""} onClick={() => setMethod("email")}>
@@ -52,7 +52,7 @@ export default function ForgotPasswordForm() {
 
       {message && <div className="business-login-message">{message}</div>}
 
-      <a className="admin-login-entry" href="/business/login"><ArrowRight size={14} /> بازگشت به ورود</a>
+      <a className="admin-login-entry" href="/help">راهنما و پشتیبانی</a>\n      <a className="admin-login-entry" href="/business/login"><ArrowRight size={14} /> بازگشت به ورود</a>
     </div>
   );
 }
