@@ -5,6 +5,7 @@ import BusinessPublicationPanel from "@/components/BusinessPublicationPanel";
 import BusinessPublicLinkCard from "@/components/BusinessPublicLinkCard";
 import BusinessMediaManager from "@/components/BusinessMediaManager";
 import BusinessLeadInbox from "@/components/BusinessLeadInbox";
+import BusinessReviewPanel from "@/components/BusinessReviewPanel";
 
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -229,6 +230,8 @@ export default function BusinessDashboardContent() {
 
           <BusinessLeadInbox />
         </div>
+
+        <BusinessReviewPanel />
 
         <BusinessPublicationPanel
           initialStatus={(profile.status || "") as any}
