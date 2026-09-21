@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { createBusinessSession } from "@/lib/server/business-session";
+import { createBusinessSession, getBusinessSession } from "@/lib/server/business-session";
 import {
   BUSINESS_CATEGORIES,
   BUSINESS_CATEGORY_BY_SLUG,
@@ -153,6 +153,16 @@ export async function POST(request: Request) {
     }
 
     stage = "password-check";
+    if (userId && !existingUser?.password_hash) {
+      const activeSession = await getBusinessSession(request);
+      if (!activeSession?.user_id || String(activeSession.user_id) !== String(userId)) {
+        return Response.json(
+          { ok: false, error: "PASSWORD_SETUP_REQUIRED" },
+          { status: 409 }
+        );
+      }
+    }
+
     if (userId && existingUser?.password_hash) {
       const valid = await verifyPassword(
         password,
