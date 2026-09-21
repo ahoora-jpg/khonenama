@@ -1,7 +1,8 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { businesses } from "@/lib/demo-data";
-import { ArrowUpLeft, BadgeCheck, MapPin, Star } from "lucide-react";
+import { listPublishedBusinesses } from "@/lib/server/public-businesses";
+import { ArrowUpLeft, BadgeCheck, BriefcaseBusiness, Crown, MapPin, Star } from "lucide-react";
 
 type Faq = { question: string; answer: string };
 type GuideLink = { title: string; text: string; href: string };
@@ -15,7 +16,7 @@ export type LocalSeoLandingProps = {
   guides: GuideLink[];
 };
 
-export default function LocalSeoLanding({
+export default async function LocalSeoLanding({
   categorySlug,
   h1,
   intro,
@@ -23,9 +24,57 @@ export default function LocalSeoLanding({
   faqs,
   guides,
 }: LocalSeoLandingProps) {
-  const matches = businesses.filter(
-    (business) => business.city === "کرج" && business.category === categorySlug
-  );
+  const liveBusinesses = await listPublishedBusinesses({
+    categorySlug,
+    city: "کرج",
+    limit: 24,
+  });
+
+  const live = liveBusinesses.map((business) => ({
+    slug: business.slug,
+    name: business.name,
+    description: business.description,
+    city: business.city,
+    area: business.area,
+    verified:
+      business.verificationStatus === "verified" ||
+      business.verificationStatus === "professional",
+    rating: business.rating,
+    reviewCount: business.reviewCount,
+    planCode: business.planCode,
+    coverUrl:
+      business.media.find((item) => item.kind === "cover")?.url ||
+      business.media[0]?.url ||
+      "",
+    demo: false,
+  }));
+
+  const liveSlugs = new Set(live.map((item) => item.slug));
+  const demos = businesses
+    .filter(
+      (business) =>
+        business.city === "کرج" &&
+        business.category === categorySlug &&
+        !liveSlugs.has(business.slug)
+    )
+    .map((business) => ({
+      slug: business.slug,
+      name: business.name,
+      description: business.description,
+      city: business.city,
+      area: business.area,
+      verified: business.verified,
+      rating: business.rating,
+      reviewCount: business.reviewCount,
+      planCode: business.featured ? ("premium" as const) : ("free" as const),
+      coverUrl:
+        business.media?.find((item) => item.cover)?.url ||
+        business.media?.[0]?.url ||
+        "",
+      demo: true,
+    }));
+
+  const matches = [...live, ...demos];
 
   const itemListJsonLd = {
     "@context": "https://schema.org",
@@ -83,17 +132,33 @@ export default function LocalSeoLanding({
             {matches.length > 0 ? (
               <div className="business-grid">
                 {matches.map((business) => (
-                  <a className="business-card" href={"/business/" + business.slug} key={business.slug}>
-                    <div className="business-media business-generic"><div className="business-media-shape" /></div>
+                  <a className={"business-card plan-card-" + business.planCode} href={"/business/" + business.slug} key={business.slug}>
+                    <div className="business-media business-generic">
+                      {business.coverUrl ? (
+                        <img className="business-card-cover" src={business.coverUrl} alt={business.name} loading="lazy" />
+                      ) : (
+                        <div className="business-media-shape" />
+                      )}
+                      {business.demo && <span className="demo-label">پروفایل نمونه</span>}
+                    </div>
                     <div className="business-content">
                       <div className="business-title-row">
                         <h3>{business.name}</h3>
                         {business.verified && <BadgeCheck size={18} className="verified-icon" />}
+                        {business.planCode === "pro" && (
+                          <span className="plan-listing-badge is-pro"><BriefcaseBusiness size={12} /> حرفه‌ای</span>
+                        )}
+                        {business.planCode === "premium" && (
+                          <span className="plan-listing-badge is-premium"><Crown size={12} /> ویژه</span>
+                        )}
                       </div>
                       <p>{business.description}</p>
                       <div className="business-meta-row">
                         <span><MapPin size={14} /> {business.city}، {business.area}</span>
-                        <span><Star size={14} fill="currentColor" /> {business.rating}</span>
+                        <span>
+                          <Star size={14} fill={business.reviewCount ? "currentColor" : "none"} />
+                          {business.reviewCount ? business.rating : "جدید"}
+                        </span>
                       </div>
                     </div>
                   </a>
@@ -101,7 +166,8 @@ export default function LocalSeoLanding({
               </div>
             ) : (
               <div className="category-empty glass-panel">
-                <strong>پروفایل‌های این دسته در کرج در حال تکمیل هستند.</strong>
+                <strong>هنوز کسب‌وکار ثبت‌شده‌ای در این دسته نداریم.</strong>
+                <a className="pill-button dark" href="/register-business">ثبت رایگان کسب‌وکار</a>
               </div>
             )}
           </section>
