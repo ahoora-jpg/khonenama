@@ -26,6 +26,7 @@ export type PublicBusiness = {
   promoted: boolean;
   rating: number;
   reviewCount: number;
+  reviews: { id: number; name: string; rating: number; body: string; verifiedInteraction: boolean; createdAt: string }[];
 };
 
 function getDb() {
@@ -40,7 +41,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
 
   const result: PublicBusiness[] = [];
   for (const row of rows) {
-    const [servicesResult, categoriesResult, reviewResult, planResult, promotionResult, mediaResult, hoursResult] = await Promise.all([
+    const [servicesResult, categoriesResult, reviewResult, planResult, promotionResult, mediaResult, hoursResult, reviewsResult] = await Promise.all([
       db
         .prepare(
           "SELECT s.name FROM business_services bs JOIN services s ON s.id = bs.service_id WHERE bs.business_id = ? ORDER BY s.id"
@@ -80,6 +81,13 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
       db
         .prepare(
           "SELECT weekday, opens_at, closes_at, is_closed FROM business_hours WHERE business_id = ? ORDER BY weekday"
+        )
+        .bind(row.id)
+        .all(),
+      db
+        .prepare(
+          "SELECT id, rating, title, body, verified_interaction, created_at FROM reviews " +
+          "WHERE business_id = ? AND status = 'published' ORDER BY created_at DESC, id DESC LIMIT 8"
         )
         .bind(row.id)
         .all(),
@@ -126,6 +134,14 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
       promoted: Boolean(promotionResult?.id) || planResult?.code === "premium",
       rating: Number(reviewResult?.rating || 0),
       reviewCount: Number(reviewResult?.review_count || 0),
+      reviews: (reviewsResult?.results || []).map((item: any) => ({
+        id: Number(item.id),
+        name: item.title || "مشتری خونه‌نما",
+        rating: Number(item.rating || 0),
+        body: item.body || "",
+        verifiedInteraction: Boolean(item.verified_interaction),
+        createdAt: item.created_at || "",
+      })),
     });
   }
 
