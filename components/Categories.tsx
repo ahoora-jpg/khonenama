@@ -1,4 +1,4 @@
-import { ArrowUpLeft, Layers3, PaintRoller, PanelsTopLeft, Ruler, Sofa } from "lucide-react";
+import { ArrowUpLeft, Layers3, PaintRoller, PanelsTopLeft, Ruler, Sofa, Wifi } from "lucide-react";
 
 const categories = [
   { title: "پرده و متعلقات", description: "پارچه، زبرا، شید، پانچ، دوخت و نصب", className: "category-card category-large category-curtain", icon: PanelsTopLeft, href: "/category/curtain", number: "01" },
@@ -6,6 +6,7 @@ const categories = [
   { title: "موکت", description: "خانگی، اداری و تایلی", className: "category-card category-dark", icon: Ruler, href: "/category/carpet", number: "03" },
   { title: "کاغذ دیواری", description: "مدرن، کلاسیک و مینیمال", className: "category-card category-wall", icon: PaintRoller, href: "/category/wallpaper", number: "04" },
   { title: "طراحی داخلی", description: "طراح، معمار و مجری", className: "category-card category-design", icon: Sofa, href: "/category/interior-design", number: "05" },
+  { title: "خانه هوشمند", description: "روشنایی، پرده برقی، قفل و سناریوهای هوشمند", className: "category-card category-smart", icon: Wifi, href: "/category/smart-home", number: "06" },
 ];
 
 export default function Categories() {
