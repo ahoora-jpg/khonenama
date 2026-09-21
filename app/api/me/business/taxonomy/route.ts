@@ -48,12 +48,20 @@ export async function PUT(request: Request) {
   }
 
   const body = await request.json().catch(() => ({}));
-  const categories = Array.isArray(body?.categories)
-    ? [...new Set(body.categories.filter((item: unknown) => typeof item === "string" && isBusinessCategorySlug(item)))]
+  const categories: string[] = Array.isArray(body?.categories)
+    ? [...new Set(
+        body.categories
+          .filter((item: unknown): item is string => typeof item === "string")
+          .filter((item: string) => isBusinessCategorySlug(item))
+      )]
     : [];
-  const allowed = new Set(servicesForCategories(categories));
-  const services = Array.isArray(body?.services)
-    ? [...new Set(body.services.filter((item: unknown) => typeof item === "string" && allowed.has(item)))]
+  const allowed = new Set<string>(servicesForCategories(categories));
+  const services: string[] = Array.isArray(body?.services)
+    ? [...new Set(
+        body.services
+          .filter((item: unknown): item is string => typeof item === "string")
+          .filter((item: string) => allowed.has(item))
+      )]
     : [];
 
   if (!categories.length || !services.length) {
