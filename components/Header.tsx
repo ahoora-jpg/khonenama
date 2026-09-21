@@ -16,6 +16,7 @@ const links = [
   ["فروشگاه‌های منتخب", "/#featured"],
   ["چطور کار می‌کند؟", "/#how-it-works"],
   ["راهنماها", "/magazine"],
+  ["پیگیری درخواست", "/request-status"],
   ["برغان کرج", "/karaj/baraghan"],
 ] as const;
 
