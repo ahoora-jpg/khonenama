@@ -1665,3 +1665,98 @@
     margin-inline-start:0;
   }
 }
+
+
+/* Business hours */
+.profile-hours-card {
+  margin-top:14px;
+  display:grid;
+  gap:12px;
+}
+.profile-hours-list {
+  display:grid;
+  gap:7px;
+}
+.profile-hours-row {
+  display:grid;
+  grid-template-columns:90px 82px minmax(120px,1fr) minmax(120px,1fr);
+  gap:8px;
+  align-items:center;
+  padding:8px 10px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fffdfa;
+}
+.profile-hours-row.is-closed {
+  background:#f4f0ea;
+  opacity:.76;
+}
+.profile-hours-row > strong {
+  font-size:9px;
+}
+.profile-hours-row label {
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.profile-hours-row label > span {
+  font-size:7px;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.profile-hours-row input[type="time"] {
+  width:100%;
+  min-height:34px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:white;
+  padding:4px 7px;
+  font-size:8px;
+}
+.hours-closed-toggle {
+  cursor:pointer;
+  font-weight:850;
+}
+.profile-hours-loading,
+.profile-hours-message {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color:var(--muted);
+  font-size:8px;
+}
+.public-hours {
+  margin-top:9px;
+  padding-top:9px;
+  border-top:1px solid var(--line);
+  display:grid;
+  gap:5px;
+}
+.public-hours > strong {
+  display:flex;
+  align-items:center;
+  gap:5px;
+  font-size:9px;
+}
+.public-hours > span {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  color:#6e675f;
+}
+.public-hours b {
+  font-size:8px;
+}
+.public-hours small {
+  font-size:7px;
+}
+
+@media (max-width:650px) {
+  .profile-hours-row {
+    grid-template-columns:1fr auto;
+  }
+  .profile-hours-row label:not(.hours-closed-toggle) {
+    grid-column:span 1;
+  }
+}
