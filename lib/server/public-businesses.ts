@@ -30,6 +30,12 @@ export type PublicBusiness = {
   reviews: { id: number; name: string; rating: number; body: string; verifiedInteraction: boolean; createdAt: string }[];
 };
 
+const INTERNAL_TEST_BUSINESS_SLUGS = new Set(["alayy-dkvr-krj"]);
+
+export function isInternalTestBusinessSlug(slug: string) {
+  return INTERNAL_TEST_BUSINESS_SLUGS.has(slug);
+}
+
 function getDb() {
   return (env as any).DB;
 }
@@ -194,8 +200,12 @@ export async function listPublishedBusinesses(options: {
     if (!db) return [];
 
     await ensureVisibilitySchema(db);
-    const where = ["b.status = 'published'", "NOT EXISTS (SELECT 1 FROM business_visibility_controls bvc WHERE bvc.business_id = b.id AND bvc.owner_paused = 1)"];
-    const binds: any[] = [];
+    const where = [
+      "b.status = 'published'",
+      "NOT EXISTS (SELECT 1 FROM business_visibility_controls bvc WHERE bvc.business_id = b.id AND bvc.owner_paused = 1)",
+      "b.slug NOT IN (" + Array.from(INTERNAL_TEST_BUSINESS_SLUGS).map(() => "?").join(",") + ")",
+    ];
+    const binds: any[] = [...INTERNAL_TEST_BUSINESS_SLUGS];
 
     if (options.categorySlug) {
       where.push(
