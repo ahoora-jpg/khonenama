@@ -76,55 +76,30 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       throw new Error("حجم هر تصویر باید کمتر از ۸ مگابایت باشد.");
     }
 
-    const authResponse = await fetch("/api/me/business/media/auth", { cache: "no-store" });
-    const auth = await authResponse.json().catch(() => ({}));
-
-    if (!authResponse.ok || !auth?.ok) {
-      if (auth?.error === "IMAGEKIT_NOT_CONFIGURED") {
-        setConfigured(false);
-        throw new Error("فضای تصاویر هنوز به سایت متصل نشده است.");
-      }
-      throw new Error("مجوز آپلود دریافت نشد.");
-    }
-
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, "_");
     const form = new FormData();
     form.append("file", file);
-    form.append("fileName", safeName || "business-image.jpg");
-    form.append("publicKey", auth.publicKey);
-    form.append("token", auth.token);
-    form.append("signature", auth.signature);
-    form.append("expire", String(auth.expire));
-    form.append("folder", auth.folder);
-    form.append("useUniqueFileName", "true");
-    form.append("tags", "khonenama,business-gallery");
 
-    const uploadResponse = await fetch("https://upload.imagekit.io/api/v1/files/upload", {
+    const response = await fetch("/api/me/business/media/upload", {
       method: "POST",
       body: form,
     });
 
-    const uploaded = await uploadResponse.json().catch(() => ({}));
-    if (!uploadResponse.ok || !uploaded?.fileId || !uploaded?.url) {
-      throw new Error(uploaded?.message || "آپلود تصویر انجام نشد.");
-    }
-
-    const saveResponse = await fetch("/api/me/business/media", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        fileId: uploaded.fileId,
-        url: uploaded.url,
-        filePath: uploaded.filePath,
-        thumbnailUrl: uploaded.thumbnailUrl || "",
-        altText: "",
-        kind: media.length === 0 ? "cover" : "image",
-      }),
-    });
-
-    const saved = await saveResponse.json().catch(() => ({}));
-    if (!saveResponse.ok || !saved?.ok) {
-      throw new Error("تصویر آپلود شد اما ثبت آن در پروفایل کامل نشد.");
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || !result?.ok) {
+      if (result?.error === "IMAGEKIT_NOT_CONFIGURED") {
+        setConfigured(false);
+        throw new Error("فضای تصاویر هنوز به سایت متصل نشده است.");
+      }
+      if (result?.error === "GALLERY_LIMIT_REACHED") {
+        throw new Error("ظرفیت تصاویر این پلن تکمیل شده است.");
+      }
+      if (result?.error === "FILE_TOO_LARGE") {
+        throw new Error("حجم هر تصویر باید کمتر از ۸ مگابایت باشد.");
+      }
+      if (result?.error === "INVALID_FILE_TYPE") {
+        throw new Error("فرمت این تصویر مجاز نیست.");
+      }
+      throw new Error("آپلود تصویر انجام نشد.");
     }
   }
 
@@ -240,7 +215,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
 
       {!configured && (
         <div className="business-media-config-note">
-          اتصال فضای تصاویر هنوز کامل نشده است. بعد از ثبت کلیدهای سرویس، همین بخش بدون تغییر دیگری فعال می‌شود.
+          اتصال فضای تصاویر موقتاً در دسترس نیست. دوباره وارد پنل شوید یا با پشتیبانی تماس بگیرید.
         </div>
       )}
 
