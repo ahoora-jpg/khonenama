@@ -19,6 +19,10 @@ export const editorialVisuals = {
     src: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1600&q=82",
     alt: "طراحی داخلی گرم و مدرن خانه",
   },
+  smartHome: {
+    src: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1600&q=82",
+    alt: "فضای داخلی مدرن با نورپردازی و تجهیزات خانه هوشمند",
+  },
 } as const;
 
 export function getGuideVisual(category: string) {
@@ -27,6 +31,7 @@ export function getGuideVisual(category: string) {
   if (category === "موکت") return editorialVisuals.carpet;
   if (category === "کاغذ دیواری") return editorialVisuals.wallpaper;
   if (category === "طراحی داخلی") return editorialVisuals.interiorDesign;
+  if (category === "خانه هوشمند") return editorialVisuals.smartHome;
   return editorialVisuals.interiorDesign;
 }
 
@@ -35,5 +40,6 @@ export function getCategoryVisual(slug: string) {
   if (slug === "flooring") return editorialVisuals.flooring;
   if (slug === "carpet") return editorialVisuals.carpet;
   if (slug === "wallpaper") return editorialVisuals.wallpaper;
+  if (slug === "smart-home") return editorialVisuals.smartHome;
   return editorialVisuals.interiorDesign;
 }
