@@ -20,6 +20,7 @@ async function resolveBusiness(slug: string) {
       area: demo.area,
       address: "",
       phone: "",
+      whatsapp: "",
       website: "",
       instagram: "",
       verified: demo.verified,
@@ -55,6 +56,7 @@ async function resolveBusiness(slug: string) {
     area: live.area,
     address: live.address,
     phone: live.phone,
+    whatsapp: live.whatsapp,
     website: live.website,
     instagram: live.instagram,
     verified: live.verificationStatus === "verified" || live.verificationStatus === "professional",
@@ -233,6 +235,16 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                 ) : (
                   <a className="pill-button dark" href="#contact"><Phone size={17} /> اطلاعات تماس</a>
                 )}
+                {business.whatsapp && (
+                  <a
+                    className="pill-button profile-secondary"
+                    href={"https://wa.me/" + business.whatsapp.replace(/\D/g, "").replace(/^0/, "98")}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <MessageCircle size={17} /> واتساپ
+                  </a>
+                )}
                 <a className="pill-button profile-secondary" href="#quote"><MessageCircle size={17} /> درخواست قیمت</a>
               </div>
             </div>
@@ -249,6 +261,15 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
               <h3>اطلاعات کسب‌وکار</h3>
               {business.address && <p><MapPin size={14} /> {business.address}</p>}
               {business.phone && <a href={"tel:" + business.phone}><Phone size={14} /> {business.phone}</a>}
+              {business.whatsapp && (
+                <a
+                  href={"https://wa.me/" + business.whatsapp.replace(/\D/g, "").replace(/^0/, "98")}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <MessageCircle size={14} /> واتساپ
+                </a>
+              )}
               {business.website && <a href={business.website} target="_blank" rel="noreferrer"><Globe2 size={14} /> وب‌سایت</a>}
               {business.instagram && <a href={business.instagram.startsWith("http") ? business.instagram : "https://instagram.com/" + business.instagram.replace(/^@/, "")} target="_blank" rel="noreferrer"><Instagram size={14} /> اینستاگرام</a>}
               {business.hours.length > 0 && (
