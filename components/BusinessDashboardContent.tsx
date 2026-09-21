@@ -4,6 +4,7 @@ import BusinessLogoutButton from "@/components/BusinessLogoutButton";
 import BusinessPublicationPanel from "@/components/BusinessPublicationPanel";
 import BusinessPublicLinkCard from "@/components/BusinessPublicLinkCard";
 import BusinessMediaManager from "@/components/BusinessMediaManager";
+import BusinessLeadInbox from "@/components/BusinessLeadInbox";
 
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -226,17 +227,7 @@ export default function BusinessDashboardContent() {
             <p>موقعیت فعلی: {location || "ثبت نشده"}</p>
           </section>
 
-          <section className="dashboard-panel glass-panel" id="leads">
-            <div className="panel-heading">
-              <div><span className="section-kicker">درخواست‌های مشتری</span><h2>Leadها</h2></div>
-              <MessageCircle size={20} />
-            </div>
-            <div className="dashboard-empty-state">
-              <MessageCircle size={22} />
-              <strong>هنوز درخواستی ثبت نشده</strong>
-              <small>وقتی مشتری درخواست مرتبط ارسال کند، اینجا نمایش داده می‌شود.</small>
-            </div>
-          </section>
+          <BusinessLeadInbox />
         </div>
 
         <BusinessPublicationPanel
