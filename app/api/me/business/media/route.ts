@@ -1,6 +1,19 @@
 import { normalizePlanCode, planPresentation } from "@/lib/business-entitlements";
 import { getOwnedBusiness, ensureBusinessMediaSchema } from "@/lib/server/business-media";
-import { deleteImageKitFile, imageKitConfigured } from "@/lib/server/imagekit";
+import {
+  deleteImageKitFile,
+  getImageKitFileDetails,
+  imageKitConfigured,
+} from "@/lib/server/imagekit";
+
+const MAX_MEDIA_BYTES = 8 * 1024 * 1024;
+const ALLOWED_IMAGE_MIME = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/avif",
+  "image/gif",
+]);
 
 function cleanText(value: unknown, max = 500) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
@@ -54,13 +67,10 @@ export async function POST(request: Request) {
 
   const body = await request.json().catch(() => ({}));
   const providerFileId = cleanText(body?.fileId, 220);
-  const fileUrl = cleanText(body?.url, 1200);
-  const filePath = cleanText(body?.filePath, 700);
-  const thumbnailUrl = cleanText(body?.thumbnailUrl, 1200);
   const altText = cleanText(body?.altText, 300);
   const kind = body?.kind === "logo" || body?.kind === "cover" ? body.kind : "image";
 
-  if (!providerFileId || !fileUrl || !filePath) {
+  if (!providerFileId) {
     return Response.json({ ok: false, error: "INVALID_MEDIA" }, { status: 400 });
   }
 
@@ -76,6 +86,45 @@ export async function POST(request: Request) {
   if (currentCount >= galleryLimit) {
     return Response.json(
       { ok: false, error: "GALLERY_LIMIT_REACHED", limit: galleryLimit },
+      { status: 409 }
+    );
+  }
+
+  let verified;
+  try {
+    verified = await getImageKitFileDetails(providerFileId);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    if (message === "IMAGEKIT_NOT_CONFIGURED") {
+      return Response.json({ ok: false, error: "IMAGEKIT_NOT_CONFIGURED" }, { status: 503 });
+    }
+    return Response.json({ ok: false, error: "MEDIA_VERIFICATION_FAILED" }, { status: 400 });
+  }
+
+  const businessFolder = "/khonenama/businesses/" + owned.business.id + "/";
+  if (
+    verified.fileId !== providerFileId ||
+    !verified.filePath.startsWith(businessFolder) ||
+    verified.fileType !== "image" ||
+    !ALLOWED_IMAGE_MIME.has(verified.mime) ||
+    !Number.isFinite(verified.size) ||
+    verified.size < 1 ||
+    verified.size > MAX_MEDIA_BYTES ||
+    !verified.url
+  ) {
+    return Response.json({ ok: false, error: "INVALID_MEDIA" }, { status: 400 });
+  }
+
+  const duplicate = await owned.db
+    .prepare(
+      "SELECT id FROM business_media WHERE business_id = ? AND provider_file_id = ? LIMIT 1"
+    )
+    .bind(owned.business.id, providerFileId)
+    .first();
+
+  if (duplicate?.id) {
+    return Response.json(
+      { ok: false, error: "MEDIA_ALREADY_REGISTERED" },
       { status: 409 }
     );
   }
@@ -102,9 +151,9 @@ export async function POST(request: Request) {
       altText,
       sortOrder,
       providerFileId,
-      fileUrl,
-      filePath,
-      thumbnailUrl
+      verified.url,
+      verified.filePath,
+      verified.thumbnailUrl
     )
     .first();
 
