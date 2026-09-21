@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowLeft, Eye, EyeOff, KeyRound, LockKeyhole, Phone, ShieldCheck } from "lucide-react";
 
 export default function BusinessLoginForm() {
@@ -10,13 +10,38 @@ export default function BusinessLoginForm() {
   const [message, setMessage] = useState("");
   const [credentialError, setCredentialError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [phoneError, setPhoneError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const phoneRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
   async function submit() {
     setMessage("");
     setCredentialError(false);
+    setPhoneError("");
+    setPasswordError("");
 
-    if (phone.trim().length < 10 || password.length < 8) {
-      setMessage("شماره همراه و رمز عبور را کامل وارد کنید.");
+    const actualPhone = phoneRef.current?.value ?? phone;
+    const actualPassword = passwordRef.current?.value ?? password;
+
+    if (actualPhone !== phone) setPhone(actualPhone);
+    if (actualPassword !== password) setPassword(actualPassword);
+
+    let invalid = false;
+    if (actualPhone.trim().length < 10) {
+      setPhoneError("شماره همراه را کامل وارد کنید.");
+      invalid = true;
+    }
+    if (actualPassword.length < 8) {
+      setPasswordError("رمز عبور باید حداقل ۸ کاراکتر باشد.");
+      invalid = true;
+    }
+    if (invalid) {
+      setMessage("اطلاعات ورود را کامل کنید.");
+      requestAnimationFrame(() => {
+        if (actualPhone.trim().length < 10) phoneRef.current?.focus();
+        else passwordRef.current?.focus();
+      });
       return;
     }
 
@@ -27,7 +52,7 @@ export default function BusinessLoginForm() {
       const response = await fetch("/api/auth/business/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, password }),
+        body: JSON.stringify({ phone: actualPhone, password: actualPassword }),
         signal: controller.signal,
       });
 
@@ -82,14 +107,21 @@ export default function BusinessLoginForm() {
         <div className="form-input">
           <Phone size={17} />
           <input
+            ref={phoneRef}
             name="khonenama_business_phone"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => {
+              setPhone(e.target.value);
+              if (phoneError) setPhoneError("");
+            }}
             inputMode="tel"
             autoComplete="off"
             placeholder="09..."
           />
         </div>
+        {phoneError && (
+          <div className="login-inline-error" role="alert">{phoneError}</div>
+        )}
       </label>
 
       <label>
@@ -97,12 +129,14 @@ export default function BusinessLoginForm() {
         <div className={credentialError ? "form-input login-input-error" : "form-input"}>
           <LockKeyhole size={17} />
           <input
+            ref={passwordRef}
             id="business-login-password"
             name="khonenama_business_password"
             dir="ltr"
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
+              if (passwordError) setPasswordError("");
               if (credentialError) {
                 setCredentialError(false);
                 setMessage("");
@@ -126,6 +160,9 @@ export default function BusinessLoginForm() {
             <span>{showPassword ? "پنهان" : "نمایش"}</span>
           </button>
         </div>
+        {passwordError && (
+          <div className="login-inline-error" role="alert">{passwordError}</div>
+        )}
         {credentialError && (
           <div className="login-inline-error" role="alert" aria-live="assertive">
             رمز عبور یا شماره همراه صحیح نیست. دوباره بررسی کنید.
