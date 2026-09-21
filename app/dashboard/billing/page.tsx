@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BusinessPlanCards from "@/components/BusinessPlanCards";
+import BusinessSessionGuard from "@/components/BusinessSessionGuard";
 import { CreditCard, FileText, ReceiptText, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -15,6 +16,7 @@ export default function BillingPage() {
       <Header />
       <section className="inner-page dashboard-page">
         <div className="shell">
+          <BusinessSessionGuard nextPath="/dashboard/billing">
           <div className="dashboard-heading">
             <div>
               <span className="section-kicker">صورتحساب و اشتراک</span>
@@ -59,6 +61,7 @@ export default function BillingPage() {
               </div>
             </section>
           </div>
+          </BusinessSessionGuard>
         </div>
       </section>
       <Footer />
