@@ -65,12 +65,10 @@ async function recordLoginFailure(db: any, keyHash: string) {
     "SELECT failures, window_started FROM auth_rate_limits WHERE key_hash = ? LIMIT 1"
   ).bind(keyHash).first();
 
-  const stale = !current?.window_started || Boolean(
-    await db.prepare("SELECT CASE WHEN ? < datetime('now', ?) THEN 1 ELSE 0 END AS stale")
-      .bind(String(current?.window_started || ""), "-" + LOGIN_WINDOW_MINUTES + " minutes")
-      .first()
-      .then((row: any) => row?.stale)
-  );
+  const windowStartedMs = Date.parse(String(current?.window_started || ""));
+  const stale =
+    !Number.isFinite(windowStartedMs) ||
+    Date.now() - windowStartedMs > LOGIN_WINDOW_MINUTES * 60 * 1000;
 
   const failures = stale ? 1 : Number(current?.failures || 0) + 1;
   const blockedUntil = failures >= LOGIN_MAX_FAILURES
