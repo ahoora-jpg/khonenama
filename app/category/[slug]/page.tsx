@@ -52,6 +52,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       planCode: business.planCode,
       promoted: business.promoted,
       coverUrl: business.media.find((item) => item.kind === "cover")?.url || business.media[0]?.url || "",
+      source: "live" as const,
     })),
     ...demoMatches
       .filter((business) => !liveSlugs.has(business.slug))
@@ -60,6 +61,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         planCode: business.featured ? "premium" as const : "free" as const,
         promoted: Boolean(business.featured),
         coverUrl: business.media?.find((item) => item.cover)?.url || business.media?.[0]?.url || "",
+        source: "demo" as const,
       })),
   ];
   const relatedGuides = guides.filter((guide) => seo.guides.includes(guide.slug));
@@ -161,6 +163,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                       <div className="business-title-row">
                         <h3>{business.name}</h3>
                         {business.verified && <BadgeCheck size={18} className="verified-icon" />}
+                        {business.source === "demo" && <span className="demo-result-badge">نمونه نمایشی</span>}
                         {business.planCode === "pro" && (
                           <span className="plan-listing-badge is-pro"><BriefcaseBusiness size={13} /> حرفه‌ای</span>
                         )}
