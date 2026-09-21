@@ -6,9 +6,9 @@ import { getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, BookOpen, Clock3 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "مجله خونه‌نما | راهنمای پرده، کفپوش و دکوراسیون منزل",
+  title: "مجله خونه‌نما | راهنمای دکوراسیون، انتخاب متریال و خانه هوشمند",
   description:
-    "راهنماهای کاربردی خونه‌نما درباره پرده، زبرا، شید، پارکت، لمینت، کفپوش و انتخاب خدمات دکوراسیون منزل.",
+    "راهنماهای کاربردی خونه‌نما درباره پرده، پارکت، کفپوش، دیوارپوش، طراحی داخلی، نورپردازی و خانه هوشمند.",
   alternates: { canonical: "/magazine" },
 };
 
