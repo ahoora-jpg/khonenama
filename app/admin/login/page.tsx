@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import AdminLoginForm from "@/components/AdminLoginForm";
 
 export const metadata: Metadata = {
-  title: "ورود مدیریت | خونه‌نما",
+  title: "ورود مدیریت",
   robots: { index: false, follow: false },
 };
 
