@@ -1,8 +1,24 @@
+import { normalizePlanCode, planPresentation } from "@/lib/business-entitlements";
 import { getOwnedBusiness, ensureBusinessMediaSchema } from "@/lib/server/business-media";
 import { deleteImageKitFile, imageKitConfigured } from "@/lib/server/imagekit";
 
 function cleanText(value: unknown, max = 500) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
+}
+
+async function getGalleryLimit(db: any, businessId: number) {
+  const planRow = await db
+    .prepare(
+      "SELECT p.code FROM subscriptions s JOIN plans p ON p.id = s.plan_id " +
+        "WHERE s.business_id = ? AND s.status = 'active' " +
+        "AND (s.ends_at IS NULL OR s.ends_at > CURRENT_TIMESTAMP) " +
+        "ORDER BY s.id DESC LIMIT 1"
+    )
+    .bind(businessId)
+    .first();
+
+  const planCode = normalizePlanCode(planRow?.code);
+  return planPresentation[planCode].galleryLimit;
 }
 
 export async function GET(request: Request) {
@@ -48,12 +64,23 @@ export async function POST(request: Request) {
     return Response.json({ ok: false, error: "INVALID_MEDIA" }, { status: 400 });
   }
 
-  const countRow = await owned.db
-    .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ?")
-    .bind(owned.business.id)
-    .first();
+  const [countRow, galleryLimit] = await Promise.all([
+    owned.db
+      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ?")
+      .bind(owned.business.id)
+      .first(),
+    getGalleryLimit(owned.db, Number(owned.business.id)),
+  ]);
 
-  const sortOrder = Number(countRow?.count || 0) + 1;
+  const currentCount = Number(countRow?.count || 0);
+  if (currentCount >= galleryLimit) {
+    return Response.json(
+      { ok: false, error: "GALLERY_LIMIT_REACHED", limit: galleryLimit },
+      { status: 409 }
+    );
+  }
+
+  const sortOrder = currentCount + 1;
 
   if (kind === "cover") {
     await owned.db
