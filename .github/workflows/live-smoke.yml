@@ -50,7 +50,10 @@ jobs:
 
           sitemap="$(expect_status 200 GET "$BASE/sitemap.xml")"
           echo "$sitemap" | grep -q '/category/smart-home'
-          echo "$sitemap" | grep -q '/business/alayy-dkvr-krj'
+          if echo "$sitemap" | grep -q '/business/alayy-dkvr-krj'; then
+            echo "Internal test business must not be present in sitemap"
+            exit 1
+          fi
 
           robots="$(expect_status 200 GET "$BASE/robots.txt")"
           echo "$robots" | grep -q 'Disallow: /dashboard'
