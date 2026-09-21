@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import QuoteRequestForm from "@/components/QuoteRequestForm";
+import BusinessAnalyticsTracker from "@/components/BusinessAnalyticsTracker";
 import BusinessReviews from "@/components/BusinessReviews";
 import { businesses as demoBusinesses, getBusiness } from "@/lib/demo-data";
 import { getPublishedBusiness, getBusinessSlugRedirect, listPublishedBusinesses } from "@/lib/server/public-businesses";
@@ -189,6 +190,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
       />
+      {business.source === "d1" && <BusinessAnalyticsTracker slug={business.slug} />}
       <Header />
       <section className="inner-page business-profile-page">
         <div className="shell">
@@ -230,21 +232,23 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
 
               <div className="profile-actions">
                 {business.phone ? (
-                  <a className="pill-button dark" href={"tel:" + business.phone}><Phone size={17} /> تماس</a>
+                  <a className="pill-button dark" data-analytics-event="phone" href={"tel:" + business.phone}><Phone size={17} /> تماس</a>
                 ) : (
                   <a className="pill-button dark" href="#contact"><Phone size={17} /> اطلاعات تماس</a>
                 )}
                 {business.whatsapp && (
                   <a
                     className="pill-button profile-secondary"
-                    href={"https://wa.me/" + business.whatsapp.replace(/\D/g, "").replace(/^0/, "98")}
+                    data-analytics-event="whatsapp"
+                    data-analytics-event="whatsapp"
+                  href={"https://wa.me/" + business.whatsapp.replace(/\D/g, "").replace(/^0/, "98")}
                     target="_blank"
                     rel="noreferrer"
                   >
                     <MessageCircle size={17} /> واتساپ
                   </a>
                 )}
-                <a className="pill-button profile-secondary" href="#quote"><MessageCircle size={17} /> درخواست قیمت</a>
+                <a className="pill-button profile-secondary" data-analytics-event="quote_start" href="#quote"><MessageCircle size={17} /> درخواست قیمت</a>
               </div>
             </div>
           </div>
@@ -259,7 +263,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
             <aside className="profile-side-card glass-panel" id="contact">
               <h3>اطلاعات کسب‌وکار</h3>
               {business.address && <p><MapPin size={14} /> {business.address}</p>}
-              {business.phone && <a href={"tel:" + business.phone}><Phone size={14} /> {business.phone}</a>}
+              {business.phone && <a data-analytics-event="phone" href={"tel:" + business.phone}><Phone size={14} /> {business.phone}</a>}
               {business.whatsapp && (
                 <a
                   href={"https://wa.me/" + business.whatsapp.replace(/\D/g, "").replace(/^0/, "98")}
@@ -269,8 +273,8 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                   <MessageCircle size={14} /> واتساپ
                 </a>
               )}
-              {business.website && <a href={business.website} target="_blank" rel="noreferrer"><Globe2 size={14} /> وب‌سایت</a>}
-              {business.instagram && <a href={business.instagram.startsWith("http") ? business.instagram : "https://instagram.com/" + business.instagram.replace(/^@/, "")} target="_blank" rel="noreferrer"><Instagram size={14} /> اینستاگرام</a>}
+              {business.website && <a data-analytics-event="website" href={business.website} target="_blank" rel="noreferrer"><Globe2 size={14} /> وب‌سایت</a>}
+              {business.instagram && <a data-analytics-event="instagram" href={business.instagram.startsWith("http") ? business.instagram : "https://instagram.com/" + business.instagram.replace(/^@/, "")} target="_blank" rel="noreferrer"><Instagram size={14} /> اینستاگرام</a>}
               {business.hours.length > 0 && (
                 <div className="public-hours">
                   <strong><Clock3 size={14} /> ساعات کاری</strong>
