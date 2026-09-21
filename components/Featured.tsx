@@ -11,10 +11,10 @@ export default function Featured() {
       <div className="shell">
         <div className="section-heading premium-heading">
           <div>
-            <span className="section-kicker">منتخب‌های خونه‌نما</span>
-            <h2>پروفایل‌هایی که باید دیده شوند.</h2>
+            <span className="section-kicker">پروفایل‌های نمونه خونه‌نما</span>
+            <h2>یک پروفایل کامل چه شکلی است؟</h2>
           </div>
-          <p>نمونه‌کار، خدمات و محدوده فعالیت را قبل از تماس یکجا ببین و مقایسه کن.</p>
+          <p>این نمونه‌ها برای نمایش امکانات خونه‌نما هستند؛ کسب‌وکارهای واقعی بعد از ثبت، با اطلاعات و نمونه‌کار خودشان نمایش داده می‌شوند.</p>
         </div>
 
         <div className="business-grid premium-business-grid">
