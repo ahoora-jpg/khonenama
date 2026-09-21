@@ -2526,3 +2526,112 @@
     padding:17px;
   }
 }
+
+
+/* Homepage inspiration showroom */
+.inspiration-showcase {
+  overflow:hidden;
+}
+.inspiration-showcase .section-kicker {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.inspiration-masonry {
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  grid-auto-rows:118px;
+  gap:10px;
+}
+.inspiration-tile {
+  position:relative;
+  overflow:hidden;
+  border-radius:18px;
+  border:1px solid var(--line);
+  background:#eee8df;
+  isolation:isolate;
+}
+.inspiration-tile:nth-child(6n+1),
+.inspiration-tile:nth-child(6n+5) {
+  grid-column:span 5;
+  grid-row:span 3;
+}
+.inspiration-tile:nth-child(6n+2),
+.inspiration-tile:nth-child(6n+6) {
+  grid-column:span 4;
+  grid-row:span 2;
+}
+.inspiration-tile:nth-child(6n+3),
+.inspiration-tile:nth-child(6n+4) {
+  grid-column:span 3;
+  grid-row:span 2;
+}
+.inspiration-tile img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition:transform .45s ease;
+}
+.inspiration-tile:hover img {
+  transform:scale(1.035);
+}
+.inspiration-overlay {
+  position:absolute;
+  inset:auto 9px 9px;
+  z-index:2;
+  display:grid;
+  grid-template-columns:auto 1fr;
+  align-items:center;
+  gap:2px 6px;
+  padding:8px 10px;
+  border-radius:12px;
+  background:rgba(24,22,19,.72);
+  color:#fff;
+  backdrop-filter:blur(12px);
+}
+.inspiration-overlay svg {
+  grid-row:1 / 3;
+}
+.inspiration-overlay strong {
+  font-size:9px;
+}
+.inspiration-overlay small {
+  font-size:7px;
+  opacity:.76;
+}
+.inspiration-disclaimer {
+  margin:10px 0 0;
+  color:var(--muted);
+  font-size:8px;
+  line-height:1.9;
+}
+@media (max-width:900px) {
+  .inspiration-masonry {
+    grid-template-columns:repeat(6,minmax(0,1fr));
+    grid-auto-rows:105px;
+  }
+  .inspiration-tile:nth-child(n) {
+    grid-column:span 3;
+    grid-row:span 2;
+  }
+  .inspiration-tile:nth-child(3n+1) {
+    grid-column:span 6;
+  }
+}
+@media (max-width:620px) {
+  .inspiration-masonry {
+    grid-template-columns:1fr 1fr;
+    grid-auto-rows:135px;
+    gap:7px;
+  }
+  .inspiration-tile:nth-child(n) {
+    grid-column:span 1;
+    grid-row:span 1;
+    border-radius:14px;
+  }
+  .inspiration-tile:nth-child(4n+1) {
+    grid-column:span 2;
+    grid-row:span 2;
+  }
+}
