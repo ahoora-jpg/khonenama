@@ -66,6 +66,7 @@ export default function BusinessLoginForm() {
           D1_BINDING_NOT_AVAILABLE: "اتصال دیتابیس در دسترس نیست.",
           PASSWORD_REHASH_REQUIRED: "رمز این حساب از نسخه قدیمی سیستم است. یک‌بار از پنل مدیریت وارد شوید و دوباره همین رمز را بزنید تا خودکار به نسخه جدید منتقل شود.",
           INTERNAL_ERROR: "ورود در سرور با خطا روبه‌رو شد. کد خطا ثبت شده و باید بررسی شود.",
+          TOO_MANY_ATTEMPTS: "تعداد تلاش‌های ناموفق زیاد بوده است. حدود ۱۵ دقیقه بعد دوباره تلاش کنید.",
         };
         const text = messages[result?.error] || "ورود انجام نشد. دوباره تلاش کنید.";
         setMessage(text);
@@ -75,7 +76,9 @@ export default function BusinessLoginForm() {
         return;
       }
 
-      window.location.href = "/dashboard";
+      const next = new URLSearchParams(window.location.search).get("next");
+      const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+      window.location.href = safeNext;
     } catch (error: any) {
       if (error?.name === "AbortError") {
         setMessage("پاسخ سرور بیش از حد طول کشید. دوباره تلاش کنید.");
