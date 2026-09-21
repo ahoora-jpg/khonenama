@@ -1329,3 +1329,15 @@
   font-size:7px;
   font-weight:900;
 }
+
+.result-thumb {
+  overflow:hidden;
+  background:linear-gradient(145deg,#e9e4dc,#dce3da);
+}
+.result-thumb img {
+  width:100%;
+  height:100%;
+  min-height:160px;
+  display:block;
+  object-fit:cover;
+}
