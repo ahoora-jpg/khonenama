@@ -46,7 +46,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "لمینت ضدآب است؟", answer: "همه لمینت‌ها ضدآب نیستند. مقاومت آن‌ها به ساختار و مشخصات سازنده بستگی دارد و آب ایستاده همچنان می‌تواند آسیب‌زا باشد." },
       { question: "PVC بهتر است یا لمینت؟", answer: "برای رطوبت بیشتر PVC معمولاً مطمئن‌تر است؛ برای حس نزدیک‌تر به کف چوبی، لمینت می‌تواند جذاب‌تر باشد." }
     ],
-    guides: ["parquet-vs-laminate", "flooring-types-guide", "laminate-guide", "laminate-vs-pvc"]
+    guides: ["parquet-vs-laminate", "flooring-types-guide", "laminate-guide", "laminate-vs-pvc", "laminate-installation-guide"]
   },
   carpet: {
     slug: "carpet",
@@ -64,7 +64,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "موکت برای اتاق خواب مناسب است؟", answer: "بله، به‌خصوص وقتی نرمی زیر پا و کاهش انتقال صدا مهم باشد." },
       { question: "موکت پرزبلند بهتر است یا کوتاه؟", answer: "به کاربرد بستگی دارد؛ پرز کوتاه معمولاً نظافت و تردد آسان‌تری دارد." }
     ],
-    guides: ["carpet-types-guide", "carpet-buying-guide"]
+    guides: ["carpet-types-guide", "carpet-buying-guide", "carpet-bedroom-guide"]
   },
   wallpaper: {
     slug: "wallpaper",
@@ -81,7 +81,7 @@ export const categorySeo: Record<string, CategorySeo> = {
     faqs: [
       { question: "کاغذ دیواری برای فضای کوچک مناسب است؟", answer: "بله، اما طرح و رنگ باید با ابعاد و نور فضا هماهنگ شود تا فضا شلوغ یا کوچک‌تر دیده نشود." }
     ],
-    guides: ["wallpaper-guide", "wallpaper-vs-wallpanel"]
+    guides: ["wallpaper-guide", "wallpaper-vs-wallpanel", "washable-wallpaper-guide"]
   },
   "interior-design": {
     slug: "interior-design",
