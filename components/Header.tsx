@@ -9,6 +9,7 @@ const categories = [
   ["موکت", "/category/carpet"],
   ["کاغذ دیواری", "/category/wallpaper"],
   ["طراحی داخلی", "/category/interior-design"],
+  ["خانه هوشمند", "/category/smart-home"],
 ] as const;
 
 const links = [
