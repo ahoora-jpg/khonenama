@@ -3,7 +3,7 @@ import { getOwnedBusiness, ensureBusinessMediaSchema } from "@/lib/server/busine
 import {
   deleteImageKitFile,
   getImageKitFileDetails,
-  imageKitConfigured,
+  imageKitServerConfigured,
 } from "@/lib/server/imagekit";
 
 const MAX_MEDIA_BYTES = 8 * 1024 * 1024;
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
 
   return Response.json({
     ok: true,
-    configured: imageKitConfigured(),
+    configured: imageKitServerConfigured(),
     media: rows?.results || [],
   });
 }
