@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: baseUrl + "/category/carpet", changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/category/wallpaper", changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/category/interior-design", changeFrequency: "weekly", priority: 0.8 },
+    { url: baseUrl + "/category/smart-home", changeFrequency: "weekly", priority: 0.86 },
     { url: baseUrl + "/magazine", changeFrequency: "weekly", priority: 0.86 },
   ];
 
