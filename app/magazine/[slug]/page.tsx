@@ -48,11 +48,11 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     datePublished: guide.publishedAt || "2026-09-19",
     inLanguage: "fa-IR",
     mainEntityOfPage: "https://khonenama.ir/magazine/" + guide.slug,
-    author: { "@type": "Organization", name: "خونه‌نما" },
-    publisher: { "@type": "Organization", name: "خونه‌نما", url: "https://khonenama.ir" },
+    author: { "@id": "https://khonenama.ir/#organization" },
+    publisher: { "@id": "https://khonenama.ir/#organization" },
     keywords: guide.keywords.join(", "),
     articleSection: guide.category,
-    isPartOf: { "@type": "WebSite", name: "خونه‌نما", url: "https://khonenama.ir" },
+    isPartOf: { "@id": "https://khonenama.ir/#website" },
     image: [visual.src],
   };
 

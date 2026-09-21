@@ -28,10 +28,12 @@ export const metadata = {
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
+  "@id": "https://khonenama.ir/#website",
   name: "خونه‌نما",
   alternateName: "Khonenama",
   url: "https://khonenama.ir",
   inLanguage: "fa-IR",
+  publisher: { "@id": "https://khonenama.ir/#organization" },
   potentialAction: {
     "@type": "SearchAction",
     target: {
@@ -59,9 +61,13 @@ const categoryListJsonLd = {
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": "https://khonenama.ir/#organization",
   name: "خونه‌نما",
   alternateName: "Khonenama",
   url: "https://khonenama.ir",
+  mainEntityOfPage: "https://khonenama.ir/about",
+  publishingPrinciples: "https://khonenama.ir/editorial-policy",
+  knowsAbout: ["پرده و پوشش پنجره", "کفپوش و پارکت", "موکت", "کاغذ دیواری و دیوارپوش", "طراحی داخلی", "خانه هوشمند"],
   description:
     "مرجع پیدا کردن و مقایسه فروشگاه‌ها و متخصصان دکوراسیون منزل، با شروع از کرج و خیابان برغان.",
   areaServed: [

@@ -27,6 +27,7 @@ const groups = [
     links: [
       ["درباره خونه‌نما", "/about"],
       ["راهنما و پشتیبانی", "/help"],
+      ["سیاست تحریریه", "/editorial-policy"],
       ["ثبت کسب‌وکار", "/register-business"],
       ["داشبورد فروشنده", "/dashboard"],
       ["جستجو", "/search"],
@@ -57,6 +58,7 @@ export default function Footer() {
             <div className="footer-trust-links">
               <a href="/privacy">حریم خصوصی</a>
               <a href="/terms">قوانین استفاده</a>
+              <a href="/editorial-policy">سیاست تحریریه</a>
             </div>
           </div>
 

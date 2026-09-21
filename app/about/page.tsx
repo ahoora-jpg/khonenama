@@ -9,9 +9,21 @@ export const metadata: Metadata = {
   alternates: { canonical: "/about" },
 };
 
+const aboutJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "@id": "https://khonenama.ir/about#page",
+  url: "https://khonenama.ir/about",
+  name: "درباره خونه‌نما",
+  inLanguage: "fa-IR",
+  mainEntity: { "@id": "https://khonenama.ir/#organization" },
+  isPartOf: { "@id": "https://khonenama.ir/#website" },
+};
+
 export default function AboutPage() {
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutJsonLd) }} />
       <Header />
       <section className="inner-page legal-page">
         <div className="shell legal-shell">
@@ -49,6 +61,12 @@ export default function AboutPage() {
               بعضی پروفایل‌ها با برچسب «نمونه نمایشی» فقط برای نشان دادن ساختار سایت ساخته شده‌اند.
               این نمونه‌ها مشتری، امتیاز یا ادعای فعالیت واقعی ندارند و با کسب‌وکار ثبت‌شده اشتباه گرفته نمی‌شوند.
             </p>
+
+            <h2>محتوای خونه‌نما چگونه نوشته و به‌روزرسانی می‌شود؟</h2>
+            <p>
+              راهنماهای خونه‌نما برای پاسخ روشن به سوال‌های انتخاب، خرید، نصب و نگهداری نوشته می‌شوند. در مطالب آموزشی از رتبه‌بندی ساختگی، قیمت قطعی بدون منبع و ادعای تجربه مشتری استفاده نمی‌کنیم. جزئیات روش تولید و بازبینی محتوا در صفحه سیاست تحریریه منتشر شده است.
+            </p>
+            <p><a href="/editorial-policy">سیاست تحریریه و اصول محتوایی خونه‌نما</a></p>
 
             <h2>برای کسب‌وکارها</h2>
             <p>
