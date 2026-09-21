@@ -2352,3 +2352,13 @@
 .filters-reset:hover {
   color:var(--ink);
 }
+
+
+.plan-choice.is-disabled {
+  opacity:.58;
+  cursor:not-allowed;
+  filter:saturate(.55);
+}
+.onboarding-media-preview .media-upload-tile {
+  cursor:default;
+}
