@@ -18,6 +18,10 @@ export function imageKitConfigured() {
   return Boolean(config.publicKey && config.privateKey && config.urlEndpoint);
 }
 
+function imageKitAuthHeader(privateKey: string) {
+  return "Basic " + btoa(privateKey + ":");
+}
+
 function hex(bytes: ArrayBuffer) {
   return Array.from(new Uint8Array(bytes))
     .map((byte) => byte.toString(16).padStart(2, "0"))
@@ -51,16 +55,61 @@ export async function createImageKitUploadAuth() {
   };
 }
 
+export type ImageKitFileDetails = {
+  fileId: string;
+  name: string;
+  filePath: string;
+  url: string;
+  thumbnailUrl: string;
+  fileType: string;
+  mime: string;
+  size: number;
+};
+
+export async function getImageKitFileDetails(fileId: string): Promise<ImageKitFileDetails> {
+  const { privateKey } = getImageKitConfig();
+  if (!privateKey) throw new Error("IMAGEKIT_NOT_CONFIGURED");
+
+  const response = await fetch(
+    "https://api.imagekit.io/v1/files/" + encodeURIComponent(fileId),
+    {
+      method: "GET",
+      headers: { Authorization: imageKitAuthHeader(privateKey) },
+    }
+  );
+
+  if (!response.ok) {
+    const body = await response.text().catch(() => "");
+    throw new Error("IMAGEKIT_FILE_LOOKUP_FAILED:" + response.status + ":" + body.slice(0, 300));
+  }
+
+  const details: any = await response.json();
+  return {
+    fileId: typeof details?.fileId === "string" ? details.fileId : "",
+    name: typeof details?.name === "string" ? details.name : "",
+    filePath: typeof details?.filePath === "string" ? details.filePath : "",
+    url: typeof details?.url === "string" ? details.url : "",
+    thumbnailUrl:
+      typeof details?.thumbnail === "string"
+        ? details.thumbnail
+        : typeof details?.thumbnailUrl === "string"
+          ? details.thumbnailUrl
+          : "",
+    fileType: typeof details?.fileType === "string" ? details.fileType : "",
+    mime: typeof details?.mime === "string" ? details.mime : "",
+    size: Number(details?.size || 0),
+  };
+}
+
 export async function deleteImageKitFile(fileId: string) {
   const { privateKey } = getImageKitConfig();
   if (!privateKey) throw new Error("IMAGEKIT_NOT_CONFIGURED");
 
-  const encoded = btoa(privateKey + ":");
   const response = await fetch(
     "https://api.imagekit.io/v1/files/" + encodeURIComponent(fileId),
     {
       method: "DELETE",
-      headers: { Authorization: "Basic " + encoded },
+      headers: { Authorization: imageKitAuthHeader(privateKey) },
     }
   );
 
