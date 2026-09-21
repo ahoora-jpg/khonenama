@@ -209,8 +209,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                 <div>
                   <div className="profile-name-line">
                     <h1>{business.name}</h1>
-                    {business.isDemo && <span className="demo-profile-pill">نمونه نمایشی</span>}
-                    {business.source === "demo" && <span className="demo-profile-badge">پروفایل نمونه</span>}
+                    {business.source === "demo" && <span className="demo-profile-pill">نمونه نمایشی</span>}
                     {business.verified && <BadgeCheck size={22} className="verified-icon" />}
                     {business.planCode === "pro" && (
                       <span className="plan-public-badge is-pro"><BriefcaseBusiness size={14} /> حرفه‌ای</span>
@@ -285,22 +284,6 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
               )}
               {!business.address && !business.phone && !business.website && !business.instagram && (
                 <p>اطلاعات تماس پس از تکمیل و تأیید صاحب کسب‌وکار در این بخش نمایش داده می‌شود.</p>
-              )}
-              {business.hours.length > 0 && (
-                <div className="public-hours-block">
-                  <strong>ساعات کاری</strong>
-                  <div>
-                    {business.hours.map((item: any) => {
-                      const labels = ["شنبه","یکشنبه","دوشنبه","سه‌شنبه","چهارشنبه","پنجشنبه","جمعه"];
-                      return (
-                        <span key={item.weekday}>
-                          <b>{labels[item.weekday] || "روز"}</b>
-                          <small>{item.isClosed ? "تعطیل" : item.opensAt + " تا " + item.closesAt}</small>
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
               )}
             </aside>
           </div>
