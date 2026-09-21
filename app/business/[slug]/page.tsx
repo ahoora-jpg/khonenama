@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import QuoteRequestForm from "@/components/QuoteRequestForm";
 import { getBusiness } from "@/lib/demo-data";
 import { getPublishedBusiness, getBusinessSlugRedirect } from "@/lib/server/public-businesses";
-import { BadgeCheck, BriefcaseBusiness, Crown, Globe2, Instagram, MapPin, MessageCircle, Phone, Star } from "lucide-react";
+import { BadgeCheck, BriefcaseBusiness, Clock3, Crown, Globe2, Instagram, MapPin, MessageCircle, Phone, Star } from "lucide-react";
 import { notFound, permanentRedirect } from "next/navigation";
 
 async function resolveBusiness(slug: string) {
@@ -28,6 +28,7 @@ async function resolveBusiness(slug: string) {
       reviewCount: demo.reviewCount,
       planCode: demo.featured ? "premium" as const : "free" as const,
       planName: demo.featured ? "ویژه" : "پایه",
+      hours: [],
       media: (demo.media || []).map((item, index) => ({
         id: index + 1,
         kind: item.cover ? "cover" : "image",
@@ -61,6 +62,7 @@ async function resolveBusiness(slug: string) {
     planCode: live.planCode,
     planName: live.planName,
     media: live.media,
+    hours: live.hours,
   };
 }
 
@@ -120,6 +122,14 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
       worstRating: 1,
     } : undefined,
     knowsAbout: business.services,
+    openingHoursSpecification: business.hours
+      .filter((item: any) => !item.isClosed && item.opensAt && item.closesAt)
+      .map((item: any) => ({
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"][item.weekday],
+        opens: item.opensAt,
+        closes: item.closesAt,
+      })),
   };
 
   return (
@@ -191,6 +201,17 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
               {business.phone && <a href={"tel:" + business.phone}><Phone size={14} /> {business.phone}</a>}
               {business.website && <a href={business.website} target="_blank" rel="noreferrer"><Globe2 size={14} /> وب‌سایت</a>}
               {business.instagram && <a href={business.instagram.startsWith("http") ? business.instagram : "https://instagram.com/" + business.instagram.replace(/^@/, "")} target="_blank" rel="noreferrer"><Instagram size={14} /> اینستاگرام</a>}
+              {business.hours.length > 0 && (
+                <div className="public-hours">
+                  <strong><Clock3 size={14} /> ساعات کاری</strong>
+                  {business.hours.map((item: any) => (
+                    <span key={item.weekday}>
+                      <b>{["شنبه","یکشنبه","دوشنبه","سه‌شنبه","چهارشنبه","پنجشنبه","جمعه"][item.weekday]}</b>
+                      <small>{item.isClosed ? "تعطیل" : item.opensAt + " تا " + item.closesAt}</small>
+                    </span>
+                  ))}
+                </div>
+              )}
               {!business.address && !business.phone && !business.website && !business.instagram && (
                 <p>اطلاعات تماس پس از تکمیل و تأیید صاحب کسب‌وکار در این بخش نمایش داده می‌شود.</p>
               )}
