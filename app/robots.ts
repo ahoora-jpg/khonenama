@@ -6,7 +6,16 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/dashboard", "/register-business", "/business/demo-"],
+        disallow: [
+          "/dashboard",
+          "/admin",
+          "/api",
+          "/register-business",
+          "/business/login",
+          "/business/forgot-password",
+          "/request-status",
+          "/business/demo-",
+        ],
       },
     ],
     sitemap: "https://khonenama.ir/sitemap.xml",
