@@ -2322,3 +2322,33 @@
     padding:20px;
   }
 }
+
+
+.demo-result-badge {
+  display:inline-flex;
+  align-items:center;
+  padding:4px 7px;
+  border-radius:999px;
+  border:1px solid rgba(103,92,82,.12);
+  background:#f2ede7;
+  color:#766a61;
+  font-size:7px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.filters-submit {
+  width:100%;
+  justify-content:center;
+  margin-top:5px;
+}
+.filters-reset {
+  display:block;
+  text-align:center;
+  margin-top:7px;
+  color:var(--muted);
+  font-size:8px;
+  text-decoration:none;
+}
+.filters-reset:hover {
+  color:var(--ink);
+}
