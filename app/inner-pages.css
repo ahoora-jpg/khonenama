@@ -2162,3 +2162,34 @@
   font-weight:900;
   white-space:nowrap;
 }
+
+
+.public-hours-block {
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid var(--line);
+}
+.public-hours-block > strong {
+  display:block;
+  margin-bottom:8px;
+  font-size:9px;
+}
+.public-hours-block > div {
+  display:grid;
+  gap:5px;
+}
+.public-hours-block span {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  color:var(--muted);
+  font-size:8px;
+}
+.public-hours-block b {
+  color:var(--ink);
+  font-size:8px;
+}
+.public-hours-block small {
+  font-size:8px;
+}
