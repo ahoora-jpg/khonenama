@@ -99,7 +99,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "طراح داخلی چه کاری انجام می‌دهد؟", answer: "بسته به قرارداد می‌تواند از برنامه‌ریزی فضا و انتخاب متریال تا طراحی جزئیات و هماهنگی اجرای پروژه را پوشش دهد." }
     ],
     guides: ["choose-interior-designer", "interior-design-process"]
-  }
+  },
   "smart-home": {
     slug: "smart-home",
     metaTitle: "خانه هوشمند | روشنایی، پرده برقی، قفل و اتوماسیون منزل",
