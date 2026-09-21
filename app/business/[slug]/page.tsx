@@ -265,6 +265,22 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
               {!business.address && !business.phone && !business.website && !business.instagram && (
                 <p>اطلاعات تماس پس از تکمیل و تأیید صاحب کسب‌وکار در این بخش نمایش داده می‌شود.</p>
               )}
+              {business.hours.length > 0 && (
+                <div className="public-hours-block">
+                  <strong>ساعات کاری</strong>
+                  <div>
+                    {business.hours.map((item: any) => {
+                      const labels = ["شنبه","یکشنبه","دوشنبه","سه‌شنبه","چهارشنبه","پنجشنبه","جمعه"];
+                      return (
+                        <span key={item.weekday}>
+                          <b>{labels[item.weekday] || "روز"}</b>
+                          <small>{item.isClosed ? "تعطیل" : item.opensAt + " تا " + item.closesAt}</small>
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </aside>
           </div>
 
