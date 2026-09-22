@@ -75,10 +75,12 @@ export default async function LocalSeoLanding({
     }));
 
   const matches = [...live, ...demos];
+  const localUrl = "https://khonenama.ir/karaj/" + categorySlug;
 
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
+    "@id": localUrl + "#businesses",
     name: h1,
     itemListElement: matches.map((business, index) => ({
       "@type": "ListItem",
@@ -86,6 +88,34 @@ export default async function LocalSeoLanding({
       name: business.name,
       url: "https://khonenama.ir/business/" + business.slug,
     })),
+  };
+
+  const collectionPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": localUrl + "#webpage",
+    url: localUrl,
+    name: h1,
+    description: intro,
+    inLanguage: "fa-IR",
+    isPartOf: { "@id": "https://khonenama.ir/#website" },
+    about: [
+      { "@type": "Thing", name: h1 },
+      { "@type": "Place", name: "کرج" },
+      ...guides.slice(0, 6).map((guide) => ({ "@type": "Thing", name: guide.title })),
+    ],
+    mainEntity: { "@id": localUrl + "#businesses" },
+    publisher: { "@id": "https://khonenama.ir/#organization" },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "خونه‌نما", item: "https://khonenama.ir/" },
+      { "@type": "ListItem", position: 2, name: "کرج", item: "https://khonenama.ir/karaj" },
+      { "@type": "ListItem", position: 3, name: h1, item: localUrl },
+    ],
   };
 
   const faqJsonLd = {
@@ -100,8 +130,10 @@ export default async function LocalSeoLanding({
 
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <Header />
 
       <section className="inner-page">
