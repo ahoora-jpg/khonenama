@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getGuide, guides } from "@/lib/guides";
 import { getGuideVisual } from "@/lib/visuals";
-import { ArrowUpLeft, Clock3, Link2 } from "lucide-react";
+import { ArrowUpLeft, Calculator, Clock3, Link2 } from "lucide-react";
 import { notFound } from "next/navigation";
 
 export function generateStaticParams() {
@@ -168,6 +168,17 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             </div>
 
             <aside className="guide-side">
+              {guide.category === "کاغذ دیواری" && (
+                <div className="guide-side-card guide-tool-link glass-panel">
+                  <Calculator size={18} />
+                  <h3>تعداد رول را محاسبه کن</h3>
+                  <p>عرض و ارتفاع دیوار، ابعاد رول و Pattern Repeat را وارد کن تا تعداد رول لازم مشخص شود.</p>
+                  <a href="/tools/wallpaper-calculator">
+                    محاسبه‌گر کاغذ دیواری <ArrowUpLeft size={15} />
+                  </a>
+                </div>
+              )}
+
               <div className="guide-side-card glass-panel">
                 <span className="section-kicker">مسیر بعدی</span>
                 <h3>فروشگاه‌ها و متخصصان مرتبط را ببین</h3>
