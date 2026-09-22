@@ -55,6 +55,7 @@ export default function KarajSmartHomePage() {
         },
       ]}
       guides={[
+        { title: "Scope اولیه خانه هوشمند", text: "تعداد نقاط را قبل از قیمت‌گیری مشخص کنید", href: "/tools/smart-home-scope" },
         { title: "KNX یا Matter؟", text: "تفاوت زیرساخت حرفه‌ای و اکوسیستم مصرفی", href: "/magazine/knx-vs-matter-smart-home-guide" },
         { title: "Matter Controller یا Thread Border Router؟", text: "نقش Controller، Admin و Border Router", href: "/magazine/matter-controller-thread-border-router-guide" },
         { title: "خانه هوشمند بدون اینترنت", text: "کنترل محلی و رفتار سیستم هنگام قطعی", href: "/magazine/smart-home-without-internet-guide" },
