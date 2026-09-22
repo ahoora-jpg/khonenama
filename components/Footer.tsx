@@ -27,6 +27,7 @@ const groups = [
     links: [
       ["درباره خونه‌نما", "/about"],
       ["راهنما و پشتیبانی", "/help"],
+      ["ابزارهای خونه‌نما", "/tools"],
       ["سیاست تحریریه", "/editorial-policy"],
       ["ثبت کسب‌وکار", "/register-business"],
       ["داشبورد فروشنده", "/dashboard"],
