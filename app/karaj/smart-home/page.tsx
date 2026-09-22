@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
 import LocalSeoLanding from "@/components/LocalSeoLanding";
 
-export const metadata: Metadata = {
-  title: "خانه هوشمند کرج | روشنایی، پرده برقی، قفل و هوشمندسازی",
-  description:
-    "متخصصان خانه هوشمند در کرج را برای روشنایی هوشمند، پرده برقی، قفل، امنیت، کنترل دما و سناریوهای اتوماسیون مقایسه کنید.",
-  alternates: { canonical: "/karaj/smart-home" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const title = "خانه هوشمند کرج | Matter، روشنایی، پرده برقی و امنیت";
+  const description =
+    "متخصصان خانه هوشمند در کرج را برای Matter، روشنایی هوشمند، پرده برقی، قفل، امنیت، کنترل دما و سناریوهای اتوماسیون مقایسه کنید.";
+  const url = "https://khonenama.ir/karaj/smart-home";
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: { title, description, url, locale: "fa_IR", type: "website" },
+    twitter: { card: "summary", title, description },
+  };
+}
 
 export default function KarajSmartHomePage() {
   return (
