@@ -24,6 +24,7 @@ export default function KarajCarpetPage() {
         { question: "موکت تایلی برای خانه مناسب است؟", answer: "بله، به‌خصوص در فضاهایی که تعویض موضعی یا طراحی ماژولار مزیت دارد." },
       ]}
       guides={[
+        { title: "محاسبه متراژ موکت", text: "رول، تایلی، پرت و تعداد بسته", href: "/tools/carpet-estimator" },
         { title: "راهنمای خرید موکت در کرج", text: "متراژ، پرت، زیرسازی و نصب", href: "/magazine/carpet-karaj-guide" },
         { title: "انواع موکت چیست؟", text: "رول، تایلی، پرزکوتاه و پرزبلند", href: "/magazine/carpet-types-guide" },
         { title: "راهنمای خرید موکت", text: "تراکم، الیاف، زیرسازی و نصب", href: "/magazine/carpet-buying-guide" },
