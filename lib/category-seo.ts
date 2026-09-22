@@ -98,7 +98,7 @@ export const categorySeo: Record<string, CategorySeo> = {
     faqs: [
       { question: "طراح داخلی چه کاری انجام می‌دهد؟", answer: "بسته به قرارداد می‌تواند از برنامه‌ریزی فضا و انتخاب متریال تا طراحی جزئیات و هماهنگی اجرای پروژه را پوشش دهد." }
     ],
-    guides: ["choose-interior-designer", "interior-design-process"]
+    guides: ["interior-design-trends-2026", "pantone-cloud-dancer-2026-interior-guide", "small-apartment-interior-design-guide", "living-room-zoning-lighting-guide", "biophilic-interior-design-guide-2026", "smart-home-interior-design-planning-guide", "interior-decoration-budget-priority-guide", "choose-interior-designer", "interior-design-process"]
   },
   "smart-home": {
     slug: "smart-home",
@@ -118,7 +118,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "خانه هوشمند فقط برای ساختمان نوساز است؟", answer: "خیر. بسیاری از پروژه‌های بازسازی و حتی خانه‌های در حال استفاده هم می‌توانند به‌صورت مرحله‌ای هوشمند شوند." },
       { question: "از کدام بخش شروع کنیم؟", answer: "اگر هدف راحتی روزمره است، روشنایی، پرده برقی و قفل هوشمند شروع‌های رایجی هستند؛ اگر امنیت یا مدیریت انرژی اولویت دارد، مسیر انتخاب متفاوت می‌شود." }
     ],
-    guides: ["smart-home-guide", "smart-lighting-guide", "smart-curtain-guide"]
+    guides: ["matter-thread-zigbee-wifi-guide-2026", "smart-home-security-guide-2026", "smart-lighting-scenes-guide-2026", "smart-curtain-daylight-guide", "smart-home-guide", "smart-lighting-guide", "smart-curtain-guide"]
   },
 };
 
