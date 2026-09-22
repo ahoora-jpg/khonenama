@@ -76,10 +76,12 @@ export const categorySeo: Record<string, CategorySeo> = {
       "انتخاب دیوارپوش باید با نور، ابعاد فضا، سبک دکوراسیون و شرایط سطح دیوار هماهنگ باشد؛ نصب دقیق هم به اندازه طرح مهم است.",
     sections: [
       { heading: "قبل از انتخاب طرح", text: "ابعاد فضا، نور طبیعی، رنگ مبلمان و تعداد دیوارهایی که قرار است پوشانده شوند را در نظر بگیرید." },
-      { heading: "زیرسازی را جدی بگیرید", text: "ترک، نم یا ناهمواری دیوار می‌تواند نتیجه نصب را خراب کند و باید قبل از اجرا برطرف شود." }
+      { heading: "زیرسازی را جدی بگیرید", text: "ترک، نم یا ناهمواری دیوار می‌تواند نتیجه نصب را خراب کند و باید قبل از اجرا برطرف شود." },
+      { heading: "تعداد رول را قبل از خرید حساب کنید", text: "فقط مترمربع دیوار کافی نیست؛ عرض و طول رول، ارتفاع دیوار و Pattern Repeat تعیین می‌کنند از هر رول چند نوار کامل به دست می‌آید. محاسبه‌گر خونه‌نما این موارد را با پرت پیشنهادی محاسبه می‌کند." }
     ],
     faqs: [
-      { question: "کاغذ دیواری برای فضای کوچک مناسب است؟", answer: "بله، اما طرح و رنگ باید با ابعاد و نور فضا هماهنگ شود تا فضا شلوغ یا کوچک‌تر دیده نشود." }
+      { question: "کاغذ دیواری برای فضای کوچک مناسب است؟", answer: "بله، اما طرح و رنگ باید با ابعاد و نور فضا هماهنگ شود تا فضا شلوغ یا کوچک‌تر دیده نشود." },
+      { question: "چند رول کاغذ دیواری لازم دارم؟", answer: "به عرض کل دیوارها، ارتفاع، عرض و طول رول، Pattern Repeat و پرت بستگی دارد. برای برآورد سریع از محاسبه‌گر رول خونه‌نما استفاده کنید." }
     ],
     guides: ["wallpaper-guide", "wallpaper-vs-wallpanel", "washable-wallpaper-guide"]
   },
@@ -129,7 +131,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "خانه هوشمند فقط برای ساختمان نوساز است؟", answer: "خیر. بسیاری از پروژه‌های بازسازی و حتی خانه‌های در حال استفاده هم می‌توانند به‌صورت مرحله‌ای هوشمند شوند." },
       { question: "از کدام بخش شروع کنیم؟", answer: "اگر هدف راحتی روزمره است، روشنایی، پرده برقی و قفل هوشمند شروع‌های رایجی هستند؛ اگر امنیت یا مدیریت انرژی اولویت دارد، مسیر انتخاب متفاوت می‌شود." }
     ],
-    guides: ["matter-thread-zigbee-wifi-guide-2026", "smart-home-security-guide-2026", "smart-lighting-scenes-guide-2026", "smart-curtain-daylight-guide", "smart-home-guide", "smart-lighting-guide", "smart-curtain-guide"]
+    guides: ["knx-vs-matter-smart-home-guide", "matter-controller-thread-border-router-guide", "smart-home-without-internet-guide", "smart-lock-buying-security-guide", "smart-home-rental-apartment-guide", "presence-vs-motion-sensor-smart-home-guide", "matter-thread-zigbee-wifi-guide-2026", "smart-home-security-guide-2026", "smart-lighting-scenes-guide-2026", "smart-curtain-daylight-guide", "smart-home-guide", "smart-lighting-guide", "smart-curtain-guide"]
   },
 };
 
