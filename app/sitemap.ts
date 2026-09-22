@@ -22,6 +22,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/category/interior-design", changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/category/smart-home", changeFrequency: "weekly", priority: 0.86 },
     { url: baseUrl + "/magazine", changeFrequency: "weekly", priority: 0.86 },
+    { url: baseUrl + "/tools", changeFrequency: "weekly", priority: 0.8 },
+    { url: baseUrl + "/tools/wallpaper-calculator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/for-business", changeFrequency: "monthly", priority: 0.72 },
     { url: baseUrl + "/about", changeFrequency: "monthly", priority: 0.5 },
     { url: baseUrl + "/editorial-policy", changeFrequency: "monthly", priority: 0.48 },
