@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import AdminContactFloat from "@/components/AdminContactFloat";
 import "./globals.css";
 import "./inner-pages.css";
 
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fa" dir="rtl">
-      <body>{children}</body>
+      <body>{children}<AdminContactFloat /></body>
     </html>
   );
 }
