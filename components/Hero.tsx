@@ -12,13 +12,13 @@ const popular = [
 
 export default function Hero() {
   return (
-    <section className="hero premium-hero" id="top">
+    <section className="hero premium-hero hero-editorial-layout" id="top">
       <div className="hero-orb hero-orb-one" />
       <div className="hero-orb hero-orb-two" />
       <div className="hero-grid-lines" aria-hidden="true" />
 
-      <div className="shell hero-grid">
-        <div className="hero-copy">
+      <div className="shell hero-editorial-shell">
+        <header className="hero-identity-block">
           <div className="eyebrow hero-brand-label">
             <Sparkles size={15} />
             خونه‌نما؛ انتخاب آگاهانه برای خانه
@@ -27,43 +27,55 @@ export default function Hero() {
           <h1 className="hero-identity-title">
             مرجع تخصصی دکوراسیون و تزئینات داخلی منزل
           </h1>
+        </header>
 
-          <h2 className="hero-slogan">
-            برای خونه‌ات، بهتر انتخاب کن.
-          </h2>
+        <div className="hero-showcase premium-visual-wrap">
+          <div className="hero-visual-frame hero-coverflow-frame">
+            <CoverFlowCarousel className="hero-coverflow hero-coverflow-full" />
+          </div>
+        </div>
 
-          <p className="hero-lead">
-            فروشگاه‌ها، متخصصان، محصولات و ایده‌های دکوراسیون را پیدا کن، مقایسه کن
-            و مستقیم با بهترین گزینه‌های اطرافت ارتباط بگیر.
-          </p>
+        <div className="hero-after-showcase">
+          <div className="hero-after-copy">
+            <h2 className="hero-slogan">
+              برای خونه‌ات، بهتر انتخاب کن.
+            </h2>
 
-          <form className="hero-search premium-search" action="/search" method="get">
-            <label>
-              <Search size={20} />
-              <span>
-                <small>دنبال چی هستی؟</small>
-                <input name="q" aria-label="خدمت یا محصول" placeholder="مثلاً پرده زبرا، پارکت یا طراح داخلی" />
-              </span>
-            </label>
+            <p className="hero-lead">
+              فروشگاه‌ها، متخصصان، محصولات و ایده‌های دکوراسیون را پیدا کن، مقایسه کن
+              و مستقیم با بهترین گزینه‌های اطرافت ارتباط بگیر.
+            </p>
+          </div>
 
-            <span className="search-separator" />
+          <div className="hero-discovery-panel">
+            <form className="hero-search premium-search" action="/search" method="get">
+              <label>
+                <Search size={20} />
+                <span>
+                  <small>دنبال چی هستی؟</small>
+                  <input name="q" aria-label="خدمت یا محصول" placeholder="مثلاً پرده زبرا، پارکت یا طراح داخلی" />
+                </span>
+              </label>
 
-            <label>
-              <MapPin size={20} />
-              <span>
-                <small>کجایی؟</small>
-                <input name="location" aria-label="شهر یا محله" defaultValue="کرج" />
-              </span>
-            </label>
+              <span className="search-separator" />
 
-            <button type="submit">جستجو <ArrowUpLeft size={17} /></button>
-          </form>
+              <label>
+                <MapPin size={20} />
+                <span>
+                  <small>کجایی؟</small>
+                  <input name="location" aria-label="شهر یا محله" defaultValue="کرج" />
+                </span>
+              </label>
 
-          <div className="quick-links" aria-label="جستجوهای محبوب">
-            <span>پرمخاطب:</span>
-            {popular.map(([label, href]) => (
-              <a href={href} key={href}>{label}</a>
-            ))}
+              <button type="submit">جستجو <ArrowUpLeft size={17} /></button>
+            </form>
+
+            <div className="quick-links" aria-label="جستجوهای محبوب">
+              <span>پرمخاطب:</span>
+              {popular.map(([label, href]) => (
+                <a href={href} key={href}>{label}</a>
+              ))}
+            </div>
           </div>
 
           <div className="hero-trust-row premium-trust-row">
@@ -75,12 +87,6 @@ export default function Hero() {
           <a href="/#categories" className="hero-scroll-hint">
             <WandSparkles size={16} /> دیدن دسته‌بندی‌ها
           </a>
-        </div>
-
-        <div className="hero-visual-wrap premium-visual-wrap">
-          <div className="hero-visual-frame hero-coverflow-frame">
-            <CoverFlowCarousel compact className="hero-coverflow" />
-          </div>
         </div>
       </div>
     </section>
