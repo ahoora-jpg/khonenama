@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
+import HomeTools from "@/components/HomeTools";
 import InspirationGallery from "@/components/InspirationGallery";
 import Featured from "@/components/Featured";
 import LocalDiscovery from "@/components/LocalDiscovery";
@@ -94,6 +95,7 @@ export default function HomePage() {
       <Header />
       <Hero />
       <Categories />
+      <HomeTools />
       <InspirationGallery />
       <LocalDiscovery />
       <GuidesHome />
