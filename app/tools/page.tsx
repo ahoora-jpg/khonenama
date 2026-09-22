@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { ArrowUpLeft, Calculator, HousePlug, Scissors } from "lucide-react";
+import { ArrowUpLeft, Calculator, Grid3X3, HousePlug, Scissors } from "lucide-react";
 
 const url = "https://khonenama.ir/tools";
 const title = "ابزارهای خونه‌نما | محاسبه‌گرهای دکوراسیون و خانه";
 const description =
-  "ابزارهای رایگان خونه‌نما برای محاسبه تعداد رول کاغذ دیواری، متراژ پارچه پرده و ساخت Scope اولیه خانه هوشمند.";
+  "ابزارهای رایگان خونه‌نما برای محاسبه کاغذ دیواری، پرده، موکت و ساخت Scope اولیه خانه هوشمند.";
 
 export const metadata: Metadata = {
   title,
@@ -42,6 +42,11 @@ const collectionJsonLd = {
       name: "برآورد Scope خانه هوشمند",
       url: "https://khonenama.ir/tools/smart-home-scope",
     },
+    {
+      "@type": "WebApplication",
+      name: "محاسبه متراژ موکت رول و تایلی",
+      url: "https://khonenama.ir/tools/carpet-estimator",
+    },
   ],
 };
 
@@ -62,7 +67,7 @@ export default function ToolsPage() {
             <h1>کمتر حدس بزن؛ دقیق‌تر اندازه بگیر.</h1>
             <p>
               ابزارهای کاربردی برای محاسبه، اندازه‌گیری و تصمیم‌گیری قبل از خرید یا اجرا؛
-              از تعداد رول کاغذ دیواری و متراژ پارچه پرده تا Scope اولیه خانه هوشمند.
+              از کاغذ دیواری و پرده تا موکت و Scope اولیه خانه هوشمند.
             </p>
           </header>
 
@@ -93,6 +98,16 @@ export default function ToolsPage() {
                 <span className="section-kicker">خانه هوشمند</span>
                 <h2>برآورد Scope اولیه پروژه</h2>
                 <p>تعداد نقاط روشنایی، پرده، دما، امنیت و سنسورها را مشخص کنید و محدوده پروژه را برای مقایسه پیشنهادها بسازید.</p>
+              </div>
+              <ArrowUpLeft size={18} />
+            </a>
+
+            <a className="tool-card glass-panel" href="/tools/carpet-estimator">
+              <span className="tool-card-icon"><Grid3X3 size={24} /></span>
+              <div>
+                <span className="section-kicker">موکت</span>
+                <h2>برآورد موکت رول و تایلی</h2>
+                <p>برای رول، متراژ طولی و جهت نوارها؛ برای تایلی، تعداد تایل و بسته را با درصد پرت محاسبه کنید.</p>
               </div>
               <ArrowUpLeft size={18} />
             </a>
