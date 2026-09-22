@@ -28,6 +28,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       url: "https://khonenama.ir/magazine/" + guide.slug,
       type: "article",
       locale: "fa_IR",
+      publishedTime: guide.publishedAt,
+      modifiedTime: guide.modifiedAt || guide.publishedAt,
+      authors: ["https://khonenama.ir/about"],
       images: [{ url: visual.src, alt: visual.alt }],
     },
   };
@@ -52,6 +55,10 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     publisher: { "@id": "https://khonenama.ir/#organization" },
     keywords: guide.keywords.join(", "),
     articleSection: guide.category,
+    abstract: guide.quickAnswer || guide.excerpt,
+    about: guide.keywords.slice(0, 6).map((name) => ({ "@type": "Thing", name })),
+    citation: guide.sources?.map((source) => source.url),
+    isAccessibleForFree: true,
     isPartOf: { "@id": "https://khonenama.ir/#website" },
     image: [visual.src],
   };
@@ -103,6 +110,13 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             </div>
           </header>
 
+          {guide.quickAnswer && (
+            <section className="guide-quick-answer glass-panel" aria-label="پاسخ کوتاه">
+              <span className="section-kicker">پاسخ کوتاه</span>
+              <p>{guide.quickAnswer}</p>
+            </section>
+          )}
+
           <figure className="guide-hero-image">
             <img src={visual.src} alt={visual.alt} />
             <figcaption>تصویر نمونه برای درک بهتر موضوع؛ منبع تصویری دارای مجوز انتشار.</figcaption>
@@ -131,6 +145,20 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                   </details>
                 ))}
               </section>
+
+              {guide.sources && guide.sources.length > 0 && (
+                <section className="guide-sources" aria-label="منابع">
+                  <h2>منابع و مراجع</h2>
+                  <p>برای بخش‌های فنی و ترندهای این راهنما از منابع اصلی و تخصصی زیر استفاده شده است.</p>
+                  <ul>
+                    {guide.sources.map((source) => (
+                      <li key={source.url}>
+                        <a href={source.url} target="_blank" rel="noopener noreferrer">{source.name}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
             </div>
 
             <aside className="guide-side">
