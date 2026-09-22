@@ -6,7 +6,7 @@ import { getCategorySeo } from "@/lib/category-seo";
 import { guides } from "@/lib/guides";
 import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 import { getCategoryVisual, getGuideVisual } from "@/lib/visuals";
-import { ArrowUpLeft, BadgeCheck, BookOpen, BriefcaseBusiness, Crown, MapPin, Star } from "lucide-react";
+import { ArrowUpLeft, BadgeCheck, BookOpen, BriefcaseBusiness, Calculator, Crown, MapPin, Star } from "lucide-react";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -146,6 +146,17 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               </div>
             ))}
           </section>
+
+          {slug === "wallpaper" && (
+            <section className="category-tool-card glass-panel" aria-label="ابزار محاسبه کاغذ دیواری">
+              <span><Calculator size={20} /></span>
+              <div>
+                <h2>چند رول کاغذ دیواری لازم دارید؟</h2>
+                <p>ابعاد دیوار و رول را وارد کنید؛ Pattern Repeat، تلرانس برش و پرت هم در محاسبه لحاظ می‌شوند.</p>
+              </div>
+              <a href="/tools/wallpaper-calculator">محاسبه تعداد رول <ArrowUpLeft size={14} /></a>
+            </section>
+          )}
 
           {relatedGuides.length > 0 && (
             <section className="category-results">
