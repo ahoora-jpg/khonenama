@@ -1,5 +1,6 @@
 import { seoBatchGuides } from "@/lib/guides-seo-batch";
 import { seoBatch2Guides } from "@/lib/guides-seo-batch-2";
+import { seoBatch3Guides } from "@/lib/guides-seo-batch-3";
 
 export type GuideFaq = { question: string; answer: string };
 export type GuideSection = { heading: string; paragraphs: string[]; bullets?: string[] };
@@ -22,6 +23,7 @@ export type Guide = {
 };
 
 export const guides: Guide[] = [
+  ...seoBatch3Guides,
   ...seoBatch2Guides,
   ...seoBatchGuides,
   {
