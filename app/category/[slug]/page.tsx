@@ -158,6 +158,28 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             </section>
           )}
 
+          {slug === "curtain" && (
+            <section className="category-tool-card glass-panel" aria-label="ابزار محاسبه پارچه پرده">
+              <span><Calculator size={20} /></span>
+              <div>
+                <h2>برای پرده چند متر پارچه لازم دارید؟</h2>
+                <p>عرض ریل، قد پرده، Fullness، عرض پارچه و Pattern Repeat را وارد کنید و متراژ تقریبی پارچه را بگیرید.</p>
+              </div>
+              <a href="/tools/curtain-fabric-calculator">محاسبه متراژ پرده <ArrowUpLeft size={14} /></a>
+            </section>
+          )}
+
+          {slug === "smart-home" && (
+            <section className="category-tool-card glass-panel" aria-label="ابزار برآورد خانه هوشمند">
+              <span><Calculator size={20} /></span>
+              <div>
+                <h2>قبل از گرفتن قیمت، Scope پروژه را مشخص کنید</h2>
+                <p>تعداد نقاط روشنایی، پرده، دما، قفل، سنسور و دوربین را تعریف کنید تا پیشنهاد مجری‌ها قابل‌مقایسه‌تر شود.</p>
+              </div>
+              <a href="/tools/smart-home-scope">ساخت Scope اولیه <ArrowUpLeft size={14} /></a>
+            </section>
+          )}
+
           {relatedGuides.length > 0 && (
             <section className="category-results">
               <div className="section-heading compact-heading">
