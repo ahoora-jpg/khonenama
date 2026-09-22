@@ -1474,3 +1474,156 @@ button, a { -webkit-tap-highlight-color: transparent; }
     font-size:9px;
   }
 }
+
+
+/* Readability + visual audit — public site only */
+.hero-search small { font-size: 12.5px; line-height: 1.5; }
+.hero-search input { font-size: 15px; }
+.quick-links { font-size: 13px; gap: 9px; }
+.quick-links a { padding: 6px 11px; }
+.hero-trust-row span { font-size: 12.5px; }
+.hero-scroll-hint { font-size: 13px; }
+.brand small { font-size: 11px; }
+.premium-nav > a,
+.nav-mega-trigger { font-size: 13px; }
+.nav-mega-intro span { font-size: 12px; }
+.nav-mega-intro p { font-size: 13px; line-height: 1.8; }
+.nav-mega-grid a span { font-size: 11px; }
+.nav-mega-grid a strong { font-size: 14px; }
+.section-kicker { font-size: 13px; }
+.section-heading > p { font-size: 15px; line-height: 1.9; }
+.category-card p { font-size: 14px; line-height: 1.75; opacity: .9; }
+.business-content > p { font-size: 14px; line-height: 1.8; }
+.business-meta-row { font-size: 12.5px; }
+.business-button { font-size: 13px; }
+.step-card p { font-size: 14px; line-height: 1.85; }
+.cta-kicker { font-size: 13px; }
+.cta-copy p { font-size: 15px; line-height: 1.95; }
+.cta-feature strong { font-size: 14px; }
+.cta-feature small { font-size: 12px; }
+.footer-brand-block p { font-size: 14px; line-height: 1.9; }
+.footer-mini-meta { font-size: 12px; }
+.footer-column a { font-size: 13px; }
+.footer-bottom { font-size: 12px; }
+.text-link-arrow { font-size: 13px; }
+
+.coverflow-label strong,
+.coverflow-tag { font-size: 12px; }
+.coverflow-copy > strong { font-size: 14px; }
+.coverflow-copy p { font-size: 13px; line-height: 1.8; }
+.coverflow-copy a { font-size: 12.5px; padding: 10px 17px; }
+
+/* Category mosaics now have a direct visual cue */
+.premium-category-card {
+  isolation: isolate;
+}
+.category-visual {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: .36;
+  filter: saturate(.86) contrast(.96);
+  transform: scale(1.02);
+  transition: transform .4s ease, opacity .4s ease;
+}
+.premium-category-card:hover .category-visual {
+  transform: scale(1.07);
+  opacity: .46;
+}
+.category-visual-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(20,18,15,.05), rgba(20,18,15,.48)),
+    linear-gradient(90deg, rgba(255,253,248,.36), transparent 62%);
+  pointer-events: none;
+}
+.category-floor .category-visual-overlay,
+.category-wall .category-visual-overlay,
+.category-design .category-visual-overlay,
+.category-smart .category-visual-overlay {
+  background:
+    linear-gradient(180deg, rgba(255,253,248,.14), rgba(24,22,18,.38)),
+    linear-gradient(90deg, rgba(255,253,248,.2), transparent 64%);
+}
+.premium-category-card .category-icon,
+.premium-category-card .category-number,
+.premium-category-card > div,
+.premium-category-card .category-arrow {
+  position: relative;
+  z-index: 3;
+}
+.premium-category-card h3,
+.premium-category-card p {
+  text-shadow: 0 2px 14px rgba(0,0,0,.24);
+}
+.category-floor,
+.category-wall,
+.category-design,
+.category-smart {
+  color: #fff;
+}
+.category-floor .category-icon,
+.category-wall .category-icon,
+.category-design .category-icon,
+.category-smart .category-icon {
+  background: rgba(255,255,255,.82);
+  color: var(--ink);
+}
+
+/* Guide cards gain topic imagery instead of an icon-only tile */
+.guide-preview-card-visual {
+  padding-top: 15px;
+}
+.guide-preview-media {
+  position: relative;
+  height: 118px;
+  margin: -7px -7px 13px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+.guide-preview-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.guide-preview-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(16,15,13,.04), rgba(16,15,13,.48));
+}
+.guide-preview-media > span {
+  position: absolute;
+  z-index: 2;
+  right: 12px;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(20,19,16,.7);
+  color: #fff;
+  font-size: 12px;
+}
+.guide-preview-category {
+  display: none !important;
+}
+.guide-preview-card p { font-size: 14px; line-height: 1.9; }
+.guide-preview-card strong { font-size: 13px; }
+
+@media (max-width:650px) {
+  .hero-search small { font-size: 12px; }
+  .hero-search input { font-size: 15px; }
+  .quick-links { font-size: 12.5px; }
+  .hero-trust-row span { font-size: 12px; }
+  .category-card p { font-size: 13px; }
+  .section-kicker { font-size: 12px; }
+  .footer-column a { font-size: 13px; }
+}
