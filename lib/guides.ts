@@ -1,4 +1,5 @@
 import { seoBatchGuides } from "@/lib/guides-seo-batch";
+import { seoBatch2Guides } from "@/lib/guides-seo-batch-2";
 
 export type GuideFaq = { question: string; answer: string };
 export type GuideSection = { heading: string; paragraphs: string[]; bullets?: string[] };
@@ -16,9 +17,12 @@ export type Guide = {
   relatedCategory?: string;
   publishedAt?: string;
   modifiedAt?: string;
+  quickAnswer?: string;
+  sources?: { name: string; url: string }[];
 };
 
 export const guides: Guide[] = [
+  ...seoBatch2Guides,
   ...seoBatchGuides,
   {
     slug: "zebra-curtain-guide",
