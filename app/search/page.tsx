@@ -11,6 +11,60 @@ export const metadata: Metadata = {
   alternates: { canonical: "/search" },
 };
 
+function normalizeSearchText(value: string) {
+  return value
+    .trim()
+    .toLocaleLowerCase("fa")
+    .replace(/ي/g, "ی")
+    .replace(/ك/g, "ک")
+    .replace(/\u200c/g, " ")
+    .replace(/\s+/g, " ");
+}
+
+const categoryAliases: Record<string, string[]> = {
+  curtain: ["پرده", "پرده زبرا", "زبرا", "شید", "بلک اوت", "بلک‌اوت"],
+  flooring: ["پارکت", "لمینت", "کفپوش", "pvc"],
+  carpet: ["موکت", "موکت تایلی"],
+  wallpaper: ["کاغذ دیواری", "دیوارپوش"],
+  "interior-design": ["طراحی داخلی", "دکوراسیون داخلی", "طراح داخلی"],
+  "smart-home": ["خانه هوشمند", "هوشمندسازی"],
+};
+
+function relevanceScore(
+  business: { name: string; description: string; category?: string; categoryName?: string; services: string[]; city: string; area: string; promoted?: boolean },
+  query: string,
+  location: string,
+) {
+  const q = normalizeSearchText(query);
+  const loc = normalizeSearchText(location);
+  if (!q) return (business.promoted ? 5 : 0) + (normalizeSearchText(business.area) === loc ? 3 : 0);
+
+  const name = normalizeSearchText(business.name);
+  const description = normalizeSearchText(business.description);
+  const categoryName = normalizeSearchText(business.categoryName || "");
+  const services = business.services.map(normalizeSearchText);
+  const aliases = (categoryAliases[business.category || ""] || []).map(normalizeSearchText);
+
+  let score = 0;
+  if (name === q) score += 120;
+  else if (name.startsWith(q)) score += 95;
+  else if (name.includes(q)) score += 70;
+
+  if (categoryName === q || aliases.includes(q)) score += 100;
+  else if (categoryName.includes(q) || aliases.some((item) => item.includes(q) || q.includes(item))) score += 82;
+
+  if (services.some((item) => item === q)) score += 90;
+  else if (services.some((item) => item.startsWith(q))) score += 72;
+  else if (services.some((item) => item.includes(q))) score += 55;
+
+  if (description.includes(q)) score += 24;
+  if (normalizeSearchText(business.area) === loc) score += 12;
+  else if (normalizeSearchText(business.city) === loc) score += 6;
+  if (business.promoted) score += 2;
+
+  return score;
+}
+
 export default async function SearchPage({
   searchParams,
 }: {
@@ -31,7 +85,7 @@ export default async function SearchPage({
 
   const liveBusinesses = await listPublishedBusinesses({
     query: query || undefined,
-    city: location || undefined,
+    location: location || undefined,
     limit: 50,
   });
 
@@ -51,6 +105,8 @@ export default async function SearchPage({
       city: business.city,
       area: business.area,
       services: business.services,
+      category: business.category,
+      categoryName: business.categoryName,
       verified: business.verificationStatus === "verified" || business.verificationStatus === "professional",
       rating: business.rating,
       reviewCount: business.reviewCount,
@@ -63,6 +119,7 @@ export default async function SearchPage({
       .filter((business) => !liveSlugs.has(business.slug))
       .map((business) => ({
         ...business,
+        categoryName: "",
         planCode: business.featured ? "premium" as const : "free" as const,
         promoted: Boolean(business.featured),
         coverUrl: business.media?.find((item) => item.cover)?.url || business.media?.[0]?.url || "",
@@ -70,12 +127,14 @@ export default async function SearchPage({
       })),
   ];
 
-  const results = combinedResults.filter((business) => {
-    if (onlyVerified && !business.verified) return false;
-    if (onlyMedia && !business.coverUrl) return false;
-    if (onlyPremium && business.planCode !== "premium") return false;
-    return true;
-  });
+  const results = combinedResults
+    .filter((business) => {
+      if (onlyVerified && !business.verified) return false;
+      if (onlyMedia && !business.coverUrl) return false;
+      if (onlyPremium && business.planCode !== "premium") return false;
+      return true;
+    })
+    .sort((a, b) => relevanceScore(b, query, location) - relevanceScore(a, query, location));
 
   return (
     <main>
