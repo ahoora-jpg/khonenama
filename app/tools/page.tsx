@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { ArrowUpLeft, Calculator } from "lucide-react";
+import { ArrowUpLeft, Calculator, HousePlug, Scissors } from "lucide-react";
 
 const url = "https://khonenama.ir/tools";
 const title = "ابزارهای خونه‌نما | محاسبه‌گرهای دکوراسیون و خانه";
@@ -31,6 +31,16 @@ const collectionJsonLd = {
       "@type": "WebApplication",
       name: "محاسبه‌گر تعداد رول کاغذ دیواری",
       url: "https://khonenama.ir/tools/wallpaper-calculator",
+    },
+    {
+      "@type": "WebApplication",
+      name: "محاسبه‌گر متراژ پارچه پرده",
+      url: "https://khonenama.ir/tools/curtain-fabric-calculator",
+    },
+    {
+      "@type": "WebApplication",
+      name: "برآورد Scope خانه هوشمند",
+      url: "https://khonenama.ir/tools/smart-home-scope",
     },
   ],
 };
@@ -63,6 +73,26 @@ export default function ToolsPage() {
                 <span className="section-kicker">کاغذ دیواری</span>
                 <h2>محاسبه تعداد رول کاغذ دیواری</h2>
                 <p>عرض و ارتفاع دیوار، ابعاد رول، Pattern Repeat و پرت را وارد کنید و تعداد رول لازم را بگیرید.</p>
+              </div>
+              <ArrowUpLeft size={18} />
+            </a>
+
+            <a className="tool-card glass-panel" href="/tools/curtain-fabric-calculator">
+              <span className="tool-card-icon"><Scissors size={24} /></span>
+              <div>
+                <span className="section-kicker">پرده</span>
+                <h2>محاسبه متراژ پارچه پرده</h2>
+                <p>عرض ریل، قد پرده، Fullness، عرض پارچه و Pattern Repeat را وارد کنید و متراژ تقریبی را بگیرید.</p>
+              </div>
+              <ArrowUpLeft size={18} />
+            </a>
+
+            <a className="tool-card glass-panel" href="/tools/smart-home-scope">
+              <span className="tool-card-icon"><HousePlug size={24} /></span>
+              <div>
+                <span className="section-kicker">خانه هوشمند</span>
+                <h2>برآورد Scope اولیه پروژه</h2>
+                <p>تعداد نقاط روشنایی، پرده، دما، امنیت و سنسورها را مشخص کنید و محدوده پروژه را برای مقایسه پیشنهادها بسازید.</p>
               </div>
               <ArrowUpLeft size={18} />
             </a>
