@@ -55,6 +55,10 @@ export default function KarajSmartHomePage() {
         },
       ]}
       guides={[
+        { title: "KNX یا Matter؟", text: "تفاوت زیرساخت حرفه‌ای و اکوسیستم مصرفی", href: "/magazine/knx-vs-matter-smart-home-guide" },
+        { title: "Matter Controller یا Thread Border Router؟", text: "نقش Controller، Admin و Border Router", href: "/magazine/matter-controller-thread-border-router-guide" },
+        { title: "خانه هوشمند بدون اینترنت", text: "کنترل محلی و رفتار سیستم هنگام قطعی", href: "/magazine/smart-home-without-internet-guide" },
+        { title: "راهنمای خرید قفل هوشمند", text: "امنیت، باتری، دسترسی اضطراری و Matter", href: "/magazine/smart-lock-buying-security-guide" },
         { title: "Matter، Thread، Zigbee یا Wi‑Fi؟", text: "راهنمای انتخاب پروتکل در ۲۰۲۶", href: "/magazine/matter-thread-zigbee-wifi-guide-2026" },
         { title: "امنیت خانه هوشمند", text: "چک‌لیست امنیت دوربین، قفل و شبکه", href: "/magazine/smart-home-security-guide-2026" },
         { title: "هزینه خانه هوشمند در کرج", text: "عوامل قیمت و مقایسه پیشنهادها", href: "/magazine/smart-home-karaj-cost-guide" },
