@@ -3941,3 +3941,96 @@
     font-size:21px;
   }
 }
+
+
+/* Public inner-page readability audit */
+.search-page .filters-panel label { font-size: 13px; }
+.search-page .result-body > p { font-size: 14px; line-height: 1.9; }
+.search-page .result-tags span { font-size: 12px; padding: 6px 10px; }
+.search-page .result-meta { font-size: 12.5px; }
+.search-page .demo-result-badge,
+.search-page .plan-listing-badge { font-size: 11px; }
+.search-page .filters-reset { font-size: 12px; }
+
+.magazine-category,
+.magazine-readtime { font-size: 12px; }
+.magazine-card p { font-size: 14px; line-height: 1.95; }
+.magazine-card > a { font-size: 13px; }
+
+.guide-breadcrumb,
+.guide-meta { font-size: 12px; }
+.guide-header > p { font-size: 16px; }
+.guide-content p,
+.guide-content li { font-size: 16px; line-height: 2.05; }
+.guide-faq summary { font-size: 14px; }
+.guide-faq details p { font-size: 14px; }
+.guide-side-card p,
+.guide-side-card > a:not(.guide-related-link),
+.guide-related-link { font-size: 13px; }
+
+.category-seo-copy-card p,
+.local-intent-card p,
+.category-guide-card p { font-size: 14px; }
+.category-empty strong { font-size: 14px; }
+.category-empty p { font-size: 13px; }
+
+.local-discovery-card p,
+.karaj-neighborhood-card p { font-size: 14px; }
+
+.tool-card p,
+.home-tools-heading p,
+.home-tool-card p { font-size: 13.5px; line-height: 1.9; }
+
+.wallpaper-calculator-head p,
+.curtain-calculator-head p,
+.smart-scope-head p,
+.carpet-estimator-head p { font-size: 14px; }
+
+.wallpaper-calculator-grid label > span,
+.curtain-calculator-grid label > span,
+.smart-scope-grid label > span,
+.carpet-estimator-grid label > span { font-size: 12.5px; }
+
+.wallpaper-calculator-grid small,
+.curtain-calculator-grid small,
+.carpet-estimator-grid small { font-size: 11.5px; line-height: 1.8; }
+
+.wallpaper-calculator-grid b,
+.curtain-calculator-grid b,
+.carpet-estimator-grid b { font-size: 12px; }
+
+.wallpaper-result-breakdown dt,
+.curtain-result-breakdown dt,
+.carpet-result-breakdown dt { font-size: 12px; }
+.wallpaper-result-breakdown dd,
+.curtain-result-breakdown dd,
+.carpet-result-breakdown dd { font-size: 13px; }
+
+.wallpaper-result-disclaimer,
+.curtain-result-disclaimer,
+.smart-scope-disclaimer,
+.carpet-result-disclaimer,
+.carpet-alt-note { font-size: 11.5px; line-height: 1.9; }
+
+.smart-scope-summary span,
+.smart-scope-priorities > span { font-size: 11.5px; }
+.smart-scope-priorities b { font-size: 11px; }
+.smart-scope-recommendations p,
+.smart-scope-details li { font-size: 12.5px; }
+.smart-scope-details summary { font-size: 13px; }
+
+.wallpaper-tool-steps p,
+.wallpaper-tool-next p,
+.category-tool-card p { font-size: 13px; line-height: 1.85; }
+
+.inspiration-overlay strong { font-size: 12px; }
+.inspiration-overlay small,
+.inspiration-disclaimer { font-size: 11.5px; }
+
+@media (max-width:650px) {
+  .guide-header > p,
+  .guide-content p,
+  .guide-content li { font-size: 15px; }
+  .tool-card p,
+  .home-tool-card p { font-size: 13px; }
+}
