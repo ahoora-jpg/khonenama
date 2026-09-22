@@ -29,6 +29,14 @@
 - پروفایل‌های نمایشی با برچسب نمونه مشخص می‌شوند و نباید کسب‌وکار واقعی تلقی شوند.
 - امتیاز عمومی فقط از نظرهای منتشرشده ساخته می‌شود و نشان تأیید از پلن پولی جداست.
 
+## Featured 2026 knowledge
+- Matter، Thread، Zigbee و Wi‑Fi: https://khonenama.ir/magazine/matter-thread-zigbee-wifi-guide-2026
+- امنیت خانه هوشمند: https://khonenama.ir/magazine/smart-home-security-guide-2026
+- ترندهای طراحی داخلی ۲۰۲۶: https://khonenama.ir/magazine/interior-design-trends-2026
+- رنگ سال ۲۰۲۶ Pantone در دکوراسیون: https://khonenama.ir/magazine/pantone-cloud-dancer-2026-interior-guide
+- طراحی داخلی خانه کوچک: https://khonenama.ir/magazine/small-apartment-interior-design-guide
+- طراحی داخلی + زیرساخت خانه هوشمند: https://khonenama.ir/magazine/smart-home-interior-design-planning-guide
+
 ## Trust
 - درباره خونه‌نما: https://khonenama.ir/about
 - راهنما و پشتیبانی: https://khonenama.ir/help
