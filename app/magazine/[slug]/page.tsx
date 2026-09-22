@@ -201,6 +201,17 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                 </div>
               )}
 
+              {guide.category === "موکت" && (
+                <div className="guide-side-card guide-tool-link glass-panel">
+                  <Calculator size={18} />
+                  <h3>متراژ موکت را قبل از خرید حساب کن</h3>
+                  <p>برای رول، متراژ طولی و جهت نوارها؛ برای تایلی، تعداد تایل و بسته را با پرت حساب کن.</p>
+                  <a href="/tools/carpet-estimator">
+                    محاسبه‌گر موکت <ArrowUpLeft size={15} />
+                  </a>
+                </div>
+              )}
+
               <div className="guide-side-card glass-panel">
                 <span className="section-kicker">مسیر بعدی</span>
                 <h3>فروشگاه‌ها و متخصصان مرتبط را ببین</h3>
