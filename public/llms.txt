@@ -34,6 +34,7 @@
 - محاسبه تعداد رول کاغذ دیواری: https://khonenama.ir/tools/wallpaper-calculator
 - محاسبه متراژ پارچه پرده: https://khonenama.ir/tools/curtain-fabric-calculator
 - برآورد Scope خانه هوشمند: https://khonenama.ir/tools/smart-home-scope
+- محاسبه متراژ موکت رول و تایلی: https://khonenama.ir/tools/carpet-estimator
 
 ## Featured 2026 knowledge
 - KNX یا Matter: https://khonenama.ir/magazine/knx-vs-matter-smart-home-guide
