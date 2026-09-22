@@ -31,7 +31,7 @@ export default function Hero() {
 
         <div className="hero-showcase premium-visual-wrap">
           <div className="hero-visual-frame hero-coverflow-frame">
-            <CoverFlowCarousel className="hero-coverflow hero-coverflow-full" />
+            <CoverFlowCarousel className="hero-coverflow hero-coverflow-full" compact />
           </div>
         </div>
 
