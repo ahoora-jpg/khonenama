@@ -64,7 +64,7 @@ export const defaultKhonenamaItems: CarouselItem[] = [
     titleLine1: "چوب، بافت و گرما",
     titleLine2: "از انتخاب تا اجرا",
     desc: "پارکت، لمینت و مجریان نزدیک تو",
-    img: "https://images.unsplash.com/photo-1600585152915-d208bec867a1?auto=format&fit=crop&w=1200&q=85",
+    img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=85",
     ctaText: "مشاهده کفپوش",
     ctaUrl: "/category/flooring",
   },
@@ -147,7 +147,7 @@ export function CoverFlowCarousel({
       onTouchEnd={handleTouchEnd}
     >
       <div className="coverflow-bg" aria-hidden="true">
-        <img src={items[currentIndex]?.img} alt="" />
+        <img src={items[currentIndex]?.img} alt="" onError={(event) => { event.currentTarget.src = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85"; }} />
         <div />
       </div>
 
@@ -205,7 +205,7 @@ export function CoverFlowCarousel({
                     : "0 16px 36px rgba(0,0,0,.28)",
                 }}
               >
-                <img src={item.img} alt={item.titleLine1} />
+                <img src={item.img} alt={item.titleLine1} onError={(event) => { event.currentTarget.src = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85"; }} />
                 <div className="coverflow-vignette" />
                 <div className="coverflow-content" style={{ opacity: isCenter ? 1 : 0, pointerEvents: isCenter ? "auto" : "none" }}>
                   <span className="coverflow-tag">{item.tag}</span>
