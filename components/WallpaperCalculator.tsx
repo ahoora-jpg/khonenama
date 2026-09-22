@@ -26,7 +26,11 @@ const defaults: Values = {
 };
 
 function numberOf(value: string) {
-  const normalized = value.replace("٫", ".").replace(",", ".");
+  const normalized = value
+    .replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)))
+    .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
+    .replace("٫", ".")
+    .replace(",", ".");
   const parsed = Number.parseFloat(normalized);
   return Number.isFinite(parsed) ? parsed : 0;
 }
