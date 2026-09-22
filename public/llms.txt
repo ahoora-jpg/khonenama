@@ -34,6 +34,12 @@
 - محاسبه تعداد رول کاغذ دیواری: https://khonenama.ir/tools/wallpaper-calculator
 
 ## Featured 2026 knowledge
+- KNX یا Matter: https://khonenama.ir/magazine/knx-vs-matter-smart-home-guide
+- Matter Controller و Thread Border Router: https://khonenama.ir/magazine/matter-controller-thread-border-router-guide
+- خانه هوشمند بدون اینترنت: https://khonenama.ir/magazine/smart-home-without-internet-guide
+- راهنمای خرید قفل هوشمند: https://khonenama.ir/magazine/smart-lock-buying-security-guide
+- خانه هوشمند برای مستأجرها: https://khonenama.ir/magazine/smart-home-rental-apartment-guide
+- سنسور Presence در برابر Motion: https://khonenama.ir/magazine/presence-vs-motion-sensor-smart-home-guide
 - Matter، Thread، Zigbee و Wi‑Fi: https://khonenama.ir/magazine/matter-thread-zigbee-wifi-guide-2026
 - امنیت خانه هوشمند: https://khonenama.ir/magazine/smart-home-security-guide-2026
 - ترندهای طراحی داخلی ۲۰۲۶: https://khonenama.ir/magazine/interior-design-trends-2026
