@@ -67,9 +67,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const relatedGuides = guides.filter((guide) => seo.guides.includes(guide.slug));
   const visual = getCategoryVisual(slug);
 
+  const categoryUrl = "https://khonenama.ir/category/" + slug;
+
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
+    "@id": categoryUrl + "#businesses",
     name: seo.h1,
     itemListElement: matches.map((business, index) => ({
       "@type": "ListItem",
@@ -77,6 +80,29 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       url: "https://khonenama.ir/business/" + business.slug,
       name: business.name,
     })),
+  };
+
+  const collectionPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": categoryUrl + "#webpage",
+    url: categoryUrl,
+    name: seo.h1,
+    description: seo.metaDescription,
+    inLanguage: "fa-IR",
+    isPartOf: { "@id": "https://khonenama.ir/#website" },
+    about: relatedGuides.slice(0, 8).map((guide) => ({ "@type": "Thing", name: guide.title })),
+    mainEntity: { "@id": categoryUrl + "#businesses" },
+    publisher: { "@id": "https://khonenama.ir/#organization" },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "خونه‌نما", item: "https://khonenama.ir/" },
+      { "@type": "ListItem", position: 2, name: seo.h1, item: categoryUrl },
+    ],
   };
 
   const faqJsonLd = {
@@ -91,12 +117,18 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <Header />
 
       <section className="inner-page category-page">
         <div className="shell">
+          <nav className="guide-breadcrumb" aria-label="مسیر صفحه">
+            <a href="/">خونه‌نما</a><span>/</span><span>{seo.h1}</span>
+          </nav>
+
           <div className="category-hero category-hero-with-media glass-panel">
             <div>
               <span className="section-kicker">راهنمای تخصصی خونه‌نما</span>
