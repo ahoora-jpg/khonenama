@@ -33,6 +33,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       authors: ["https://khonenama.ir/about"],
       images: [{ url: visual.src, alt: visual.alt }],
     },
+    twitter: {
+      card: "summary_large_image",
+      title: guide.title,
+      description: guide.excerpt,
+      images: [visual.src],
+    },
   };
 }
 
