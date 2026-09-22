@@ -180,6 +180,17 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             </section>
           )}
 
+          {slug === "carpet" && (
+            <section className="category-tool-card glass-panel" aria-label="ابزار محاسبه موکت">
+              <span><Calculator size={20} /></span>
+              <div>
+                <h2>چند متر موکت یا چند بسته تایل لازم دارید؟</h2>
+                <p>برای موکت رول، عرض رول و جهت نوارها؛ برای موکت تایلی، تعداد تایل و بسته را با پرت محاسبه کنید.</p>
+              </div>
+              <a href="/tools/carpet-estimator">محاسبه متراژ موکت <ArrowUpLeft size={14} /></a>
+            </section>
+          )}
+
           {relatedGuides.length > 0 && (
             <section className="category-results">
               <div className="section-heading compact-heading">
