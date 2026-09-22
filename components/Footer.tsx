@@ -1,4 +1,4 @@
-import { CircleHelp, Instagram, MapPin } from "lucide-react";
+import { CircleHelp, ExternalLink, Instagram, MapPin, MessageCircle } from "lucide-react";
 
 const groups = [
   {
@@ -59,6 +59,13 @@ export default function Footer() {
               <a href="/privacy">حریم خصوصی</a>
               <a href="/terms">قوانین استفاده</a>
               <a href="/editorial-policy">سیاست تحریریه</a>
+              <a
+                href="https://wa.me/989122606778?text=%D8%B3%D9%84%D8%A7%D9%85%D8%8C%20%D8%A7%D8%B2%20%D8%B3%D8%A7%DB%8C%D8%AA%20%D8%AE%D9%88%D9%86%D9%87%E2%80%8C%D9%86%D9%85%D8%A7%20%D9%BE%DB%8C%D8%A7%D9%85%20%D9%85%DB%8C%E2%80%8C%D8%AF%D9%87%D9%85."
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MessageCircle size={13} /> ارتباط با ادمین
+              </a>
             </div>
           </div>
 
@@ -72,7 +79,19 @@ export default function Footer() {
 
         <div className="footer-bottom">
           <span>© ۲۰۲۶ خونه‌نما · همه حقوق محفوظ است.</span>
-          <span>طراحی برای تجربه بهتر انتخاب در خانه</span>
+          <div className="footer-credit">
+            <span>طراحی و توسعه وب:</span>
+            <a href="https://ahoora-studio.ir/" target="_blank" rel="noopener">
+              Ahoora Studio <ExternalLink size={12} />
+            </a>
+            <a
+              href="https://wa.me/989122606778?text=%D8%B3%D9%84%D8%A7%D9%85%D8%8C%20%D8%A7%D8%B2%20%D8%B3%D8%A7%DB%8C%D8%AA%20%D8%AE%D9%88%D9%86%D9%87%E2%80%8C%D9%86%D9%85%D8%A7%20%D8%A8%D8%B1%D8%A7%DB%8C%20%D8%AA%D9%85%D8%A7%D8%B3%20%D8%A8%D8%A7%20Ahoora%20Studio%20%D9%BE%DB%8C%D8%A7%D9%85%20%D9%85%DB%8C%E2%80%8C%D8%AF%D9%87%D9%85."
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <MessageCircle size={12} /> واتساپ
+            </a>
+          </div>
         </div>
       </div>
     </footer>
