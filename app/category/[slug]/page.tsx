@@ -125,7 +125,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               </div>
 
               <div className="category-guide-grid">
-                {relatedGuides.slice(0, 6).map((guide) => (
+                {relatedGuides.slice(0, 8).map((guide) => (
                   <a className="category-guide-card" href={"/magazine/" + guide.slug} key={guide.slug}>
                     <img className="category-guide-thumb" src={getGuideVisual(guide.category).src} alt="" loading="lazy" />
                     <BookOpen size={18} />
