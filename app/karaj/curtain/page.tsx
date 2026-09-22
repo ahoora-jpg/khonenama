@@ -169,6 +169,9 @@ export default function KarajCurtainPage() {
               </div>
             </div>
             <div className="category-guide-grid">
+              <a className="category-guide-card" href="/tools/curtain-fabric-calculator">
+                <div><h3>محاسبه متراژ پارچه پرده</h3><p>عرض ریل، Fullness و Pattern Repeat</p></div><ArrowUpLeft size={16} />
+              </a>
               <a className="category-guide-card" href="/magazine/zebra-curtain-guide">
                 <div><h3>پرده زبرا چیست؟</h3><p>مزایا، معایب و انواع زبرا</p></div><ArrowUpLeft size={16} />
               </a>
