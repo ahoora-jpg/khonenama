@@ -4,10 +4,10 @@ import { ArrowUpLeft, MapPin, Search, Sparkles, WandSparkles } from "lucide-reac
 import { CoverFlowCarousel } from "@/components/ui/3-d-coverflow-carousel";
 
 const popular = [
-  ["پرده", "/category/curtain"],
-  ["موکت", "/category/carpet"],
-  ["پارکت", "/category/flooring"],
-  ["کاغذ دیواری", "/category/wallpaper"],
+  ["پرده", "/search?q=پرده&location=کرج"],
+  ["موکت", "/search?q=موکت&location=کرج"],
+  ["پارکت", "/search?q=پارکت&location=کرج"],
+  ["کاغذ دیواری", "/search?q=کاغذ+دیواری&location=کرج"],
 ] as const;
 
 export default function Hero() {
