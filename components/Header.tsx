@@ -18,7 +18,7 @@ const links = [
   ["راهنماها", "/magazine"],
   ["ابزارها", "/tools"],
   ["پیگیری درخواست", "/request-status"],
-  ["برغان کرج", "/karaj/baraghan"],
+  ["برغان کرج", "/search?location=برغان"],
 ] as const;
 
 export default function Header() {
