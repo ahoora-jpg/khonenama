@@ -179,6 +179,28 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                 </div>
               )}
 
+              {guide.category === "پرده" && (
+                <div className="guide-side-card guide-tool-link glass-panel">
+                  <Calculator size={18} />
+                  <h3>متراژ پارچه پرده را حساب کن</h3>
+                  <p>عرض ریل، قد پرده، Fullness و Pattern Repeat را وارد کن تا متراژ تقریبی پارچه مشخص شود.</p>
+                  <a href="/tools/curtain-fabric-calculator">
+                    محاسبه‌گر متراژ پرده <ArrowUpLeft size={15} />
+                  </a>
+                </div>
+              )}
+
+              {guide.category === "خانه هوشمند" && (
+                <div className="guide-side-card guide-tool-link glass-panel">
+                  <Calculator size={18} />
+                  <h3>Scope پروژه را قبل از قیمت‌گیری مشخص کن</h3>
+                  <p>تعداد نقاط روشنایی، پرده، دما، امنیت و سنسورها را وارد کن تا محدوده اولیه پروژه مشخص شود.</p>
+                  <a href="/tools/smart-home-scope">
+                    ابزار Scope خانه هوشمند <ArrowUpLeft size={15} />
+                  </a>
+                </div>
+              )}
+
               <div className="guide-side-card glass-panel">
                 <span className="section-kicker">مسیر بعدی</span>
                 <h3>فروشگاه‌ها و متخصصان مرتبط را ببین</h3>
