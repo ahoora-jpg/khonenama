@@ -10,13 +10,15 @@ import HowItWorks from "@/components/HowItWorks";
 import BusinessCTA from "@/components/BusinessCTA";
 import Footer from "@/components/Footer";
 
+const homeTitle = "خونه‌نما | مرجع تخصصی دکوراسیون و تزئینات داخلی منزل";
+
 export const metadata = {
-  title: "خونه‌نما | مرجع تخصصی دکوراسیون و تزئینات داخلی منزل",
+  title: { absolute: homeTitle },
   description:
     "مرجع تخصصی دکوراسیون و تزئینات داخلی منزل؛ فروشگاه‌ها، متخصصان، پرده، موکت، کفپوش، کاغذ دیواری، طراحی داخلی و خانه هوشمند را پیدا و مقایسه کنید.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "خونه‌نما | مرجع تخصصی دکوراسیون و تزئینات داخلی منزل",
+    title: homeTitle,
     description:
       "فروشگاه‌ها، متخصصان و خدمات دکوراسیون منزل را در خونه‌نما پیدا و مقایسه کنید.",
     url: "https://khonenama.ir",
