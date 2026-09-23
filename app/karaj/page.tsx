@@ -3,11 +3,24 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { ArrowUpLeft, Layers3, MapPin, PaintRoller, PanelsTopLeft, Ruler, Sofa, Wifi } from "lucide-react";
 
+const pageUrl = "https://khonenama.ir/karaj";
+const pageTitle = "دکوراسیون داخلی کرج | فروشگاه‌ها، متخصصان و خدمات";
+const pageDescription =
+  "فروشگاه‌ها، متخصصان و خدمات دکوراسیون داخلی کرج را در خونه‌نما پیدا و مقایسه کنید؛ پرده، موکت، کفپوش، کاغذ دیواری، طراحی داخلی و خانه هوشمند.";
+
 export const metadata: Metadata = {
-  title: "دکوراسیون داخلی کرج | فروشگاه‌ها، متخصصان و خدمات",
-  description:
-    "فروشگاه‌ها، متخصصان و خدمات دکوراسیون داخلی کرج را در خونه‌نما پیدا و مقایسه کنید؛ پرده، موکت، کفپوش، کاغذ دیواری، طراحی داخلی و خانه هوشمند.",
-  alternates: { canonical: "/karaj" },
+  title: pageTitle,
+  description: pageDescription,
+  alternates: { canonical: pageUrl },
+  openGraph: {
+    title: pageTitle,
+    description: pageDescription,
+    url: pageUrl,
+    siteName: "خونه‌نما",
+    locale: "fa_IR",
+    type: "website",
+  },
+  twitter: { card: "summary", title: pageTitle, description: pageDescription },
 };
 
 const categories = [
@@ -23,7 +36,7 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   name: "دکوراسیون داخلی کرج",
-  url: "https://khonenama.ir/karaj",
+  url: pageUrl,
   description:
     "راهنمای محلی خونه‌نما برای پیدا کردن فروشگاه‌ها، متخصصان و خدمات دکوراسیون داخلی در کرج.",
   about: {
