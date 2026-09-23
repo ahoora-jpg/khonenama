@@ -6,6 +6,8 @@ const demos = businesses
   .slice(0, 6);
 
 export default function Featured() {
+  if (demos.length === 0) return null;
+
   return (
     <section className="section section-soft premium-featured" id="featured">
       <div className="shell">
