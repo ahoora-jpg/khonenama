@@ -6,6 +6,33 @@ import { getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, Calculator, Clock3, Link2 } from "lucide-react";
 import { notFound } from "next/navigation";
 
+const CURTAIN_INSTALLATION_SLUG = "curtain-installation-guide";
+const CURTAIN_INSTALLATION_MODIFIED_AT = "2026-09-23";
+
+const curtainInstallationExtraFaqs = [
+  {
+    question: "نصب پرده دیواری چه زمانی مناسب‌تر است؟",
+    answer:
+      "وقتی سقف برای پیچ‌کاری مناسب نیست، سقف کاذب محدودیت دارد یا می‌خواهید پایه‌ها روی دیوار بالای قاب قرار بگیرند، نصب دیواری می‌تواند گزینه مناسب‌تری باشد. قبل از سوراخ‌کاری باید مسیر تأسیسات و فضای بازشدن پنجره بررسی شود.",
+  },
+  {
+    question: "برای پرده زبرا نصب سقفی بهتر است یا دیواری؟",
+    answer:
+      "هیچ روش واحدی برای همه پنجره‌ها بهتر نیست. نصب سقفی معمولاً ظاهر یکپارچه‌تری می‌دهد و نصب دیواری در بعضی قاب‌ها یا سقف‌های نامناسب عملی‌تر است؛ اندازه‌گیری و جنس سطح نصب تعیین‌کننده‌اند.",
+  },
+];
+
+function enhancedKeywords(slug: string, keywords: string[]) {
+  if (slug !== CURTAIN_INSTALLATION_SLUG) return keywords;
+  return [
+    ...keywords,
+    "نصب پرده دیواری",
+    "نصب پرده سقفی",
+    "انتخاب محل نصب پرده",
+    "اندازه گیری پرده",
+  ];
+}
+
 export function generateStaticParams() {
   return guides.map((guide) => ({ slug: guide.slug }));
 }
@@ -15,11 +42,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const guide = getGuide(slug);
   if (!guide) return {};
   const visual = getGuideVisual(guide.category);
+  const isCurtainInstallation = guide.slug === CURTAIN_INSTALLATION_SLUG;
+  const modifiedAt = isCurtainInstallation
+    ? CURTAIN_INSTALLATION_MODIFIED_AT
+    : guide.modifiedAt || guide.publishedAt;
 
   return {
     title: guide.title,
     description: guide.excerpt,
-    keywords: guide.keywords,
+    keywords: enhancedKeywords(guide.slug, guide.keywords),
     authors: [{ name: "خونه‌نما", url: "https://khonenama.ir/about" }],
     alternates: { canonical: "/magazine/" + guide.slug },
     openGraph: {
@@ -29,7 +60,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       type: "article",
       locale: "fa_IR",
       publishedTime: guide.publishedAt,
-      modifiedTime: guide.modifiedAt || guide.publishedAt,
+      modifiedTime: modifiedAt,
       authors: ["https://khonenama.ir/about"],
       images: [{ url: visual.src, alt: visual.alt }],
     },
@@ -47,22 +78,32 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const guide = getGuide(slug);
   if (!guide) notFound();
   const visual = getGuideVisual(guide.category);
+  const isCurtainInstallation = guide.slug === CURTAIN_INSTALLATION_SLUG;
+  const modifiedAt = isCurtainInstallation
+    ? CURTAIN_INSTALLATION_MODIFIED_AT
+    : guide.modifiedAt || guide.publishedAt || "2026-09-19";
+  const quickAnswer = isCurtainInstallation
+    ? "برای نصب پرده دیواری، پایه‌ها روی دیوار بالای قاب یا در محل مناسب اطراف پنجره بسته می‌شوند؛ برای نصب سقفی، پایه به سقف متصل می‌شود. انتخاب بین این دو به جنس سطح، فضای بازشو، عرض پوشش موردنیاز و مسیر تأسیسات بستگی دارد. قبل از سفارش زبرا یا شید، محل نصب را مشخص و عرض و ارتفاع را بر همان مبنا اندازه‌گیری کنید."
+    : guide.quickAnswer;
+  const visibleFaqs = isCurtainInstallation
+    ? [...guide.faqs, ...curtainInstallationExtraFaqs]
+    : guide.faqs;
 
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: guide.title,
     description: guide.excerpt,
-    dateModified: guide.modifiedAt || guide.publishedAt || "2026-09-19",
+    dateModified: modifiedAt,
     datePublished: guide.publishedAt || "2026-09-19",
     inLanguage: "fa-IR",
     mainEntityOfPage: "https://khonenama.ir/magazine/" + guide.slug,
     author: { "@id": "https://khonenama.ir/#organization" },
     publisher: { "@id": "https://khonenama.ir/#organization" },
-    keywords: guide.keywords.join(", "),
+    keywords: enhancedKeywords(guide.slug, guide.keywords).join(", "),
     articleSection: guide.category,
-    abstract: guide.quickAnswer || guide.excerpt,
-    about: guide.keywords.slice(0, 6).map((name) => ({ "@type": "Thing", name })),
+    abstract: quickAnswer || guide.excerpt,
+    about: enhancedKeywords(guide.slug, guide.keywords).slice(0, 8).map((name) => ({ "@type": "Thing", name })),
     citation: guide.sources?.map((source) => source.url),
     isAccessibleForFree: true,
     isPartOf: { "@id": "https://khonenama.ir/#website" },
@@ -82,7 +123,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: guide.faqs.map((faq) => ({
+    mainEntity: visibleFaqs.map((faq) => ({
       "@type": "Question",
       name: faq.question,
       acceptedAnswer: { "@type": "Answer", text: faq.answer },
@@ -112,14 +153,14 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             <p>{guide.excerpt}</p>
             <div className="guide-meta">
               <span><Clock3 size={14} /> {guide.readTime}</span>
-              <span>به‌روزرسانی: {guide.updated}</span>
+              <span>به‌روزرسانی: {isCurtainInstallation ? "۱۴۰۵/۰۷/۰۱" : guide.updated}</span>
             </div>
           </header>
 
-          {guide.quickAnswer && (
+          {quickAnswer && (
             <section className="guide-quick-answer glass-panel" aria-label="پاسخ کوتاه">
               <span className="section-kicker">پاسخ کوتاه</span>
-              <p>{guide.quickAnswer}</p>
+              <p>{quickAnswer}</p>
             </section>
           )}
 
@@ -130,6 +171,18 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
 
           <div className="guide-layout">
             <div className="guide-content">
+              {isCurtainInstallation && (
+                <section>
+                  <h2>نصب پرده دیواری یا سقفی؛ کدام محل برای پنجره شما مناسب‌تر است؟</h2>
+                  <p>
+                    در نصب پرده دیواری، پایه‌ها روی دیوار و معمولاً بالاتر از قاب پنجره قرار می‌گیرند؛ در نصب سقفی، پایه مستقیماً به سقف یا سطح بالایی مناسب متصل می‌شود. برای زبرا و شید، تصمیم محل نصب باید قبل از اندازه‌گیری نهایی گرفته شود چون عرض پوشش، ارتفاع پرده و فاصله از دستگیره یا بازشوی پنجره را تغییر می‌دهد.
+                  </p>
+                  <p>
+                    اگر سقف کاذب، مسیر برق یا سطح نامناسب دارید، نصب دیواری می‌تواند عملی‌تر باشد. اگر هدف پوشش یکپارچه‌تر و افزایش ارتفاع بصری است، نصب سقفی ارزش بررسی دارد. در هر دو حالت، جنس دیوار یا سقف و پیچ و رول‌پلاک متناسب با آن باید قبل از اجرا مشخص شود.
+                  </p>
+                </section>
+              )}
+
               {guide.sections.map((section) => (
                 <section key={section.heading}>
                   <h2>{section.heading}</h2>
@@ -144,7 +197,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
 
               <section className="guide-faq">
                 <h2>سوالات متداول</h2>
-                {guide.faqs.map((faq) => (
+                {visibleFaqs.map((faq) => (
                   <details key={faq.question}>
                     <summary>{faq.question}</summary>
                     <p>{faq.answer}</p>
