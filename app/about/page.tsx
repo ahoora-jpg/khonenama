@@ -3,17 +3,31 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { BadgeCheck, MapPin, Search, ShieldCheck, Store } from "lucide-react";
 
+const pageUrl = "https://khonenama.ir/about";
+const pageTitle = "درباره خونه‌نما | مرجع تخصصی دکوراسیون و خدمات خانه";
+const pageDescription =
+  "خونه‌نما برای پیدا کردن، مقایسه و ارتباط مستقیم با فروشگاه‌ها و متخصصان دکوراسیون و خانه هوشمند ساخته شده است.";
+
 export const metadata: Metadata = {
-  title: "درباره خونه‌نما | مرجع تخصصی دکوراسیون و خدمات خانه",
-  description: "خونه‌نما برای پیدا کردن، مقایسه و ارتباط مستقیم با فروشگاه‌ها و متخصصان دکوراسیون و خانه هوشمند ساخته شده است.",
-  alternates: { canonical: "/about" },
+  title: pageTitle,
+  description: pageDescription,
+  alternates: { canonical: pageUrl },
+  openGraph: {
+    title: pageTitle,
+    description: pageDescription,
+    url: pageUrl,
+    siteName: "خونه‌نما",
+    locale: "fa_IR",
+    type: "website",
+  },
+  twitter: { card: "summary", title: pageTitle, description: pageDescription },
 };
 
 const aboutJsonLd = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
   "@id": "https://khonenama.ir/about#page",
-  url: "https://khonenama.ir/about",
+  url: pageUrl,
   name: "درباره خونه‌نما",
   inLanguage: "fa-IR",
   mainEntity: { "@id": "https://khonenama.ir/#organization" },
@@ -32,7 +46,7 @@ export default function AboutPage() {
             <h1>پیدا کردن گزینه مناسب برای خانه باید ساده‌تر و شفاف‌تر باشد.</h1>
             <p>
               خونه‌نما یک مرجع تخصصی برای دکوراسیون، متریال، اجرای داخلی و خانه هوشمند است؛
-              جایی برای دیدن نمونه‌کار، مقایسه خدمات و ارتباط مستقیم با کسب‌وکار.
+              جایی برای دیدن اطلاعات واقعی کسب‌وکارها، مقایسه خدمات و ارتباط مستقیم با آن‌ها.
             </p>
           </header>
 
@@ -40,7 +54,7 @@ export default function AboutPage() {
             <h2>خونه‌نما چه کاری انجام می‌دهد؟</h2>
             <p>
               کاربر می‌تواند بر اساس دسته، شهر و محله جستجو کند، پروفایل کسب‌وکارها را ببیند،
-              خدمات و نمونه‌کارها را مقایسه کند و برای همان کسب‌وکار درخواست قیمت خصوصی بفرستد.
+              خدمات و نمونه‌کارهای ثبت‌شده را مقایسه کند و برای همان کسب‌وکار درخواست قیمت خصوصی بفرستد.
             </p>
 
             <div className="about-feature-grid">
@@ -54,12 +68,6 @@ export default function AboutPage() {
             <p>
               نشان تأیید برای اعتماد و بررسی کسب‌وکار است و خریدنی نیست. پلن حرفه‌ای یا ویژه
               می‌تواند امکانات و میزان دیده‌شدن را بیشتر کند، اما امتیاز کاربران یا نشان تأیید را نمی‌خرد.
-            </p>
-
-            <h2>پروفایل نمونه یعنی چه؟</h2>
-            <p>
-              بعضی پروفایل‌ها با برچسب «نمونه نمایشی» فقط برای نشان دادن ساختار سایت ساخته شده‌اند.
-              این نمونه‌ها مشتری، امتیاز یا ادعای فعالیت واقعی ندارند و با کسب‌وکار ثبت‌شده اشتباه گرفته نمی‌شوند.
             </p>
 
             <h2>محتوای خونه‌نما چگونه نوشته و به‌روزرسانی می‌شود؟</h2>
