@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { businesses } from "@/lib/demo-data";
+import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 import { BadgeCheck, MapPin, Star } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -11,8 +11,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/karaj/baraghan" },
 };
 
-export default function BaraghanPage() {
-  const localBusinesses = businesses.filter((business) => business.area.includes("برغان"));
+export default async function BaraghanPage() {
+  const publishedBusinesses = await listPublishedBusinesses({ city: "کرج", limit: 50 });
+  const localBusinesses = publishedBusinesses.filter((business) =>
+    business.area.includes("برغان")
+  );
 
   return (
     <main>
@@ -33,24 +36,48 @@ export default function BaraghanPage() {
               <div><h2>کسب‌وکارهای برغان</h2></div>
             </div>
 
-            <div className="business-grid">
-              {(localBusinesses.length ? localBusinesses : businesses.slice(0, 1)).map((business) => (
-                <a className="business-card" href={`/business/${business.slug}`} key={business.slug}>
-                  <div className="business-media business-generic"><div className="business-media-shape" /></div>
-                  <div className="business-content">
-                    <div className="business-title-row">
-                      <h3>{business.name}</h3>
-                      {business.verified && <BadgeCheck size={18} className="verified-icon" />}
+            {localBusinesses.length > 0 ? (
+              <div className="business-grid">
+                {localBusinesses.map((business) => (
+                  <a className={"business-card plan-card-" + business.planCode} href={`/business/${business.slug}`} key={business.slug}>
+                    <div className="business-media business-generic">
+                      {business.media.find((item) => item.kind === "cover")?.url || business.media[0]?.url ? (
+                        <img
+                          className="business-card-cover"
+                          src={business.media.find((item) => item.kind === "cover")?.url || business.media[0]?.url}
+                          alt={business.name}
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="business-media-shape" />
+                      )}
                     </div>
-                    <p>{business.description}</p>
-                    <div className="business-meta-row">
-                      <span><MapPin size={14} /> {business.city}، {business.area}</span>
-                      <span><Star size={14} fill="currentColor" /> {business.rating}</span>
+                    <div className="business-content">
+                      <div className="business-title-row">
+                        <h3>{business.name}</h3>
+                        {(business.verificationStatus === "verified" || business.verificationStatus === "professional") && (
+                          <BadgeCheck size={18} className="verified-icon" />
+                        )}
+                      </div>
+                      <p>{business.description}</p>
+                      <div className="business-meta-row">
+                        <span><MapPin size={14} /> {business.city}، {business.area}</span>
+                        <span>
+                          <Star size={14} fill={business.reviewCount ? "currentColor" : "none"} />
+                          {business.reviewCount ? business.rating : "جدید"}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </a>
-              ))}
-            </div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className="category-empty glass-panel">
+                <strong>هنوز کسب‌وکار منتشرشده‌ای در محدوده برغان نداریم.</strong>
+                <p>پس از ثبت و تأیید کسب‌وکارهای واقعی این محدوده، پروفایل‌های آن‌ها در همین صفحه نمایش داده می‌شود.</p>
+                <a className="pill-button dark" href="/register-business">ثبت رایگان کسب‌وکار</a>
+              </div>
+            )}
           </div>
         </div>
       </section>
