@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { businessPlans } from "@/lib/business-plans";
+import { businessDiscoveryAnswers } from "@/lib/ai-search-content";
 import {
   ArrowUpLeft,
   BadgeCheck,
@@ -16,23 +17,71 @@ import {
   Users,
 } from "lucide-react";
 
+const pageUrl = "https://khonenama.ir/for-business";
+const pageTitle = "ثبت کسب‌وکار دکوراسیون | معرفی فروشگاه و خدمات";
+const pageDescription =
+  "کسب‌وکار دکوراسیون خود را در خونه‌نما معرفی کنید؛ پروفایل عمومی، دسته‌بندی تخصصی، جستجوی محلی، نمونه‌کار و مسیر دریافت درخواست مشتری.";
+
 export const metadata: Metadata = {
-  title: "ثبت کسب‌وکار در خونه‌نما | معرفی فروشگاه و خدمات دکوراسیون",
-  description:
-    "کسب‌وکار دکوراسیون خود را در خونه‌نما ثبت کنید؛ پروفایل حرفه‌ای، جستجوی محلی، نمونه‌کار، آمار بازدید و مسیرهای تبلیغاتی.",
-  alternates: { canonical: "/for-business" },
+  title: { absolute: pageTitle },
+  description: pageDescription,
+  alternates: { canonical: pageUrl },
+  openGraph: {
+    title: pageTitle,
+    description: pageDescription,
+    url: pageUrl,
+    siteName: "خونه‌نما",
+    locale: "fa_IR",
+    type: "website",
+  },
 };
 
 const steps = [
   ["۱", "حساب و اطلاعات پایه", "شماره تماس، نام و نوع کسب‌وکار را ثبت می‌کنید."],
   ["۲", "خدمات و محدوده فعالیت", "دسته، خدمات، شهر و محله‌هایی که پوشش می‌دهید مشخص می‌شوند."],
-  ["۳", "تصاویر و نمونه‌کار", "لوگو، کاور و نمونه‌کارها را برای ساخت پروفایل حرفه‌ای اضافه می‌کنید."],
-  ["۴", "انتشار و رشد", "پروفایل منتشر می‌شود و بعداً می‌توانید پلن و تبلیغات را ارتقا دهید."],
+  ["۳", "تصاویر و نمونه‌کار", "لوگو، کاور و تصاویر واقعی را برای کامل‌کردن پروفایل اضافه می‌کنید."],
+  ["۴", "بررسی و انتشار", "پس از تکمیل و بررسی، پروفایل واجد شرایط می‌تواند در صفحات عمومی منتشر شود."],
 ] as const;
+
+const businessFaqs = [
+  { question: "ثبت کسب‌وکار رایگان است؟", answer: "بله. پلن پایه برای ساخت و انتشار پروفایل اولیه رایگان است." },
+  { question: "چطور نشان تأییدشده می‌گیرم؟", answer: "تأیید شماره تماس مرحله پایه است و برای نشان تأییدشده، مدارک و اطلاعات کسب‌وکار بررسی می‌شوند." },
+  { question: "تبلیغ پولی روی رتبه طبیعی اثر می‌گذارد؟", answer: "جایگاه‌های پولی با برچسب «ویژه» یا «اسپانسر» مشخص می‌شوند و از اعتبار تأیید کسب‌وکار جدا هستند." },
+  { question: "برای ساخت پروفایل چه اطلاعاتی لازم است؟", answer: "نام واقعی کسب‌وکار، دسته و خدمات، شهر و محدوده فعالیت، شماره تماس و توضیح روشن پایه کار هستند؛ تصاویر واقعی هم به کامل‌تر شدن پروفایل کمک می‌کنند." },
+] as const;
+
+const webpageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": pageUrl + "#webpage",
+  url: pageUrl,
+  name: pageTitle,
+  description: pageDescription,
+  inLanguage: "fa-IR",
+  isPartOf: { "@id": "https://khonenama.ir/#website" },
+  publisher: { "@id": "https://khonenama.ir/#organization" },
+  about: [
+    { "@type": "Thing", name: "معرفی کسب‌وکار دکوراسیون" },
+    { "@type": "Thing", name: "ثبت فروشگاه و متخصص خدمات خانه" },
+    { "@type": "Thing", name: "جستجوی محلی کسب‌وکار" },
+  ],
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [...businessDiscoveryAnswers, ...businessFaqs].map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: { "@type": "Answer", text: item.answer },
+  })),
+};
 
 export default function ForBusinessPage() {
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webpageJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <Header />
 
       <section className="business-landing-hero">
@@ -41,7 +90,7 @@ export default function ForBusinessPage() {
             <span className="section-kicker">خونه‌نما برای کسب‌وکارها</span>
             <h1>کسب‌وکارت را جایی معرفی کن که مشتری دنبال دکوراسیون می‌گردد.</h1>
             <p>
-              پروفایل حرفه‌ای بساز، در جستجوی محلی دیده شو، نمونه‌کارت را نمایش بده
+              پروفایل حرفه‌ای بساز، در دسته و جستجوی محلی دیده شو، نمونه‌کارت را نمایش بده
               و مسیر ارتباط با مشتری را ساده‌تر کن.
             </p>
             <div className="business-hero-actions">
@@ -59,21 +108,40 @@ export default function ForBusinessPage() {
 
           <div className="business-landing-visual glass-panel">
             <div className="business-preview-card">
-              <span className="status-pill">نمونه پروفایل</span>
+              <span className="status-pill">نمای ساختار پروفایل</span>
               <div className="business-preview-cover" />
               <div className="business-preview-body">
-                <strong>پرده‌سرای نمونه کرج</strong>
-                <small>پرده زبرا، شید، اندازه‌گیری و نصب</small>
+                <strong>نام کسب‌وکار شما</strong>
+                <small>دسته، خدمات و محدوده فعالیت</small>
                 <div>
-                  <span><Search size={14} /> دیده‌شدن در جستجو</span>
-                  <span><MessageCircle size={14} /> دریافت درخواست مشتری</span>
+                  <span><Search size={14} /> دیده‌شدن در دسته و جستجوی محلی</span>
+                  <span><MessageCircle size={14} /> مسیر دریافت درخواست مشتری</span>
                 </div>
               </div>
             </div>
             <div className="business-floating-stat">
               <BarChart3 size={20} />
-              <span><strong>آمار واقعی</strong><small>بازدید، تماس و درخواست</small></span>
+              <span><strong>آمار پنل</strong><small>تعامل‌های ثبت‌شده با پروفایل</small></span>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section business-benefits">
+        <div className="shell">
+          <div className="section-heading premium-heading">
+            <div>
+              <span className="section-kicker">پاسخ به سوال صاحبان کسب‌وکار</span>
+              <h2>کجا و چطور کسب‌وکار دکوراسیون را آنلاین معرفی کنیم؟</h2>
+            </div>
+          </div>
+          <div className="local-intent-grid">
+            {businessDiscoveryAnswers.map((item) => (
+              <article className="local-intent-card" key={item.question}>
+                <h3>{item.question}</h3>
+                <p>{item.answer}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
@@ -89,9 +157,9 @@ export default function ForBusinessPage() {
 
           <div className="business-benefit-grid">
             <article><Store size={22} /><h3>پروفایل حرفه‌ای</h3><p>اطلاعات، خدمات، تماس، آدرس، تصاویر و نمونه‌کار در یک صفحه اختصاصی.</p></article>
-            <article><MapPin size={22} /><h3>جستجوی محلی</h3><p>نمایش بر اساس شهر، محله، دسته و نوع خدمت.</p></article>
-            <article><Camera size={22} /><h3>نمونه‌کار واقعی</h3><p>تصاویر پروژه‌ها و محصولات، به‌جای توضیح خشک و طولانی.</p></article>
-            <article><BarChart3 size={22} /><h3>آمار عملکرد</h3><p>در پلن‌های حرفه‌ای، بازدید، کلیک تماس و درخواست مشتری را دنبال می‌کنید.</p></article>
+            <article><MapPin size={22} /><h3>جستجوی محلی</h3><p>نمایش بر اساس شهر، محله، دسته و نوع خدمت برای پروفایل‌های منتشرشده.</p></article>
+            <article><Camera size={22} /><h3>نمونه‌کار واقعی</h3><p>تصاویر واقعی پروژه‌ها و محصولات را در پروفایل خودتان نمایش می‌دهید.</p></article>
+            <article><BarChart3 size={22} /><h3>آمار عملکرد</h3><p>در پنل، تعامل‌هایی که سیستم ثبت می‌کند قابل پیگیری هستند.</p></article>
           </div>
         </div>
       </section>
@@ -155,10 +223,9 @@ export default function ForBusinessPage() {
             <h2>قبل از ثبت کسب‌وکار</h2>
           </div>
           <div className="guide-faq">
-            <details><summary>ثبت کسب‌وکار رایگان است؟</summary><p>بله. پلن پایه برای ساخت و انتشار پروفایل اولیه رایگان است.</p></details>
-            <details><summary>چطور نشان تأییدشده می‌گیرم؟</summary><p>تأیید شماره تماس مرحله پایه است و برای نشان تأییدشده، مدارک و اطلاعات کسب‌وکار بررسی می‌شوند.</p></details>
-            <details><summary>تبلیغ پولی روی رتبه طبیعی اثر می‌گذارد؟</summary><p>جایگاه‌های پولی با برچسب «ویژه» یا «اسپانسر» مشخص می‌شوند و از اعتبار تأیید کسب‌وکار جدا هستند.</p></details>
-            <details><summary>آیا چند نفر می‌توانند یک پروفایل را مدیریت کنند؟</summary><p>بله؛ ساختار پنل برای Owner، Manager و Staff طراحی شده و در فاز اتصال احراز هویت فعال می‌شود.</p></details>
+            {businessFaqs.map((item) => (
+              <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>
+            ))}
           </div>
         </div>
       </section>

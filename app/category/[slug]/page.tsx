@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { businesses, getCategory } from "@/lib/demo-data";
+import { getCategory } from "@/lib/demo-data";
 import { getCategorySeo } from "@/lib/category-seo";
+import { getAiSearchContent } from "@/lib/ai-search-content";
 import { guides } from "@/lib/guides";
 import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 import { getCategoryVisual, getGuideVisual } from "@/lib/visuals";
@@ -16,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!category || !seo) return {};
 
   return {
-    title: seo.metaTitle,
+    title: { absolute: seo.metaTitle },
     description: seo.metaDescription,
     alternates: { canonical: "/category/" + slug },
     openGraph: {
@@ -36,35 +37,22 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   if (!category || !seo) notFound();
 
   const liveBusinesses = await listPublishedBusinesses({ categorySlug: slug, limit: 50 });
-  const demoMatches = businesses.filter((business) => business.category === slug);
-  const liveSlugs = new Set(liveBusinesses.map((business) => business.slug));
-  const matches = [
-    ...liveBusinesses.map((business) => ({
-      slug: business.slug,
-      name: business.name,
-      description: business.description,
-      city: business.city,
-      area: business.area,
-      verified: business.verificationStatus === "verified" || business.verificationStatus === "professional",
-      rating: business.rating,
-      reviewCount: business.reviewCount,
-      services: business.services,
-      planCode: business.planCode,
-      promoted: business.promoted,
-      coverUrl: business.media.find((item) => item.kind === "cover")?.url || business.media[0]?.url || "",
-      source: "live" as const,
-    })),
-    ...demoMatches
-      .filter((business) => !liveSlugs.has(business.slug))
-      .map((business) => ({
-        ...business,
-        planCode: business.featured ? "premium" as const : "free" as const,
-        promoted: Boolean(business.featured),
-        coverUrl: business.media?.find((item) => item.cover)?.url || business.media?.[0]?.url || "",
-        source: "demo" as const,
-      })),
-  ];
+  const matches = liveBusinesses.map((business) => ({
+    slug: business.slug,
+    name: business.name,
+    description: business.description,
+    city: business.city,
+    area: business.area,
+    verified: business.verificationStatus === "verified" || business.verificationStatus === "professional",
+    rating: business.rating,
+    reviewCount: business.reviewCount,
+    services: business.services,
+    planCode: business.planCode,
+    promoted: business.promoted,
+    coverUrl: business.media.find((item) => item.kind === "cover")?.url || business.media[0]?.url || "",
+  }));
   const relatedGuides = guides.filter((guide) => seo.guides.includes(guide.slug));
+  const aiAnswers = getAiSearchContent(slug);
   const visual = getCategoryVisual(slug);
 
   const categoryUrl = "https://khonenama.ir/category/" + slug;
@@ -91,7 +79,10 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     description: seo.metaDescription,
     inLanguage: "fa-IR",
     isPartOf: { "@id": "https://khonenama.ir/#website" },
-    about: relatedGuides.slice(0, 8).map((guide) => ({ "@type": "Thing", name: guide.title })),
+    about: [
+      ...relatedGuides.slice(0, 8).map((guide) => ({ "@type": "Thing", name: guide.title })),
+      ...aiAnswers.map((item) => ({ "@type": "Thing", name: item.question })),
+    ],
     mainEntity: { "@id": categoryUrl + "#businesses" },
     publisher: { "@id": "https://khonenama.ir/#organization" },
   };
@@ -108,10 +99,10 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: seo.faqs.map((faq) => ({
+    mainEntity: [...aiAnswers, ...seo.faqs].map((faq) => ({
       "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: { "@type": "Answer", text: faq.answer },
+      name: "question" in faq ? faq.question : "",
+      acceptedAnswer: { "@type": "Answer", text: "answer" in faq ? faq.answer : "" },
     })),
   };
 
@@ -137,6 +128,25 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             </div>
             <img src={visual.src} alt={visual.alt} />
           </div>
+
+          {aiAnswers.length > 0 && (
+            <section className="category-results" aria-labelledby="decision-answers-heading">
+              <div className="section-heading compact-heading">
+                <div>
+                  <span className="section-kicker">پاسخ سریع برای تصمیم‌گیری</span>
+                  <h2 id="decision-answers-heading">سوال‌هایی که قبل از انتخاب باید جوابشان را بدانید</h2>
+                </div>
+              </div>
+              <div className="local-intent-grid">
+                {aiAnswers.map((item) => (
+                  <article className="local-intent-card" key={item.question}>
+                    <h3>{item.question}</h3>
+                    <p>{item.answer}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
 
           <section className="category-seo-copy">
             {seo.sections.map((section) => (
@@ -203,7 +213,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               <div className="category-guide-grid">
                 {relatedGuides.slice(0, 8).map((guide) => (
                   <a className="category-guide-card" href={"/magazine/" + guide.slug} key={guide.slug}>
-                    <img className="category-guide-thumb" src={getGuideVisual(guide.category).src} alt="" loading="lazy" />
+                    <img className="category-guide-thumb" src={getGuideVisual(guide.category).src} alt={guide.title} loading="lazy" />
                     <BookOpen size={18} />
                     <div>
                       <h3>{guide.title}</h3>
@@ -239,7 +249,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                       <div className="business-title-row">
                         <h3>{business.name}</h3>
                         {business.verified && <BadgeCheck size={18} className="verified-icon" />}
-                        {business.source === "demo" && <span className="demo-result-badge">نمونه نمایشی</span>}
                         {business.planCode === "pro" && (
                           <span className="plan-listing-badge is-pro"><BriefcaseBusiness size={13} /> حرفه‌ای</span>
                         )}
@@ -250,7 +259,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                       <p>{business.description}</p>
                       <div className="business-meta-row">
                         <span><MapPin size={14} /> {business.city}، {business.area}</span>
-                        <span><Star size={14} fill="currentColor" /> {business.reviewCount > 0 ? business.rating : "جدید"}</span>
+                        <span><Star size={14} fill={business.reviewCount > 0 ? "currentColor" : "none"} /> {business.reviewCount > 0 ? business.rating : "جدید"}</span>
                       </div>
                     </div>
                   </a>
@@ -258,8 +267,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               </div>
             ) : (
               <div className="category-empty glass-panel">
-                <strong>پروفایل‌های این دسته در حال تکمیل هستند.</strong>
-                <p>در همین صفحه به‌زودی فروشگاه‌ها و متخصصان مرتبط نمایش داده می‌شوند.</p>
+                <strong>هنوز کسب‌وکار منتشرشده‌ای در این دسته نداریم.</strong>
+                <p>فقط پروفایل‌های واقعی و منتشرشده در این بخش نمایش داده می‌شوند.</p>
+                <a className="pill-button dark" href="/for-business">صاحب کسب‌وکار هستید؟ راهنمای معرفی در خونه‌نما</a>
               </div>
             )}
           </section>

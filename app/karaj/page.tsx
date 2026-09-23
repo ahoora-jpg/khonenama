@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { karajAiAnswers } from "@/lib/ai-search-content";
 import { ArrowUpLeft, Layers3, MapPin, PaintRoller, PanelsTopLeft, Ruler, Sofa, Wifi } from "lucide-react";
 
 const pageUrl = "https://khonenama.ir/karaj";
@@ -9,7 +10,7 @@ const pageDescription =
   "فروشگاه‌ها، متخصصان و خدمات دکوراسیون داخلی کرج را در خونه‌نما پیدا و مقایسه کنید؛ پرده، موکت، کفپوش، کاغذ دیواری، طراحی داخلی و خانه هوشمند.";
 
 export const metadata: Metadata = {
-  title: pageTitle,
+  title: { absolute: pageTitle },
   description: pageDescription,
   alternates: { canonical: pageUrl },
   openGraph: {
@@ -35,24 +36,39 @@ const categories = [
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
+  "@id": pageUrl + "#webpage",
   name: "دکوراسیون داخلی کرج",
   url: pageUrl,
   description:
     "راهنمای محلی خونه‌نما برای پیدا کردن فروشگاه‌ها، متخصصان و خدمات دکوراسیون داخلی در کرج.",
-  about: {
-    "@type": "Thing",
-    name: "دکوراسیون داخلی کرج",
-  },
+  inLanguage: "fa-IR",
+  isPartOf: { "@id": "https://khonenama.ir/#website" },
+  publisher: { "@id": "https://khonenama.ir/#organization" },
+  about: [
+    { "@type": "Thing", name: "دکوراسیون داخلی کرج" },
+    ...categories.map(([title]) => ({ "@type": "Thing", name: title })),
+  ],
   spatialCoverage: {
     "@type": "City",
     name: "کرج",
   },
 };
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: karajAiAnswers.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: { "@type": "Answer", text: item.answer },
+  })),
+};
+
 export default function KarajPage() {
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <Header />
 
       <section className="inner-page">
@@ -65,6 +81,23 @@ export default function KarajPage() {
               موقعیت و نوع خدمت پیدا و مقایسه کنید.
             </p>
           </div>
+
+          <section className="category-results" aria-labelledby="karaj-decision-heading">
+            <div className="section-heading compact-heading">
+              <div>
+                <span className="section-kicker">پاسخ سریع برای جستجوی محلی</span>
+                <h2 id="karaj-decision-heading">قبل از انتخاب فروشگاه یا متخصص در کرج</h2>
+              </div>
+            </div>
+            <div className="local-intent-grid">
+              {karajAiAnswers.map((item) => (
+                <article className="local-intent-card" key={item.question}>
+                  <h3>{item.question}</h3>
+                  <p>{item.answer}</p>
+                </article>
+              ))}
+            </div>
+          </section>
 
           <section className="category-results">
             <div className="section-heading compact-heading">
@@ -104,6 +137,14 @@ export default function KarajPage() {
               </div>
               <ArrowUpLeft size={20} />
             </a>
+          </section>
+
+          <section className="category-results">
+            <div className="category-empty glass-panel">
+              <strong>صاحب فروشگاه یا متخصص دکوراسیون در کرج هستید؟</strong>
+              <p>راهنمای ساخت پروفایل، اطلاعات لازم و نحوه انتشار کسب‌وکار در خونه‌نما را ببینید.</p>
+              <a className="pill-button dark" href="/for-business">راهنمای معرفی کسب‌وکار</a>
+            </div>
           </section>
         </div>
       </section>

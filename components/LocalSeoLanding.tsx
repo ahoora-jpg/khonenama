@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { businesses } from "@/lib/demo-data";
+import { getAiSearchContent } from "@/lib/ai-search-content";
 import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 import { ArrowUpLeft, BadgeCheck, BriefcaseBusiness, Crown, MapPin, Star } from "lucide-react";
 
@@ -30,7 +30,7 @@ export default async function LocalSeoLanding({
     limit: 24,
   });
 
-  const live = liveBusinesses.map((business) => ({
+  const matches = liveBusinesses.map((business) => ({
     slug: business.slug,
     name: business.name,
     description: business.description,
@@ -46,35 +46,9 @@ export default async function LocalSeoLanding({
       business.media.find((item) => item.kind === "cover")?.url ||
       business.media[0]?.url ||
       "",
-    demo: false,
   }));
 
-  const liveSlugs = new Set(live.map((item) => item.slug));
-  const demos = businesses
-    .filter(
-      (business) =>
-        business.city === "کرج" &&
-        business.category === categorySlug &&
-        !liveSlugs.has(business.slug)
-    )
-    .map((business) => ({
-      slug: business.slug,
-      name: business.name,
-      description: business.description,
-      city: business.city,
-      area: business.area,
-      verified: business.verified,
-      rating: business.rating,
-      reviewCount: business.reviewCount,
-      planCode: business.featured ? ("premium" as const) : ("free" as const),
-      coverUrl:
-        business.media?.find((item) => item.cover)?.url ||
-        business.media?.[0]?.url ||
-        "",
-      demo: true,
-    }));
-
-  const matches = [...live, ...demos];
+  const aiAnswers = getAiSearchContent(categorySlug);
   const localUrl = "https://khonenama.ir/karaj/" + categorySlug;
 
   const itemListJsonLd = {
@@ -103,6 +77,7 @@ export default async function LocalSeoLanding({
       { "@type": "Thing", name: h1 },
       { "@type": "Place", name: "کرج" },
       ...guides.slice(0, 6).map((guide) => ({ "@type": "Thing", name: guide.title })),
+      ...aiAnswers.map((item) => ({ "@type": "Thing", name: item.question })),
     ],
     mainEntity: { "@id": localUrl + "#businesses" },
     publisher: { "@id": "https://khonenama.ir/#organization" },
@@ -121,7 +96,7 @@ export default async function LocalSeoLanding({
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faqs.map((item) => ({
+    mainEntity: [...aiAnswers, ...faqs].map((item) => ({
       "@type": "Question",
       name: item.question,
       acceptedAnswer: { "@type": "Answer", text: item.answer },
@@ -146,6 +121,7 @@ export default async function LocalSeoLanding({
             <span className="section-kicker">راهنمای محلی خونه‌نما</span>
             <h1>{h1}</h1>
             <p>{intro}</p>
+            <a href={"/category/" + categorySlug}>راهنمای جامع این دسته</a>
           </div>
 
           <section className="local-intent-grid">
@@ -156,6 +132,25 @@ export default async function LocalSeoLanding({
               </div>
             ))}
           </section>
+
+          {aiAnswers.length > 0 && (
+            <section className="category-results" aria-labelledby="local-ai-answers-heading">
+              <div className="section-heading compact-heading">
+                <div>
+                  <span className="section-kicker">پاسخ سریع قبل از تماس</span>
+                  <h2 id="local-ai-answers-heading">سوال‌های تصمیم‌گیری این دسته</h2>
+                </div>
+              </div>
+              <div className="local-intent-grid">
+                {aiAnswers.map((item) => (
+                  <article className="local-intent-card" key={item.question}>
+                    <h3>{item.question}</h3>
+                    <p>{item.answer}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
 
           <section className="category-results">
             <div className="section-heading compact-heading">
@@ -171,7 +166,6 @@ export default async function LocalSeoLanding({
                       ) : (
                         <div className="business-media-shape" />
                       )}
-                      {business.demo && <span className="demo-label">پروفایل نمونه</span>}
                     </div>
                     <div className="business-content">
                       <div className="business-title-row">
@@ -198,8 +192,9 @@ export default async function LocalSeoLanding({
               </div>
             ) : (
               <div className="category-empty glass-panel">
-                <strong>هنوز کسب‌وکار ثبت‌شده‌ای در این دسته نداریم.</strong>
-                <a className="pill-button dark" href="/register-business">ثبت رایگان کسب‌وکار</a>
+                <strong>هنوز کسب‌وکار منتشرشده‌ای در این دسته نداریم.</strong>
+                <p>اگر صاحب فروشگاه یا متخصص این حوزه هستید، ابتدا راهنمای معرفی کسب‌وکار را ببینید؛ فقط اطلاعات واقعی پس از بررسی وارد صفحات عمومی می‌شوند.</p>
+                <a className="pill-button dark" href="/for-business">راهنمای معرفی کسب‌وکار</a>
               </div>
             )}
           </section>
