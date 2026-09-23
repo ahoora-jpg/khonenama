@@ -11,12 +11,10 @@ export const metadata: Metadata = {
   },
   description:
     "فروشگاه‌ها، متخصصان و خدمات پرده، موکت، کفپوش، کاغذ دیواری و دکوراسیون داخلی را در خونه‌نما پیدا و مقایسه کنید.",
-  alternates: { canonical: "/" },
   openGraph: {
     title: "خونه‌نما | مرجع دکوراسیون و خدمات منزل",
     description:
       "فروشگاه‌ها و متخصصان دکوراسیون منزل را پیدا، مقایسه و انتخاب کنید.",
-    url: "https://khonenama.ir",
     siteName: "خونه‌نما",
     locale: "fa_IR",
     type: "website",
