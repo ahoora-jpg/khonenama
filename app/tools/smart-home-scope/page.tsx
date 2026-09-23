@@ -10,7 +10,7 @@ const description =
   "تعداد نقاط روشنایی، پرده، دما، قفل، سنسور، دوربین و پریز را وارد کنید و یک Scope اولیه برای مقایسه پیشنهاد مجریان خانه هوشمند بسازید.";
 
 export const metadata: Metadata = {
-  title,
+  title: { absolute: title },
   description,
   keywords: [
     "برآورد خانه هوشمند",
