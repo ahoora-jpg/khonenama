@@ -16,7 +16,7 @@
 
 خونه‌نما جستجوی محلی، پروفایل کسب‌وکار، گالری، خدمات، ساعات کاری، نظرهای منتشرشده، درخواست قیمت خصوصی و پنل صاحب کسب‌وکار را در یک تجربه موبایل‌محور و فارسی/RTL جمع می‌کند.
 
-پروفایل‌های نمایشی سایت به‌صورت واضح با برچسب نمونه مشخص شده‌اند و نباید با کسب‌وکار واقعی یا نظر واقعی اشتباه گرفته شوند.
+مسیرهای عمومی کشف کسب‌وکار فقط باید داده کسب‌وکارهای واقعی و منتشرشده را نمایش دهند. پروفایل‌های ناقص یا متوقف‌شده تا زمانی که حداقل کیفیت انتشار را نداشته باشند وارد Sitemap نمی‌شوند و داده ساختگی برای کسب‌وکار، نظر، امتیاز، قیمت یا نمونه‌کار نباید به‌عنوان داده واقعی منتشر شود.
 
 ## اعتماد و شفافیت
 
@@ -29,5 +29,14 @@
 ## Stack
 
 Next.js / React / Vinext / Cloudflare Workers / Cloudflare D1 / ImageKit
+
+## Production deployment
+
+The repository contains a manual GitHub Actions workflow named `Deploy Cloudflare`. It requires these repository Actions secrets:
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+
+The workflow validates both credentials before running `npm run deploy` so a missing Cloudflare credential fails clearly instead of after a full build.
 
 **Official website:** https://khonenama.ir/
