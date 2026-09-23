@@ -4,18 +4,32 @@ import Footer from "@/components/Footer";
 import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 import { BadgeCheck, MapPin, Star } from "lucide-react";
 
+const pageUrl = "https://khonenama.ir/karaj/baraghan";
+const pageTitle = "دکوراسیون خیابان برغان کرج | فروشگاه‌ها و خدمات";
+const pageDescription =
+  "فروشگاه‌ها و متخصصان پرده، کفپوش، موکت، کاغذ دیواری و دکوراسیون در خیابان برغان کرج را در خونه‌نما پیدا و مقایسه کنید.";
+
 export const metadata: Metadata = {
-  title: "دکوراسیون خیابان برغان کرج | فروشگاه‌ها و خدمات",
-  description:
-    "فروشگاه‌ها و متخصصان پرده، کفپوش، موکت، کاغذ دیواری و دکوراسیون در خیابان برغان کرج را در خونه‌نما پیدا و مقایسه کنید.",
-  alternates: { canonical: "/karaj/baraghan" },
+  title: pageTitle,
+  description: pageDescription,
+  alternates: { canonical: pageUrl },
+  openGraph: {
+    title: pageTitle,
+    description: pageDescription,
+    url: pageUrl,
+    siteName: "خونه‌نما",
+    locale: "fa_IR",
+    type: "website",
+  },
+  twitter: { card: "summary", title: pageTitle, description: pageDescription },
 };
 
 export default async function BaraghanPage() {
-  const publishedBusinesses = await listPublishedBusinesses({ city: "کرج", limit: 50 });
-  const localBusinesses = publishedBusinesses.filter((business) =>
-    business.area.includes("برغان")
-  );
+  const localBusinesses = await listPublishedBusinesses({
+    city: "کرج",
+    area: "برغان",
+    limit: 50,
+  });
 
   return (
     <main>
