@@ -9,12 +9,35 @@ const description =
   "ابزارهای رایگان خونه‌نما برای محاسبه کاغذ دیواری، پرده، موکت و ساخت Scope اولیه خانه هوشمند.";
 
 export const metadata: Metadata = {
-  title,
+  title: { absolute: title },
   description,
   alternates: { canonical: url },
   openGraph: { title, description, url, type: "website", locale: "fa_IR" },
   twitter: { card: "summary", title, description },
 };
+
+const toolFaqs = [
+  {
+    question: "برای محاسبه کاغذ دیواری فقط مترمربع دیوار کافی است؟",
+    answer:
+      "خیر. ارتفاع دیوار، عرض و طول رول، تعداد نوارهای قابل برش، Pattern Repeat و پرت روی تعداد رول نهایی اثر دارند؛ به همین دلیل ابزار کاغذ دیواری این متغیرها را جداگانه می‌گیرد.",
+  },
+  {
+    question: "متراژ پارچه پرده به چه چیزهایی بستگی دارد؟",
+    answer:
+      "عرض ریل، قد نهایی، ضریب چین یا Fullness، عرض پارچه و در پارچه‌های طرح‌دار Pattern Repeat روی مصرف اثر دارند. ابزار پرده برای برآورد اولیه همین متغیرها را کنار هم قرار می‌دهد.",
+  },
+  {
+    question: "Scope خانه هوشمند چه کمکی قبل از قیمت‌گیری می‌کند؟",
+    answer:
+      "Scope تعداد نقاط و نیازهای پروژه مثل روشنایی، پرده، دما، قفل، سنسور و دوربین را روشن می‌کند تا پیشنهاد چند مجری روی محدوده مشابه قابل مقایسه‌تر باشد؛ این ابزار جای طراحی مهندسی نهایی را نمی‌گیرد.",
+  },
+  {
+    question: "برای موکت رول و تایلی یک روش محاسبه کافی است؟",
+    answer:
+      "خیر. در موکت رول عرض رول، جهت نوارها و پرت مهم است؛ در موکت تایلی ابعاد تایل، تعداد تایل در بسته و پرت تعیین‌کننده است. ابزار موکت هر دو حالت را جدا محاسبه می‌کند.",
+  },
+] as const;
 
 const collectionJsonLd = {
   "@context": "https://schema.org",
@@ -50,10 +73,21 @@ const collectionJsonLd = {
   ],
 };
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: toolFaqs.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: { "@type": "Answer", text: item.answer },
+  })),
+};
+
 export default function ToolsPage() {
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <Header />
 
       <section className="inner-page tools-page">
@@ -70,6 +104,33 @@ export default function ToolsPage() {
               از کاغذ دیواری و پرده تا موکت و Scope اولیه خانه هوشمند.
             </p>
           </header>
+
+          <section className="category-results" aria-labelledby="tool-choice-heading">
+            <div className="section-heading compact-heading">
+              <div>
+                <span className="section-kicker">انتخاب ابزار بر اساس نیاز</span>
+                <h2 id="tool-choice-heading">کدام محاسبه‌گر قبل از خرید یا اجرا به کارتان می‌آید؟</h2>
+              </div>
+            </div>
+            <div className="local-intent-grid">
+              <article className="local-intent-card">
+                <h3>قبل از خرید کاغذ دیواری</h3>
+                <p>تعداد رول را با ابعاد واقعی دیوار و رول، تکرار طرح و پرت برآورد کنید؛ بعد برای انتخاب جنس و زیرسازی، راهنمای <a href="/category/wallpaper">کاغذ دیواری و دیوارپوش</a> را ببینید.</p>
+              </article>
+              <article className="local-intent-card">
+                <h3>قبل از سفارش پرده</h3>
+                <p>عرض ریل، قد، Fullness و عرض پارچه را مشخص کنید. محل نصب سقفی یا دیواری باید پیش از اندازه‌گیری نهایی روشن باشد؛ برای جزئیات به <a href="/magazine/curtain-installation-guide">راهنمای نصب پرده</a> بروید.</p>
+              </article>
+              <article className="local-intent-card">
+                <h3>قبل از خرید موکت</h3>
+                <p>برای رول، عرض رول و جهت نوارها و برای تایلی، تعداد تایل و بسته را با پرت حساب کنید؛ سپس گزینه‌ها را در <a href="/category/carpet">راهنمای موکت</a> مقایسه کنید.</p>
+              </article>
+              <article className="local-intent-card">
+                <h3>قبل از قیمت‌گیری خانه هوشمند</h3>
+                <p>اول Scope نقاط و سناریوهای مورد نیاز را مشخص کنید تا پیشنهادهای مجری‌ها روی محدوده مشابه مقایسه شوند؛ بعد سراغ <a href="/category/smart-home">راهنمای خانه هوشمند</a> بروید.</p>
+              </article>
+            </div>
+          </section>
 
           <section className="tools-grid" aria-label="فهرست ابزارها">
             <a className="tool-card glass-panel" href="/tools/wallpaper-calculator">
@@ -111,6 +172,17 @@ export default function ToolsPage() {
               </div>
               <ArrowUpLeft size={18} />
             </a>
+          </section>
+
+          <section className="category-results category-faq-block">
+            <div className="section-heading compact-heading">
+              <div><span className="section-kicker">پاسخ سریع</span><h2>سوالات رایج درباره محاسبه قبل از اجرا</h2></div>
+            </div>
+            <div className="guide-faq">
+              {toolFaqs.map((item) => (
+                <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>
+              ))}
+            </div>
           </section>
         </div>
       </section>
