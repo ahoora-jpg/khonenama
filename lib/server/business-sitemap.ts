@@ -30,7 +30,7 @@ async function ensureVisibilitySchema(db: any) {
  * Do not use the public business hydrator here: that loads services, media,
  * reviews, hours and plans per business and used to cap the sitemap at 100
  * profiles. This query only returns fields needed by sitemap.xml and pages
- * through published profiles in batches.
+ * through published, sufficiently complete profiles in batches.
  */
 export async function listPublishedBusinessSitemapEntries(): Promise<BusinessSitemapEntry[]> {
   try {
@@ -56,6 +56,13 @@ export async function listPublishedBusinessSitemapEntries(): Promise<BusinessSit
         "ORDER BY s.id DESC LIMIT 1), 'free') AS plan_code " +
         "FROM businesses b " +
         "WHERE b.status = 'published' " +
+        "AND length(trim(COALESCE(b.slug, ''))) > 2 " +
+        "AND length(trim(COALESCE(b.name, ''))) >= 2 " +
+        "AND length(trim(COALESCE(b.description, ''))) >= 20 " +
+        "AND length(trim(COALESCE(b.city, ''))) >= 2 " +
+        "AND EXISTS (SELECT 1 FROM business_categories bc WHERE bc.business_id = b.id) " +
+        "AND EXISTS (SELECT 1 FROM business_services bs WHERE bs.business_id = b.id) " +
+        "AND EXISTS (SELECT 1 FROM business_service_areas bsa WHERE bsa.business_id = b.id) " +
         "AND NOT EXISTS (SELECT 1 FROM business_visibility_controls bvc " +
         "WHERE bvc.business_id = b.id AND bvc.owner_paused = 1) " +
         (INTERNAL_TEST_BUSINESS_SLUGS.length
