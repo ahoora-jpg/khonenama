@@ -1,8 +1,10 @@
 import type { MetadataRoute } from "next";
 import { guides } from "@/lib/guides";
-import { listPublishedBusinesses } from "@/lib/server/public-businesses";
+import { listPublishedBusinessSitemapEntries } from "@/lib/server/business-sitemap";
 
 const baseUrl = "https://khonenama.ir";
+
+export const revalidate = 300;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
@@ -42,9 +44,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: guide.category === "راهنمای محلی" ? 0.82 : 0.76,
   }));
 
-  const liveBusinesses = await listPublishedBusinesses({ limit: 100 });
+  const liveBusinesses = await listPublishedBusinessSitemapEntries();
   const businessPages: MetadataRoute.Sitemap = liveBusinesses.map((business) => ({
     url: baseUrl + "/business/" + business.slug,
+    lastModified: business.updatedAt || undefined,
     changeFrequency: "weekly",
     priority: business.planCode === "premium" ? 0.86 : 0.78,
   }));
