@@ -2,15 +2,32 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+const pageUrl = "https://khonenama.ir/privacy";
+const pageTitle = "حریم خصوصی | خونه‌نما";
+const pageDescription = "توضیح نحوه نمایش، نگهداری و استفاده از اطلاعات کاربران و کسب‌وکارها در خونه‌نما.";
+
 export const metadata: Metadata = {
-  title: "حریم خصوصی | خونه‌نما",
-  description: "توضیح نحوه نمایش، نگهداری و استفاده از اطلاعات کاربران و کسب‌وکارها در خونه‌نما.",
-  alternates: { canonical: "/privacy" },
+  title: { absolute: pageTitle },
+  description: pageDescription,
+  alternates: { canonical: pageUrl },
+};
+
+const pageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": pageUrl + "#webpage",
+  url: pageUrl,
+  name: pageTitle,
+  description: pageDescription,
+  inLanguage: "fa-IR",
+  isPartOf: { "@id": "https://khonenama.ir/#website" },
+  about: { "@id": "https://khonenama.ir/#organization" },
 };
 
 export default function PrivacyPage() {
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }} />
       <Header />
       <section className="inner-page legal-page">
         <div className="shell legal-shell">
