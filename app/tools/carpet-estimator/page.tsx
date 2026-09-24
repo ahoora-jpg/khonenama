@@ -5,7 +5,7 @@ import CarpetEstimator from "@/components/CarpetEstimator";
 import { ArrowUpLeft, Grid3X3, Ruler } from "lucide-react";
 
 const url = "https://khonenama.ir/tools/carpet-estimator";
-const title = "محاسبه متراژ موکت | برآورد موکت رول و تایلی خونه‌نما";
+const title = "محاسبه متراژ موکت | رول و تایلی";
 const description =
   "متراژ موکت رول یا تعداد موکت تایلی را با ابعاد اتاق، عرض رول یا ابعاد تایل، درصد پرت و تعداد تایل در بسته محاسبه کنید.";
 
