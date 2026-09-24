@@ -20,5 +20,7 @@ jobs:
         with:
           node-version: 22
       - run: npm install
+      - name: Capture npm audit details
+        run: npm audit --json || true
       - run: npx tsc --noEmit
       - run: npm run build:vinext
