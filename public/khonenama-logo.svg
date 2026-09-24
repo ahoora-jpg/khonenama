@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">خونه‌نما</title>
+  <desc id="desc">نشان ساده خونه‌نما برای favicon و داده ساختاریافته</desc>
+  <rect width="512" height="512" rx="112" fill="#111111"/>
+  <path d="M112 238 256 112l144 126v152a10 10 0 0 1-10 10H122a10 10 0 0 1-10-10V238Z" fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M210 400V292h92v108" fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
