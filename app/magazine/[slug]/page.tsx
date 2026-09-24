@@ -9,6 +9,49 @@ import { notFound } from "next/navigation";
 const CURTAIN_INSTALLATION_SLUG = "curtain-installation-guide";
 const CURTAIN_INSTALLATION_MODIFIED_AT = "2026-09-23";
 
+const SEO_METADATA_OVERRIDES: Record<string, { title?: string; description?: string }> = {
+  "flooring-karaj-guide": { title: "پارکت و لمینت کرج | خرید، نصب و هزینه" },
+  "curtain-cleaning-guide": { title: "تمیز کردن پرده زبرا و شید | راهنمای نظافت" },
+  "carpet-karaj-guide": { title: "موکت کرج | خرید، متراژ و نصب" },
+  "interior-design-karaj-cost-guide": { title: "هزینه طراحی داخلی در کرج | روش قیمت‌گذاری" },
+  "curtain-buying-guide": { title: "راهنمای انتخاب پرده منزل | مدل، اندازه و نصب" },
+  "wallpaper-vs-wallpanel": {
+    description: "کاغذ دیواری و دیوارپوش را از نظر ظاهر، زیرسازی، نصب، نگهداری و کاربرد مقایسه کنید تا گزینه مناسب فضای خانه را انتخاب کنید.",
+  },
+  "smart-home-guide": { title: "خانه هوشمند چیست؟ | راهنمای شروع" },
+  "carpet-buying-guide": { title: "راهنمای خرید موکت | مشخصات مهم قبل از سفارش" },
+  "parquet-vs-laminate": { title: "پارکت یا لمینت؟ | تفاوت و راهنمای انتخاب" },
+  "choose-interior-designer": { title: "انتخاب طراح داخلی | ۷ معیار قبل از قرارداد" },
+  "wallpaper-karaj-guide": { title: "کاغذ دیواری کرج | خرید، نصب و محاسبه رول" },
+  "washable-wallpaper-guide": { title: "کاغذ دیواری قابل شست‌وشو | راهنمای انتخاب" },
+  "zebra-curtain-price-guide": { title: "قیمت پرده زبرا | عوامل مؤثر و روش مقایسه" },
+  "laminate-vs-pvc": {
+    description: "لمینت و کفپوش PVC را از نظر رطوبت، ظاهر، نصب، دوام و نگهداری مقایسه کنید تا برای فضای خانه انتخاب دقیق‌تری داشته باشید.",
+  },
+  "smart-home-interior-design-planning-guide": {
+    title: "طراحی داخلی و خانه هوشمند | تصمیم‌های قبل از اجرا",
+    description: "برق، شبکه، پرده، نور، سنسورها و دسترسی سرویس را پیش از اجرای سقف و کابینت هماهنگ کنید تا دوباره‌کاری پروژه کمتر شود.",
+  },
+  "best-curtain-living-room": { title: "بهترین پرده برای پذیرایی | انتخاب بر اساس نور" },
+  "carpet-bedroom-guide": { title: "موکت اتاق خواب و کودک | پرز، نظافت و صدا" },
+  "smart-home-rental-apartment-guide": { title: "خانه هوشمند برای مستأجرها | بدون تخریب" },
+  "smart-home-without-internet-guide": { title: "خانه هوشمند بدون اینترنت | کنترل محلی" },
+  "matter-controller-thread-border-router-guide": { title: "Matter Controller یا Thread Border Router؟" },
+  "knx-vs-matter-smart-home-guide": { title: "KNX یا Matter؟ | تفاوت و کاربرد در خانه هوشمند" },
+  "presence-vs-motion-sensor-smart-home-guide": { title: "سنسور حضور یا حرکت؟ | Presence و Motion" },
+  "smart-lock-buying-security-guide": { title: "راهنمای خرید قفل هوشمند | امنیت و Matter" },
+  "matter-thread-zigbee-wifi-guide-2026": { title: "Matter، Thread، Zigbee یا Wi‑Fi؟" },
+  "interior-decoration-budget-priority-guide": { title: "بودجه دکوراسیون داخلی | اولویت هزینه‌ها" },
+  "pantone-cloud-dancer-2026-interior-guide": { title: "رنگ سال ۲۰۲۶ Pantone | Cloud Dancer در دکوراسیون" },
+  "biophilic-interior-design-guide-2026": { title: "طراحی بیوفیلیک در خانه | راهنمای کاربردی" },
+  "smart-home-karaj-cost-guide": { title: "هزینه خانه هوشمند در کرج | عوامل قیمت" },
+  "smart-lighting-scenes-guide-2026": { title: "نورپردازی هوشمند | کلید، دیمر و سناریوها" },
+  "small-apartment-interior-design-guide": { title: "طراحی داخلی خانه کوچک | ۱۲ اصل کاربردی" },
+  "smart-home-security-guide-2026": { title: "امنیت خانه هوشمند | ۹ اقدام ضروری" },
+  "living-room-zoning-lighting-guide": { title: "چیدمان پذیرایی | زون‌بندی و نورپردازی" },
+  "interior-design-trends-2026": { title: "ترندهای طراحی داخلی ۲۰۲۶ | رنگ، بافت و فناوری" },
+};
+
 const curtainInstallationExtraFaqs = [
   {
     question: "نصب پرده دیواری چه زمانی مناسب‌تر است؟",
@@ -46,16 +89,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const modifiedAt = isCurtainInstallation
     ? CURTAIN_INSTALLATION_MODIFIED_AT
     : guide.modifiedAt || guide.publishedAt;
+  const seoOverride = SEO_METADATA_OVERRIDES[guide.slug];
+  const metadataTitle = seoOverride?.title || guide.title;
+  const metadataDescription = seoOverride?.description || guide.excerpt;
 
   return {
-    title: guide.title,
-    description: guide.excerpt,
+    title: metadataTitle,
+    description: metadataDescription,
     keywords: enhancedKeywords(guide.slug, guide.keywords),
     authors: [{ name: "خونه‌نما", url: "https://khonenama.ir/about" }],
     alternates: { canonical: "/magazine/" + guide.slug },
     openGraph: {
-      title: guide.title,
-      description: guide.excerpt,
+      title: metadataTitle,
+      description: metadataDescription,
       url: "https://khonenama.ir/magazine/" + guide.slug,
       type: "article",
       locale: "fa_IR",
@@ -66,8 +112,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     },
     twitter: {
       card: "summary_large_image",
-      title: guide.title,
-      description: guide.excerpt,
+      title: metadataTitle,
+      description: metadataDescription,
       images: [visual.src],
     },
   };
