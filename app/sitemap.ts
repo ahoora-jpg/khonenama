@@ -3,6 +3,7 @@ import { guides } from "@/lib/guides";
 import { listPublishedBusinessSitemapEntries } from "@/lib/server/business-sitemap";
 
 const baseUrl = "https://khonenama.ir";
+const seoRefreshDate = "2026-09-24";
 
 // Business profiles change independently of code deploys. Generate the sitemap
 // at request time so search engines see newly publishable profiles without
@@ -11,30 +12,30 @@ export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
-    { url: baseUrl, changeFrequency: "daily", priority: 1 },
-    { url: baseUrl + "/karaj", changeFrequency: "daily", priority: 0.95 },
-    { url: baseUrl + "/karaj/curtain", changeFrequency: "daily", priority: 0.94 },
-    { url: baseUrl + "/karaj/flooring", changeFrequency: "daily", priority: 0.92 },
-    { url: baseUrl + "/karaj/carpet", changeFrequency: "weekly", priority: 0.88 },
-    { url: baseUrl + "/karaj/wallpaper", changeFrequency: "weekly", priority: 0.88 },
-    { url: baseUrl + "/karaj/interior-design", changeFrequency: "weekly", priority: 0.9 },
-    { url: baseUrl + "/karaj/smart-home", changeFrequency: "weekly", priority: 0.9 },
-    { url: baseUrl + "/karaj/baraghan", changeFrequency: "daily", priority: 0.92 },
-    { url: baseUrl + "/category/curtain", changeFrequency: "weekly", priority: 0.9 },
-    { url: baseUrl + "/category/flooring", changeFrequency: "weekly", priority: 0.88 },
-    { url: baseUrl + "/category/carpet", changeFrequency: "weekly", priority: 0.8 },
-    { url: baseUrl + "/category/wallpaper", changeFrequency: "weekly", priority: 0.8 },
-    { url: baseUrl + "/category/interior-design", changeFrequency: "weekly", priority: 0.8 },
-    { url: baseUrl + "/category/smart-home", changeFrequency: "weekly", priority: 0.86 },
-    { url: baseUrl + "/magazine", changeFrequency: "weekly", priority: 0.86 },
-    { url: baseUrl + "/tools", lastModified: "2026-09-23", changeFrequency: "weekly", priority: 0.8 },
+    { url: baseUrl, lastModified: seoRefreshDate, changeFrequency: "daily", priority: 1 },
+    { url: baseUrl + "/karaj", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.95 },
+    { url: baseUrl + "/karaj/curtain", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.94 },
+    { url: baseUrl + "/karaj/flooring", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.92 },
+    { url: baseUrl + "/karaj/carpet", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.88 },
+    { url: baseUrl + "/karaj/wallpaper", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.88 },
+    { url: baseUrl + "/karaj/interior-design", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.9 },
+    { url: baseUrl + "/karaj/smart-home", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.9 },
+    { url: baseUrl + "/karaj/baraghan", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.92 },
+    { url: baseUrl + "/category/curtain", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.9 },
+    { url: baseUrl + "/category/flooring", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.88 },
+    { url: baseUrl + "/category/carpet", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.8 },
+    { url: baseUrl + "/category/wallpaper", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.8 },
+    { url: baseUrl + "/category/interior-design", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.8 },
+    { url: baseUrl + "/category/smart-home", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.86 },
+    { url: baseUrl + "/magazine", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.86 },
+    { url: baseUrl + "/tools", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/tools/wallpaper-calculator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/curtain-fabric-calculator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
-    { url: baseUrl + "/tools/smart-home-scope", lastModified: "2026-09-23", changeFrequency: "monthly", priority: 0.84 },
+    { url: baseUrl + "/tools/smart-home-scope", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/carpet-estimator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
-    { url: baseUrl + "/for-business", changeFrequency: "monthly", priority: 0.72 },
-    { url: baseUrl + "/about", lastModified: "2026-09-24", changeFrequency: "monthly", priority: 0.5 },
-    { url: baseUrl + "/editorial-policy", lastModified: "2026-09-24", changeFrequency: "monthly", priority: 0.48 },
+    { url: baseUrl + "/for-business", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.72 },
+    { url: baseUrl + "/about", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.5 },
+    { url: baseUrl + "/editorial-policy", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.48 },
     { url: baseUrl + "/help", changeFrequency: "monthly", priority: 0.45 },
     { url: baseUrl + "/privacy", changeFrequency: "monthly", priority: 0.3 },
     { url: baseUrl + "/terms", changeFrequency: "monthly", priority: 0.3 },
@@ -49,7 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const guidePages: MetadataRoute.Sitemap = guides.map((guide) => ({
     url: baseUrl + "/magazine/" + guide.slug,
     lastModified: refreshedGuides.has(guide.slug)
-      ? "2026-09-24"
+      ? seoRefreshDate
       : guide.modifiedAt || guide.publishedAt || "2026-09-19",
     changeFrequency: guide.category === "راهنمای محلی" ? "weekly" : "monthly",
     priority: guide.category === "راهنمای محلی" ? 0.82 : 0.76,
