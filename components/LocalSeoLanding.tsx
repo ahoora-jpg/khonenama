@@ -79,8 +79,21 @@ export default async function LocalSeoLanding({
       ...guides.slice(0, 6).map((guide) => ({ "@type": "Thing", name: guide.title })),
       ...aiAnswers.map((item) => ({ "@type": "Thing", name: item.question })),
     ],
+    hasPart: [
+      {
+        "@type": "CollectionPage",
+        name: "راهنمای جامع " + h1.replace(" در کرج", ""),
+        url: "https://khonenama.ir/category/" + categorySlug,
+      },
+      ...guides.slice(0, 6).map((guide) => ({
+        "@type": "Article",
+        name: guide.title,
+        url: guide.href.startsWith("http") ? guide.href : "https://khonenama.ir" + guide.href,
+      })),
+    ],
     mainEntity: { "@id": localUrl + "#businesses" },
     publisher: { "@id": "https://khonenama.ir/#organization" },
+    publishingPrinciples: "https://khonenama.ir/editorial-policy",
   };
 
   const breadcrumbJsonLd = {
@@ -122,6 +135,7 @@ export default async function LocalSeoLanding({
             <h1>{h1}</h1>
             <p>{intro}</p>
             <a href={"/category/" + categorySlug}>راهنمای جامع این دسته</a>
+            <a href="/editorial-policy">روش تدوین و بررسی اطلاعات خونه‌نما</a>
           </div>
 
           <section className="local-intent-grid">
