@@ -13,9 +13,10 @@ const guideImages: Record<string, string> = {
 export default function GuidesHome() {
   const preferredSlugs = [
     "zebra-vs-shade",
+    "shade-curtain-guide",
     "parquet-vs-laminate",
-    "wallpaper-vs-paint",
-    "smart-home-guide",
+    "wallpaper-vs-wallpanel",
+    "smart-curtain-daylight-guide",
   ];
   const selected = preferredSlugs
     .map((slug) => guides.find((guide) => guide.slug === slug))
@@ -38,7 +39,11 @@ export default function GuidesHome() {
           {selected.map((guide) => (
             <a className="guide-preview-card guide-preview-card-visual" href={"/magazine/" + guide.slug} key={guide.slug}>
               <div className="guide-preview-media">
-                <img src={guideImages[guide.category] || guideImages["طراحی داخلی"]} alt="" loading="lazy" aria-hidden="true" />
+                <img
+                  src={guideImages[guide.category] || guideImages["طراحی داخلی"]}
+                  alt={`تصویر راهنمای ${guide.title}`}
+                  loading="lazy"
+                />
                 <span><BookOpen size={17} /> {guide.category}</span>
               </div>
               <span className="guide-preview-category">{guide.category}</span>
