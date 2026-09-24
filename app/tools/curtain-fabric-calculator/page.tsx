@@ -5,7 +5,7 @@ import CurtainFabricCalculator from "@/components/CurtainFabricCalculator";
 import { ArrowUpLeft, Scissors } from "lucide-react";
 
 const url = "https://khonenama.ir/tools/curtain-fabric-calculator";
-const title = "محاسبه متراژ پارچه پرده | محاسبه‌گر آنلاین خونه‌نما";
+const title = "محاسبه متراژ پارچه پرده | ابزار آنلاین";
 const description =
   "متراژ پارچه پرده را با عرض ریل، قد پرده، Fullness، عرض پارچه، اضافه دوخت و Pattern Repeat محاسبه کنید.";
 
