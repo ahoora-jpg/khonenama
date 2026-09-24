@@ -7,7 +7,7 @@ import { ArrowUpLeft, Calculator, Clock3 } from "lucide-react";
 const url = "https://khonenama.ir/magazine/shade-curtain-guide";
 const title = "پرده شید چیست؟ انواع شید و کاربرد هر مدل";
 const description = "شید رول چیست و چه تفاوتی با زبرا دارد؟ شید ساده، اسکرین و بلک‌اوت را از نظر نور، حریم خصوصی، نصب و کاربرد مقایسه کنید.";
-const visual = getGuideVisual("پرده");
+const visual = getGuideVisual("پرده", "shade-curtain-guide");
 const modifiedAt = "2026-09-24";
 
 export const metadata: Metadata = {
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     publishedTime: "2026-09-19",
     modifiedTime: modifiedAt,
     authors: ["https://khonenama.ir/about"],
-    images: [{ url: visual.src, alt: visual.alt }],
+    images: [{ url: visual.src, alt: visual.alt, width: visual.width, height: visual.height }],
   },
   twitter: { card: "summary_large_image", title, description, images: [visual.src] },
 };
@@ -60,7 +60,13 @@ const articleJsonLd = {
   mainEntityOfPage: url,
   author: { "@id": "https://khonenama.ir/#organization" },
   publisher: { "@id": "https://khonenama.ir/#organization" },
-  image: [visual.src],
+  image: {
+    "@type": "ImageObject",
+    url: visual.src,
+    width: visual.width,
+    height: visual.height,
+    caption: visual.alt,
+  },
   articleSection: "پرده",
   abstract: "پرده شید یک پوشش یک‌تکه است که روی محور جمع می‌شود. نوع پارچه مشخص می‌کند شید نور را نرم فیلتر کند، خیرگی را کاهش دهد یا برای تاریکی بیشتر استفاده شود.",
   about: ["پرده شید", "شید رول", "شید اسکرین", "شید بلک‌اوت", "پرده زبرا"].map((name) => ({ "@type": "Thing", name })),
@@ -115,8 +121,16 @@ export default function ShadeCurtainGuidePage() {
           </section>
 
           <figure className="guide-hero-image">
-            <img src={visual.src} alt="نمونه پرده شید در فضای داخلی" />
-            <figcaption>نوع پارچه و محل نصب روی میزان نور و حریم خصوصی اثر مستقیم دارند.</figcaption>
+            <img
+              src={visual.src}
+              alt={visual.alt}
+              width={visual.width}
+              height={visual.height}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+            />
+            <figcaption>{visual.alt}؛ نوع پارچه و محل نصب روی میزان نور و حریم خصوصی اثر مستقیم دارند.</figcaption>
           </figure>
 
           <div className="guide-layout">
