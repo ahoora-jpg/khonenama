@@ -113,11 +113,12 @@ export default function SmartHomeScopePage() {
           <section className="wallpaper-tool-next glass-panel">
             <div>
               <span className="section-kicker">بعد از Scope</span>
-              <h2>پروتکل و مجری را مقایسه کنید</h2>
-              <p>برای انتخاب معماری، کنترل محلی و سطح یکپارچگی، راهنماهای خانه هوشمند را بخوانید.</p>
+              <h2>پروتکل، سناریو و مجری را مقایسه کنید</h2>
+              <p>بعد از مشخص‌کردن تعداد نقاط، معماری ارتباطی، کنترل محلی و سناریوهای واقعی مثل نور و پرده را جداگانه بررسی کنید.</p>
             </div>
             <div>
               <a href="/magazine/matter-thread-zigbee-wifi-guide-2026">Matter، Thread و Zigbee <ArrowUpLeft size={15} /></a>
+              <a href="/magazine/smart-curtain-daylight-guide">پرده برقی و سناریوی نور طبیعی <ArrowUpLeft size={15} /></a>
               <a href="/category/smart-home">متخصصان خانه هوشمند <ArrowUpLeft size={15} /></a>
               <a href="/karaj/smart-home">خانه هوشمند در کرج <ArrowUpLeft size={15} /></a>
             </div>
