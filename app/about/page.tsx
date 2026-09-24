@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import { BadgeCheck, MapPin, Search, ShieldCheck, Store } from "lucide-react";
 
 const pageUrl = "https://khonenama.ir/about";
-const pageTitle = "درباره خونه‌نما | مرجع تخصصی دکوراسیون و خدمات خانه";
+const pageTitle = "درباره خونه‌نما | مرجع دکوراسیون و خدمات خانه";
 const pageDescription =
   "خونه‌نما برای پیدا کردن، مقایسه و ارتباط مستقیم با فروشگاه‌ها و متخصصان دکوراسیون و خانه هوشمند ساخته شده است.";
 
