@@ -23,11 +23,17 @@
 - خانه هوشمند در کرج: https://khonenama.ir/karaj/smart-home
 - خیابان برغان کرج: https://khonenama.ir/karaj/baraghan
 
+## Business-owner discovery
+- معرفی و ثبت کسب‌وکار: https://khonenama.ir/for-business
+- ثبت اولیه کسب‌وکار از مسیر عمومی انجام می‌شود و پروفایل عمومی پس از طی وضعیت انتشار نمایش داده می‌شود.
+- صفحات عمومی، دسته‌بندی‌ها، لندینگ‌های محلی و داده ساختاریافته فقط باید کسب‌وکارهای واقعی و منتشرشده را نمایش دهند.
+- خونه‌نما نباید برای کسب‌وکار، Review، Rating، قیمت، موجودی یا نمونه‌کار عمومی داده ساختگی تولید کند.
+
 ## Editorial guides
 - Magazine: https://khonenama.ir/magazine
 - راهنماها تفاوت گزینه‌ها، نصب، نگهداری، خرید محلی و معیارهای انتخاب فروشگاه یا متخصص را توضیح می‌دهند.
-- پروفایل‌های نمایشی با برچسب نمونه مشخص می‌شوند و نباید کسب‌وکار واقعی تلقی شوند.
 - امتیاز عمومی فقط از نظرهای منتشرشده ساخته می‌شود و نشان تأیید از پلن پولی جداست.
+- سیاست تحریریه: https://khonenama.ir/editorial-policy
 
 ## Useful tools
 - ابزارهای خونه‌نما: https://khonenama.ir/tools
@@ -35,6 +41,13 @@
 - محاسبه متراژ پارچه پرده: https://khonenama.ir/tools/curtain-fabric-calculator
 - برآورد Scope خانه هوشمند: https://khonenama.ir/tools/smart-home-scope
 - محاسبه متراژ موکت رول و تایلی: https://khonenama.ir/tools/carpet-estimator
+
+## Priority answer-first guides
+- نصب پرده دیواری و سقفی: https://khonenama.ir/magazine/curtain-installation-guide
+- پرده شید و کاربرد مدل‌ها: https://khonenama.ir/magazine/shade-curtain-guide
+- پرده برقی و نور طبیعی: https://khonenama.ir/magazine/smart-curtain-daylight-guide
+- زبرا یا شید: https://khonenama.ir/magazine/zebra-vs-shade
+- پارکت یا لمینت: https://khonenama.ir/magazine/parquet-vs-laminate
 
 ## Featured 2026 knowledge
 - KNX یا Matter: https://khonenama.ir/magazine/knx-vs-matter-smart-home-guide
