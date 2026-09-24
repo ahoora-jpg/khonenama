@@ -7,6 +7,7 @@ import {
   ArrowUpLeft,
   BadgeCheck,
   BarChart3,
+  BookOpen,
   Camera,
   Check,
   MapPin,
@@ -64,6 +65,22 @@ const webpageJsonLd = {
     { "@type": "Thing", name: "معرفی کسب‌وکار دکوراسیون" },
     { "@type": "Thing", name: "ثبت فروشگاه و متخصص خدمات خانه" },
     { "@type": "Thing", name: "جستجوی محلی کسب‌وکار" },
+    { "@type": "Thing", name: "دیده‌شدن آنلاین کسب‌وکار محلی" },
+  ],
+  hasPart: {
+    "@type": "Article",
+    "@id": "https://khonenama.ir/for-business/online-discovery-guide#article",
+    url: "https://khonenama.ir/for-business/online-discovery-guide",
+    headline: "چطور کسب‌وکار دکوراسیون را آنلاین معرفی کنیم؟",
+  },
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "خونه‌نما", item: "https://khonenama.ir/" },
+    { "@type": "ListItem", position: 2, name: "برای کسب‌وکارها", item: pageUrl },
   ],
 };
 
@@ -81,6 +98,7 @@ export default function ForBusinessPage() {
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webpageJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <Header />
 
@@ -142,6 +160,15 @@ export default function ForBusinessPage() {
                 <p>{item.answer}</p>
               </article>
             ))}
+          </div>
+
+          <div className="category-tool-card glass-panel" aria-label="راهنمای معرفی آنلاین کسب‌وکار">
+            <span><BookOpen size={20} /></span>
+            <div>
+              <h2>راهنمای عملی دیده‌شدن آنلاین برای فروشگاه و متخصص دکوراسیون</h2>
+              <p>از انتخاب دسته و محدوده فعالیت تا تصاویر واقعی، اطلاعات پروفایل، مسیر تماس و حضور در جستجوی محلی را مرحله‌به‌مرحله بررسی کنید.</p>
+            </div>
+            <a href="/for-business/online-discovery-guide">مطالعه راهنمای کامل <ArrowUpLeft size={14} /></a>
           </div>
         </div>
       </section>
