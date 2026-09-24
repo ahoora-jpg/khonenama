@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LocalSeoLanding from "@/components/LocalSeoLanding";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const title = "خانه هوشمند کرج | Matter، روشنایی، پرده برقی و امنیت";
+  const title = "خانه هوشمند کرج | روشنایی، پرده و امنیت";
   const description =
     "متخصصان خانه هوشمند در کرج را برای Matter، روشنایی هوشمند، پرده برقی، قفل، امنیت، کنترل دما و سناریوهای اتوماسیون مقایسه کنید.";
   const url = "https://khonenama.ir/karaj/smart-home";
