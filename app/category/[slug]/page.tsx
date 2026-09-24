@@ -93,7 +93,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     ],
     hasPart: [
       ...relatedGuides.slice(0, 8).map((guide) => ({
-        "@type": "Article",
+        "@type": "WebPage",
         name: guide.title,
         url: "https://khonenama.ir/magazine/" + guide.slug,
       })),
