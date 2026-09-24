@@ -5,6 +5,7 @@ Disallow: /business/demo-
 
 Host: https://khonenama.ir
 Sitemap: https://khonenama.ir/sitemap.xml
+Sitemap: https://khonenama.ir/image-sitemap.xml
 `;
 
 export const dynamic = "force-static";
