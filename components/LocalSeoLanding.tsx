@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getAiSearchContent } from "@/lib/ai-search-content";
 import { listPublishedBusinesses } from "@/lib/server/public-businesses";
+import { getCategoryVisual } from "@/lib/visuals";
 import { ArrowUpLeft, BadgeCheck, BriefcaseBusiness, Crown, MapPin, Star } from "lucide-react";
 
 type Faq = { question: string; answer: string };
@@ -50,6 +51,7 @@ export default async function LocalSeoLanding({
 
   const aiAnswers = getAiSearchContent(categorySlug);
   const localUrl = "https://khonenama.ir/karaj/" + categorySlug;
+  const visual = getCategoryVisual(categorySlug);
 
   const itemListJsonLd = {
     "@context": "https://schema.org",
@@ -73,6 +75,14 @@ export default async function LocalSeoLanding({
     description: intro,
     inLanguage: "fa-IR",
     isPartOf: { "@id": "https://khonenama.ir/#website" },
+    primaryImageOfPage: {
+      "@type": "ImageObject",
+      contentUrl: visual.src,
+      caption: visual.alt,
+      width: visual.width,
+      height: visual.height,
+    },
+    image: visual.src,
     about: [
       { "@type": "Thing", name: h1 },
       { "@type": "Place", name: "کرج" },
@@ -130,12 +140,23 @@ export default async function LocalSeoLanding({
             <a href="/">خونه‌نما</a><span>/</span><a href="/karaj">کرج</a><span>/</span><span>{h1}</span>
           </nav>
 
-          <div className="category-hero glass-panel">
-            <span className="section-kicker">راهنمای محلی خونه‌نما</span>
-            <h1>{h1}</h1>
-            <p>{intro}</p>
-            <a href={"/category/" + categorySlug}>راهنمای جامع این دسته</a>
-            <a href="/editorial-policy">روش تدوین و بررسی اطلاعات خونه‌نما</a>
+          <div className="category-hero category-hero-with-media glass-panel">
+            <div>
+              <span className="section-kicker">راهنمای محلی خونه‌نما</span>
+              <h1>{h1}</h1>
+              <p>{intro}</p>
+              <a href={"/category/" + categorySlug}>راهنمای جامع این دسته</a>
+              <a href="/editorial-policy">روش تدوین و بررسی اطلاعات خونه‌نما</a>
+            </div>
+            <img
+              src={visual.src}
+              alt={visual.alt}
+              width={visual.width}
+              height={visual.height}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+            />
           </div>
 
           <section className="local-intent-grid">
