@@ -7,6 +7,8 @@ const pageUrl = "https://khonenama.ir/for-business/online-discovery-guide";
 const pageTitle = "چطور کسب‌وکار دکوراسیون را آنلاین معرفی کنیم؟";
 const pageDescription =
   "راهنمای معرفی آنلاین فروشگاه و متخصص دکوراسیون؛ از اطلاعات پروفایل و جستجوی محلی تا تصاویر واقعی، خدمات، محدوده فعالیت و مسیر تماس مشتری.";
+const articleImage =
+  "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1600&q=82";
 
 export const metadata: Metadata = {
   title: { absolute: pageTitle },
@@ -19,6 +21,7 @@ export const metadata: Metadata = {
     siteName: "خونه‌نما",
     locale: "fa_IR",
     type: "article",
+    images: [{ url: articleImage, alt: "فضای داخلی و کسب‌وکارهای حوزه دکوراسیون" }],
   },
 };
 
@@ -51,6 +54,7 @@ const articleJsonLd = {
   "@id": pageUrl + "#article",
   headline: pageTitle,
   description: pageDescription,
+  image: articleImage,
   mainEntityOfPage: pageUrl,
   inLanguage: "fa-IR",
   datePublished: "2026-09-24",
