@@ -24,7 +24,7 @@ export default function Categories() {
         <div className="bento-grid premium-bento">
           {categories.map(({ title, description, className, icon: Icon, href, number, image }) => (
             <a className={`${className} premium-category-card`} href={href} key={href}>
-              <img className="category-visual" src={image} alt="" loading="lazy" aria-hidden="true" />
+              <img className="category-visual" src={image} alt={`نمونه تصویری ${title}`} loading="lazy" />
               <span className="category-visual-overlay" aria-hidden="true" />
               <span className="category-number">{number}</span>
               <span className="category-icon"><Icon size={22} /></span>
