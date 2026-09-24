@@ -68,6 +68,12 @@ const organizationJsonLd = {
   name: "خونه‌نما",
   alternateName: "Khonenama",
   url: "https://khonenama.ir",
+  logo: {
+    "@type": "ImageObject",
+    url: "https://khonenama.ir/khonenama-logo.svg",
+    contentUrl: "https://khonenama.ir/khonenama-logo.svg",
+    caption: "خونه‌نما",
+  },
   mainEntityOfPage: "https://khonenama.ir/about",
   publishingPrinciples: "https://khonenama.ir/editorial-policy",
   knowsAbout: ["پرده و پوشش پنجره", "کفپوش و پارکت", "موکت", "کاغذ دیواری و دیوارپوش", "طراحی داخلی", "خانه هوشمند"],
