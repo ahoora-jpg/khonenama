@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PreferredSourceCTA from "@/components/PreferredSourceCTA";
 import { guides } from "@/lib/guides";
 import { getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, BookOpen, Clock3 } from "lucide-react";
@@ -59,6 +60,8 @@ export default function MagazinePage() {
               قبل از خرید، فرق گزینه‌ها را بفهمید؛ بعد فروشگاه و متخصص مناسب را پیدا کنید.
             </p>
           </div>
+
+          <PreferredSourceCTA />
 
           <div className="magazine-grid">
             {guides.map((guide) => (
