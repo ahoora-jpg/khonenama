@@ -27,8 +27,7 @@ export function GET() {
   });
 
   const guideEntries = guides.map((guide) => {
-    // Keep the sitemap aligned with the image rendered by the current guide template.
-    const visual = getGuideVisual(guide.category);
+    const visual = getGuideVisual(guide.category, guide.slug);
     return imageEntry(`${baseUrl}/magazine/${guide.slug}`, visual.src, visual.alt);
   });
 
