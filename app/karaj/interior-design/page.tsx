@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LocalSeoLanding from "@/components/LocalSeoLanding";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const title = "طراحی داخلی کرج | دکوراسیون، چیدمان، رنگ و انتخاب طراح";
+  const title = "طراحی داخلی کرج | انتخاب طراح و دکوراسیون";
   const description =
     "طراحان و خدمات طراحی داخلی در کرج را مقایسه کنید؛ ترندهای ۲۰۲۶، چیدمان، رنگ، نور، نمونه‌کار، بودجه و فرآیند طراحی و اجرا.";
   const url = "https://khonenama.ir/karaj/interior-design";
