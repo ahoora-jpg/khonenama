@@ -4,7 +4,7 @@ const preferredSourceUrl = "https://www.google.com/preferences/source?q=khonenam
 
 export default function PreferredSourceCTA({ compact = false }: { compact?: boolean }) {
   return (
-    <aside
+    <div
       className={`preferred-source-card glass-panel${compact ? " preferred-source-card-compact" : ""}`}
       aria-label="افزودن خونه‌نما به منابع ترجیحی گوگل"
     >
@@ -21,6 +21,6 @@ export default function PreferredSourceCTA({ compact = false }: { compact?: bool
       <a href={preferredSourceUrl} target="_blank" rel="noopener noreferrer">
         افزودن به Preferred Sources <ArrowUpLeft size={15} />
       </a>
-    </aside>
+    </div>
   );
 }
