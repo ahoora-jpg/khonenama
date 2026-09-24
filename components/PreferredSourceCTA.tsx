@@ -5,7 +5,8 @@ const preferredSourceUrl = "https://www.google.com/preferences/source?q=khonenam
 export default function PreferredSourceCTA({ compact = false }: { compact?: boolean }) {
   return (
     <div
-      className={`guide-side-card glass-panel${compact ? "" : " magazine-preferred-source"}`}
+      className="guide-side-card glass-panel"
+      style={compact ? undefined : { marginBottom: 28 }}
       aria-label="افزودن خونه‌نما به منابع ترجیحی گوگل"
     >
       <Sparkles size={18} aria-hidden="true" />
