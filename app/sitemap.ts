@@ -27,22 +27,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/category/interior-design", changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/category/smart-home", changeFrequency: "weekly", priority: 0.86 },
     { url: baseUrl + "/magazine", changeFrequency: "weekly", priority: 0.86 },
-    { url: baseUrl + "/tools", changeFrequency: "weekly", priority: 0.8 },
+    { url: baseUrl + "/tools", lastModified: "2026-09-23", changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/tools/wallpaper-calculator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/curtain-fabric-calculator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
-    { url: baseUrl + "/tools/smart-home-scope", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
+    { url: baseUrl + "/tools/smart-home-scope", lastModified: "2026-09-23", changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/carpet-estimator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/for-business", changeFrequency: "monthly", priority: 0.72 },
-    { url: baseUrl + "/about", changeFrequency: "monthly", priority: 0.5 },
-    { url: baseUrl + "/editorial-policy", changeFrequency: "monthly", priority: 0.48 },
+    { url: baseUrl + "/about", lastModified: "2026-09-24", changeFrequency: "monthly", priority: 0.5 },
+    { url: baseUrl + "/editorial-policy", lastModified: "2026-09-24", changeFrequency: "monthly", priority: 0.48 },
     { url: baseUrl + "/help", changeFrequency: "monthly", priority: 0.45 },
     { url: baseUrl + "/privacy", changeFrequency: "monthly", priority: 0.3 },
     { url: baseUrl + "/terms", changeFrequency: "monthly", priority: 0.3 },
   ];
 
+  const refreshedGuides = new Set([
+    "curtain-installation-guide",
+    "shade-curtain-guide",
+    "smart-curtain-daylight-guide",
+  ]);
+
   const guidePages: MetadataRoute.Sitemap = guides.map((guide) => ({
     url: baseUrl + "/magazine/" + guide.slug,
-    lastModified: guide.modifiedAt || guide.publishedAt || "2026-09-19",
+    lastModified: refreshedGuides.has(guide.slug)
+      ? "2026-09-24"
+      : guide.modifiedAt || guide.publishedAt || "2026-09-19",
     changeFrequency: guide.category === "راهنمای محلی" ? "weekly" : "monthly",
     priority: guide.category === "راهنمای محلی" ? 0.82 : 0.76,
   }));
