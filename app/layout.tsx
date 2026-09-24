@@ -16,6 +16,17 @@ export const metadata: Metadata = {
     shortcut: "/khonenama-logo.svg",
     apple: "/khonenama-logo.svg",
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
     title: "خونه‌نما | مرجع دکوراسیون و خدمات منزل",
     description:
