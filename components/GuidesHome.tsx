@@ -11,12 +11,15 @@ const guideImages: Record<string, string> = {
 };
 
 export default function GuidesHome() {
+  // Keep the first cards aligned with the strongest real search intent we have seen
+  // in Search Console, while still exposing the other high-value category guides.
   const preferredSlugs = [
-    "zebra-vs-shade",
+    "curtain-installation-guide",
     "shade-curtain-guide",
+    "smart-curtain-daylight-guide",
+    "zebra-vs-shade",
     "parquet-vs-laminate",
     "wallpaper-vs-wallpanel",
-    "smart-curtain-daylight-guide",
   ];
   const selected = preferredSlugs
     .map((slug) => guides.find((guide) => guide.slug === slug))
