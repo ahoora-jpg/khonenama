@@ -42,5 +42,8 @@
     "typescript": "5.9.2",
     "vite": "8.2.2",
     "wrangler": "4.132.0"
+  },
+  "overrides": {
+    "image-size": "2.0.4"
   }
 }
