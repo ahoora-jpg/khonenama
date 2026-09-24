@@ -5,16 +5,50 @@ import { guides } from "@/lib/guides";
 import { getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, BookOpen, Clock3 } from "lucide-react";
 
+const magazineUrl = "https://khonenama.ir/magazine";
+const magazineTitle = "مجله خونه‌نما | راهنمای دکوراسیون و خانه هوشمند";
+const magazineDescription =
+  "راهنماهای کاربردی خونه‌نما درباره پرده، پارکت، کفپوش، دیوارپوش، طراحی داخلی، نورپردازی و خانه هوشمند.";
+
 export const metadata: Metadata = {
-  title: "مجله خونه‌نما | راهنمای دکوراسیون، انتخاب متریال و خانه هوشمند",
-  description:
-    "راهنماهای کاربردی خونه‌نما درباره پرده، پارکت، کفپوش، دیوارپوش، طراحی داخلی، نورپردازی و خانه هوشمند.",
-  alternates: { canonical: "/magazine" },
+  title: { absolute: magazineTitle },
+  description: magazineDescription,
+  alternates: { canonical: magazineUrl },
+  openGraph: {
+    title: magazineTitle,
+    description: magazineDescription,
+    url: magazineUrl,
+    siteName: "خونه‌نما",
+    locale: "fa_IR",
+    type: "website",
+  },
+};
+
+const collectionJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": magazineUrl + "#collection",
+  url: magazineUrl,
+  name: magazineTitle,
+  description: magazineDescription,
+  inLanguage: "fa-IR",
+  isPartOf: { "@id": "https://khonenama.ir/#website" },
+  mainEntity: {
+    "@type": "ItemList",
+    numberOfItems: guides.length,
+    itemListElement: guides.map((guide, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: guide.title,
+      url: `https://khonenama.ir/magazine/${guide.slug}`,
+    })),
+  },
 };
 
 export default function MagazinePage() {
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }} />
       <Header />
       <section className="inner-page">
         <div className="shell">
