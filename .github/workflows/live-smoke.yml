@@ -70,9 +70,14 @@ jobs:
             echo "Internal test business must not be present in sitemap"
             exit 1
           fi
+          for private_path in '/dashboard' '/admin' '/register-business' '/business/login' '/business/forgot-password' '/request-status' '/search'; do
+            if echo "$sitemap" | grep -q "$private_path"; then
+              echo "Private/noindex route must not be present in sitemap: $private_path"
+              exit 1
+            fi
+          done
 
           robots="$(expect_status 200 GET "$BASE/robots.txt")"
-          echo "$robots" | grep -q 'Disallow: /dashboard'
           echo "$robots" | grep -q 'Disallow: /api'
 
           expect_status 401 GET "$BASE/api/me/business" >/dev/null
