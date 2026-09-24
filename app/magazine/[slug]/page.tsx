@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PreferredSourceCTA from "@/components/PreferredSourceCTA";
 import { getGuide, guides } from "@/lib/guides";
 import { getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, Calculator, Clock3, Link2 } from "lucide-react";
@@ -146,6 +147,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     mainEntityOfPage: "https://khonenama.ir/magazine/" + guide.slug,
     author: { "@id": "https://khonenama.ir/#organization" },
     publisher: { "@id": "https://khonenama.ir/#organization" },
+    publishingPrinciples: "https://khonenama.ir/editorial-policy",
     keywords: enhancedKeywords(guide.slug, guide.keywords).join(", "),
     articleSection: guide.category,
     abstract: quickAnswer || guide.excerpt,
@@ -200,6 +202,8 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             <div className="guide-meta">
               <span><Clock3 size={14} /> {guide.readTime}</span>
               <span>به‌روزرسانی: {isCurtainInstallation ? "۱۴۰۵/۰۷/۰۱" : guide.updated}</span>
+              <a href="/about">درباره خونه‌نما</a>
+              <a href="/editorial-policy">سیاست تحریریه</a>
             </div>
           </header>
 
@@ -318,6 +322,15 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                 <a href={guide.relatedCategory || "/search"}>
                   مشاهده کسب‌وکارها <ArrowUpLeft size={15} />
                 </a>
+              </div>
+
+              <PreferredSourceCTA compact />
+
+              <div className="guide-side-card glass-panel">
+                <span className="section-kicker">شفافیت تحریریه</span>
+                <h3>این راهنما چطور تهیه می‌شود؟</h3>
+                <p>روش نگارش، استفاده از منابع، به‌روزرسانی محتوا و سیاست خونه‌نما درباره داده‌های واقعی را ببینید.</p>
+                <a href="/editorial-policy">مشاهده سیاست تحریریه <ArrowUpLeft size={15} /></a>
               </div>
 
               <div className="guide-side-card glass-panel">
