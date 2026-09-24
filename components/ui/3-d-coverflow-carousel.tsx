@@ -147,7 +147,11 @@ export function CoverFlowCarousel({
       onTouchEnd={handleTouchEnd}
     >
       <div className="coverflow-bg" aria-hidden="true">
-        <img src={items[currentIndex]?.img} alt="" onError={(event) => { event.currentTarget.src = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85"; }} />
+        <img
+          src={items[currentIndex]?.img}
+          alt={`پس‌زمینه تصویری ${items[currentIndex]?.titleLine1 || "الهام دکوراسیون"}`}
+          onError={(event) => { event.currentTarget.src = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85"; }}
+        />
         <div />
       </div>
 
