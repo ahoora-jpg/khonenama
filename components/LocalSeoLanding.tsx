@@ -86,7 +86,7 @@ export default async function LocalSeoLanding({
         url: "https://khonenama.ir/category/" + categorySlug,
       },
       ...guides.slice(0, 6).map((guide) => ({
-        "@type": "Article",
+        "@type": "WebPage",
         name: guide.title,
         url: guide.href.startsWith("http") ? guide.href : "https://khonenama.ir" + guide.href,
       })),
