@@ -23,6 +23,17 @@ const groups = [
     ],
   },
   {
+    title: "دسترسی سریع",
+    links: [
+      ["مجله خونه‌نما", "/magazine"],
+      ["راهنمای پرده شید", "/magazine/shade-curtain-guide"],
+      ["پرده برقی و نور طبیعی", "/magazine/smart-curtain-daylight-guide"],
+      ["ابزار Scope خانه هوشمند", "/tools/smart-home-scope"],
+      ["برای کسب‌وکارها", "/for-business"],
+      ["راهنمای معرفی آنلاین", "/for-business/online-discovery-guide"],
+    ],
+  },
+  {
     title: "خونه‌نما",
     links: [
       ["درباره خونه‌نما", "/about"],
