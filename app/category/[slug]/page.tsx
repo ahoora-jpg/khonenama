@@ -10,6 +10,13 @@ import { getCategoryVisual, getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, BadgeCheck, BookOpen, BriefcaseBusiness, Calculator, Crown, MapPin, Star } from "lucide-react";
 import { notFound } from "next/navigation";
 
+const categoryToolUrls: Record<string, string> = {
+  curtain: "https://khonenama.ir/tools/curtain-fabric-calculator",
+  wallpaper: "https://khonenama.ir/tools/wallpaper-calculator",
+  carpet: "https://khonenama.ir/tools/carpet-estimator",
+  "smart-home": "https://khonenama.ir/tools/smart-home-scope",
+};
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const category = getCategory(slug);
@@ -56,6 +63,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const visual = getCategoryVisual(slug);
 
   const categoryUrl = "https://khonenama.ir/category/" + slug;
+  const toolUrl = categoryToolUrls[slug];
 
   const itemListJsonLd = {
     "@context": "https://schema.org",
@@ -83,8 +91,19 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       ...relatedGuides.slice(0, 8).map((guide) => ({ "@type": "Thing", name: guide.title })),
       ...aiAnswers.map((item) => ({ "@type": "Thing", name: item.question })),
     ],
+    hasPart: [
+      ...relatedGuides.slice(0, 8).map((guide) => ({
+        "@type": "Article",
+        name: guide.title,
+        url: "https://khonenama.ir/magazine/" + guide.slug,
+      })),
+      ...(toolUrl
+        ? [{ "@type": "WebApplication", name: "ابزار مرتبط با " + seo.h1, url: toolUrl }]
+        : []),
+    ],
     mainEntity: { "@id": categoryUrl + "#businesses" },
     publisher: { "@id": "https://khonenama.ir/#organization" },
+    publishingPrinciples: "https://khonenama.ir/editorial-policy",
   };
 
   const breadcrumbJsonLd = {
@@ -125,6 +144,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               <span className="section-kicker">راهنمای تخصصی خونه‌نما</span>
               <h1>{seo.h1}</h1>
               <p>{seo.intro}</p>
+              <a href="/editorial-policy">روش تدوین و بررسی راهنماهای خونه‌نما</a>
             </div>
             <img src={visual.src} alt={visual.alt} />
           </div>
