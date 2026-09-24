@@ -85,7 +85,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const guide = getGuide(slug);
   if (!guide) return {};
-  const visual = getGuideVisual(guide.category);
+  const visual = getGuideVisual(guide.category, guide.slug);
   const isCurtainInstallation = guide.slug === CURTAIN_INSTALLATION_SLUG;
   const modifiedAt = isCurtainInstallation
     ? CURTAIN_INSTALLATION_MODIFIED_AT
@@ -109,7 +109,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       publishedTime: guide.publishedAt,
       modifiedTime: modifiedAt,
       authors: ["https://khonenama.ir/about"],
-      images: [{ url: visual.src, alt: visual.alt }],
+      images: [{ url: visual.src, alt: visual.alt, width: visual.width, height: visual.height }],
     },
     twitter: {
       card: "summary_large_image",
@@ -124,7 +124,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const { slug } = await params;
   const guide = getGuide(slug);
   if (!guide) notFound();
-  const visual = getGuideVisual(guide.category);
+  const visual = getGuideVisual(guide.category, guide.slug);
   const isCurtainInstallation = guide.slug === CURTAIN_INSTALLATION_SLUG;
   const modifiedAt = isCurtainInstallation
     ? CURTAIN_INSTALLATION_MODIFIED_AT
@@ -155,7 +155,13 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     citation: guide.sources?.map((source) => source.url),
     isAccessibleForFree: true,
     isPartOf: { "@id": "https://khonenama.ir/#website" },
-    image: [visual.src],
+    image: {
+      "@type": "ImageObject",
+      url: visual.src,
+      width: visual.width,
+      height: visual.height,
+      caption: visual.alt,
+    },
   };
 
   const breadcrumbJsonLd = {
@@ -215,8 +221,16 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
           )}
 
           <figure className="guide-hero-image">
-            <img src={visual.src} alt={visual.alt} />
-            <figcaption>تصویر نمونه برای درک بهتر موضوع؛ منبع تصویری دارای مجوز انتشار.</figcaption>
+            <img
+              src={visual.src}
+              alt={visual.alt}
+              width={visual.width}
+              height={visual.height}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+            />
+            <figcaption>{visual.alt}؛ تصویر مرتبط برای درک بهتر موضوع و دارای مجوز انتشار.</figcaption>
           </figure>
 
           <div className="guide-layout">
