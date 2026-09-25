@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { ArrowUpLeft, Calculator, Grid3X3, HousePlug, Scissors } from "lucide-react";
+import { ArrowUpLeft, Calculator, Grid3X3, HousePlug, Layers3, Scissors } from "lucide-react";
 
 const url = "https://khonenama.ir/tools";
 const title = "ابزارهای خونه‌نما | محاسبه‌گرهای دکوراسیون و خانه";
 const description =
-  "ابزارهای رایگان خونه‌نما برای محاسبه کاغذ دیواری، پرده، موکت و ساخت Scope اولیه خانه هوشمند.";
+  "ابزارهای رایگان خونه‌نما برای محاسبه کاغذ دیواری، پرده، پارکت و لمینت، موکت و ساخت Scope اولیه خانه هوشمند.";
 
 export const metadata: Metadata = {
   title: { absolute: title },
@@ -37,6 +37,11 @@ const toolFaqs = [
     answer:
       "خیر. در موکت رول عرض رول، جهت نوارها و پرت مهم است؛ در موکت تایلی ابعاد تایل، تعداد تایل در بسته و پرت تعیین‌کننده است. ابزار موکت هر دو حالت را جدا محاسبه می‌کند.",
   },
+  {
+    question: "برای پارکت و لمینت چطور تعداد بسته را حساب کنیم؟",
+    answer:
+      "مساحت فضا را با درصد پرت جمع کنید و حاصل را بر پوشش مترمربعی هر بسته تقسیم کنید. چون خرید معمولاً به بسته کامل انجام می‌شود، نتیجه باید رو به بالا گرد شود.",
+  },
 ] as const;
 
 const collectionJsonLd = {
@@ -59,6 +64,11 @@ const collectionJsonLd = {
       "@type": "WebApplication",
       name: "محاسبه‌گر متراژ پارچه پرده",
       url: "https://khonenama.ir/tools/curtain-fabric-calculator",
+    },
+    {
+      "@type": "WebApplication",
+      name: "محاسبه‌گر متراژ پارکت، لمینت و کفپوش",
+      url: "https://khonenama.ir/tools/flooring-estimator",
     },
     {
       "@type": "WebApplication",
@@ -101,7 +111,7 @@ export default function ToolsPage() {
             <h1>کمتر حدس بزن؛ دقیق‌تر اندازه بگیر.</h1>
             <p>
               ابزارهای کاربردی برای محاسبه، اندازه‌گیری و تصمیم‌گیری قبل از خرید یا اجرا؛
-              از کاغذ دیواری و پرده تا موکت و Scope اولیه خانه هوشمند.
+              از کاغذ دیواری و پرده تا پارکت، لمینت، موکت و Scope اولیه خانه هوشمند.
             </p>
           </header>
 
@@ -120,6 +130,10 @@ export default function ToolsPage() {
               <article className="local-intent-card">
                 <h3>قبل از سفارش پرده</h3>
                 <p>عرض ریل، قد، Fullness و عرض پارچه را مشخص کنید. محل نصب سقفی یا دیواری باید پیش از اندازه‌گیری نهایی روشن باشد؛ برای جزئیات به <a href="/magazine/curtain-installation-guide">راهنمای نصب پرده</a> بروید.</p>
+              </article>
+              <article className="local-intent-card">
+                <h3>قبل از خرید پارکت یا لمینت</h3>
+                <p>مساحت، درصد پرت و پوشش هر بسته را مشخص کنید و برای کفپوش رولی عرض رول را هم وارد محاسبه کنید؛ سپس گزینه‌ها را در <a href="/category/flooring">راهنمای کفپوش و پارکت</a> مقایسه کنید.</p>
               </article>
               <article className="local-intent-card">
                 <h3>قبل از خرید موکت</h3>
@@ -149,6 +163,16 @@ export default function ToolsPage() {
                 <span className="section-kicker">پرده</span>
                 <h2>محاسبه متراژ پارچه پرده</h2>
                 <p>عرض ریل، قد پرده، Fullness، عرض پارچه و Pattern Repeat را وارد کنید و متراژ تقریبی را بگیرید.</p>
+              </div>
+              <ArrowUpLeft size={18} />
+            </a>
+
+            <a className="tool-card glass-panel" href="/tools/flooring-estimator">
+              <span className="tool-card-icon"><Layers3 size={24} /></span>
+              <div>
+                <span className="section-kicker">پارکت و کفپوش</span>
+                <h2>محاسبه متراژ پارکت و لمینت</h2>
+                <p>مساحت، پرت و تعداد بسته را برای پارکت و لمینت محاسبه کنید؛ برای PVC رولی، عرض رول و متراژ طولی را هم ببینید.</p>
               </div>
               <ArrowUpLeft size={18} />
             </a>
