@@ -12,10 +12,6 @@ const heroImageBase = "https://images.unsplash.com/photo-1600210492486-724fe5c67
 export default function Hero() {
   return (
     <section className="hero premium-hero hero-editorial-layout" id="top">
-      <div className="hero-orb hero-orb-one" />
-      <div className="hero-orb hero-orb-two" />
-      <div className="hero-grid-lines" aria-hidden="true" />
-
       <div className="shell hero-editorial-shell">
         <header className="hero-identity-block">
           <div className="eyebrow hero-brand-label">
@@ -47,10 +43,7 @@ export default function Hero() {
 
         <div className="hero-after-showcase">
           <div className="hero-after-copy">
-            <h2 className="hero-slogan">
-              برای خونه‌ات، بهتر انتخاب کن.
-            </h2>
-
+            <h2 className="hero-slogan">برای خونه‌ات، بهتر انتخاب کن.</h2>
             <p className="hero-lead">
               فروشگاه‌ها، متخصصان، محصولات و ایده‌های دکوراسیون را پیدا کن، مقایسه کن
               و مستقیم با بهترین گزینه‌های اطرافت ارتباط بگیر.
