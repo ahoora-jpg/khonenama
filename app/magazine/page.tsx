@@ -57,6 +57,8 @@ const collectionJsonLd = {
 };
 
 export default function MagazinePage() {
+  const usedImageSrc = new Set<string>();
+
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }} />
@@ -76,9 +78,15 @@ export default function MagazinePage() {
           <div className="magazine-grid">
             {guides.map((guide) => {
               const visual = getGuideVisual(guide.category, guide.slug);
+              const showImage = !usedImageSrc.has(visual.src);
+              if (showImage) usedImageSrc.add(visual.src);
               return (
                 <article className="magazine-card" key={guide.slug}>
-                  <img className="magazine-card-image" src={visual.src} alt={visual.alt} width={1200} height={675} loading="lazy" decoding="async" />
+                  {showImage ? (
+                    <img className="magazine-card-image" src={visual.src} alt={visual.alt} width={1200} height={675} loading="lazy" decoding="async" />
+                  ) : (
+                    <div className="magazine-card-image magazine-card-image-placeholder" aria-hidden="true"><span>{guide.category}</span></div>
+                  )}
                   <div className="magazine-card-top">
                     <span className="magazine-category">{guide.category}</span>
                     <span className="magazine-readtime"><Clock3 size={13} /> {guide.readTime}</span>

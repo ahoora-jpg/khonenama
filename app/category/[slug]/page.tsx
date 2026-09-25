@@ -125,6 +125,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     })),
   };
 
+  const usedGuideImageSrc = new Set<string>();
+
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd) }} />
@@ -146,7 +148,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               <p>{seo.intro}</p>
               <a href="/editorial-policy">روش تدوین و بررسی راهنماهای خونه‌نما</a>
             </div>
-            <img src={visual.src} alt={visual.alt} />
+            <img src={visual.src} alt={visual.alt} width={visual.width} height={visual.height} loading="eager" fetchPriority="high" decoding="async" />
           </div>
 
           {aiAnswers.length > 0 && (
@@ -231,17 +233,26 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               </div>
 
               <div className="category-guide-grid">
-                {relatedGuides.slice(0, 8).map((guide) => (
-                  <a className="category-guide-card" href={"/magazine/" + guide.slug} key={guide.slug}>
-                    <img className="category-guide-thumb" src={getGuideVisual(guide.category, guide.slug).src} alt={guide.title} width={1200} height={675} loading="lazy" decoding="async" />
-                    <BookOpen size={18} />
-                    <div>
-                      <h3>{guide.title}</h3>
-                      <p>{guide.excerpt}</p>
-                    </div>
-                    <ArrowUpLeft size={16} />
-                  </a>
-                ))}
+                {relatedGuides.slice(0, 8).map((guide) => {
+                  const guideVisual = getGuideVisual(guide.category, guide.slug);
+                  const showThumb = !usedGuideImageSrc.has(guideVisual.src);
+                  if (showThumb) usedGuideImageSrc.add(guideVisual.src);
+                  return (
+                    <a className="category-guide-card" href={"/magazine/" + guide.slug} key={guide.slug}>
+                      {showThumb ? (
+                        <img className="category-guide-thumb" src={guideVisual.src} alt={guide.title} width={1200} height={675} loading="lazy" decoding="async" />
+                      ) : (
+                        <div className="category-guide-thumb category-guide-thumb-placeholder" aria-hidden="true" />
+                      )}
+                      <BookOpen size={18} />
+                      <div>
+                        <h3>{guide.title}</h3>
+                        <p>{guide.excerpt}</p>
+                      </div>
+                      <ArrowUpLeft size={16} />
+                    </a>
+                  );
+                })}
               </div>
             </section>
           )}
