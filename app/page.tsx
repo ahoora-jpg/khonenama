@@ -3,7 +3,6 @@ import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import HomeTools from "@/components/HomeTools";
 import InspirationGallery from "@/components/InspirationGallery";
-import Featured from "@/components/Featured";
 import LocalDiscovery from "@/components/LocalDiscovery";
 import GuidesHome from "@/components/GuidesHome";
 import HowItWorks from "@/components/HowItWorks";
@@ -107,7 +106,6 @@ export default function HomePage() {
       <InspirationGallery />
       <LocalDiscovery />
       <GuidesHome />
-      <Featured />
       <HowItWorks />
       <BusinessCTA />
       <Footer />
