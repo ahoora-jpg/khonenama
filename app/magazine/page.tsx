@@ -78,7 +78,7 @@ export default function MagazinePage() {
               const visual = getGuideVisual(guide.category, guide.slug);
               return (
                 <article className="magazine-card" key={guide.slug}>
-                  <img className="magazine-card-image" src={visual.src} alt={visual.alt} loading="lazy" />
+                  <img className="magazine-card-image" src={visual.src} alt={visual.alt} width={1200} height={675} loading="lazy" decoding="async" />
                   <div className="magazine-card-top">
                     <span className="magazine-category">{guide.category}</span>
                     <span className="magazine-readtime"><Clock3 size={13} /> {guide.readTime}</span>

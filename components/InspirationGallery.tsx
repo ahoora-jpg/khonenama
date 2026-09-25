@@ -5,25 +5,25 @@ const items = [
     title: "پرده مدرن و نور طبیعی",
     category: "پرده و پارچه",
     href: "/category/curtain",
-    img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=900&q=72",
+    img: "https://khonenama.ir/images/editorial/photo-1513694203232-719a280e022f.webp",
   },
   {
     title: "چوب و کفپوش گرم",
     category: "پارکت و لمینت",
     href: "/category/flooring",
-    img: "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=900&q=72",
+    img: "https://khonenama.ir/images/editorial/photo-1600573472550-8090b5e0745e.webp",
   },
   {
     title: "دیوار شاخص و بافت",
     category: "کاغذ دیواری",
     href: "/category/wallpaper",
-    img: "https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=900&q=72",
+    img: "https://khonenama.ir/images/editorial/photo-1615874694520-474822394e73.webp",
   },
   {
     title: "خانه‌ای با نور و بافت",
     category: "طراحی داخلی",
     href: "/category/interior-design",
-    img: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=72",
+    img: "https://khonenama.ir/images/editorial/photo-1616486338812-3dadae4b4ace.webp",
   },
 ];
 
@@ -53,8 +53,8 @@ export default function InspirationGallery() {
               <img
                 src={item.img}
                 alt={item.title}
-                width={900}
-                height={600}
+                width={1200}
+                height={675}
                 loading="lazy"
                 decoding="async"
               />

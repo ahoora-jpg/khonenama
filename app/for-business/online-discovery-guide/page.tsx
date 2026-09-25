@@ -8,7 +8,7 @@ const pageTitle = "چطور کسب‌وکار دکوراسیون را آنلای
 const pageDescription =
   "راهنمای معرفی آنلاین فروشگاه و متخصص دکوراسیون؛ از اطلاعات پروفایل و جستجوی محلی تا تصاویر واقعی، خدمات، محدوده فعالیت و مسیر تماس مشتری.";
 const articleImage =
-  "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1600&q=82";
+  "https://khonenama.ir/images/editorial/photo-1618221195710-dd6b41faaea6.webp";
 
 export const metadata: Metadata = {
   title: { absolute: pageTitle },

@@ -23,16 +23,14 @@ export default function Categories() {
 
         <div className="bento-grid premium-bento">
           {categories.map(({ title, description, className, icon: Icon, href, number, photo }) => {
-            const base = `https://images.unsplash.com/${photo}`;
+            const base = `https://khonenama.ir/images/editorial/${photo}.webp`;
             return (
               <a className={`${className} premium-category-card`} href={href} key={href}>
                 <img
                   className="category-visual"
-                  src={`${base}?auto=format&fit=crop&w=640&q=70`}
-                  srcSet={`${base}?auto=format&fit=crop&w=480&q=68 480w, ${base}?auto=format&fit=crop&w=640&q=70 640w, ${base}?auto=format&fit=crop&w=900&q=72 900w`}
-                  sizes="(max-width: 700px) 94vw, (max-width: 1050px) 48vw, 31vw"
-                  width={900}
-                  height={600}
+                  src={base}
+                  width={1200}
+                  height={675}
                   alt={`نمونه تصویری ${title}`}
                   loading="lazy"
                   decoding="async"
