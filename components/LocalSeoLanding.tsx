@@ -2,7 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getAiSearchContent } from "@/lib/ai-search-content";
 import { listPublishedBusinesses } from "@/lib/server/public-businesses";
-import { getCategoryVisual } from "@/lib/visuals";
+import { getLocalVisual } from "@/lib/visuals";
 import { ArrowUpLeft, BadgeCheck, BriefcaseBusiness, Crown, MapPin, Star } from "lucide-react";
 
 type Faq = { question: string; answer: string };
@@ -51,7 +51,7 @@ export default async function LocalSeoLanding({
 
   const aiAnswers = getAiSearchContent(categorySlug);
   const localUrl = "https://khonenama.ir/karaj/" + categorySlug;
-  const visual = getCategoryVisual(categorySlug);
+  const visual = getLocalVisual(categorySlug);
 
   const itemListJsonLd = {
     "@context": "https://schema.org",
