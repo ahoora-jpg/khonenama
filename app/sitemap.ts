@@ -3,7 +3,7 @@ import { guides } from "@/lib/guides";
 import { listPublishedBusinessSitemapEntries } from "@/lib/server/business-sitemap";
 
 const baseUrl = "https://khonenama.ir";
-const seoRefreshDate = "2026-09-24";
+const seoRefreshDate = "2026-09-25";
 
 // Business profiles change independently of code deploys. Generate the sitemap
 // at request time so search engines see newly publishable profiles without
@@ -31,6 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/tools", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/tools/wallpaper-calculator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/curtain-fabric-calculator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
+    { url: baseUrl + "/tools/flooring-estimator", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.86 },
     { url: baseUrl + "/tools/smart-home-scope", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/carpet-estimator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/for-business", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.72 },
