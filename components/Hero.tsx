@@ -1,7 +1,4 @@
-"use client";
-
 import { ArrowUpLeft, MapPin, Search, Sparkles, WandSparkles } from "lucide-react";
-import { CoverFlowCarousel } from "@/components/ui/3-d-coverflow-carousel";
 
 const popular = [
   ["پرده", "/search?q=پرده&location=کرج"],
@@ -9,6 +6,8 @@ const popular = [
   ["پارکت", "/search?q=پارکت&location=کرج"],
   ["کاغذ دیواری", "/search?q=کاغذ+دیواری&location=کرج"],
 ] as const;
+
+const heroImageBase = "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0";
 
 export default function Hero() {
   return (
@@ -30,8 +29,19 @@ export default function Hero() {
         </header>
 
         <div className="hero-showcase premium-visual-wrap">
-          <div className="hero-visual-frame hero-coverflow-frame">
-            <CoverFlowCarousel className="hero-coverflow hero-coverflow-full" compact />
+          <div className="hero-visual-frame" style={{ overflow: "hidden", borderRadius: 28 }}>
+            <img
+              src={`${heroImageBase}?auto=format&fit=crop&w=960&q=72`}
+              srcSet={`${heroImageBase}?auto=format&fit=crop&w=640&q=70 640w, ${heroImageBase}?auto=format&fit=crop&w=960&q=72 960w, ${heroImageBase}?auto=format&fit=crop&w=1200&q=74 1200w`}
+              sizes="(max-width: 700px) 94vw, (max-width: 1100px) 88vw, 1100px"
+              width={1200}
+              height={675}
+              alt="فضای داخلی روشن و مدرن برای انتخاب آگاهانه دکوراسیون منزل"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              style={{ width: "100%", height: "clamp(260px, 46vw, 520px)", objectFit: "cover", display: "block" }}
+            />
           </div>
         </div>
 
