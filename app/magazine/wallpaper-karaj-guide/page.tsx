@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import GuidePage from "../[slug]/page";
 
 const slug = "wallpaper-karaj-guide";
-const title = "راهنمای کاغذ دیواری کرج | رول، زیرسازی و انتخاب نصاب";
+const title = "کاغذ دیواری کرج | رول، زیرسازی و نصاب";
 const description = "راهنمای خرید و نصب کاغذ دیواری در کرج؛ محاسبه تعداد رول، Pattern Repeat، زیرسازی، انتخاب فروشگاه و نصاب و عوامل مؤثر بر هزینه اجرا.";
 const url = `https://khonenama.ir/magazine/${slug}`;
 
