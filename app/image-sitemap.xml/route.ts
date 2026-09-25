@@ -1,5 +1,5 @@
 import { guides } from "@/lib/guides";
-import { getCategoryVisual, getGuideVisual } from "@/lib/visuals";
+import { getCategoryVisual, getGuideVisual, getLocalVisual } from "@/lib/visuals";
 
 const baseUrl = "https://khonenama.ir";
 
@@ -26,6 +26,11 @@ export function GET() {
     return imageEntry(`${baseUrl}/category/${slug}`, visual.src, visual.alt);
   });
 
+  const localEntries = categorySlugs.map((slug) => {
+    const visual = getLocalVisual(slug);
+    return imageEntry(`${baseUrl}/karaj/${slug}`, visual.src, visual.alt);
+  });
+
   const guideEntries = guides.map((guide) => {
     const visual = getGuideVisual(guide.category, guide.slug);
     return imageEntry(`${baseUrl}/magazine/${guide.slug}`, visual.src, visual.alt);
@@ -33,6 +38,7 @@ export function GET() {
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${[
     ...categoryEntries,
+    ...localEntries,
     ...guideEntries,
   ].join("\n")}\n</urlset>\n`;
 
