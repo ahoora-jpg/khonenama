@@ -74,21 +74,24 @@ export default function MagazinePage() {
           <PreferredSourceCTA />
 
           <div className="magazine-grid">
-            {guides.map((guide) => (
-              <article className="magazine-card" key={guide.slug}>
-                <img className="magazine-card-image" src={getGuideVisual(guide.category).src} alt={getGuideVisual(guide.category).alt} loading="lazy" />
-                <div className="magazine-card-top">
-                  <span className="magazine-category">{guide.category}</span>
-                  <span className="magazine-readtime"><Clock3 size={13} /> {guide.readTime}</span>
-                </div>
-                <BookOpen size={22} className="magazine-icon" />
-                <h2>{guide.title}</h2>
-                <p>{guide.excerpt}</p>
-                <a href={"/magazine/" + guide.slug}>
-                  مطالعه راهنما <ArrowUpLeft size={15} />
-                </a>
-              </article>
-            ))}
+            {guides.map((guide) => {
+              const visual = getGuideVisual(guide.category, guide.slug);
+              return (
+                <article className="magazine-card" key={guide.slug}>
+                  <img className="magazine-card-image" src={visual.src} alt={visual.alt} loading="lazy" />
+                  <div className="magazine-card-top">
+                    <span className="magazine-category">{guide.category}</span>
+                    <span className="magazine-readtime"><Clock3 size={13} /> {guide.readTime}</span>
+                  </div>
+                  <BookOpen size={22} className="magazine-icon" />
+                  <h2>{guide.title}</h2>
+                  <p>{guide.excerpt}</p>
+                  <a href={"/magazine/" + guide.slug}>
+                    مطالعه راهنما <ArrowUpLeft size={15} />
+                  </a>
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>
