@@ -125,7 +125,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     })),
   };
 
-  const usedGuideImageSrc = new Set<string>();
+  const usedGuideImageSrc = new Set<string>([visual.src]);
 
   return (
     <main>
