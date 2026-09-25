@@ -70,6 +70,7 @@ export default function KarajFlooringPage() {
         },
       ]}
       guides={[
+        { title: "محاسبه متراژ پارکت و لمینت", text: "مساحت، پرت و تعداد بسته یا متر طول", href: "/tools/flooring-estimator" },
         { title: "پارکت و لمینت در کرج", text: "انتخاب فروشگاه، نصاب، زیرسازی و هزینه نهایی", href: "/magazine/flooring-karaj-guide" },
         { title: "راهنمای نصب لمینت", text: "زیرسازی، فوم، فاصله انبساطی و قرنیز", href: "/magazine/laminate-installation-guide" },
         { title: "تفاوت پارکت و لمینت", text: "جنس، نصب، دوام و نگهداری", href: "/magazine/parquet-vs-laminate" },
