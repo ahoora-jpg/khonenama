@@ -7,6 +7,142 @@ import { ArrowUpLeft, BadgeCheck, BriefcaseBusiness, Crown, MapPin, Star } from 
 
 type Faq = { question: string; answer: string };
 type GuideLink = { title: string; text: string; href: string };
+type SearchIntent = { title: string; text: string; href: string };
+
+const localSearchIntents: Record<string, SearchIntent[]> = {
+  curtain: [
+    {
+      title: "نصب پرده در کرج",
+      text: "برای نصب دیواری یا سقفی، قبل از سفارش محل پایه، جنس سطح، عرض پوشش و دسترسی به پنجره را مشخص کنید.",
+      href: "/magazine/curtain-installation-guide",
+    },
+    {
+      title: "پرده زبرا کرج",
+      text: "زبرا را بر اساس کنترل نور، نوع مکانیزم، کیفیت پارچه، ابعاد پنجره و خدمات اندازه‌گیری و نصب مقایسه کنید.",
+      href: "/magazine/zebra-curtain-guide",
+    },
+    {
+      title: "پرده شید کرج",
+      text: "شید ساده، اسکرین و بلک‌اوت کاربرد یکسانی ندارند؛ میزان نور، حریم خصوصی و نوع اتاق را در انتخاب لحاظ کنید.",
+      href: "/magazine/shade-curtain-guide",
+    },
+    {
+      title: "پرده فروشی کرج",
+      text: "فروشگاه را فقط بر اساس نزدیکی انتخاب نکنید؛ تنوع واقعی، اندازه‌گیری، نصب و شرایط خدمات پس از فروش را هم بررسی کنید.",
+      href: "/category/curtain",
+    },
+  ],
+  flooring: [
+    {
+      title: "پارکت لمینت کرج",
+      text: "پارکت چوبی و لمینت از نظر جنس، نصب، مقاومت به رطوبت و نگهداری متفاوت‌اند؛ قبل از خرید تفاوت آن‌ها را روشن کنید.",
+      href: "/magazine/parquet-vs-laminate",
+    },
+    {
+      title: "نصب پارکت و کفپوش در کرج",
+      text: "کیفیت زیرسازی، تراز سطح، قرنیز و روش نصب روی نتیجه نهایی اثر مستقیم دارد؛ فقط قیمت هر متر را مقایسه نکنید.",
+      href: "/category/flooring",
+    },
+    {
+      title: "کفپوش PVC کرج",
+      text: "برای PVC، نوع کاربری، وضعیت زیرسازی، ضخامت و مقاومت سطح در برابر سایش و رطوبت را کنار هم بررسی کنید.",
+      href: "/category/flooring",
+    },
+    {
+      title: "فروش پارکت در کرج",
+      text: "موجودی واقعی، کلاس سایش، برند، متعلقات، هزینه نصب و شرایط تحویل را از فروشنده به‌صورت شفاف بپرسید.",
+      href: "/category/flooring",
+    },
+  ],
+  carpet: [
+    {
+      title: "موکت کرج",
+      text: "جنس الیاف، تراکم، ارتفاع پرز و نظافت‌پذیری را متناسب با اتاق خواب، کودک یا فضای پرتردد مقایسه کنید.",
+      href: "/category/carpet",
+    },
+    {
+      title: "نصب موکت در کرج",
+      text: "پرت برش، جهت خواب، چسب یا زیرسازی و فرم اتاق می‌تواند مصرف و کیفیت اجرای موکت را تغییر دهد.",
+      href: "/category/carpet",
+    },
+    {
+      title: "موکت تایلی کرج",
+      text: "موکت تایلی برای تعویض موضعی و فضاهای پرتردد مزیت دارد؛ موکت رول برای پوشش یکپارچه انتخاب رایج‌تری است.",
+      href: "/magazine/carpet-types-guide",
+    },
+    {
+      title: "فروشگاه موکت کرج",
+      text: "تنوع نمونه، موجودی، عرض رول، تعداد تایل در بسته و خدمات اندازه‌گیری و نصب را قبل از انتخاب فروشگاه بررسی کنید.",
+      href: "/category/carpet",
+    },
+  ],
+  wallpaper: [
+    {
+      title: "نصب کاغذ دیواری در کرج",
+      text: "کیفیت نصب به آماده‌سازی سطح وابسته است؛ نم، ترک، ناهمواری و نوع چسب باید قبل از اجرا بررسی شوند.",
+      href: "/magazine/wallpaper-guide",
+    },
+    {
+      title: "نصاب کاغذ دیواری کرج",
+      text: "برای مقایسه نصاب‌ها، تجربه روی جنس انتخابی، روش زیرسازی، درزها، پرت رول و مسئولیت اصلاح ایراد را بپرسید.",
+      href: "/karaj/wallpaper",
+    },
+    {
+      title: "فروشگاه کاغذ دیواری کرج",
+      text: "تنوع واقعی طرح و جنس، ابعاد رول، تکرار طرح، موجودی و امکان تأمین رول هم‌سری را قبل از خرید مقایسه کنید.",
+      href: "/category/wallpaper",
+    },
+    {
+      title: "کاغذ دیواری قابل شستشو کرج",
+      text: "قابل شستشو بودن درجات مختلف دارد و به معنی مناسب بودن برای دیوار نم‌دار نیست؛ مشخصات همان محصول را بررسی کنید.",
+      href: "/magazine/wallpaper-guide",
+    },
+  ],
+  "interior-design": [
+    {
+      title: "دکوراسیون داخلی کرج",
+      text: "دامنه خدمات، نمونه پروژه مرتبط، مسئولیت طراحی و اجرا، زمان‌بندی و شیوه مدیریت تغییرات را قبل از قرارداد مقایسه کنید.",
+      href: "/category/interior-design",
+    },
+    {
+      title: "طراحی داخلی کرج",
+      text: "قبل از انتخاب طراح، متراژ، سبک زندگی، محدودیت‌های فضا، بودجه و سطح خروجی مورد انتظار را مشخص کنید.",
+      href: "/category/interior-design",
+    },
+    {
+      title: "اجرای دکوراسیون داخلی در کرج",
+      text: "در قرارداد اجرا باید محدوده کار، متریال، مسئول خرید، زمان‌بندی، تغییرات و نحوه تحویل نهایی روشن باشد.",
+      href: "/category/interior-design",
+    },
+    {
+      title: "بهترین طراح دکوراسیون داخلی کرج",
+      text: "یک گزینه واحد برای همه بهترین نیست؛ تخصص مرتبط، فرآیند کاری، نمونه پروژه واقعی و شفافیت قرارداد را مقایسه کنید.",
+      href: "/karaj/interior-design",
+    },
+  ],
+  "smart-home": [
+    {
+      title: "خانه هوشمند کرج",
+      text: "روشنایی، پرده، امنیت، دما، قفل و سنسورها را بر اساس نیاز واقعی و امکان کنترل محلی یا ابری دسته‌بندی کنید.",
+      href: "/category/smart-home",
+    },
+    {
+      title: "هوشمندسازی ساختمان کرج",
+      text: "برای ساختمان آماده، نوساز یا بازسازی مسیر اجرا متفاوت است؛ ابتدا Scope تجهیزات و محدودیت سیم‌کشی را مشخص کنید.",
+      href: "/magazine/smart-home-guide",
+    },
+    {
+      title: "شرکت خانه هوشمند کرج",
+      text: "مجری را بر اساس معماری سیستم، پشتیبانی، مستندسازی، قابلیت کارکرد بدون اینترنت و سازگاری تجهیزات مقایسه کنید.",
+      href: "/karaj/smart-home",
+    },
+    {
+      title: "پرده برقی و روشنایی هوشمند کرج",
+      text: "سناریوی مناسب باید جهت پنجره، نور روز، حریم خصوصی و روشنایی مصنوعی را با هم در نظر بگیرد.",
+      href: "/magazine/smart-curtain-daylight-guide",
+    },
+  ],
+};
 
 export type LocalSeoLandingProps = {
   categorySlug: string;
@@ -50,6 +186,7 @@ export default async function LocalSeoLanding({
   }));
 
   const aiAnswers = getAiSearchContent(categorySlug);
+  const competitiveIntents = localSearchIntents[categorySlug] || [];
   const localUrl = "https://khonenama.ir/karaj/" + categorySlug;
   const visual = getLocalVisual(categorySlug);
 
@@ -86,6 +223,7 @@ export default async function LocalSeoLanding({
     about: [
       { "@type": "Thing", name: h1 },
       { "@type": "Place", name: "کرج" },
+      ...competitiveIntents.map((item) => ({ "@type": "Thing", name: item.title })),
       ...guides.slice(0, 6).map((guide) => ({ "@type": "Thing", name: guide.title })),
       ...aiAnswers.map((item) => ({ "@type": "Thing", name: item.question })),
     ],
@@ -95,6 +233,11 @@ export default async function LocalSeoLanding({
         name: "راهنمای جامع " + h1.replace(" در کرج", ""),
         url: "https://khonenama.ir/category/" + categorySlug,
       },
+      ...competitiveIntents.map((item) => ({
+        "@type": "WebPage",
+        name: item.title,
+        url: item.href.startsWith("http") ? item.href : "https://khonenama.ir" + item.href,
+      })),
       ...guides.slice(0, 6).map((guide) => ({
         "@type": "WebPage",
         name: guide.title,
@@ -167,6 +310,25 @@ export default async function LocalSeoLanding({
               </div>
             ))}
           </section>
+
+          {competitiveIntents.length > 0 && (
+            <section className="category-results" aria-labelledby="local-search-intents-heading">
+              <div className="section-heading compact-heading">
+                <div>
+                  <span className="section-kicker">مسیرهای رایج جستجو در کرج</span>
+                  <h2 id="local-search-intents-heading">برای این نیازها از کجا شروع کنیم؟</h2>
+                </div>
+                <p>عبارت‌های رایج جستجو را به راهنما و صفحه مرتبط وصل کرده‌ایم تا قبل از تماس، مسئله دقیق‌تر مشخص شود.</p>
+              </div>
+              <div className="category-guide-grid">
+                {competitiveIntents.map((item) => (
+                  <a className="category-guide-card" href={item.href} key={item.title}>
+                    <div><h3>{item.title}</h3><p>{item.text}</p></div><ArrowUpLeft size={16} />
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
 
           {aiAnswers.length > 0 && (
             <section className="category-results" aria-labelledby="local-ai-answers-heading">
