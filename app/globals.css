@@ -94,6 +94,13 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .desktop-nav a { color: var(--muted); font-size: 13px; font-weight: 780; transition: color .2s ease; }
 .desktop-nav a:hover { color: var(--terracotta); }
 .header-actions { display: flex; align-items: center; gap: 8px; }
+.app-download-button {
+  min-height: 43px; padding: 0 14px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  background: linear-gradient(145deg, var(--terracotta), #a9633f); color: #fff; box-shadow: 0 10px 24px rgba(169, 99, 63, .22);
+  font-size: 12px; font-weight: 900; white-space: nowrap; transition: transform .2s ease, box-shadow .2s ease;
+}
+.app-download-button:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(169, 99, 63, .3); }
+.app-download-mobile { background: linear-gradient(145deg, var(--terracotta), #a9633f); color: #fff; }
 .icon-button {
   width: 43px; height: 43px; display: grid; place-items: center;
   border: 1px solid var(--line); border-radius: 14px; background: rgba(250,250,247,.78); color: var(--ink); cursor: pointer;
@@ -267,6 +274,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .site-header-wrap { top: 7px; }
   .site-header { min-height: 60px; border-radius: 18px; padding: 8px 9px 8px 13px; }
   .brand { font-size: 19px; }
+  .header-actions { margin-inline-start: auto; }
+  .app-download-button { min-height: 40px; padding: 0 10px; border-radius: 12px; font-size: 11px; }
   .desktop-cta { display: none; }
   .mobile-menu-button { display: grid; }
   .hero { padding: 105px 0 48px; min-height: auto; }
