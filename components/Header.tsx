@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Menu, Search, Store, X } from "lucide-react";
+import { ChevronDown, Download, Menu, Search, Store, X } from "lucide-react";
 import { useState } from "react";
 
 const categories = [
@@ -20,6 +20,9 @@ const links = [
   ["پیگیری درخواست", "/request-status"],
   ["برغان کرج", "/search?location=برغان"],
 ] as const;
+
+const androidDownloadUrl =
+  "https://github.com/ahoora-jpg/khonenama-mobile/releases/latest/download/khonenama-production.apk";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -59,6 +62,16 @@ export default function Header() {
         </nav>
 
         <div className="header-actions">
+          <a
+            className="app-download-button"
+            href={androidDownloadUrl}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="دانلود اپلیکیشن اندروید خونه‌نما"
+          >
+            <Download size={17} />
+            <span>دانلود اپ</span>
+          </a>
           <a className="icon-button desktop-search depth-button" href="/search" aria-label="جستجو">
             <Search size={19} />
           </a>
@@ -88,6 +101,16 @@ export default function Header() {
           {links.map(([label, href]) => (
             <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
           ))}
+          <a
+            className="pill-button app-download-mobile"
+            href={androidDownloadUrl}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => setOpen(false)}
+          >
+            <Download size={17} />
+            دانلود اپلیکیشن اندروید
+          </a>
           <a href="/for-business" onClick={() => setOpen(false)}>برای کسب‌وکارها</a>
           <a href="/business/login" onClick={() => setOpen(false)}>ورود کسب‌وکار</a>
           <a className="pill-button dark" href="/register-business" onClick={() => setOpen(false)}>
