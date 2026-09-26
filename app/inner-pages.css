@@ -36,7 +36,7 @@
 .profile-title-row p { margin: 3px 0 0; color: var(--muted); font-size: 11px; }
 .profile-featured { position: static; height: max-content; white-space: nowrap; }
 .profile-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-.profile-meta-grid > div { display: flex; align-items: center; gap: 9px; padding: 12px; border-radius: 14px; background: rgba(246,243,237,.82); }
+.profile-meta-grid > div { display: flex; align-items: center; gap: 9px; padding: 12px; border-radius: 14px; background: rgba(255,255,255,.82); }
 .profile-meta-grid span { display: flex; flex-direction: column; }
 .profile-meta-grid strong { font-size: 11px; }
 .profile-meta-grid small { color: var(--muted); font-size: 9px; }
