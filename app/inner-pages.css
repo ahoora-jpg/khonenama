@@ -23,7 +23,7 @@
 .result-meta { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 14px; color: #777168; font-size: 10px; }
 .result-meta span { display: inline-flex; align-items: center; gap: 4px; }
 .result-meta .rating { color: #b87828; }
-.category-hero { border-radius: 30px; padding: 38px; min-height: 250px; display: flex; flex-direction: column; justify-content: end; background: linear-gradient(135deg,rgba(255,255,255,.82),rgba(240,241,238,.66)); }
+.category-hero { border-radius: 30px; padding: 38px; min-height: 250px; display: flex; flex-direction: column; justify-content: end; background: linear-gradient(135deg,rgba(250,250,247,.82),rgba(235,234,228,.66)); }
 .category-results { margin-top: 46px; }
 .business-generic { background: linear-gradient(135deg,#8d664e,#dfc7b3); }
 .business-profile-hero { position: relative; margin-bottom: 54px; }
@@ -2791,7 +2791,7 @@
 .wallpaper-tool-hero {
   background:
     radial-gradient(circle at 88% 18%, rgba(173,96,57,.08), transparent 18rem),
-    linear-gradient(145deg, rgba(255,255,255,.88), rgba(240,241,238,.84));
+    linear-gradient(145deg, rgba(250,250,247,.88), rgba(235,234,228,.84));
   border:1px solid rgba(255,255,255,.76);
 }
 .tools-hero h1,
@@ -3609,7 +3609,7 @@
 .smart-scope-hero {
   background:
     radial-gradient(circle at 88% 18%, rgba(173,96,57,.08), transparent 18rem),
-    linear-gradient(145deg, rgba(255,255,255,.88), rgba(240,241,238,.84));
+    linear-gradient(145deg, rgba(250,250,247,.88), rgba(235,234,228,.84));
 }
 @media (max-width:920px) {
   .curtain-calculator-shell,
@@ -3715,7 +3715,7 @@
 .carpet-tool-hero {
   background:
     radial-gradient(circle at 88% 18%, rgba(173,96,57,.08), transparent 18rem),
-    linear-gradient(145deg, rgba(255,255,255,.88), rgba(240,241,238,.84));
+    linear-gradient(145deg, rgba(250,250,247,.88), rgba(235,234,228,.84));
 }
 .carpet-estimator-shell {
   display:grid;
