@@ -23,7 +23,7 @@
 .result-meta { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 14px; color: #777168; font-size: 10px; }
 .result-meta span { display: inline-flex; align-items: center; gap: 4px; }
 .result-meta .rating { color: #b87828; }
-.category-hero { border-radius: 30px; padding: 38px; min-height: 250px; display: flex; flex-direction: column; justify-content: end; background: linear-gradient(135deg,rgba(255,253,248,.82),rgba(224,212,196,.66)); }
+.category-hero { border-radius: 30px; padding: 38px; min-height: 250px; display: flex; flex-direction: column; justify-content: end; background: linear-gradient(135deg,rgba(255,255,255,.82),rgba(240,241,238,.66)); }
 .category-results { margin-top: 46px; }
 .business-generic { background: linear-gradient(135deg,#8d664e,#dfc7b3); }
 .business-profile-hero { position: relative; margin-bottom: 54px; }
@@ -130,7 +130,7 @@
 .business-hero-proof { display:flex; gap:15px; flex-wrap:wrap; margin-top:18px; color:#756f67; font-size:10px; }
 .business-hero-proof span { display:inline-flex; align-items:center; gap:5px; }
 .business-landing-visual { min-height:470px; border-radius:30px; padding:28px; position:relative; overflow:hidden; }
-.business-preview-card { width:min(88%,420px); margin:24px auto 0; border-radius:25px; overflow:hidden; background:rgba(255,253,248,.94); box-shadow:0 32px 70px rgba(52,37,24,.18); transform:rotateY(-7deg) rotateX(2deg); }
+.business-preview-card { width:min(88%,420px); margin:24px auto 0; border-radius:25px; overflow:hidden; background:rgba(255,255,255,.94); box-shadow:0 32px 70px rgba(52,37,24,.18); transform:rotateY(-7deg) rotateX(2deg); }
 .business-preview-cover { height:190px; background:linear-gradient(135deg,#9a6e54,#d9bc9e 55%,#667565); }
 .business-preview-body { padding:18px; display:grid; gap:5px; }
 .business-preview-body strong { font-size:17px; }
@@ -143,7 +143,7 @@
 .business-floating-stat small { font-size:8px; color:var(--muted); }
 
 .business-benefit-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
-.business-benefit-grid article { min-height:190px; padding:20px; border:1px solid var(--line); border-radius:22px; background:rgba(255,253,248,.8); }
+.business-benefit-grid article { min-height:190px; padding:20px; border:1px solid var(--line); border-radius:22px; background:rgba(255,255,255,.8); }
 .business-benefit-grid article svg { color:var(--terracotta); }
 .business-benefit-grid h3 { margin:18px 0 6px; font-size:15px; }
 .business-benefit-grid p { margin:0; color:var(--muted); font-size:10px; line-height:1.9; }
@@ -155,7 +155,7 @@
 .business-step-grid p { margin:0; color:var(--muted); font-size:10px; line-height:1.9; }
 
 .business-plan-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-.business-plan-card { position:relative; min-height:430px; padding:24px; border-radius:26px; border:1px solid var(--line); background:rgba(255,253,248,.88); }
+.business-plan-card { position:relative; min-height:430px; padding:24px; border-radius:26px; border:1px solid var(--line); background:rgba(255,255,255,.88); }
 .business-plan-card.is-highlighted { border-color:rgba(173,96,57,.36); box-shadow:0 22px 52px rgba(115,75,49,.12); transform:translateY(-5px); }
 .business-plan-badge { display:inline-flex; padding:5px 8px; border-radius:999px; background:#eee1d3; color:#7d5d48; font-size:8px; font-weight:900; }
 .business-plan-card h3, .business-plan-card h2 { margin:14px 0 4px; font-size:24px; }
@@ -177,7 +177,7 @@
 .onboarding-trust-strip { display:flex; gap:9px; flex-wrap:wrap; margin-bottom:18px; }
 .onboarding-trust-strip span { display:inline-flex; align-items:center; gap:6px; padding:8px 10px; border-radius:999px; background:#f0e9df; color:#6f675f; font-size:9px; }
 .onboarding-shell { display:grid; grid-template-columns:260px minmax(0,1fr); gap:16px; align-items:start; }
-.onboarding-progress-wrap { position:sticky; top:110px; border-radius:23px; padding:18px; background:rgba(255,253,248,.84); border:1px solid var(--line); }
+.onboarding-progress-wrap { position:sticky; top:110px; border-radius:23px; padding:18px; background:rgba(255,255,255,.84); border:1px solid var(--line); }
 .onboarding-progress-top { display:flex; justify-content:space-between; gap:8px; font-size:9px; }
 .onboarding-progress-top strong { font-size:11px; }
 .onboarding-progress { height:7px; background:#e9e2d9; border-radius:999px; overflow:hidden; margin:12px 0 16px; }
@@ -949,7 +949,7 @@
 .business-card.plan-card-premium {
   border-color:rgba(176,132,60,.28);
   box-shadow:0 16px 44px rgba(115,83,34,.09);
-  background:linear-gradient(145deg,#fffdf8,#fbf4e7);
+  background:linear-gradient(145deg,#ffffff,#f0f1ee);
 }
 .result-card.plan-card-pro,
 .business-card.plan-card-pro {
@@ -1493,7 +1493,7 @@
   align-items:center;
   padding:4px 7px;
   border-radius:999px;
-  background:#eee8de;
+  background:#f0f1ee;
   color:#736a61;
   font-size:7px;
   font-weight:900;
@@ -1527,7 +1527,7 @@
   padding:13px;
   border:1px solid var(--line);
   border-radius:15px;
-  background:rgba(255,253,248,.82);
+  background:rgba(255,255,255,.82);
 }
 .lead-card.status-open {
   border-color:rgba(173,96,57,.2);
@@ -2106,7 +2106,7 @@
   right:7px;
   padding:3px 6px;
   border-radius:999px;
-  background:rgba(255,253,248,.9);
+  background:rgba(255,255,255,.9);
   color:#756c63;
   font-size:6px;
   font-weight:900;
@@ -2791,7 +2791,7 @@
 .wallpaper-tool-hero {
   background:
     radial-gradient(circle at 88% 18%, rgba(173,96,57,.08), transparent 18rem),
-    linear-gradient(145deg, rgba(255,255,255,.88), rgba(242,236,227,.84));
+    linear-gradient(145deg, rgba(255,255,255,.88), rgba(240,241,238,.84));
   border:1px solid rgba(255,255,255,.76);
 }
 .tools-hero h1,
@@ -3086,7 +3086,7 @@
   padding:18px;
   border:1px solid var(--line);
   border-radius:20px;
-  background:rgba(255,253,248,.74);
+  background:rgba(255,255,255,.74);
 }
 .wallpaper-tool-steps article > span {
   width:38px;
@@ -3609,7 +3609,7 @@
 .smart-scope-hero {
   background:
     radial-gradient(circle at 88% 18%, rgba(173,96,57,.08), transparent 18rem),
-    linear-gradient(145deg, rgba(255,255,255,.88), rgba(242,236,227,.84));
+    linear-gradient(145deg, rgba(255,255,255,.88), rgba(240,241,238,.84));
 }
 @media (max-width:920px) {
   .curtain-calculator-shell,
@@ -3715,7 +3715,7 @@
 .carpet-tool-hero {
   background:
     radial-gradient(circle at 88% 18%, rgba(173,96,57,.08), transparent 18rem),
-    linear-gradient(145deg, rgba(255,255,255,.88), rgba(242,236,227,.84));
+    linear-gradient(145deg, rgba(255,255,255,.88), rgba(240,241,238,.84));
 }
 .carpet-estimator-shell {
   display:grid;

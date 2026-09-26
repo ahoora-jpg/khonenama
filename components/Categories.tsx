@@ -43,8 +43,6 @@ export default function Categories() {
                   <p>{description}</p>
                 </div>
                 <span className="category-arrow"><ArrowUpLeft size={19} /></span>
-                <span className="category-shape" aria-hidden="true" />
-                <span className="category-glow" aria-hidden="true" />
               </a>
             );
           })}
