@@ -949,7 +949,7 @@
 .business-card.plan-card-premium {
   border-color:rgba(176,132,60,.28);
   box-shadow:0 16px 44px rgba(115,83,34,.09);
-  background:linear-gradient(145deg,#ffffff,#f0f1ee);
+  background:linear-gradient(145deg,var(--surface),var(--surface-soft));
 }
 .result-card.plan-card-pro,
 .business-card.plan-card-pro {
@@ -1493,7 +1493,7 @@
   align-items:center;
   padding:4px 7px;
   border-radius:999px;
-  background:#f0f1ee;
+  background:var(--surface-soft);
   color:#736a61;
   font-size:7px;
   font-weight:900;
