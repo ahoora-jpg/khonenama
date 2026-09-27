@@ -23,6 +23,21 @@ export const metadata: Metadata = {
   twitter: { card: "summary", title: pageTitle, description: pageDescription },
 };
 
+const aboutFaqs = [
+  {
+    question: "خونه نما چیست؟",
+    answer: "خونه نما (Khonenama) مرجع فارسی برای شناخت و مقایسه موضوعات، فروشگاه‌ها و متخصصان مرتبط با دکوراسیون و فضای داخلی خانه است؛ با تمرکز اولیه بر کرج و استان البرز.",
+  },
+  {
+    question: "آیا خونه نما درباره نمای بیرونی ساختمان است؟",
+    answer: "خیر. موضوع خونه نما فضای داخلی خانه است؛ از پرده، کفپوش، موکت و کاغذ دیواری تا طراحی داخلی و خانه هوشمند. خونه نما سایت طراحی نمای ساختمان یا خرید و فروش ملک نیست.",
+  },
+  {
+    question: "نام درست برند چگونه نوشته می‌شود؟",
+    answer: "نام اصلی فارسی برند «خونه نما» با فاصله است و نام لاتین آن Khonenama است. دامنه رسمی برند khonenama.ir است.",
+  },
+];
+
 const aboutJsonLd = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
@@ -35,10 +50,20 @@ const aboutJsonLd = {
   isPartOf: { "@id": "https://khonenama.ir/#website" },
 };
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: aboutFaqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: { "@type": "Answer", text: faq.answer },
+  })),
+};
 export default function AboutPage() {
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <Header />
       <section className="inner-page legal-page">
         <div className="shell legal-shell">
@@ -57,6 +82,28 @@ export default function AboutPage() {
               کاربر می‌تواند بر اساس دسته، شهر و محله جستجو کند، پروفایل کسب‌وکارها را ببیند،
               خدمات و نمونه‌کارهای ثبت‌شده را مقایسه کند و برای همان کسب‌وکار درخواست قیمت خصوصی بفرستد.
             </p>
+            <h2>خونه نما با «نمای ساختمان» چه تفاوتی دارد؟</h2>
+            <p>
+              واژه «نما» در نام خونه نما به نمایش و کشف انتخاب‌های داخل خانه اشاره دارد. موضوع این سایت نمای بیرونی ساختمان،
+              نقشه و پلان معماری یا خرید و فروش ملک نیست؛ تمرکز خونه نما مشخصاً روی دکوراسیون و فضای داخلی خانه است.
+            </p>
+
+            <h2>موضوعات اصلی خونه نما</h2>
+            <div className="local-intent-grid">
+              <a className="local-intent-card" href="/category/curtain"><h3>پرده و متعلقات</h3><p>زبرا، شید، پرده پارچه‌ای، اندازه‌گیری و نصب.</p></a>
+              <a className="local-intent-card" href="/category/flooring"><h3>کفپوش و پارکت</h3><p>پارکت، لمینت، PVC، زیرسازی و اجرا.</p></a>
+              <a className="local-intent-card" href="/category/carpet"><h3>موکت</h3><p>موکت رول و تایلی، متراژ، خرید و نصب.</p></a>
+              <a className="local-intent-card" href="/category/wallpaper"><h3>کاغذ دیواری و دیوارپوش</h3><p>انتخاب، محاسبه رول، زیرسازی و اجرا.</p></a>
+              <a className="local-intent-card" href="/category/interior-design"><h3>طراحی داخلی</h3><p>چیدمان، رنگ، نور و انتخاب طراح و مجری.</p></a>
+              <a className="local-intent-card" href="/category/smart-home"><h3>خانه هوشمند</h3><p>روشنایی، پرده برقی، امنیت، سنسور و اتوماسیون.</p></a>
+            </div>
+
+            <section className="guide-faq" aria-label="سوالات متداول درباره خونه نما">
+              <h2>سوالات متداول درباره خونه نما</h2>
+              {aboutFaqs.map((faq) => (
+                <details key={faq.question}><summary>{faq.question}</summary><p>{faq.answer}</p></details>
+              ))}
+            </section>
 
             <div className="about-feature-grid">
               <div><Search size={20} /><strong>جستجوی تخصصی</strong><span>از پرده و کفپوش تا طراحی داخلی و خانه هوشمند</span></div>

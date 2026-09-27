@@ -68,6 +68,10 @@ const organizationJsonLd = {
   alternateName: ["خونه‌نما", "Khonenama", "Khonenama.ir", "khonenama.ir"],
   url: "https://khonenama.ir/",
   sameAs: ["https://github.com/ahoora-jpg/khonenama"],
+  subjectOf: [
+    { "@type": "WebPage", url: "https://ahoora-studio.site/case-study/khonenama", name: "Khonenama case study — Ahoora Studio" },
+    { "@type": "WebPage", url: "https://ahoora-studio.ir/case-study/khonenama", name: "معرفی پروژه خونه نما — Ahoora Studio" },
+  ],
   logo: {
     "@type": "ImageObject",
     url: "https://khonenama.ir/khonenama-logo.svg",

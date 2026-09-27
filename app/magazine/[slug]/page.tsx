@@ -36,7 +36,10 @@ const SEO_METADATA_OVERRIDES: Record<string, { title?: string; description?: str
   "best-curtain-living-room": { title: "بهترین پرده برای پذیرایی | انتخاب بر اساس نور" },
   "carpet-bedroom-guide": { title: "موکت اتاق خواب و کودک | پرز، نظافت و صدا" },
   "smart-home-rental-apartment-guide": { title: "خانه هوشمند برای مستأجرها | بدون تخریب" },
-  "smart-home-without-internet-guide": { title: "خانه هوشمند بدون اینترنت | کنترل محلی" },
+  "smart-home-without-internet-guide": {
+    title: "خانه هوشمند بدون اینترنت | کنترل محلی و قطع اینترنت",
+    description: "در زمان قطع اینترنت خانه هوشمند چه چیزهایی باید کار کنند؟ تفاوت شبکه داخلی و اینترنت، Local Control، کنترل دستی و وابستگی Cloud را قبل از خرید بررسی کنید.",
+  },
   "matter-controller-thread-border-router-guide": { title: "Matter Controller یا Thread Border Router؟" },
   "knx-vs-matter-smart-home-guide": { title: "KNX یا Matter؟ | تفاوت و کاربرد در خانه هوشمند" },
   "presence-vs-motion-sensor-smart-home-guide": { title: "سنسور حضور یا حرکت؟ | Presence و Motion" },

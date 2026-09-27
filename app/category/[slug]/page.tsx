@@ -10,6 +10,15 @@ import { getCategoryVisual, getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, BadgeCheck, BookOpen, BriefcaseBusiness, Calculator, Crown, MapPin, Star } from "lucide-react";
 import { notFound } from "next/navigation";
 
+const categoryPillars = [
+  { slug: "curtain", label: "پرده و متعلقات" },
+  { slug: "flooring", label: "کفپوش و پارکت" },
+  { slug: "carpet", label: "موکت" },
+  { slug: "wallpaper", label: "کاغذ دیواری و دیوارپوش" },
+  { slug: "interior-design", label: "طراحی داخلی" },
+  { slug: "smart-home", label: "خانه هوشمند" },
+];
+
 const categoryToolUrls: Record<string, string> = {
   curtain: "https://khonenama.ir/tools/curtain-fabric-calculator",
   wallpaper: "https://khonenama.ir/tools/wallpaper-calculator",
@@ -179,6 +188,26 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             ))}
           </section>
 
+          <section className="category-results" aria-labelledby="related-pillars-heading">
+            <div className="section-heading compact-heading">
+              <div>
+                <span className="section-kicker">مسیرهای مرتبط در فضای داخلی خانه</span>
+                <h2 id="related-pillars-heading">موضوعات مرتبط در خونه نما</h2>
+              </div>
+            </div>
+            <div className="local-intent-grid">
+              {categoryPillars.filter((item) => item.slug !== slug).map((item) => (
+                <a className="local-intent-card" href={`/category/${item.slug}`} key={item.slug}>
+                  <h3>{item.label}</h3>
+                  <p>راهنماها، ابزارها و کسب‌وکارهای مرتبط با {item.label} را ببینید.</p>
+                </a>
+              ))}
+              <a className="local-intent-card" href="/about">
+                <h3>خونه نما چیست؟</h3>
+                <p>موضوع، روش کار و تفاوت خونه نما با سایت‌های نمای ساختمان و ملک را ببینید.</p>
+              </a>
+            </div>
+          </section>
           {slug === "wallpaper" && (
             <section className="category-tool-card glass-panel" aria-label="ابزار محاسبه کاغذ دیواری">
               <span><Calculator size={20} /></span>

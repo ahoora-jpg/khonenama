@@ -6,6 +6,7 @@ const baseUrl = "https://khonenama.ir";
 const seoRefreshDate = "2026-09-25";
 const homepageBrandRefreshDate = "2026-09-27";
 const aboutBrandRefreshDate = "2026-09-27";
+const pillarRefreshDate = "2026-09-27";
 
 // Business profiles change independently of code deploys. Generate the sitemap
 // at request time so search engines see newly publishable profiles without
@@ -16,19 +17,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified: homepageBrandRefreshDate, changeFrequency: "daily", priority: 1 },
     { url: baseUrl + "/karaj", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.95 },
-    { url: baseUrl + "/karaj/curtain", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.94 },
+    { url: baseUrl + "/karaj/curtain", lastModified: pillarRefreshDate, changeFrequency: "daily", priority: 0.94 },
     { url: baseUrl + "/karaj/flooring", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.92 },
     { url: baseUrl + "/karaj/carpet", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.88 },
     { url: baseUrl + "/karaj/wallpaper", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.88 },
     { url: baseUrl + "/karaj/interior-design", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.9 },
     { url: baseUrl + "/karaj/smart-home", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.9 },
     { url: baseUrl + "/karaj/baraghan", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.92 },
-    { url: baseUrl + "/category/curtain", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.9 },
-    { url: baseUrl + "/category/flooring", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.88 },
-    { url: baseUrl + "/category/carpet", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.8 },
-    { url: baseUrl + "/category/wallpaper", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.8 },
-    { url: baseUrl + "/category/interior-design", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.8 },
-    { url: baseUrl + "/category/smart-home", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.86 },
+    { url: baseUrl + "/category/curtain", lastModified: pillarRefreshDate, changeFrequency: "weekly", priority: 0.9 },
+    { url: baseUrl + "/category/flooring", lastModified: pillarRefreshDate, changeFrequency: "weekly", priority: 0.88 },
+    { url: baseUrl + "/category/carpet", lastModified: pillarRefreshDate, changeFrequency: "weekly", priority: 0.8 },
+    { url: baseUrl + "/category/wallpaper", lastModified: pillarRefreshDate, changeFrequency: "weekly", priority: 0.8 },
+    { url: baseUrl + "/category/interior-design", lastModified: pillarRefreshDate, changeFrequency: "weekly", priority: 0.8 },
+    { url: baseUrl + "/category/smart-home", lastModified: pillarRefreshDate, changeFrequency: "weekly", priority: 0.86 },
     { url: baseUrl + "/magazine", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.86 },
     { url: baseUrl + "/tools", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/tools/wallpaper-calculator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
@@ -49,6 +50,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "curtain-installation-guide",
     "shade-curtain-guide",
     "smart-curtain-daylight-guide",
+    "zebra-curtain-guide",
+    "smart-home-without-internet-guide",
   ]);
 
   const guidePages: MetadataRoute.Sitemap = guides.map((guide) => ({

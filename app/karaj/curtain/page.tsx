@@ -20,7 +20,7 @@ export default function KarajCurtainPage() {
     <LocalSeoLanding
       categorySlug="curtain"
       h1="پرده فروشی در کرج"
-      intro="فروشگاه‌ها و خدمات پرده در کرج را برای زبرا، شید، پرده پارچه‌ای، اندازه‌گیری و نصب پیدا و مقایسه کنید."
+      intro="در خونه نما، فروشگاه‌ها و خدمات پرده در کرج را برای زبرا، شید، پرده پارچه‌ای، اندازه‌گیری و نصب پیدا و مقایسه کنید؛ سپس راهنماها و ابزارهای مرتبط را برای تصمیم دقیق‌تر ببینید."
       intentCards={[
         {
           title: "بهترین پرده‌فروشی کرج را چطور انتخاب کنیم؟",
@@ -58,6 +58,7 @@ export default function KarajCurtainPage() {
         },
       ]}
       guides={[
+        { title: "راهنمای جامع پرده در خونه نما", text: "انواع پرده، معیارهای انتخاب و مسیرهای مرتبط", href: "/category/curtain" },
         { title: "محاسبه متراژ پارچه پرده", text: "عرض ریل، Fullness و Pattern Repeat", href: "/tools/curtain-fabric-calculator" },
         { title: "راهنمای نصب پرده", text: "اندازه‌گیری، نصب سقفی و نصب دیواری", href: "/magazine/curtain-installation-guide" },
         { title: "پرده زبرا چیست؟", text: "مزایا، معایب و انواع زبرا", href: "/magazine/zebra-curtain-guide" },
