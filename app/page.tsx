@@ -67,6 +67,7 @@ const organizationJsonLd = {
   name: "خونه نما",
   alternateName: ["خونه‌نما", "Khonenama", "Khonenama.ir", "khonenama.ir"],
   url: "https://khonenama.ir/",
+  sameAs: ["https://github.com/ahoora-jpg/khonenama"],
   logo: {
     "@type": "ImageObject",
     url: "https://khonenama.ir/khonenama-logo.svg",
