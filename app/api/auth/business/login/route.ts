@@ -207,7 +207,11 @@ export async function POST(request: Request) {
     const session = await createBusinessSession(String(user.id), request);
 
     return Response.json(
-      { ok: true },
+      {
+        ok: true,
+        accessToken: session.token,
+        expiresAt: session.expiresAt,
+      },
       {
         headers: {
           "Set-Cookie": session.cookie,
