@@ -30,8 +30,8 @@ export default function Header() {
   return (
     <header className="site-header-wrap">
       <div className="site-header shell glass-panel premium-header">
-        <a className="brand" href="/" aria-label="خونه‌نما">
-          خونه<span>نما</span>
+        <a className="brand" href="/" aria-label="خونه نما">
+          خونه <span>نما</span>
           <small>خانه‌ای برای انتخاب بهتر</small>
         </a>
 
@@ -67,7 +67,7 @@ export default function Header() {
             href={androidDownloadUrl}
             target="_blank"
             rel="noreferrer"
-            aria-label="دانلود اپلیکیشن اندروید خونه‌نما"
+            aria-label="دانلود اپلیکیشن اندروید خونه نما"
           >
             <Download size={17} />
             <span>دانلود اپ</span>
