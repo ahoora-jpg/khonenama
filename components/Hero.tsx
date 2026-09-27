@@ -16,11 +16,11 @@ export default function Hero() {
         <header className="hero-identity-block">
           <div className="eyebrow hero-brand-label">
             <Sparkles size={15} />
-            خونه‌نما؛ انتخاب آگاهانه برای خانه
+            خونه نما؛ انتخاب آگاهانه برای فضای داخلی خانه
           </div>
 
           <h1 className="hero-identity-title">
-            خونه‌نما؛ مرجع تخصصی دکوراسیون و تزئینات داخلی منزل
+            خونه نما؛ مرجع دکوراسیون داخلی و فضای داخلی خانه
           </h1>
         </header>
 
@@ -43,8 +43,8 @@ export default function Hero() {
           <div className="hero-after-copy">
             <h2 className="hero-slogan">برای خونه‌ات، بهتر انتخاب کن.</h2>
             <p className="hero-lead">
-              فروشگاه‌ها، متخصصان، محصولات و ایده‌های دکوراسیون را پیدا کن، مقایسه کن
-              و مستقیم با بهترین گزینه‌های اطرافت ارتباط بگیر.
+              خونه نما (Khonenama) برای پیدا کردن و مقایسه فروشگاه‌ها، متخصصان، متریال و ایده‌های
+              دکوراسیون و فضای داخلی خانه ساخته شده؛ از پرده و کفپوش تا طراحی داخلی و خانه هوشمند.
             </p>
           </div>
 
