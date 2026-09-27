@@ -38,6 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/tools/smart-home-scope", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/carpet-estimator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/for-business", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.72 },
+    { url: baseUrl + "/download-app", lastModified: "2026-09-27", changeFrequency: "monthly", priority: 0.64 },
     { url: baseUrl + "/for-business/online-discovery-guide", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.74 },
     { url: baseUrl + "/about", lastModified: aboutBrandRefreshDate, changeFrequency: "monthly", priority: 0.5 },
     { url: baseUrl + "/editorial-policy", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.48 },
