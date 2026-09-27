@@ -319,7 +319,10 @@ export async function POST(request: Request) {
           id: userId,
           phoneVerified: Boolean(existingUser?.phone_verified_at),
         },
-        session: { expiresAt: session.expiresAt },
+        session: {
+          accessToken: session.token,
+          expiresAt: session.expiresAt,
+        },
       },
       {
         status: 201,
