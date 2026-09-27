@@ -21,8 +21,7 @@ const links = [
   ["برغان کرج", "/karaj/baraghan"],
 ] as const;
 
-const androidDownloadUrl =
-  "https://github.com/ahoora-jpg/khonenama-mobile/releases/latest/download/khonenama-production.apk";
+const androidDownloadUrl = "/download-app";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -65,8 +64,6 @@ export default function Header() {
           <a
             className="app-download-button"
             href={androidDownloadUrl}
-            target="_blank"
-            rel="noreferrer"
             aria-label="دانلود اپلیکیشن اندروید خونه نما"
           >
             <Download size={17} />
@@ -104,8 +101,6 @@ export default function Header() {
           <a
             className="pill-button app-download-mobile"
             href={androidDownloadUrl}
-            target="_blank"
-            rel="noreferrer"
             onClick={() => setOpen(false)}
           >
             <Download size={17} />
