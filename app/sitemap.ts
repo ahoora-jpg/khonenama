@@ -4,9 +4,10 @@ import { listPublishedBusinessSitemapEntries } from "@/lib/server/business-sitem
 
 const baseUrl = "https://khonenama.ir";
 const seoRefreshDate = "2026-09-25";
-const homepageBrandRefreshDate = "2026-09-27";
-const aboutBrandRefreshDate = "2026-09-27";
+const homepageBrandRefreshDate = "2026-09-28";
+const aboutBrandRefreshDate = "2026-09-28";
 const pillarRefreshDate = "2026-09-27";
+const categoryRefreshDate = "2026-09-28";
 
 // Business profiles change independently of code deploys. Generate the sitemap
 // at request time so search engines see newly publishable profiles without
@@ -24,12 +25,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/karaj/interior-design", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.9 },
     { url: baseUrl + "/karaj/smart-home", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.9 },
     { url: baseUrl + "/karaj/baraghan", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.92 },
-    { url: baseUrl + "/category/curtain", lastModified: pillarRefreshDate, changeFrequency: "weekly", priority: 0.9 },
-    { url: baseUrl + "/category/flooring", lastModified: pillarRefreshDate, changeFrequency: "weekly", priority: 0.88 },
-    { url: baseUrl + "/category/carpet", lastModified: pillarRefreshDate, changeFrequency: "weekly", priority: 0.8 },
-    { url: baseUrl + "/category/wallpaper", lastModified: pillarRefreshDate, changeFrequency: "weekly", priority: 0.8 },
-    { url: baseUrl + "/category/interior-design", lastModified: pillarRefreshDate, changeFrequency: "weekly", priority: 0.8 },
-    { url: baseUrl + "/category/smart-home", lastModified: pillarRefreshDate, changeFrequency: "weekly", priority: 0.86 },
+    { url: baseUrl + "/category/curtain", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.9 },
+    { url: baseUrl + "/category/flooring", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.88 },
+    { url: baseUrl + "/category/carpet", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
+    { url: baseUrl + "/category/wallpaper", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
+    { url: baseUrl + "/category/interior-design", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
+    { url: baseUrl + "/category/smart-home", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.86 },
     { url: baseUrl + "/magazine", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.86 },
     { url: baseUrl + "/tools", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/tools/wallpaper-calculator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
