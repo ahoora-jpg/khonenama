@@ -13,12 +13,12 @@ const categories = [
 ] as const;
 
 const links = [
-  ["فروشگاه‌های منتخب", "/#featured"],
+  ["دکوراسیون کرج", "/karaj"],
   ["چطور کار می‌کند؟", "/#how-it-works"],
   ["راهنماها", "/magazine"],
   ["ابزارها", "/tools"],
   ["پیگیری درخواست", "/request-status"],
-  ["برغان کرج", "/search?location=برغان"],
+  ["برغان کرج", "/karaj/baraghan"],
 ] as const;
 
 const androidDownloadUrl =
