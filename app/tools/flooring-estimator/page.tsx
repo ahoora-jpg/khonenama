@@ -29,7 +29,7 @@ const appJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "@id": url + "#app",
-  name: "محاسبه‌گر متراژ پارکت، لمینت و کفپوش خونه‌نما",
+  name: "محاسبه‌گر متراژ پارکت، لمینت و کفپوش خونه نما",
   url,
   description,
   applicationCategory: "UtilitiesApplication",
@@ -43,7 +43,7 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "خونه‌نما", item: "https://khonenama.ir/" },
+    { "@type": "ListItem", position: 1, name: "خونه نما", item: "https://khonenama.ir/" },
     { "@type": "ListItem", position: 2, name: "ابزارها", item: "https://khonenama.ir/tools" },
     { "@type": "ListItem", position: 3, name: "محاسبه متراژ پارکت و لمینت", item: url },
   ],
@@ -91,11 +91,11 @@ export default function FlooringEstimatorPage() {
       <section className="inner-page carpet-tool-page">
         <div className="shell wallpaper-tool-shell">
           <nav className="guide-breadcrumb" aria-label="مسیر صفحه">
-            <a href="/">خونه‌نما</a><span>/</span><a href="/category/flooring">کفپوش و پارکت</a><span>/</span><span>محاسبه متراژ</span>
+            <a href="/">خونه نما</a><span>/</span><a href="/category/flooring">کفپوش و پارکت</a><span>/</span><span>محاسبه متراژ</span>
           </nav>
 
           <header className="wallpaper-tool-hero carpet-tool-hero">
-            <span className="section-kicker">ابزار رایگان خونه‌نما</span>
+            <span className="section-kicker">ابزار رایگان خونه نما</span>
             <h1>محاسبه متراژ پارکت، لمینت و کفپوش PVC</h1>
             <p>
               مساحت فضا، پرت و پوشش هر بسته را برای پارکت و لمینت حساب کنید؛ برای کفپوش PVC رولی، عرض رول و جهت برش را هم وارد محاسبه کنید.

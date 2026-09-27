@@ -38,7 +38,7 @@ const webApplicationJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "@id": url + "#app",
-  name: "محاسبه‌گر تعداد رول کاغذ دیواری خونه‌نما",
+  name: "محاسبه‌گر تعداد رول کاغذ دیواری خونه نما",
   url,
   description,
   applicationCategory: "UtilitiesApplication",
@@ -52,7 +52,7 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "خونه‌نما", item: "https://khonenama.ir/" },
+    { "@type": "ListItem", position: 1, name: "خونه نما", item: "https://khonenama.ir/" },
     { "@type": "ListItem", position: 2, name: "ابزارها", item: "https://khonenama.ir/tools" },
     { "@type": "ListItem", position: 3, name: "محاسبه تعداد رول کاغذ دیواری", item: url },
   ],
@@ -100,11 +100,11 @@ export default function WallpaperCalculatorPage() {
       <section className="inner-page wallpaper-tool-page">
         <div className="shell wallpaper-tool-shell">
           <nav className="guide-breadcrumb" aria-label="مسیر صفحه">
-            <a href="/">خونه‌نما</a><span>/</span><a href="/category/wallpaper">کاغذ دیواری</a><span>/</span><span>محاسبه‌گر رول</span>
+            <a href="/">خونه نما</a><span>/</span><a href="/category/wallpaper">کاغذ دیواری</a><span>/</span><span>محاسبه‌گر رول</span>
           </nav>
 
           <header className="wallpaper-tool-hero">
-            <span className="section-kicker">ابزار رایگان خونه‌نما</span>
+            <span className="section-kicker">ابزار رایگان خونه نما</span>
             <h1>محاسبه تعداد رول کاغذ دیواری</h1>
             <p>
               اندازه دیوار و مشخصات رول را وارد کنید تا تعداد رول لازم بر اساس روش نوار،
@@ -121,7 +121,7 @@ export default function WallpaperCalculatorPage() {
               <p>
                 دو رول با مساحت اسمی یکسان می‌توانند تعداد نوار قابل استفاده متفاوتی بدهند.
                 ارتفاع دیوار و تکرار طرح تعیین می‌کند از هر رول چند نوار کامل می‌توان برید.
-                به همین دلیل محاسبه‌گر خونه‌نما ابتدا طول هر نوار را تعیین می‌کند و بعد تعداد رول را به دست می‌آورد.
+                به همین دلیل محاسبه‌گر خونه نما ابتدا طول هر نوار را تعیین می‌کند و بعد تعداد رول را به دست می‌آورد.
               </p>
             </div>
 

@@ -7,7 +7,7 @@ import { ArrowUpLeft, Layers3, MapPin, PaintRoller, PanelsTopLeft, Ruler, Sofa, 
 const pageUrl = "https://khonenama.ir/karaj";
 const pageTitle = "دکوراسیون داخلی کرج | فروشگاه‌ها، متخصصان و خدمات";
 const pageDescription =
-  "فروشگاه‌ها، متخصصان و خدمات دکوراسیون داخلی کرج را در خونه‌نما پیدا و مقایسه کنید؛ پرده، موکت، کفپوش، کاغذ دیواری، طراحی داخلی و خانه هوشمند.";
+  "فروشگاه‌ها، متخصصان و خدمات دکوراسیون داخلی کرج را در خونه نما پیدا و مقایسه کنید؛ پرده، موکت، کفپوش، کاغذ دیواری، طراحی داخلی و خانه هوشمند.";
 
 export const metadata: Metadata = {
   title: { absolute: pageTitle },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: pageTitle,
     description: pageDescription,
     url: pageUrl,
-    siteName: "خونه‌نما",
+    siteName: "خونه نما",
     locale: "fa_IR",
     type: "website",
   },
@@ -40,7 +40,7 @@ const jsonLd = {
   name: "دکوراسیون داخلی کرج",
   url: pageUrl,
   description:
-    "راهنمای محلی خونه‌نما برای پیدا کردن فروشگاه‌ها، متخصصان و خدمات دکوراسیون داخلی در کرج.",
+    "راهنمای محلی خونه نما برای پیدا کردن فروشگاه‌ها، متخصصان و خدمات دکوراسیون داخلی در کرج.",
   inLanguage: "fa-IR",
   isPartOf: { "@id": "https://khonenama.ir/#website" },
   publisher: { "@id": "https://khonenama.ir/#organization" },
@@ -74,7 +74,7 @@ export default function KarajPage() {
       <section className="inner-page">
         <div className="shell">
           <div className="category-hero glass-panel">
-            <span className="section-kicker">راهنمای محلی خونه‌نما</span>
+            <span className="section-kicker">راهنمای محلی خونه نما</span>
             <h1>دکوراسیون داخلی کرج</h1>
             <p>
               فروشگاه‌ها، متخصصان و خدمات دکوراسیون منزل را در کرج بر اساس دسته،
@@ -125,7 +125,7 @@ export default function KarajPage() {
             <div className="section-heading compact-heading">
               <div>
                 <span className="section-kicker">شروع محلی</span>
-                <h2>خیابان برغان؛ نقطه شروع خونه‌نما در کرج</h2>
+                <h2>خیابان برغان؛ نقطه شروع خونه نما در کرج</h2>
               </div>
             </div>
 
@@ -142,7 +142,7 @@ export default function KarajPage() {
           <section className="category-results">
             <div className="category-empty glass-panel">
               <strong>صاحب فروشگاه یا متخصص دکوراسیون در کرج هستید؟</strong>
-              <p>راهنمای ساخت پروفایل، اطلاعات لازم و نحوه انتشار کسب‌وکار در خونه‌نما را ببینید.</p>
+              <p>راهنمای ساخت پروفایل، اطلاعات لازم و نحوه انتشار کسب‌وکار در خونه نما را ببینید.</p>
               <a className="pill-button dark" href="/for-business">راهنمای معرفی کسب‌وکار</a>
             </div>
           </section>

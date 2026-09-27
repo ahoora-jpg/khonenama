@@ -2,7 +2,7 @@ import { MessageCircle } from "lucide-react";
 
 const adminWhatsapp =
   "https://wa.me/989122606778?text=" +
-  encodeURIComponent("سلام، از سایت خونه‌نما پیام می‌دهم. برای ارتباط با ادمین / پیشنهاد همکاری پیام دارم.");
+  encodeURIComponent("سلام، از سایت خونه نما پیام می‌دهم. برای ارتباط با ادمین / پیشنهاد همکاری پیام دارم.");
 
 export default function AdminContactFloat() {
   return (
@@ -11,7 +11,7 @@ export default function AdminContactFloat() {
       href={adminWhatsapp}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="ارتباط با ادمین خونه‌نما در واتساپ"
+      aria-label="ارتباط با ادمین خونه نما در واتساپ"
       title="ارتباط با ادمین"
     >
       <span className="admin-contact-icon" aria-hidden="true">

@@ -44,9 +44,9 @@ export default function AdminLoginForm() {
       }}
     >
       <span className="business-login-icon"><KeyRound size={22} /></span>
-      <span className="section-kicker">مدیریت خونه‌نما</span>
+      <span className="section-kicker">مدیریت خونه نما</span>
       <h1>ورود مدیر</h1>
-      <p>این بخش فقط برای مدیریت داخلی خونه‌نماست.</p>
+      <p>این بخش فقط برای مدیریت داخلی خونه نماست.</p>
       <label>
         <span>کلید مدیریت</span>
         <input

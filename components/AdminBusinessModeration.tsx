@@ -156,7 +156,7 @@ export default function AdminBusinessModeration() {
     <div className="admin-moderation">
       <div className="dashboard-heading">
         <div>
-          <span className="section-kicker">مدیریت داخلی خونه‌نما</span>
+          <span className="section-kicker">مدیریت داخلی خونه نما</span>
           <h1>بررسی کسب‌وکارها</h1>
           <p>پروفایل‌های در انتظار بررسی را تأیید، رد یا برای اصلاح برگردان.</p>
         </div>

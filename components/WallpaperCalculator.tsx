@@ -123,7 +123,7 @@ export default function WallpaperCalculator() {
       <div className="wallpaper-calculator-card glass-panel">
         <div className="wallpaper-calculator-head">
           <div>
-            <span className="section-kicker">ابزار خونه‌نما</span>
+            <span className="section-kicker">ابزار خونه نما</span>
             <h2 id="wallpaper-calculator-title">محاسبه تعداد رول کاغذ دیواری</h2>
             <p>
               محاسبه بر اساس تعداد نوارهای لازم انجام می‌شود؛ بنابراین Pattern Repeat،

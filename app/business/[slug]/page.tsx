@@ -80,7 +80,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!business) return {};
 
   const title = business.name + " | " + [business.area, business.city].filter(Boolean).join("، ");
-  const description = business.description || ("پروفایل " + business.name + " در خونه‌نما");
+  const description = business.description || ("پروفایل " + business.name + " در خونه نما");
 
   return {
     title,
@@ -327,7 +327,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
               <QuoteRequestForm businessSlug={business.slug} businessName={business.name} />
             ) : (
               <div className="demo-quote-note glass-panel">
-                این یک پروفایل نمونه برای نمایش تجربه خونه‌نماست. درخواست قیمت واقعی فقط برای کسب‌وکارهای ثبت‌شده فعال می‌شود.
+                این یک پروفایل نمونه برای نمایش تجربه خونه نماست. درخواست قیمت واقعی فقط برای کسب‌وکارهای ثبت‌شده فعال می‌شود.
               </div>
             )}
           </section>

@@ -37,7 +37,7 @@ export default function HomeTools() {
       <div className="shell">
         <div className="section-heading home-tools-heading">
           <div>
-            <span className="section-kicker">ابزارهای رایگان خونه‌نما</span>
+            <span className="section-kicker">ابزارهای رایگان خونه نما</span>
             <h2 id="home-tools-title">قبل از خرید، دقیق‌تر حساب کن.</h2>
             <p>محاسبه‌گرهای ساده و کاربردی برای کاهش حدس، پرت و پیشنهادهای غیرقابل مقایسه.</p>
           </div>

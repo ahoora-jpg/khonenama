@@ -154,7 +154,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
       reviewCount: Number(reviewResult?.review_count || 0),
       reviews: (reviewsResult?.results || []).map((item: any) => ({
         id: Number(item.id),
-        name: item.title || "مشتری خونه‌نما",
+        name: item.title || "مشتری خونه نما",
         rating: Number(item.rating || 0),
         body: item.body || "",
         verifiedInteraction: Boolean(item.verified_interaction),

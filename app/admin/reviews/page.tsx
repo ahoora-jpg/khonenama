@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import AdminReviewModeration from "@/components/AdminReviewModeration";
 
 export const metadata: Metadata = {
-  title: "مدیریت نظرها | خونه‌نما",
+  title: "مدیریت نظرها | خونه نما",
   robots: { index: false, follow: false },
 };
 

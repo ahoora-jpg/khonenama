@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import AdminBusinessModeration from "@/components/AdminBusinessModeration";
 
 export const metadata: Metadata = {
-  title: "مدیریت کسب‌وکارها | خونه‌نما",
+  title: "مدیریت کسب‌وکارها | خونه نما",
   robots: { index: false, follow: false },
 };
 

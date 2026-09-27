@@ -4,7 +4,7 @@ export const businessPlans = [
     name: "پایه",
     priceLabel: "رایگان",
     amountToman: 0,
-    description: "برای شروع حضور کسب‌وکار در خونه‌نما",
+    description: "برای شروع حضور کسب‌وکار در خونه نما",
     badge: "شروع سریع",
     features: [
       "پروفایل عمومی و قابل ایندکس",

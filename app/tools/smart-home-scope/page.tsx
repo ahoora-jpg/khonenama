@@ -5,7 +5,7 @@ import SmartHomeScopeCalculator from "@/components/SmartHomeScopeCalculator";
 import { ArrowUpLeft } from "lucide-react";
 
 const url = "https://khonenama.ir/tools/smart-home-scope";
-const title = "برآورد Scope خانه هوشمند | ابزار برنامه‌ریزی خونه‌نما";
+const title = "برآورد Scope خانه هوشمند | ابزار برنامه‌ریزی خونه نما";
 const description =
   "تعداد نقاط روشنایی، پرده، دما، قفل، سنسور، دوربین و پریز را وارد کنید و یک Scope اولیه برای مقایسه پیشنهاد مجریان خانه هوشمند بسازید.";
 
@@ -28,7 +28,7 @@ const appJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "@id": url + "#app",
-  name: "ابزار برآورد Scope خانه هوشمند خونه‌نما",
+  name: "ابزار برآورد Scope خانه هوشمند خونه نما",
   url,
   description,
   applicationCategory: "UtilitiesApplication",
@@ -71,11 +71,11 @@ export default function SmartHomeScopePage() {
       <section className="inner-page smart-scope-page">
         <div className="shell wallpaper-tool-shell">
           <nav className="guide-breadcrumb" aria-label="مسیر صفحه">
-            <a href="/">خونه‌نما</a><span>/</span><a href="/category/smart-home">خانه هوشمند</a><span>/</span><span>Scope اولیه</span>
+            <a href="/">خونه نما</a><span>/</span><a href="/category/smart-home">خانه هوشمند</a><span>/</span><span>Scope اولیه</span>
           </nav>
 
           <header className="wallpaper-tool-hero smart-scope-hero">
-            <span className="section-kicker">ابزار برنامه‌ریزی خونه‌نما</span>
+            <span className="section-kicker">ابزار برنامه‌ریزی خونه نما</span>
             <h1>برآورد Scope اولیه خانه هوشمند</h1>
             <p>
               قبل از گرفتن قیمت، تعداد نقاط و نیازهای واقعی پروژه را مشخص کنید تا پیشنهاد مجری‌ها

@@ -7,9 +7,9 @@ import { getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, BookOpen, Clock3 } from "lucide-react";
 
 const magazineUrl = "https://khonenama.ir/magazine";
-const magazineTitle = "مجله خونه‌نما | راهنمای دکوراسیون و خانه هوشمند";
+const magazineTitle = "مجله خونه نما | راهنمای دکوراسیون و خانه هوشمند";
 const magazineDescription =
-  "راهنماهای کاربردی خونه‌نما درباره پرده، پارکت، کفپوش، دیوارپوش، طراحی داخلی، نورپردازی و خانه هوشمند.";
+  "راهنماهای کاربردی خونه نما درباره پرده، پارکت، کفپوش، دیوارپوش، طراحی داخلی، نورپردازی و خانه هوشمند.";
 
 export const metadata: Metadata = {
   title: { absolute: magazineTitle },
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: magazineTitle,
     description: magazineDescription,
     url: magazineUrl,
-    siteName: "خونه‌نما",
+    siteName: "خونه نما",
     locale: "fa_IR",
     type: "website",
   },
@@ -66,10 +66,10 @@ export default function MagazinePage() {
       <section className="inner-page">
         <div className="shell">
           <div className="category-hero glass-panel magazine-hero">
-            <span className="section-kicker">مجله خونه‌نما</span>
+            <span className="section-kicker">مجله خونه نما</span>
             <h1>راهنمای انتخاب برای خانه</h1>
             <p>
-              قبل از خرید، فرق گزینه‌ها را بفهمید؛ بعد فروشگاه و متخصص مناسب را پیدا کنید. روش نگارش و به‌روزرسانی مطالب در <a href="/editorial-policy">سیاست تحریریه خونه‌نما</a> توضیح داده شده است.
+              قبل از خرید، فرق گزینه‌ها را بفهمید؛ بعد فروشگاه و متخصص مناسب را پیدا کنید. روش نگارش و به‌روزرسانی مطالب در <a href="/editorial-policy">سیاست تحریریه خونه نما</a> توضیح داده شده است.
             </p>
           </div>
 

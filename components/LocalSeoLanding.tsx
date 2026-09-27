@@ -253,7 +253,7 @@ export default async function LocalSeoLanding({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "خونه‌نما", item: "https://khonenama.ir/" },
+      { "@type": "ListItem", position: 1, name: "خونه نما", item: "https://khonenama.ir/" },
       { "@type": "ListItem", position: 2, name: "کرج", item: "https://khonenama.ir/karaj" },
       { "@type": "ListItem", position: 3, name: h1, item: localUrl },
     ],
@@ -280,16 +280,16 @@ export default async function LocalSeoLanding({
       <section className="inner-page">
         <div className="shell">
           <nav className="guide-breadcrumb" aria-label="مسیر صفحه">
-            <a href="/">خونه‌نما</a><span>/</span><a href="/karaj">کرج</a><span>/</span><span>{h1}</span>
+            <a href="/">خونه نما</a><span>/</span><a href="/karaj">کرج</a><span>/</span><span>{h1}</span>
           </nav>
 
           <div className="category-hero category-hero-with-media glass-panel">
             <div>
-              <span className="section-kicker">راهنمای محلی خونه‌نما</span>
+              <span className="section-kicker">راهنمای محلی خونه نما</span>
               <h1>{h1}</h1>
               <p>{intro}</p>
               <a href={"/category/" + categorySlug}>راهنمای جامع این دسته</a>
-              <a href="/editorial-policy">روش تدوین و بررسی اطلاعات خونه‌نما</a>
+              <a href="/editorial-policy">روش تدوین و بررسی اطلاعات خونه نما</a>
             </div>
             <img
               src={visual.src}

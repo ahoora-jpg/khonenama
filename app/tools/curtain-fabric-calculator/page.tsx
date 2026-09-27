@@ -28,7 +28,7 @@ const appJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "@id": url + "#app",
-  name: "محاسبه‌گر متراژ پارچه پرده خونه‌نما",
+  name: "محاسبه‌گر متراژ پارچه پرده خونه نما",
   url,
   description,
   applicationCategory: "UtilitiesApplication",
@@ -42,7 +42,7 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "خونه‌نما", item: "https://khonenama.ir/" },
+    { "@type": "ListItem", position: 1, name: "خونه نما", item: "https://khonenama.ir/" },
     { "@type": "ListItem", position: 2, name: "ابزارها", item: "https://khonenama.ir/tools" },
     { "@type": "ListItem", position: 3, name: "محاسبه متراژ پارچه پرده", item: url },
   ],
@@ -57,7 +57,7 @@ const faqJsonLd = {
       name: "برای پرده چند متر پارچه لازم است؟",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "متراژ به عرض ریل، ضریب Fullness، عرض پارچه، قد نهایی، اضافه دوخت و در پارچه‌های طرح‌دار به Pattern Repeat بستگی دارد. محاسبه‌گر خونه‌نما این عوامل را با هم در نظر می‌گیرد.",
+        text: "متراژ به عرض ریل، ضریب Fullness، عرض پارچه، قد نهایی، اضافه دوخت و در پارچه‌های طرح‌دار به Pattern Repeat بستگی دارد. محاسبه‌گر خونه نما این عوامل را با هم در نظر می‌گیرد.",
       },
     },
     {
@@ -90,11 +90,11 @@ export default function CurtainFabricCalculatorPage() {
       <section className="inner-page curtain-tool-page">
         <div className="shell wallpaper-tool-shell">
           <nav className="guide-breadcrumb" aria-label="مسیر صفحه">
-            <a href="/">خونه‌نما</a><span>/</span><a href="/category/curtain">پرده</a><span>/</span><span>محاسبه‌گر پارچه</span>
+            <a href="/">خونه نما</a><span>/</span><a href="/category/curtain">پرده</a><span>/</span><span>محاسبه‌گر پارچه</span>
           </nav>
 
           <header className="wallpaper-tool-hero curtain-tool-hero">
-            <span className="section-kicker">ابزار رایگان خونه‌نما</span>
+            <span className="section-kicker">ابزار رایگان خونه نما</span>
             <h1>محاسبه متراژ پارچه پرده</h1>
             <p>
               برای برآورد خرید پارچه، عرض ریل و قد پرده را با مشخصات همان پارچه وارد کنید.

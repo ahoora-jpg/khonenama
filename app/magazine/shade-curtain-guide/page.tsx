@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title,
   description,
   keywords: ["پرده شید چیست", "انواع پرده شید", "شید رول", "شید بلک اوت", "شید اسکرین", "پرده شید یا زبرا"],
-  authors: [{ name: "خونه‌نما", url: "https://khonenama.ir/about" }],
+  authors: [{ name: "خونه نما", url: "https://khonenama.ir/about" }],
   alternates: { canonical: url },
   openGraph: {
     title,
@@ -88,7 +88,7 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "خونه‌نما", item: "https://khonenama.ir/" },
+    { "@type": "ListItem", position: 1, name: "خونه نما", item: "https://khonenama.ir/" },
     { "@type": "ListItem", position: 2, name: "مجله", item: "https://khonenama.ir/magazine" },
     { "@type": "ListItem", position: 3, name: "پرده شید", item: url },
   ],
@@ -105,7 +105,7 @@ export default function ShadeCurtainGuidePage() {
       <article className="inner-page guide-page">
         <div className="shell guide-shell">
           <nav className="guide-breadcrumb" aria-label="مسیر صفحه">
-            <a href="/">خونه‌نما</a><span>/</span><a href="/magazine">مجله</a><span>/</span><a href="/category/curtain">پرده</a><span>/</span><span>پرده شید</span>
+            <a href="/">خونه نما</a><span>/</span><a href="/magazine">مجله</a><span>/</span><a href="/category/curtain">پرده</a><span>/</span><span>پرده شید</span>
           </nav>
 
           <header className="guide-header">
@@ -191,7 +191,7 @@ export default function ShadeCurtainGuidePage() {
               <div className="guide-side-card guide-tool-link glass-panel">
                 <Calculator size={18} />
                 <h3>متراژ پارچه پرده را برآورد کن</h3>
-                <p>برای پرده‌های پارچه‌ای، عرض ریل، قد، Fullness و تکرار طرح را با ابزار خونه‌نما محاسبه کنید.</p>
+                <p>برای پرده‌های پارچه‌ای، عرض ریل، قد، Fullness و تکرار طرح را با ابزار خونه نما محاسبه کنید.</p>
                 <a href="/tools/curtain-fabric-calculator">محاسبه‌گر پرده <ArrowUpLeft size={15} /></a>
               </div>
               <div className="guide-side-card glass-panel">

@@ -437,7 +437,7 @@ export default function BusinessOnboardingWizard() {
             </div>
 
             <small className="field-hint">
-              خونه‌نما رمز را داخل پیش‌نویس محلی فرم ذخیره نمی‌کند؛ در سرور نیز فقط نسخه هش‌شده نگهداری می‌شود.
+              خونه نما رمز را داخل پیش‌نویس محلی فرم ذخیره نمی‌کند؛ در سرور نیز فقط نسخه هش‌شده نگهداری می‌شود.
             </small>
           </section>
         )}
@@ -839,7 +839,7 @@ export default function BusinessOnboardingWizard() {
               <div className="onboarding-success">
                 <CheckCircle2 size={22} />
                 <div>
-                  <strong>پروفایل در دیتابیس خونه‌نما ذخیره شد.</strong>
+                  <strong>پروفایل در دیتابیس خونه نما ذخیره شد.</strong>
                   <small>
                     حساب شما از این پس با شماره همراه و رمز عبور قابل ورود است. حالا می‌توانید تصاویر و اطلاعات تکمیلی را از پنل مدیریت کنید.
                   </small>
@@ -887,7 +887,7 @@ export default function BusinessOnboardingWizard() {
                 ? "در حال ذخیره..."
                 : saved
                   ? "ذخیره شد"
-                  : "ذخیره در خونه‌نما"}{" "}
+                  : "ذخیره در خونه نما"}{" "}
               <Store size={16} />
             </button>
           )}

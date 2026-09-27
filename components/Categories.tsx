@@ -15,7 +15,7 @@ export default function Categories() {
       <div className="shell">
         <div className="section-heading premium-heading">
           <div>
-            <span className="section-kicker">دسته‌بندی‌های خونه‌نما</span>
+            <span className="section-kicker">دسته‌بندی‌های خونه نما</span>
             <h2>هر گوشه خونه، یک انتخاب بهتر.</h2>
           </div>
           <p>از متریال تا اجرا؛ دسته‌ای را انتخاب کن و فروشگاه‌ها و متخصصان مرتبط را یکجا ببین.</p>

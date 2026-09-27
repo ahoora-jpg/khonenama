@@ -99,7 +99,7 @@ export default function BusinessReviews({
       setMessage(
         result.verifiedInteraction
           ? "نظر شما با نشان تعامل تأییدشده ثبت شد و بعد از بررسی منتشر می‌شود."
-          : "نظر شما ثبت شد و بعد از بررسی خونه‌نما منتشر می‌شود."
+          : "نظر شما ثبت شد و بعد از بررسی خونه نما منتشر می‌شود."
       );
     } catch {
       setMessage("ارتباط با سرور برقرار نشد.");
@@ -200,9 +200,9 @@ export default function BusinessReviews({
             </label>
 
             <label>
-              <span>کد درخواست خونه‌نما ـ اختیاری</span>
+              <span>کد درخواست خونه نما ـ اختیاری</span>
               <input dir="ltr" value={requestCode} onChange={(e) => setRequestCode(e.target.value)} placeholder="KH-000001" />
-              <small>اگر از خونه‌نما درخواست قیمت داده‌ای، با این کد نظر «تعامل تأییدشده» می‌گیرد.</small>
+              <small>اگر از خونه نما درخواست قیمت داده‌ای، با این کد نظر «تعامل تأییدشده» می‌گیرد.</small>
             </label>
 
             <label>

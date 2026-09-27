@@ -142,7 +142,7 @@ export default function FlooringEstimator() {
       <div className="carpet-estimator-card glass-panel">
         <div className="carpet-estimator-head">
           <div>
-            <span className="section-kicker">ابزار خونه‌نما</span>
+            <span className="section-kicker">ابزار خونه نما</span>
             <h2 id="flooring-estimator-title">برآورد پارکت، لمینت و کفپوش PVC</h2>
             <p>
               برای پارکت و لمینت تعداد بسته را از روی پوشش هر بسته حساب کنید؛ برای کفپوش رولی، عرض رول و جهت برش را هم در نظر بگیرید.

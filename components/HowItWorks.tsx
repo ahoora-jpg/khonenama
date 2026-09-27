@@ -12,7 +12,7 @@ export default function HowItWorks() {
       <div className="shell">
         <div className="section-heading compact-heading premium-heading">
           <div>
-            <span className="section-kicker">مسیر ساده خونه‌نما</span>
+            <span className="section-kicker">مسیر ساده خونه نما</span>
             <h2>کمتر بگرد. مطمئن‌تر انتخاب کن.</h2>
           </div>
           <a className="text-link-arrow" href="/search">شروع جستجو <ArrowUpLeft size={16} /></a>

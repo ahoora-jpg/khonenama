@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     "پرده شید چیست",
     "پرده زبرا چیست",
   ],
-  authors: [{ name: "خونه‌نما", url: "https://khonenama.ir/about" }],
+  authors: [{ name: "خونه نما", url: "https://khonenama.ir/about" }],
   alternates: { canonical: url },
   openGraph: { title, description, url, type: "article", locale: "fa_IR" },
   twitter: { card: "summary", title, description },

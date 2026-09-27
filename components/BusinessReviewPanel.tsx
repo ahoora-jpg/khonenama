@@ -61,7 +61,7 @@ export default function BusinessReviewPanel() {
           {reviews.slice(0, 6).map((review) => (
             <article key={review.id}>
               <div>
-                <strong>{review.title || "مشتری خونه‌نما"}</strong>
+                <strong>{review.title || "مشتری خونه نما"}</strong>
                 {review.verified_interaction ? (
                   <span className="verified-interaction-badge"><BadgeCheck size={11} /> تعامل تأییدشده</span>
                 ) : null}
@@ -80,7 +80,7 @@ export default function BusinessReviewPanel() {
         <div className="dashboard-empty-state">
           <MessageSquareText size={22} />
           <strong>هنوز نظری ثبت نشده</strong>
-          <small>نظرهای مشتریان پس از بررسی خونه‌نما در این بخش و صفحه عمومی نمایش داده می‌شوند.</small>
+          <small>نظرهای مشتریان پس از بررسی خونه نما در این بخش و صفحه عمومی نمایش داده می‌شوند.</small>
         </div>
       )}
     </section>

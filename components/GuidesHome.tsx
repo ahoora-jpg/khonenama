@@ -19,7 +19,7 @@ export default function GuidesHome() {
       <div className="shell">
         <div className="section-heading premium-heading">
           <div>
-            <span className="section-kicker">راهنمای خونه‌نما</span>
+            <span className="section-kicker">راهنمای خونه نما</span>
             <h2 id="guides-home-title">اول فرق‌ها را بدان، بعد انتخاب کن.</h2>
           </div>
           <a className="text-link-arrow" href="/magazine">

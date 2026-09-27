@@ -27,7 +27,7 @@ export default function BillingPage() {
           </div>
 
           <div className="billing-security-strip">
-            <span><ShieldCheck size={17} /> اطلاعات کارت در خونه‌نما ذخیره نمی‌شود</span>
+            <span><ShieldCheck size={17} /> اطلاعات کارت در خونه نما ذخیره نمی‌شود</span>
             <span><ReceiptText size={17} /> هر پرداخت با فاکتور و شناسه مستقل</span>
             <span><CreditCard size={17} /> فعال‌سازی فقط بعد از Verify درگاه</span>
           </div>

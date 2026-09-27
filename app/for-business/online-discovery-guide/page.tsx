@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     title: pageTitle,
     description: pageDescription,
     url: pageUrl,
-    siteName: "خونه‌نما",
+    siteName: "خونه نما",
     locale: "fa_IR",
     type: "article",
     images: [{ url: articleImage, alt: "فضای داخلی و کسب‌وکارهای حوزه دکوراسیون" }],
@@ -90,7 +90,7 @@ export default function OnlineBusinessDiscoveryGuide() {
       <article className="inner-page guide-page">
         <div className="shell guide-shell">
           <nav className="guide-breadcrumb" aria-label="مسیر صفحه">
-            <a href="/">خونه‌نما</a><span>/</span><a href="/for-business">برای کسب‌وکارها</a><span>/</span><span>راهنمای دیده‌شدن آنلاین</span>
+            <a href="/">خونه نما</a><span>/</span><a href="/for-business">برای کسب‌وکارها</a><span>/</span><span>راهنمای دیده‌شدن آنلاین</span>
           </nav>
 
           <header className="guide-header">
@@ -139,9 +139,9 @@ export default function OnlineBusinessDiscoveryGuide() {
               پروفایل تخصصی جای سایت، شبکه اجتماعی یا Google Business Profile را در همه بازارها نمی‌گیرد؛ نقش آن این است که کسب‌وکار را در محیطی دسته‌بندی‌شده و مرتبط با نیاز کاربر قرار دهد. بهتر است اطلاعات اصلی شما در کانال‌های مختلف هماهنگ و قابل اعتماد باشند.
             </p>
 
-            <h2>خونه‌نما در این مسیر چه کاری انجام می‌دهد؟</h2>
+            <h2>خونه نما در این مسیر چه کاری انجام می‌دهد؟</h2>
             <p>
-              خونه‌نما روی فروشگاه‌ها و متخصصان حوزه دکوراسیون و خدمات خانه تمرکز دارد. کسب‌وکار می‌تواند اطلاعات واقعی خود را ثبت کند و پروفایل پس از تکمیل و بررسی، در صورت واجد شرایط بودن در صفحات عمومی، دسته‌بندی و جستجوی محلی نمایش داده شود.
+              خونه نما روی فروشگاه‌ها و متخصصان حوزه دکوراسیون و خدمات خانه تمرکز دارد. کسب‌وکار می‌تواند اطلاعات واقعی خود را ثبت کند و پروفایل پس از تکمیل و بررسی، در صورت واجد شرایط بودن در صفحات عمومی، دسته‌بندی و جستجوی محلی نمایش داده شود.
             </p>
             <div className="guide-cta glass-panel">
               <div>

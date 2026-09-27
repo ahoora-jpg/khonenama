@@ -86,7 +86,7 @@ export default function AdminReviewModeration() {
               <div className="admin-review-head">
                 <div>
                   <span className="status-pill">{item.status}</span>
-                  <h2>{item.title || "کاربر خونه‌نما"}</h2>
+                  <h2>{item.title || "کاربر خونه نما"}</h2>
                   <a href={"/business/" + item.business_slug} target="_blank" rel="noreferrer">{item.business_name}</a>
                 </div>
                 <div className="admin-review-rating">

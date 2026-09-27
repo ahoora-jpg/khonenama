@@ -98,7 +98,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: metadataTitle,
     description: metadataDescription,
     keywords: enhancedKeywords(guide.slug, guide.keywords),
-    authors: [{ name: "خونه‌نما", url: "https://khonenama.ir/about" }],
+    authors: [{ name: "خونه نما", url: "https://khonenama.ir/about" }],
     alternates: { canonical: "/magazine/" + guide.slug },
     openGraph: {
       title: metadataTitle,
@@ -168,7 +168,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "خونه‌نما", item: "https://khonenama.ir" },
+      { "@type": "ListItem", position: 1, name: "خونه نما", item: "https://khonenama.ir" },
       { "@type": "ListItem", position: 2, name: "مجله", item: "https://khonenama.ir/magazine" },
       { "@type": "ListItem", position: 3, name: guide.title, item: "https://khonenama.ir/magazine/" + guide.slug },
     ],
@@ -194,7 +194,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
       <article className="inner-page guide-page">
         <div className="shell guide-shell">
           <nav className="guide-breadcrumb" aria-label="مسیر صفحه">
-            <a href="/">خونه‌نما</a>
+            <a href="/">خونه نما</a>
             <span>/</span>
             <a href="/magazine">مجله</a>
             <span>/</span>
@@ -208,7 +208,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             <div className="guide-meta">
               <span><Clock3 size={14} /> {guide.readTime}</span>
               <span>به‌روزرسانی: {isCurtainInstallation ? "۱۴۰۵/۰۷/۰۱" : guide.updated}</span>
-              <a href="/about">درباره خونه‌نما</a>
+              <a href="/about">درباره خونه نما</a>
               <a href="/editorial-policy">سیاست تحریریه</a>
             </div>
           </header>
@@ -332,7 +332,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               <div className="guide-side-card glass-panel">
                 <span className="section-kicker">مسیر بعدی</span>
                 <h3>فروشگاه‌ها و متخصصان مرتبط را ببین</h3>
-                <p>بعد از شناخت گزینه‌ها، کسب‌وکارهای مرتبط را در خونه‌نما مقایسه کن.</p>
+                <p>بعد از شناخت گزینه‌ها، کسب‌وکارهای مرتبط را در خونه نما مقایسه کن.</p>
                 <a href={guide.relatedCategory || "/search"}>
                   مشاهده کسب‌وکارها <ArrowUpLeft size={15} />
                 </a>
@@ -343,7 +343,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               <div className="guide-side-card glass-panel">
                 <span className="section-kicker">شفافیت تحریریه</span>
                 <h3>این راهنما چطور تهیه می‌شود؟</h3>
-                <p>روش نگارش، استفاده از منابع، به‌روزرسانی محتوا و سیاست خونه‌نما درباره داده‌های واقعی را ببینید.</p>
+                <p>روش نگارش، استفاده از منابع، به‌روزرسانی محتوا و سیاست خونه نما درباره داده‌های واقعی را ببینید.</p>
                 <a href="/editorial-policy">مشاهده سیاست تحریریه <ArrowUpLeft size={15} /></a>
               </div>
 

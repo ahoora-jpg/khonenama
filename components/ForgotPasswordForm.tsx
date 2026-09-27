@@ -21,7 +21,7 @@ export default function ForgotPasswordForm() {
       <span className="business-login-icon"><RotateCcw size={22} /></span>
       <span className="section-kicker">بازیابی رمز</span>
       <h1>انتخاب روش بازیابی</h1>
-      <p>بازیابی خودکار هنوز فعال نشده است. برای حساب‌های Pilot می‌توانید از پشتیبانی خونه‌نما برای بازیابی امن حساب کمک بگیرید.</p>
+      <p>بازیابی خودکار هنوز فعال نشده است. برای حساب‌های Pilot می‌توانید از پشتیبانی خونه نما برای بازیابی امن حساب کمک بگیرید.</p>
 
       <div className="recovery-methods">
         <button type="button" className={method === "email" ? "is-active" : ""} onClick={() => setMethod("email")}>

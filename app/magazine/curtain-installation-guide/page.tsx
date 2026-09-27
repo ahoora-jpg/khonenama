@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     "آموزش نصب پرده زبرا",
     "اندازه گیری پرده",
   ],
-  authors: [{ name: "خونه‌نما", url: "https://khonenama.ir/about" }],
+  authors: [{ name: "خونه نما", url: "https://khonenama.ir/about" }],
   alternates: { canonical: url },
   openGraph: { title, description, url, type: "article", locale: "fa_IR" },
   twitter: { card: "summary", title, description },

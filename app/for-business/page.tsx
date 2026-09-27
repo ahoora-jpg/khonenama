@@ -21,7 +21,7 @@ import {
 const pageUrl = "https://khonenama.ir/for-business";
 const pageTitle = "ثبت کسب‌وکار دکوراسیون | معرفی فروشگاه و خدمات";
 const pageDescription =
-  "کسب‌وکار دکوراسیون خود را در خونه‌نما معرفی کنید؛ پروفایل عمومی، دسته‌بندی تخصصی، جستجوی محلی، نمونه‌کار و مسیر دریافت درخواست مشتری.";
+  "کسب‌وکار دکوراسیون خود را در خونه نما معرفی کنید؛ پروفایل عمومی، دسته‌بندی تخصصی، جستجوی محلی، نمونه‌کار و مسیر دریافت درخواست مشتری.";
 
 export const metadata: Metadata = {
   title: { absolute: pageTitle },
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     title: pageTitle,
     description: pageDescription,
     url: pageUrl,
-    siteName: "خونه‌نما",
+    siteName: "خونه نما",
     locale: "fa_IR",
     type: "website",
   },
@@ -79,7 +79,7 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "خونه‌نما", item: "https://khonenama.ir/" },
+    { "@type": "ListItem", position: 1, name: "خونه نما", item: "https://khonenama.ir/" },
     { "@type": "ListItem", position: 2, name: "برای کسب‌وکارها", item: pageUrl },
   ],
 };
@@ -105,7 +105,7 @@ export default function ForBusinessPage() {
       <section className="business-landing-hero">
         <div className="shell business-landing-grid">
           <div>
-            <span className="section-kicker">خونه‌نما برای کسب‌وکارها</span>
+            <span className="section-kicker">خونه نما برای کسب‌وکارها</span>
             <h1>کسب‌وکارت را جایی معرفی کن که مشتری دنبال دکوراسیون می‌گردد.</h1>
             <p>
               پروفایل حرفه‌ای بساز، در دسته و جستجوی محلی دیده شو، نمونه‌کارت را نمایش بده
@@ -177,7 +177,7 @@ export default function ForBusinessPage() {
         <div className="shell">
           <div className="section-heading premium-heading">
             <div>
-              <span className="section-kicker">چرا خونه‌نما؟</span>
+              <span className="section-kicker">چرا خونه نما؟</span>
               <h2>فقط یک آگهی نیست؛ یک ویترین حرفه‌ای برای کسب‌وکار توست.</h2>
             </div>
           </div>
@@ -196,7 +196,7 @@ export default function ForBusinessPage() {
           <div className="section-heading premium-heading">
             <div>
               <span className="section-kicker">فرآیند ثبت</span>
-              <h2>چهار مرحله تا داشتن پروفایل در خونه‌نما</h2>
+              <h2>چهار مرحله تا داشتن پروفایل در خونه نما</h2>
             </div>
           </div>
 

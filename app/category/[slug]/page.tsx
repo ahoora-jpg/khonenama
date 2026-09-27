@@ -110,7 +110,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "خونه‌نما", item: "https://khonenama.ir/" },
+      { "@type": "ListItem", position: 1, name: "خونه نما", item: "https://khonenama.ir/" },
       { "@type": "ListItem", position: 2, name: seo.h1, item: categoryUrl },
     ],
   };
@@ -138,15 +138,15 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       <section className="inner-page category-page">
         <div className="shell">
           <nav className="guide-breadcrumb" aria-label="مسیر صفحه">
-            <a href="/">خونه‌نما</a><span>/</span><span>{seo.h1}</span>
+            <a href="/">خونه نما</a><span>/</span><span>{seo.h1}</span>
           </nav>
 
           <div className="category-hero category-hero-with-media glass-panel">
             <div>
-              <span className="section-kicker">راهنمای تخصصی خونه‌نما</span>
+              <span className="section-kicker">راهنمای تخصصی خونه نما</span>
               <h1>{seo.h1}</h1>
               <p>{seo.intro}</p>
-              <a href="/editorial-policy">روش تدوین و بررسی راهنماهای خونه‌نما</a>
+              <a href="/editorial-policy">روش تدوین و بررسی راهنماهای خونه نما</a>
             </div>
             <img src={visual.src} alt={visual.alt} width={visual.width} height={visual.height} loading="eager" fetchPriority="high" decoding="async" />
           </div>
@@ -300,7 +300,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               <div className="category-empty glass-panel">
                 <strong>هنوز کسب‌وکار منتشرشده‌ای در این دسته نداریم.</strong>
                 <p>فقط پروفایل‌های واقعی و منتشرشده در این بخش نمایش داده می‌شوند.</p>
-                <a className="pill-button dark" href="/for-business">صاحب کسب‌وکار هستید؟ راهنمای معرفی در خونه‌نما</a>
+                <a className="pill-button dark" href="/for-business">صاحب کسب‌وکار هستید؟ راهنمای معرفی در خونه نما</a>
               </div>
             )}
           </section>

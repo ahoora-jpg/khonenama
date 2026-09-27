@@ -264,7 +264,7 @@ export default function BusinessDashboardContent() {
           <div className="dashboard-verification-steps">
             <span><ShieldCheck size={17} /> تأیید موبایل</span>
             <span><FileText size={17} /> اطلاعات هویتی / صنفی</span>
-            <span><BadgeCheck size={17} /> بررسی خونه‌نما</span>
+            <span><BadgeCheck size={17} /> بررسی خونه نما</span>
           </div>
         </section>
       </div>

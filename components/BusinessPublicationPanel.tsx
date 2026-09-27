@@ -71,7 +71,7 @@ export default function BusinessPublicationPanel({
         <div>
           <span className="section-kicker">اعتماد و اعتبار</span>
           <h2>کسب‌وکار تأیید شده</h2>
-          <p>نشان تأیید خونه‌نما برای این کسب‌وکار فعال است.</p>
+          <p>نشان تأیید خونه نما برای این کسب‌وکار فعال است.</p>
         </div>
       </section>
     );
@@ -98,7 +98,7 @@ export default function BusinessPublicationPanel({
         <h2>پروفایل شما منتشر است</h2>
         <p>
           برای انتشار و گرفتن لینک نیازی به تأیید مدیریت نیست. در صورت تمایل می‌توانید
-          جداگانه برای نشان تأیید خونه‌نما درخواست بدهید.
+          جداگانه برای نشان تأیید خونه نما درخواست بدهید.
         </p>
         <button className="pill-button dark" type="button" onClick={submitForVerification} disabled={loading}>
           {loading ? "در حال ارسال..." : "درخواست نشان تأیید"} <Send size={15} />

@@ -187,7 +187,7 @@ export default function BusinessLoginForm() {
         <a href="/register-business">کسب‌وکار جدید؟ ثبت رایگان</a>
         <a href="/business/forgot-password">رمز عبور را فراموش کرده‌ام</a>
       </div>
-      <a className="admin-login-entry" href="/admin/login">ورود مدیریت خونه‌نما</a>
+      <a className="admin-login-entry" href="/admin/login">ورود مدیریت خونه نما</a>
     </form>
   );
 }

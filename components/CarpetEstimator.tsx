@@ -147,7 +147,7 @@ export default function CarpetEstimator() {
       <div className="carpet-estimator-card glass-panel">
         <div className="carpet-estimator-head">
           <div>
-            <span className="section-kicker">ابزار خونه‌نما</span>
+            <span className="section-kicker">ابزار خونه نما</span>
             <h2 id="carpet-estimator-title">برآورد موکت رول و تایلی</h2>
             <p>ابعاد فضا و مشخصات موکت را وارد کنید تا مقدار خرید، پرت و تعداد نوار یا بسته مشخص شود.</p>
           </div>

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title,
   description,
   keywords: ["پرده برقی", "پرده هوشمند", "سناریو پرده برقی", "کنترل نور طبیعی", "موتور پرده هوشمند"],
-  authors: [{ name: "خونه‌نما", url: "https://khonenama.ir/about" }],
+  authors: [{ name: "خونه نما", url: "https://khonenama.ir/about" }],
   alternates: { canonical: url },
   openGraph: { title, description, url, type: "article", locale: "fa_IR" },
   twitter: { card: "summary", title, description },

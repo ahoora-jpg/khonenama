@@ -96,7 +96,7 @@ export default function CurtainFabricCalculator() {
       <div className="curtain-calculator-card glass-panel">
         <div className="curtain-calculator-head">
           <div>
-            <span className="section-kicker">ابزار خونه‌نما</span>
+            <span className="section-kicker">ابزار خونه نما</span>
             <h2 id="curtain-calculator-title">محاسبه متراژ پارچه پرده</h2>
             <p>
               عرض ریل، قد نهایی، Fullness، عرض پارچه، اضافه دوخت و Pattern Repeat را وارد کنید

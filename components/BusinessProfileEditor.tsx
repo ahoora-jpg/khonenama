@@ -99,7 +99,7 @@ export default function BusinessProfileEditor() {
         throw new Error(result?.error || "SAVE_FAILED");
       }
 
-      setMessage("اطلاعات پروفایل در دیتابیس خونه‌نما ذخیره شد.");
+      setMessage("اطلاعات پروفایل در دیتابیس خونه نما ذخیره شد.");
     } catch {
       setError("ذخیره انجام نشد. اطلاعات ضروری را کامل کنید یا دوباره وارد پنل شوید.");
     } finally {

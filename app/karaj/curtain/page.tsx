@@ -4,10 +4,10 @@ import LocalSeoLanding from "@/components/LocalSeoLanding";
 export const metadata: Metadata = {
   title: "پرده فروشی کرج | زبرا، شید و پرده منزل در کرج",
   description:
-    "پرده‌فروشی‌های کرج را برای زبرا، شید، پرده پارچه‌ای، اندازه‌گیری و نصب مقایسه کنید. راهنمای انتخاب پرده ارزان، نزدیک و مناسب در خونه‌نما.",
+    "پرده‌فروشی‌های کرج را برای زبرا، شید، پرده پارچه‌ای، اندازه‌گیری و نصب مقایسه کنید. راهنمای انتخاب پرده ارزان، نزدیک و مناسب در خونه نما.",
   alternates: { canonical: "/karaj/curtain" },
   openGraph: {
-    title: "پرده فروشی کرج | خونه‌نما",
+    title: "پرده فروشی کرج | خونه نما",
     description: "فروشگاه‌ها و خدمات پرده در کرج را پیدا و مقایسه کنید.",
     url: "https://khonenama.ir/karaj/curtain",
     locale: "fa_IR",

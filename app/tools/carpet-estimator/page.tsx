@@ -28,7 +28,7 @@ const appJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "@id": url + "#app",
-  name: "محاسبه‌گر متراژ موکت خونه‌نما",
+  name: "محاسبه‌گر متراژ موکت خونه نما",
   url,
   description,
   applicationCategory: "UtilitiesApplication",
@@ -42,7 +42,7 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "خونه‌نما", item: "https://khonenama.ir/" },
+    { "@type": "ListItem", position: 1, name: "خونه نما", item: "https://khonenama.ir/" },
     { "@type": "ListItem", position: 2, name: "ابزارها", item: "https://khonenama.ir/tools" },
     { "@type": "ListItem", position: 3, name: "محاسبه متراژ موکت", item: url },
   ],
@@ -65,7 +65,7 @@ const faqJsonLd = {
       name: "موکت رول را بر اساس مترمربع بخریم یا متر طول؟",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "بسیاری از موکت‌های رول با عرض ثابت عرضه می‌شوند و مقدار خرید به متر طول رول وابسته است. ابزار خونه‌نما متراژ طولی و مساحت اسمی خرید را هر دو نشان می‌دهد.",
+        text: "بسیاری از موکت‌های رول با عرض ثابت عرضه می‌شوند و مقدار خرید به متر طول رول وابسته است. ابزار خونه نما متراژ طولی و مساحت اسمی خرید را هر دو نشان می‌دهد.",
       },
     },
     {
@@ -90,11 +90,11 @@ export default function CarpetEstimatorPage() {
       <section className="inner-page carpet-tool-page">
         <div className="shell wallpaper-tool-shell">
           <nav className="guide-breadcrumb" aria-label="مسیر صفحه">
-            <a href="/">خونه‌نما</a><span>/</span><a href="/category/carpet">موکت</a><span>/</span><span>محاسبه متراژ</span>
+            <a href="/">خونه نما</a><span>/</span><a href="/category/carpet">موکت</a><span>/</span><span>محاسبه متراژ</span>
           </nav>
 
           <header className="wallpaper-tool-hero carpet-tool-hero">
-            <span className="section-kicker">ابزار رایگان خونه‌نما</span>
+            <span className="section-kicker">ابزار رایگان خونه نما</span>
             <h1>محاسبه متراژ موکت رول و تایلی</h1>
             <p>
               برای موکت رول، جهت برش و عرض رول را هم حساب کنید؛ برای موکت تایلی، تعداد تایل و بسته موردنیاز را با پرت ببینید.

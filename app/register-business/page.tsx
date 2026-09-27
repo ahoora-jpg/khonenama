@@ -7,7 +7,7 @@ import { BadgeCheck, MapPin, ShieldCheck, Store } from "lucide-react";
 export const metadata: Metadata = {
   title: "ثبت کسب‌وکار | ساخت پروفایل",
   description:
-    "کسب‌وکار دکوراسیون خود را مرحله‌به‌مرحله ثبت کنید؛ اطلاعات، خدمات، محدوده فعالیت و نمونه‌کار را برای ساخت پروفایل خونه‌نما تکمیل کنید.",
+    "کسب‌وکار دکوراسیون خود را مرحله‌به‌مرحله ثبت کنید؛ اطلاعات، خدمات، محدوده فعالیت و نمونه‌کار را برای ساخت پروفایل خونه نما تکمیل کنید.",
   alternates: { canonical: "/register-business" },
   robots: { index: false, follow: true },
 };
@@ -27,7 +27,7 @@ export default function RegisterBusinessPage() {
                 اطلاعات را مرحله‌به‌مرحله وارد کن؛ ثبت اولیه رایگان است و بعداً از داخل پنل می‌توانی امکانات حرفه‌ای را فعال کنی.
               </p>
             </div>
-            <a className="text-link-arrow" href="/for-business">درباره خونه‌نما برای کسب‌وکارها</a>
+            <a className="text-link-arrow" href="/for-business">درباره خونه نما برای کسب‌وکارها</a>
           </div>
 
           <div className="onboarding-trust-strip">

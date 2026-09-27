@@ -7,7 +7,7 @@ import { BadgeCheck, MapPin, Star } from "lucide-react";
 const pageUrl = "https://khonenama.ir/karaj/baraghan";
 const pageTitle = "دکوراسیون خیابان برغان کرج | فروشگاه‌ها و خدمات";
 const pageDescription =
-  "فروشگاه‌ها و متخصصان پرده، کفپوش، موکت، کاغذ دیواری و دکوراسیون در خیابان برغان کرج را در خونه‌نما پیدا و مقایسه کنید.";
+  "فروشگاه‌ها و متخصصان پرده، کفپوش، موکت، کاغذ دیواری و دکوراسیون در خیابان برغان کرج را در خونه نما پیدا و مقایسه کنید.";
 
 export const metadata: Metadata = {
   title: pageTitle,
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: pageTitle,
     description: pageDescription,
     url: pageUrl,
-    siteName: "خونه‌نما",
+    siteName: "خونه نما",
     locale: "fa_IR",
     type: "website",
   },
@@ -33,12 +33,12 @@ const localFaqs = [
   {
     question: "قبل از تماس با فروشگاه یا مجری چه اطلاعاتی آماده کنیم؟",
     answer:
-      "نوع محصول یا خدمت، ابعاد تقریبی، عکس فضا، محدوده پروژه و زمان موردنظر را آماده کنید. برای پرده، موکت، کاغذ دیواری و خانه هوشمند می‌توانید قبل از تماس از ابزارهای محاسبه خونه‌نما استفاده کنید.",
+      "نوع محصول یا خدمت، ابعاد تقریبی، عکس فضا، محدوده پروژه و زمان موردنظر را آماده کنید. برای پرده، موکت، کاغذ دیواری و خانه هوشمند می‌توانید قبل از تماس از ابزارهای محاسبه خونه نما استفاده کنید.",
   },
   {
     question: "اگر هنوز کسب‌وکاری در این صفحه نمایش داده نشود یعنی در برغان خدماتی وجود ندارد؟",
     answer:
-      "خیر. این صفحه فقط پروفایل‌های واقعی و منتشرشده خونه‌نما را نمایش می‌دهد. نبود نتیجه به معنی نبود کسب‌وکار در محدوده نیست و با انتشار پروفایل‌های واجد شرایط، فهرست به‌روزرسانی می‌شود.",
+      "خیر. این صفحه فقط پروفایل‌های واقعی و منتشرشده خونه نما را نمایش می‌دهد. نبود نتیجه به معنی نبود کسب‌وکار در محدوده نیست و با انتشار پروفایل‌های واجد شرایط، فهرست به‌روزرسانی می‌شود.",
   },
 ];
 
@@ -79,7 +79,7 @@ export default async function BaraghanPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "خونه‌نما", item: "https://khonenama.ir/" },
+      { "@type": "ListItem", position: 1, name: "خونه نما", item: "https://khonenama.ir/" },
       { "@type": "ListItem", position: 2, name: "دکوراسیون کرج", item: "https://khonenama.ir/karaj" },
       { "@type": "ListItem", position: 3, name: "خیابان برغان", item: pageUrl },
     ],
@@ -104,15 +104,15 @@ export default async function BaraghanPage() {
       <section className="inner-page category-page">
         <div className="shell">
           <nav className="guide-breadcrumb" aria-label="مسیر صفحه">
-            <a href="/">خونه‌نما</a><span>/</span><a href="/karaj">کرج</a><span>/</span><span>خیابان برغان</span>
+            <a href="/">خونه نما</a><span>/</span><a href="/karaj">کرج</a><span>/</span><span>خیابان برغان</span>
           </nav>
 
           <div className="category-hero glass-panel">
-            <span className="section-kicker">راهنمای محلی خونه‌نما</span>
+            <span className="section-kicker">راهنمای محلی خونه نما</span>
             <h1>دکوراسیون در خیابان برغان کرج</h1>
             <p>
               این صفحه برای پیدا کردن و مقایسه فروشگاه‌ها و متخصصان دکوراسیون محدوده برغان کرج ساخته شده است؛
-              از پرده و پارچه تا کفپوش، موکت، کاغذ دیواری، طراحی داخلی و خدمات خانه. فقط پروفایل‌های واقعی و منتشرشده خونه‌نما در فهرست کسب‌وکارها نمایش داده می‌شوند.
+              از پرده و پارچه تا کفپوش، موکت، کاغذ دیواری، طراحی داخلی و خدمات خانه. فقط پروفایل‌های واقعی و منتشرشده خونه نما در فهرست کسب‌وکارها نمایش داده می‌شوند.
             </p>
           </div>
 

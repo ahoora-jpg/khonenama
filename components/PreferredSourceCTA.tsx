@@ -7,14 +7,14 @@ export default function PreferredSourceCTA({ compact = false }: { compact?: bool
     <div
       className="guide-side-card glass-panel"
       style={compact ? undefined : { marginBottom: 28 }}
-      aria-label="افزودن خونه‌نما به منابع ترجیحی گوگل"
+      aria-label="افزودن خونه نما به منابع ترجیحی گوگل"
     >
       <Sparkles size={18} aria-hidden="true" />
       <span className="section-kicker">Google Preferred Sources</span>
-      <h3>خونه‌نما را به منابع ترجیحی گوگل اضافه کنید</h3>
+      <h3>خونه نما را به منابع ترجیحی گوگل اضافه کنید</h3>
       <p>
-        اگر راهنماهای خونه‌نما برایتان مفید است، می‌توانید دامنه khonenama.ir را در Google به‌عنوان
-        منبع ترجیحی انتخاب کنید تا در تجربه‌هایی که این قابلیت فعال است، محتوای خونه‌نما با نشان
+        اگر راهنماهای خونه نما برایتان مفید است، می‌توانید دامنه khonenama.ir را در Google به‌عنوان
+        منبع ترجیحی انتخاب کنید تا در تجربه‌هایی که این قابلیت فعال است، محتوای خونه نما با نشان
         Preferred برجسته شود.
       </p>
       <a href={preferredSourceUrl} target="_blank" rel="noopener noreferrer">

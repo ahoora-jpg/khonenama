@@ -4,9 +4,9 @@ import Footer from "@/components/Footer";
 import { ArrowUpLeft, Calculator, Grid3X3, HousePlug, Layers3, Scissors } from "lucide-react";
 
 const url = "https://khonenama.ir/tools";
-const title = "ابزارهای خونه‌نما | محاسبه‌گرهای دکوراسیون و خانه";
+const title = "ابزارهای خونه نما | محاسبه‌گرهای دکوراسیون و خانه";
 const description =
-  "ابزارهای رایگان خونه‌نما برای محاسبه کاغذ دیواری، پرده، پارکت و لمینت، موکت و ساخت Scope اولیه خانه هوشمند.";
+  "ابزارهای رایگان خونه نما برای محاسبه کاغذ دیواری، پرده، پارکت و لمینت، موکت و ساخت Scope اولیه خانه هوشمند.";
 
 export const metadata: Metadata = {
   title: { absolute: title },
@@ -103,11 +103,11 @@ export default function ToolsPage() {
       <section className="inner-page tools-page">
         <div className="shell tools-shell">
           <nav className="guide-breadcrumb" aria-label="مسیر صفحه">
-            <a href="/">خونه‌نما</a><span>/</span><span>ابزارها</span>
+            <a href="/">خونه نما</a><span>/</span><span>ابزارها</span>
           </nav>
 
           <header className="tools-hero glass-panel">
-            <span className="section-kicker">ابزارهای رایگان خونه‌نما</span>
+            <span className="section-kicker">ابزارهای رایگان خونه نما</span>
             <h1>کمتر حدس بزن؛ دقیق‌تر اندازه بگیر.</h1>
             <p>
               ابزارهای کاربردی برای محاسبه، اندازه‌گیری و تصمیم‌گیری قبل از خرید یا اجرا؛
