@@ -4,6 +4,7 @@ import { listPublishedBusinessSitemapEntries } from "@/lib/server/business-sitem
 
 const baseUrl = "https://khonenama.ir";
 const seoRefreshDate = "2026-09-25";
+const homepageBrandRefreshDate = "2026-09-27";
 
 // Business profiles change independently of code deploys. Generate the sitemap
 // at request time so search engines see newly publishable profiles without
@@ -12,7 +13,7 @@ export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
-    { url: baseUrl, lastModified: seoRefreshDate, changeFrequency: "daily", priority: 1 },
+    { url: baseUrl, lastModified: homepageBrandRefreshDate, changeFrequency: "daily", priority: 1 },
     { url: baseUrl + "/karaj", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.95 },
     { url: baseUrl + "/karaj/curtain", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.94 },
     { url: baseUrl + "/karaj/flooring", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.92 },
