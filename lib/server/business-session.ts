@@ -29,6 +29,12 @@ function getCookieValue(request: Request, name: string) {
   return "";
 }
 
+function getSessionToken(request: Request) {
+  const authorization = request.headers.get("authorization") || "";
+  const bearer = authorization.match(/^Bearer\s+(.+)$/i)?.[1]?.trim();
+  return bearer || getCookieValue(request, COOKIE_NAME);
+}
+
 async function ensureBusinessSessionSchema(db: any) {
   await db.prepare(
     "CREATE TABLE IF NOT EXISTS auth_sessions (" +
@@ -83,7 +89,7 @@ export async function getBusinessSession(request: Request) {
     const db = (env as any).DB;
     if (!db) return null;
 
-    const token = getCookieValue(request, COOKIE_NAME);
+    const token = getSessionToken(request);
     if (!token) return null;
 
     const tokenHash = await sha256(token);
@@ -112,7 +118,7 @@ export async function destroyBusinessSession(request: Request) {
   const db = (env as any).DB;
   if (!db) return;
 
-  const token = getCookieValue(request, COOKIE_NAME);
+  const token = getSessionToken(request);
   if (!token) return;
 
   const tokenHash = await sha256(token);
