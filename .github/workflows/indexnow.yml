@@ -1,0 +1,21 @@
+name: Submit IndexNow
+
+on:
+  workflow_run:
+    workflows: ["Deploy Cloudflare"]
+    types: [completed]
+
+jobs:
+  submit:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Submit live sitemap URLs to IndexNow
+        run: node tools/submit-indexnow.mjs
