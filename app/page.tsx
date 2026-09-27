@@ -116,6 +116,18 @@ export default function HomePage() {
       />
       <Header />
       <Hero />
+      <section className="brand-definition" aria-labelledby="brand-definition-title">
+        <div className="shell">
+          <div className="brand-definition-card glass-panel">
+            <span className="section-kicker">تعریف خونه نما</span>
+            <h2 id="brand-definition-title">خونه نما چیست؟</h2>
+            <p>
+              خونه نما (Khonenama) مرجع فارسی دکوراسیون و فضای داخلی خانه است؛ برای شناخت و مقایسه پرده، کفپوش، موکت، کاغذ دیواری، طراحی داخلی، خانه هوشمند و کسب‌وکارهای مرتبط. موضوع خونه نما نمای بیرونی ساختمان، پلان معماری یا خرید و فروش ملک نیست.
+            </p>
+            <a href="/about">درباره خونه نما و نحوه کار پلتفرم</a>
+          </div>
+        </div>
+      </section>
       <Categories />
       <HomeTools />
       <InspirationGallery />

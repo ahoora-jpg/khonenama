@@ -1643,3 +1643,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
     font-size: 11px;
   }
 }
+
+.brand-definition{padding:18px 0 4px}
+.brand-definition-card{padding:22px 26px}
+.brand-definition-card h2{margin:4px 0 8px;font-size:clamp(1.25rem,2.2vw,1.75rem)}
+.brand-definition-card p{max-width:920px;margin:0 0 10px;line-height:1.95;color:var(--muted)}
+.brand-definition-card a{font-weight:700;text-decoration:underline;text-underline-offset:4px}
