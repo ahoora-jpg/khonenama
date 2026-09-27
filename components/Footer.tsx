@@ -15,11 +15,14 @@ const groups = [
   {
     title: "کرج",
     links: [
-      ["برغان", "/karaj/baraghan"],
-      ["عظیمیه", "/search?location=عظیمیه"],
-      ["جهانشهر", "/search?location=جهانشهر"],
-      ["گوهردشت", "/search?location=گوهردشت"],
-      ["مهرشهر", "/search?location=مهرشهر"],
+      ["دکوراسیون در کرج", "/karaj"],
+      ["پرده در کرج", "/karaj/curtain"],
+      ["کفپوش و پارکت در کرج", "/karaj/flooring"],
+      ["موکت در کرج", "/karaj/carpet"],
+      ["کاغذ دیواری در کرج", "/karaj/wallpaper"],
+      ["طراحی داخلی در کرج", "/karaj/interior-design"],
+      ["خانه هوشمند در کرج", "/karaj/smart-home"],
+      ["برغان کرج", "/karaj/baraghan"],
     ],
   },
   {
