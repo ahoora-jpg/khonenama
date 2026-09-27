@@ -9,19 +9,19 @@ import HowItWorks from "@/components/HowItWorks";
 import BusinessCTA from "@/components/BusinessCTA";
 import Footer from "@/components/Footer";
 
-const homeTitle = "خونه‌نما | مرجع تخصصی دکوراسیون و تزئینات داخلی منزل";
+const homeTitle = "خونه نما | دکوراسیون داخلی و فضای داخلی خانه";
 
 export const metadata = {
   title: { absolute: homeTitle },
   description:
-    "خونه‌نما (Khonenama) مرجع تخصصی دکوراسیون و تزئینات داخلی منزل است؛ فروشگاه‌ها، متخصصان، پرده، موکت، کفپوش، کاغذ دیواری، طراحی داخلی و خانه هوشمند را پیدا و مقایسه کنید.",
+    "خونه نما (Khonenama) مرجع دکوراسیون داخلی و فضای داخلی خانه است؛ فروشگاه‌ها و متخصصان پرده، موکت، کفپوش، کاغذ دیواری، طراحی داخلی و خانه هوشمند را پیدا و مقایسه کنید.",
   alternates: { canonical: "/" },
   openGraph: {
     title: homeTitle,
     description:
-      "خونه‌نما؛ مرجع پیدا کردن و مقایسه فروشگاه‌ها، متخصصان و خدمات دکوراسیون منزل.",
+      "خونه نما؛ مرجع پیدا کردن و مقایسه فروشگاه‌ها، متخصصان و خدمات دکوراسیون و فضای داخلی خانه.",
     url: "https://khonenama.ir/",
-    siteName: "خونه‌نما",
+    siteName: "خونه نما",
     locale: "fa_IR",
     type: "website",
   },
@@ -31,8 +31,8 @@ const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "@id": "https://khonenama.ir/#website",
-  name: "خونه‌نما",
-  alternateName: ["خونه نما", "Khonenama", "khonenama.ir"],
+  name: "خونه نما",
+  alternateName: ["خونه‌نما", "Khonenama", "Khonenama.ir", "khonenama.ir"],
   url: "https://khonenama.ir/",
   inLanguage: "fa-IR",
   publisher: { "@id": "https://khonenama.ir/#organization" },
@@ -49,7 +49,7 @@ const websiteJsonLd = {
 const categoryListJsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  name: "دسته‌بندی‌های دکوراسیون خونه‌نما",
+  name: "دسته‌بندی‌های دکوراسیون خونه نما",
   itemListElement: [
     { "@type": "ListItem", position: 1, name: "پرده و متعلقات", url: "https://khonenama.ir/category/curtain" },
     { "@type": "ListItem", position: 2, name: "کفپوش و پارکت", url: "https://khonenama.ir/category/flooring" },
@@ -64,20 +64,30 @@ const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   "@id": "https://khonenama.ir/#organization",
-  name: "خونه‌نما",
-  alternateName: ["خونه نما", "Khonenama", "khonenama.ir"],
+  name: "خونه نما",
+  alternateName: ["خونه‌نما", "Khonenama", "Khonenama.ir", "khonenama.ir"],
   url: "https://khonenama.ir/",
   logo: {
     "@type": "ImageObject",
     url: "https://khonenama.ir/khonenama-logo.svg",
     contentUrl: "https://khonenama.ir/khonenama-logo.svg",
-    caption: "خونه‌نما",
+    caption: "خونه نما",
   },
   mainEntityOfPage: "https://khonenama.ir/about",
   publishingPrinciples: "https://khonenama.ir/editorial-policy",
-  knowsAbout: ["پرده و پوشش پنجره", "کفپوش و پارکت", "موکت", "کاغذ دیواری و دیوارپوش", "طراحی داخلی", "خانه هوشمند"],
+  knowsAbout: [
+    "فضای داخلی خانه",
+    "دکوراسیون داخلی منزل",
+    "تزئینات داخلی منزل",
+    "پرده و پوشش پنجره",
+    "کفپوش و پارکت",
+    "موکت",
+    "کاغذ دیواری و دیوارپوش",
+    "طراحی داخلی",
+    "خانه هوشمند",
+  ],
   description:
-    "خونه‌نما (Khonenama) مرجع پیدا کردن و مقایسه فروشگاه‌ها و متخصصان دکوراسیون منزل، با شروع از کرج و خیابان برغان است.",
+    "خونه نما (Khonenama) مرجع فضای داخلی خانه و دکوراسیون داخلی برای پیدا کردن و مقایسه فروشگاه‌ها و متخصصان مرتبط است، با شروع از کرج و خیابان برغان.",
   areaServed: [
     { "@type": "City", name: "کرج" },
     { "@type": "AdministrativeArea", name: "البرز" },
