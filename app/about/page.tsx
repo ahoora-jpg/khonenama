@@ -46,8 +46,19 @@ const aboutJsonLd = {
   name: "خونه نما چیست؟",
   description: pageDescription,
   inLanguage: "fa-IR",
+  disambiguatingDescription: "خونه نما درباره دکوراسیون و فضای داخلی خانه است و با طراحی نمای بیرونی ساختمان، پلان معماری یا خرید و فروش ملک تفاوت دارد.",
+  about: { "@id": "https://khonenama.ir/#organization" },
   mainEntity: { "@id": "https://khonenama.ir/#organization" },
   isPartOf: { "@id": "https://khonenama.ir/#website" },
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "خونه نما", item: "https://khonenama.ir/" },
+    { "@type": "ListItem", position: 2, name: "خونه نما چیست؟", item: pageUrl },
+  ],
 };
 
 const faqJsonLd = {
@@ -63,6 +74,7 @@ export default function AboutPage() {
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <Header />
       <section className="inner-page legal-page">

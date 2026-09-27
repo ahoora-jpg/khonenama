@@ -35,6 +35,15 @@ const websiteJsonLd = {
   alternateName: ["خونه‌نما", "Khonenama", "Khonenama.ir", "khonenama.ir"],
   url: "https://khonenama.ir/",
   inLanguage: "fa-IR",
+  disambiguatingDescription: "خونه نما (Khonenama) درباره دکوراسیون و فضای داخلی خانه است؛ نه نمای بیرونی ساختمان، پلان معماری یا خرید و فروش ملک.",
+  about: [
+    { "@type": "Thing", name: "دکوراسیون داخلی" },
+    { "@type": "Thing", name: "پرده و پوشش پنجره" },
+    { "@type": "Thing", name: "کفپوش و پارکت" },
+    { "@type": "Thing", name: "کاغذ دیواری" },
+    { "@type": "Thing", name: "طراحی داخلی" },
+    { "@type": "Thing", name: "خانه هوشمند" },
+  ],
   publisher: { "@id": "https://khonenama.ir/#organization" },
   potentialAction: {
     "@type": "SearchAction",
@@ -67,6 +76,7 @@ const organizationJsonLd = {
   name: "خونه نما",
   alternateName: ["خونه‌نما", "Khonenama", "Khonenama.ir", "khonenama.ir"],
   url: "https://khonenama.ir/",
+  disambiguatingDescription: "خونه نما یک مرجع فارسی برای فضای داخلی خانه و دکوراسیون داخلی است و به طراحی نمای بیرونی ساختمان یا خرید و فروش ملک مربوط نیست.",
   sameAs: ["https://github.com/ahoora-jpg/khonenama"],
   subjectOf: [
     { "@type": "WebPage", url: "https://ahoora-studio.site/case-study/khonenama", name: "Khonenama case study — Ahoora Studio" },

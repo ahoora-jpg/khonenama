@@ -31,6 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const category = getCategory(slug);
   const seo = getCategorySeo(slug);
   if (!category || !seo) return {};
+  const visual = getCategoryVisual(slug);
 
   return {
     title: { absolute: seo.metaTitle },
@@ -40,6 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: seo.metaTitle,
       description: seo.metaDescription,
       url: "https://khonenama.ir/category/" + slug,
+      images: [{ url: visual.src, width: visual.width, height: visual.height, alt: visual.alt }],
       locale: "fa_IR",
       type: "website",
     },
