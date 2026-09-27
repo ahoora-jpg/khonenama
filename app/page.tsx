@@ -14,13 +14,13 @@ const homeTitle = "خونه‌نما | مرجع تخصصی دکوراسیون و
 export const metadata = {
   title: { absolute: homeTitle },
   description:
-    "مرجع تخصصی دکوراسیون و تزئینات داخلی منزل؛ فروشگاه‌ها، متخصصان، پرده، موکت، کفپوش، کاغذ دیواری، طراحی داخلی و خانه هوشمند را پیدا و مقایسه کنید.",
+    "خونه‌نما (Khonenama) مرجع تخصصی دکوراسیون و تزئینات داخلی منزل است؛ فروشگاه‌ها، متخصصان، پرده، موکت، کفپوش، کاغذ دیواری، طراحی داخلی و خانه هوشمند را پیدا و مقایسه کنید.",
   alternates: { canonical: "/" },
   openGraph: {
     title: homeTitle,
     description:
-      "فروشگاه‌ها، متخصصان و خدمات دکوراسیون منزل را در خونه‌نما پیدا و مقایسه کنید.",
-    url: "https://khonenama.ir",
+      "خونه‌نما؛ مرجع پیدا کردن و مقایسه فروشگاه‌ها، متخصصان و خدمات دکوراسیون منزل.",
+    url: "https://khonenama.ir/",
     siteName: "خونه‌نما",
     locale: "fa_IR",
     type: "website",
@@ -32,8 +32,8 @@ const websiteJsonLd = {
   "@type": "WebSite",
   "@id": "https://khonenama.ir/#website",
   name: "خونه‌نما",
-  alternateName: "Khonenama",
-  url: "https://khonenama.ir",
+  alternateName: ["خونه نما", "Khonenama", "khonenama.ir"],
+  url: "https://khonenama.ir/",
   inLanguage: "fa-IR",
   publisher: { "@id": "https://khonenama.ir/#organization" },
   potentialAction: {
@@ -65,8 +65,8 @@ const organizationJsonLd = {
   "@type": "Organization",
   "@id": "https://khonenama.ir/#organization",
   name: "خونه‌نما",
-  alternateName: "Khonenama",
-  url: "https://khonenama.ir",
+  alternateName: ["خونه نما", "Khonenama", "khonenama.ir"],
+  url: "https://khonenama.ir/",
   logo: {
     "@type": "ImageObject",
     url: "https://khonenama.ir/khonenama-logo.svg",
@@ -77,7 +77,7 @@ const organizationJsonLd = {
   publishingPrinciples: "https://khonenama.ir/editorial-policy",
   knowsAbout: ["پرده و پوشش پنجره", "کفپوش و پارکت", "موکت", "کاغذ دیواری و دیوارپوش", "طراحی داخلی", "خانه هوشمند"],
   description:
-    "مرجع پیدا کردن و مقایسه فروشگاه‌ها و متخصصان دکوراسیون منزل، با شروع از کرج و خیابان برغان.",
+    "خونه‌نما (Khonenama) مرجع پیدا کردن و مقایسه فروشگاه‌ها و متخصصان دکوراسیون منزل، با شروع از کرج و خیابان برغان است.",
   areaServed: [
     { "@type": "City", name: "کرج" },
     { "@type": "AdministrativeArea", name: "البرز" },
