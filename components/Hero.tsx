@@ -20,7 +20,7 @@ export default function Hero() {
           </div>
 
           <h1 className="hero-identity-title">
-            مرجع تخصصی دکوراسیون و تزئینات داخلی منزل
+            خونه‌نما؛ مرجع تخصصی دکوراسیون و تزئینات داخلی منزل
           </h1>
         </header>
 
