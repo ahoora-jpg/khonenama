@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import { BadgeCheck, MapPin, Search, ShieldCheck, Store } from "lucide-react";
 
 const pageUrl = "https://khonenama.ir/about";
-const pageTitle = "درباره خونه نما | دکوراسیون و فضای داخلی خانه";
+const pageTitle = "خونه نما چیست؟ | مرجع دکوراسیون و فضای داخلی خانه";
 const pageDescription =
   "خونه نما (Khonenama) مرجع دکوراسیون و فضای داخلی خانه برای پیدا کردن، مقایسه و ارتباط مستقیم با فروشگاه‌ها و متخصصان مرتبط است.";
 
@@ -28,7 +28,7 @@ const aboutJsonLd = {
   "@type": "AboutPage",
   "@id": "https://khonenama.ir/about#page",
   url: pageUrl,
-  name: "درباره خونه نما",
+  name: "خونه نما چیست؟",
   description: pageDescription,
   inLanguage: "fa-IR",
   mainEntity: { "@id": "https://khonenama.ir/#organization" },
@@ -44,10 +44,10 @@ export default function AboutPage() {
         <div className="shell legal-shell">
           <header className="legal-hero glass-panel">
             <span className="section-kicker">درباره خونه نما</span>
-            <h1>خونه نما برای انتخاب بهتر در فضای داخلی خانه ساخته شده است.</h1>
+            <h1>خونه نما چیست؟ مرجع انتخاب برای فضای داخلی خانه</h1>
             <p>
               خونه نما (Khonenama) یک مرجع تخصصی برای دکوراسیون داخلی، متریال، اجرای فضای داخلی و خانه هوشمند است؛
-              تمرکز ما روی داخل خانه و انتخاب‌های مربوط به آن است: از پرده، کفپوش و موکت تا کاغذ دیواری، طراحی داخلی و هوشمندسازی.
+              تمرکز خونه نما روی داخل خانه و انتخاب‌های مربوط به آن است: از پرده، کفپوش و موکت تا کاغذ دیواری، طراحی داخلی و هوشمندسازی.
             </p>
           </header>
 
