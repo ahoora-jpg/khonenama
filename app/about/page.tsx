@@ -4,9 +4,9 @@ import Footer from "@/components/Footer";
 import { BadgeCheck, MapPin, Search, ShieldCheck, Store } from "lucide-react";
 
 const pageUrl = "https://khonenama.ir/about";
-const pageTitle = "درباره خونه‌نما | مرجع دکوراسیون و خدمات خانه";
+const pageTitle = "درباره خونه نما | دکوراسیون داخلی و فضای داخلی خانه";
 const pageDescription =
-  "خونه‌نما برای پیدا کردن، مقایسه و ارتباط مستقیم با فروشگاه‌ها و متخصصان دکوراسیون و خانه هوشمند ساخته شده است.";
+  "خونه نما (Khonenama) مرجع دکوراسیون و فضای داخلی خانه برای پیدا کردن، مقایسه و ارتباط مستقیم با فروشگاه‌ها و متخصصان مرتبط است.";
 
 export const metadata: Metadata = {
   title: pageTitle,
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     title: pageTitle,
     description: pageDescription,
     url: pageUrl,
-    siteName: "خونه‌نما",
+    siteName: "خونه نما",
     locale: "fa_IR",
     type: "website",
   },
@@ -28,7 +28,8 @@ const aboutJsonLd = {
   "@type": "AboutPage",
   "@id": "https://khonenama.ir/about#page",
   url: pageUrl,
-  name: "درباره خونه‌نما",
+  name: "درباره خونه نما",
+  description: pageDescription,
   inLanguage: "fa-IR",
   mainEntity: { "@id": "https://khonenama.ir/#organization" },
   isPartOf: { "@id": "https://khonenama.ir/#website" },
@@ -42,16 +43,16 @@ export default function AboutPage() {
       <section className="inner-page legal-page">
         <div className="shell legal-shell">
           <header className="legal-hero glass-panel">
-            <span className="section-kicker">درباره خونه‌نما</span>
-            <h1>پیدا کردن گزینه مناسب برای خانه باید ساده‌تر و شفاف‌تر باشد.</h1>
+            <span className="section-kicker">درباره خونه نما</span>
+            <h1>خونه نما برای انتخاب بهتر در فضای داخلی خانه ساخته شده است.</h1>
             <p>
-              خونه‌نما یک مرجع تخصصی برای دکوراسیون، متریال، اجرای داخلی و خانه هوشمند است؛
-              جایی برای دیدن اطلاعات واقعی کسب‌وکارها، مقایسه خدمات و ارتباط مستقیم با آن‌ها.
+              خونه نما (Khonenama) یک مرجع تخصصی برای دکوراسیون داخلی، متریال، اجرای فضای داخلی و خانه هوشمند است؛
+              تمرکز ما روی داخل خانه و انتخاب‌های مربوط به آن است: از پرده، کفپوش و موکت تا کاغذ دیواری، طراحی داخلی و هوشمندسازی.
             </p>
           </header>
 
           <article className="legal-content glass-panel">
-            <h2>خونه‌نما چه کاری انجام می‌دهد؟</h2>
+            <h2>خونه نما چه کاری انجام می‌دهد؟</h2>
             <p>
               کاربر می‌تواند بر اساس دسته، شهر و محله جستجو کند، پروفایل کسب‌وکارها را ببیند،
               خدمات و نمونه‌کارهای ثبت‌شده را مقایسه کند و برای همان کسب‌وکار درخواست قیمت خصوصی بفرستد.
@@ -70,11 +71,11 @@ export default function AboutPage() {
               می‌تواند امکانات و میزان دیده‌شدن را بیشتر کند، اما امتیاز کاربران یا نشان تأیید را نمی‌خرد.
             </p>
 
-            <h2>محتوای خونه‌نما چگونه نوشته و به‌روزرسانی می‌شود؟</h2>
+            <h2>محتوای خونه نما چگونه نوشته و به‌روزرسانی می‌شود؟</h2>
             <p>
-              راهنماهای خونه‌نما برای پاسخ روشن به سوال‌های انتخاب، خرید، نصب و نگهداری نوشته می‌شوند. در مطالب آموزشی از رتبه‌بندی ساختگی، قیمت قطعی بدون منبع و ادعای تجربه مشتری استفاده نمی‌کنیم. جزئیات روش تولید و بازبینی محتوا در صفحه سیاست تحریریه منتشر شده است.
+              راهنماهای خونه نما برای پاسخ روشن به سوال‌های انتخاب، خرید، نصب و نگهداری نوشته می‌شوند. در مطالب آموزشی از رتبه‌بندی ساختگی، قیمت قطعی بدون منبع و ادعای تجربه مشتری استفاده نمی‌کنیم. جزئیات روش تولید و بازبینی محتوا در صفحه سیاست تحریریه منتشر شده است.
             </p>
-            <p><a href="/editorial-policy">سیاست تحریریه و اصول محتوایی خونه‌نما</a></p>
+            <p><a href="/editorial-policy">سیاست تحریریه و اصول محتوایی خونه نما</a></p>
 
             <h2>برای کسب‌وکارها</h2>
             <p>
