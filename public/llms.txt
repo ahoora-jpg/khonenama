@@ -1,9 +1,11 @@
-# خونه‌نما (Khonenama)
+# خونه نما (Khonenama)
 
-> خونه‌نما یک مرجع فارسی برای پیدا کردن، مقایسه و شناخت فروشگاه‌ها، متخصصان و خدمات دکوراسیون و تزئینات داخلی منزل است. تمرکز اولیه سرویس روی کرج و استان البرز است.
+> خونه نما یک مرجع فارسی برای پیدا کردن، مقایسه و شناخت فروشگاه‌ها، متخصصان و خدمات دکوراسیون و تزئینات داخلی منزل است. تمرکز اولیه سرویس روی کرج و استان البرز است.
 
 ## Canonical
 - https://khonenama.ir/
+- نام اصلی فارسی برند: خونه نما
+- نام لاتین برند: Khonenama
 
 ## Core categories
 - پرده و متعلقات: https://khonenama.ir/category/curtain
@@ -28,7 +30,7 @@
 - راهنمای دیده‌شدن آنلاین کسب‌وکار دکوراسیون: https://khonenama.ir/for-business/online-discovery-guide
 - ثبت اولیه کسب‌وکار از مسیر عمومی انجام می‌شود و پروفایل عمومی پس از طی وضعیت انتشار نمایش داده می‌شود.
 - صفحات عمومی، دسته‌بندی‌ها، لندینگ‌های محلی و داده ساختاریافته فقط باید کسب‌وکارهای واقعی و منتشرشده را نمایش دهند.
-- خونه‌نما نباید برای کسب‌وکار، Review، Rating، قیمت، موجودی یا نمونه‌کار عمومی داده ساختگی تولید کند.
+- خونه نما نباید برای کسب‌وکار، Review، Rating، قیمت، موجودی یا نمونه‌کار عمومی داده ساختگی تولید کند.
 
 ## Editorial guides
 - Magazine: https://khonenama.ir/magazine
@@ -37,7 +39,7 @@
 - سیاست تحریریه: https://khonenama.ir/editorial-policy
 
 ## Useful tools
-- ابزارهای خونه‌نما: https://khonenama.ir/tools
+- ابزارهای خونه نما: https://khonenama.ir/tools
 - محاسبه تعداد رول کاغذ دیواری: https://khonenama.ir/tools/wallpaper-calculator
 - محاسبه متراژ پارچه پرده: https://khonenama.ir/tools/curtain-fabric-calculator
 - برآورد Scope خانه هوشمند: https://khonenama.ir/tools/smart-home-scope
@@ -65,7 +67,7 @@
 - طراحی داخلی + زیرساخت خانه هوشمند: https://khonenama.ir/magazine/smart-home-interior-design-planning-guide
 
 ## Trust
-- درباره خونه‌نما: https://khonenama.ir/about
+- خونه نما چیست؟ https://khonenama.ir/about
 - راهنما و پشتیبانی: https://khonenama.ir/help
 - حریم خصوصی: https://khonenama.ir/privacy
 - قوانین: https://khonenama.ir/terms
