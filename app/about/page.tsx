@@ -4,12 +4,12 @@ import Footer from "@/components/Footer";
 import { BadgeCheck, MapPin, Search, ShieldCheck, Store } from "lucide-react";
 
 const pageUrl = "https://khonenama.ir/about";
-const pageTitle = "درباره خونه نما | دکوراسیون داخلی و فضای داخلی خانه";
+const pageTitle = "درباره خونه نما | دکوراسیون و فضای داخلی خانه";
 const pageDescription =
   "خونه نما (Khonenama) مرجع دکوراسیون و فضای داخلی خانه برای پیدا کردن، مقایسه و ارتباط مستقیم با فروشگاه‌ها و متخصصان مرتبط است.";
 
 export const metadata: Metadata = {
-  title: pageTitle,
+  title: { absolute: pageTitle },
   description: pageDescription,
   alternates: { canonical: pageUrl },
   openGraph: {
