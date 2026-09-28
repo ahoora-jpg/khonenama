@@ -39,15 +39,18 @@ button,
 }
 
 :root {
-  --bg: #f1f0ea;
-  --surface: #fafaf7;
-  --surface-soft: #ebeae4;
+  --bg: #f4f2ec;
+  --surface: #fcfbf8;
+  --surface-soft: #e8e5dc;
   --ink: #222321;
-  --muted: #686b67;
-  --line: #dddcd5;
-  --terracotta: #ad6039;
+  --muted: #5f625e;
+  --line: #d6d2c8;
+  --terracotta: #a85532;
   --terracotta-soft: #d6a07a;
-  --sage: #647662;
+  --terracotta-hover: #8e4529;
+  --sage: #5f735d;
+  --premium: #9a742d;
+  --danger: #9b4d43;
   --charcoal: #222321;
   --shadow: 0 24px 70px rgba(30, 31, 29, 0.1);
   --radius: 28px;
@@ -96,17 +99,17 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .header-actions { display: flex; align-items: center; gap: 8px; }
 .app-download-button {
   min-height: 43px; padding: 0 14px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-  background: linear-gradient(145deg, var(--terracotta), #a9633f); color: #fff; box-shadow: 0 10px 24px rgba(169, 99, 63, .22);
+  background: linear-gradient(145deg, var(--terracotta), var(--terracotta-hover)); color: #fff; box-shadow: 0 10px 24px rgba(168, 85, 50, .2);
   font-size: 12px; font-weight: 900; white-space: nowrap; transition: transform .2s ease, box-shadow .2s ease;
 }
-.app-download-button:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(169, 99, 63, .3); }
-.app-download-mobile { background: linear-gradient(145deg, var(--terracotta), #a9633f); color: #fff; }
+.app-download-button:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(168, 85, 50, .27); }
+.app-download-mobile { background: linear-gradient(145deg, var(--terracotta), var(--terracotta-hover)); color: #fff; }
 .app-download-page { padding: 132px 0 76px; }
 .app-download-layout { display: grid; gap: 18px; }
 .app-download-hero { position: relative; overflow: hidden; padding: clamp(30px,6vw,68px); border-radius: 30px; text-align: center; }
 .app-download-hero h1 { max-width: 760px; margin: 14px auto 12px; font-size: clamp(38px,5.7vw,68px); line-height: 1.12; letter-spacing: -2.8px; }
 .app-download-hero > p { max-width: 690px; margin: 0 auto; color: var(--muted); font-size: 15px; }
-.app-download-icon { width: 66px; height: 66px; margin: 20px auto 0; display: grid; place-items: center; border-radius: 22px; color: #fff; background: var(--terracotta); box-shadow: 0 16px 35px rgba(169,99,63,.25); }
+.app-download-icon { width: 66px; height: 66px; margin: 20px auto 0; display: grid; place-items: center; border-radius: 22px; color: #fff; background: var(--terracotta); box-shadow: 0 16px 35px rgba(168,85,50,.22); }
 .app-download-primary { min-height: 58px; margin-top: 26px; padding-inline: 26px; font-size: 15px; }
 .app-download-facts { margin-top: 22px; display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 18px; color: var(--muted); font-size: 11px; }
 .app-download-facts span { display: inline-flex; align-items: center; gap: 5px; }
@@ -125,7 +128,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .account-deletion-form input,
 .account-deletion-form textarea { width: 100%; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; outline: none; background: #fff; color: var(--ink); }
 .account-deletion-form input:focus,
-.account-deletion-form textarea:focus { border-color: var(--terracotta); box-shadow: 0 0 0 3px rgba(173,96,57,.1); }
+.account-deletion-form textarea:focus { border-color: var(--terracotta); box-shadow: 0 0 0 3px rgba(168,85,50,.1); }
 .account-deletion-form button { width: max-content; border: 0; cursor: pointer; }
 .account-deletion-form button:disabled { cursor: wait; opacity: .65; }
 .account-deletion-honeypot { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
