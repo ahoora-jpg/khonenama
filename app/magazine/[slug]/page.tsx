@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PreferredSourceCTA from "@/components/PreferredSourceCTA";
-import { getGuide, guides } from "@/lib/guides";
+import { getGuide, guides, type Guide } from "@/lib/guides";
 import { getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, Calculator, Clock3, Link2 } from "lucide-react";
 import { notFound } from "next/navigation";
@@ -80,6 +80,30 @@ function enhancedKeywords(slug: string, keywords: string[]) {
   ];
 }
 
+const RELATED_STOP_WORDS = new Set(["برای", "راهنمای", "چیست", "کدام", "بهتر", "است", "یا", "و", "در", "از", "با", "چه", "یک", "انواع", "نکات", "انتخاب"]);
+
+function guideTopicTerms(guide: Guide) {
+  const raw = [guide.title, ...guide.keywords].join(" ").replace(/[؟،؛:()|/\-]/g, " ");
+  return new Set(raw.split(/\s+/).map((item) => item.trim()).filter((item) => item.length > 2 && !RELATED_STOP_WORDS.has(item)));
+}
+
+function getRelatedGuides(guide: Guide) {
+  const currentTerms = guideTopicTerms(guide);
+  return guides
+    .filter((item) => item.slug !== guide.slug)
+    .map((item) => {
+      const itemTerms = guideTopicTerms(item);
+      let overlap = 0;
+      currentTerms.forEach((term) => { if (itemTerms.has(term)) overlap += 1; });
+      const score = (item.category === guide.category ? 6 : 0) + overlap * 3 + (item.relatedCategory === guide.relatedCategory ? 1 : 0);
+      return { item, score, overlap };
+    })
+    .filter(({ item, overlap }) => item.category === guide.category || overlap > 0)
+    .sort((a, b) => b.score - a.score || b.overlap - a.overlap || a.item.title.localeCompare(b.item.title, "fa"))
+    .slice(0, 4)
+    .map(({ item }) => item);
+}
+
 export function generateStaticParams() {
   return guides.map((guide) => ({ slug: guide.slug }));
 }
@@ -132,9 +156,13 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const modifiedAt = isCurtainInstallation
     ? CURTAIN_INSTALLATION_MODIFIED_AT
     : guide.modifiedAt || guide.publishedAt || "2026-09-19";
+  const fallbackQuickAnswer = [guide.sections[0]?.paragraphs?.[0], guide.sections[1]?.paragraphs?.[0]]
+    .filter(Boolean)
+    .join(" ");
   const quickAnswer = isCurtainInstallation
     ? "برای نصب پرده دیواری، پایه‌ها روی دیوار بالای قاب یا در محل مناسب اطراف پنجره بسته می‌شوند؛ برای نصب سقفی، پایه به سقف متصل می‌شود. انتخاب بین این دو به جنس سطح، فضای بازشو، عرض پوشش موردنیاز و مسیر تأسیسات بستگی دارد. قبل از سفارش زبرا یا شید، محل نصب را مشخص و عرض و ارتفاع را بر همان مبنا اندازه‌گیری کنید."
-    : guide.quickAnswer;
+    : guide.quickAnswer || fallbackQuickAnswer || guide.excerpt;
+  const relatedGuides = getRelatedGuides(guide);
   const visibleFaqs = isCurtainInstallation
     ? [...guide.faqs, ...curtainInstallationExtraFaqs]
     : guide.faqs;
@@ -367,10 +395,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               <div className="guide-side-card glass-panel">
                 <Link2 size={18} />
                 <h3>راهنماهای مرتبط</h3>
-                {guides
-                  .filter((item) => item.slug !== guide.slug && item.category === guide.category)
-                  .slice(0, 3)
-                  .map((item) => (
+                {relatedGuides.map((item) => (
                     <a className="guide-related-link" href={"/magazine/" + item.slug} key={item.slug}>
                       {item.title}
                     </a>
