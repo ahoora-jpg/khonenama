@@ -156,7 +156,7 @@
 
 .business-plan-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
 .business-plan-card { position:relative; min-height:430px; padding:24px; border-radius:26px; border:1px solid var(--line); background:rgba(255,255,255,.88); }
-.business-plan-card.is-highlighted { border-color:rgba(173,96,57,.36); box-shadow:0 22px 52px rgba(115,75,49,.12); transform:translateY(-5px); }
+.business-plan-card.is-highlighted { border-color:rgba(168,85,50,.36); box-shadow:0 22px 52px rgba(115,75,49,.12); transform:translateY(-5px); }
 .business-plan-badge { display:inline-flex; padding:5px 8px; border-radius:999px; background:#eee1d3; color:#7d5d48; font-size:8px; font-weight:900; }
 .business-plan-card h3, .business-plan-card h2 { margin:14px 0 4px; font-size:24px; }
 .business-plan-card > strong { display:block; font-size:17px; }
@@ -534,10 +534,10 @@
   border-radius:22px;
 }
 .admin-business-card.status-pending {
-  border-color:rgba(173,96,57,.28);
+  border-color:rgba(168,85,50,.28);
 }
 .admin-business-card.status-published {
-  border-color:rgba(94,126,86,.24);
+  border-color:rgba(95,115,93,.24);
 }
 .admin-business-card-head {
   display:flex;
@@ -912,22 +912,22 @@
 .plan-listing-badge.is-pro,
 .dashboard-plan-badge.plan-pro,
 .dashboard-current-plan.plan-pro {
-  background:#e8eee5;
-  color:#52684d;
-  border:1px solid rgba(82,104,77,.15);
+  background:rgba(168,85,50,.1);
+  color:var(--terracotta);
+  border:1px solid rgba(168,85,50,.18);
 }
 .plan-public-badge.is-premium,
 .plan-listing-badge.is-premium,
 .dashboard-plan-badge.plan-premium,
 .dashboard-current-plan.plan-premium {
-  background:linear-gradient(135deg,#f4e2b9,#e8c98c);
-  color:#6c4d19;
-  border:1px solid rgba(120,82,28,.16);
+  background:rgba(154,116,45,.13);
+  color:var(--premium);
+  border:1px solid rgba(154,116,45,.2);
 }
 .dashboard-plan-badge.plan-free,
 .dashboard-current-plan.plan-free {
-  background:#eee9e2;
-  color:#746b62;
+  background:var(--surface-soft);
+  color:#77766f;
   border:1px solid rgba(90,80,70,.08);
 }
 .dashboard-plan-badge {
@@ -1427,8 +1427,8 @@
 .quote-form-grid textarea:focus,
 .lead-quote-grid input:focus,
 .lead-quote-grid textarea:focus {
-  border-color:rgba(173,96,57,.38);
-  box-shadow:0 0 0 3px rgba(173,96,57,.07);
+  border-color:rgba(168,85,50,.38);
+  box-shadow:0 0 0 3px rgba(168,85,50,.07);
 }
 .quote-wide {
   grid-column:1 / -1;
@@ -1538,7 +1538,7 @@
   background:rgba(255,255,255,.82);
 }
 .lead-card.status-open {
-  border-color:rgba(173,96,57,.2);
+  border-color:rgba(168,85,50,.2);
 }
 .lead-card-top {
   display:flex;
@@ -2028,7 +2028,7 @@
   border-radius:16px;
 }
 .admin-review-card.status-pending {
-  border-color:rgba(173,96,57,.2);
+  border-color:rgba(168,85,50,.2);
 }
 .admin-review-head {
   display:flex;
@@ -2798,7 +2798,7 @@
 }
 .wallpaper-tool-hero {
   background:
-    radial-gradient(circle at 88% 18%, rgba(173,96,57,.08), transparent 18rem),
+    radial-gradient(circle at 88% 18%, rgba(168,85,50,.08), transparent 18rem),
     linear-gradient(145deg, rgba(250,250,247,.88), rgba(235,234,228,.84));
   border:1px solid rgba(255,255,255,.76);
 }
@@ -2911,7 +2911,7 @@
 }
 .wallpaper-preset-row button:hover,
 .wallpaper-reset:hover {
-  border-color:rgba(173,96,57,.3);
+  border-color:rgba(168,85,50,.3);
   color:var(--terracotta);
 }
 .wallpaper-calculator-grid {
@@ -3616,7 +3616,7 @@
 .curtain-tool-hero,
 .smart-scope-hero {
   background:
-    radial-gradient(circle at 88% 18%, rgba(173,96,57,.08), transparent 18rem),
+    radial-gradient(circle at 88% 18%, rgba(168,85,50,.08), transparent 18rem),
     linear-gradient(145deg, rgba(250,250,247,.88), rgba(235,234,228,.84));
 }
 @media (max-width:920px) {
@@ -3722,7 +3722,7 @@
 /* Carpet estimator */
 .carpet-tool-hero {
   background:
-    radial-gradient(circle at 88% 18%, rgba(173,96,57,.08), transparent 18rem),
+    radial-gradient(circle at 88% 18%, rgba(168,85,50,.08), transparent 18rem),
     linear-gradient(145deg, rgba(250,250,247,.88), rgba(235,234,228,.84));
 }
 .carpet-estimator-shell {
