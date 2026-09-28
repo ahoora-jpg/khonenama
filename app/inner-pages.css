@@ -522,6 +522,13 @@
   display:grid;
   gap:12px;
 }
+.admin-summary-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; }
+.admin-summary-grid > div { padding:15px; border:1px solid var(--line); border-radius:18px; background:rgba(255,255,255,.82); display:grid; gap:4px; }
+.admin-summary-grid strong { font-size:19px; color:#5f4637; }
+.admin-summary-grid span { font-size:8px; color:var(--muted); }
+.admin-gift-chip { background:#f5e6bc !important; color:#76591c !important; }
+.admin-payment-chip.status-verified { background:#dfeddf !important; color:#436246 !important; }
+.admin-payment-chip.status-failed { background:#f2deda !important; color:#844b42 !important; }
 .admin-business-card {
   padding:20px;
   border-radius:22px;
@@ -600,6 +607,7 @@
 @media (max-width:700px) {
   .publication-panel { grid-template-columns:1fr; }
   .admin-business-card-head { display:grid; }
+  .admin-summary-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .admin-business-actions .pill-button { width:100%; justify-content:center; }
 }
 
