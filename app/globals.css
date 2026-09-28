@@ -119,6 +119,18 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .app-install-number { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 13px; color: #fff; background: var(--terracotta); font-weight: 900; }
 .app-download-security { margin: 12px 0 0; padding: 18px 20px; border: 1px solid var(--line); border-radius: 18px; color: var(--muted); background: rgba(250,250,247,.72); font-size: 11px; }
 .app-download-security code { display: block; margin-top: 7px; direction: ltr; overflow-wrap: anywhere; color: var(--ink); font-family: monospace !important; }
+.account-deletion-form { margin-top: 26px; display: grid; gap: 14px; }
+.account-deletion-form .form-input { display: grid; gap: 6px; }
+.account-deletion-form .form-input > span { color: var(--muted); font-size: 11px; font-weight: 850; }
+.account-deletion-form input,
+.account-deletion-form textarea { width: 100%; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; outline: none; background: #fff; color: var(--ink); }
+.account-deletion-form input:focus,
+.account-deletion-form textarea:focus { border-color: var(--terracotta); box-shadow: 0 0 0 3px rgba(173,96,57,.1); }
+.account-deletion-form button { width: max-content; border: 0; cursor: pointer; }
+.account-deletion-form button:disabled { cursor: wait; opacity: .65; }
+.account-deletion-honeypot { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.account-deletion-message { margin: 0; color: #a13c2f; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+.account-deletion-message.is-success { color: var(--sage); }
 .icon-button {
   width: 43px; height: 43px; display: grid; place-items: center;
   border: 1px solid var(--line); border-radius: 14px; background: rgba(250,250,247,.78); color: var(--ink); cursor: pointer;

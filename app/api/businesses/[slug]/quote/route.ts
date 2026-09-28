@@ -1,4 +1,5 @@
 import { env } from "cloudflare:workers";
+import { sendBusinessLeadPush } from "@/lib/server/business-push";
 
 function normalizeDigits(value: string) {
   const fa = "۰۱۲۳۴۵۶۷۸۹";
@@ -96,6 +97,8 @@ export async function POST(
     )
     .bind(lead.id, business.id)
     .run();
+
+  await sendBusinessLeadPush(db, Number(business.id), Number(lead.id));
 
   return Response.json({ ok: true, leadId: lead.id });
 }
