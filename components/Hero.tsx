@@ -1,4 +1,5 @@
 import { ArrowUpLeft, MapPin, Search, Sparkles, WandSparkles } from "lucide-react";
+import HeroCoverflow from "./HeroCoverflow";
 
 const popular = [
   ["پرده", "/search?q=پرده&location=کرج"],
@@ -6,8 +7,6 @@ const popular = [
   ["پارکت", "/search?q=پارکت&location=کرج"],
   ["کاغذ دیواری", "/search?q=کاغذ+دیواری&location=کرج"],
 ] as const;
-
-const heroImageBase = "https://khonenama.ir/images/editorial/photo-1600210492486-724fe5c67fb0.webp";
 
 export default function Hero() {
   return (
@@ -25,18 +24,7 @@ export default function Hero() {
         </header>
 
         <div className="hero-showcase premium-visual-wrap">
-          <div className="hero-visual-frame" style={{ overflow: "hidden", borderRadius: 28 }}>
-            <img
-              src={heroImageBase}
-              width={1200}
-              height={675}
-              alt="فضای داخلی روشن و مدرن برای انتخاب آگاهانه دکوراسیون منزل"
-              loading="eager"
-              fetchPriority="high"
-              decoding="async"
-              style={{ width: "100%", height: "clamp(260px, 46vw, 520px)", objectFit: "cover", display: "block" }}
-            />
-          </div>
+          <HeroCoverflow />
         </div>
 
         <div className="hero-after-showcase">
