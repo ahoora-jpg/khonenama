@@ -19,6 +19,8 @@ export async function POST(
 
   const body = await request.json().catch(() => ({}));
   const planCode = typeof body?.planCode === "string" ? body.planCode : "";
+  const durationDays = Math.max(1, Math.min(3650, Number(body?.durationDays) || 30));
+  const note = typeof body?.note === "string" ? body.note.trim().slice(0, 500) : "";
   if (!ALLOWED.has(planCode)) {
     return Response.json({ ok: false, error: "INVALID_PLAN" }, { status: 400 });
   }
@@ -36,7 +38,9 @@ export async function POST(
     return Response.json({ ok: false, error: "PLAN_NOT_FOUND" }, { status: 404 });
   }
 
-  const endsAtSql = planCode === "free" ? "NULL" : "datetime('now', '+30 days')";
+  await db.prepare("CREATE TABLE IF NOT EXISTS business_admin_actions (id INTEGER PRIMARY KEY AUTOINCREMENT,business_id INTEGER,business_name TEXT,business_slug TEXT,action TEXT NOT NULL,previous_status TEXT,reason TEXT,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+  const businessInfo = await db.prepare("SELECT name, slug FROM businesses WHERE id=?").bind(businessId).first();
+  const endsAtSql = planCode === "free" ? "NULL" : "datetime('now', '+" + durationDays + " days')";
 
   await db.batch([
     db
@@ -44,15 +48,16 @@ export async function POST(
       .bind(businessId),
     db
       .prepare(
-        "INSERT INTO subscriptions (business_id, plan_id, status, starts_at, ends_at) VALUES (?, ?, 'active', CURRENT_TIMESTAMP, " + endsAtSql + ")"
+        "INSERT INTO subscriptions (business_id, plan_id, status, starts_at, ends_at, is_test) VALUES (?, ?, 'active', CURRENT_TIMESTAMP, " + endsAtSql + ", 1)"
       )
       .bind(businessId, plan.id),
+    db.prepare("INSERT INTO business_admin_actions (business_id,business_name,business_slug,action,reason) VALUES (?,?,?,'complimentary_plan',?)").bind(businessId,businessInfo?.name || '',businessInfo?.slug || '',JSON.stringify({planCode,durationDays,note})),
   ]);
 
   return Response.json({
     ok: true,
-    testMode: true,
+    complimentary: true,
     plan: { code: plan.code, name: plan.name },
-    expiresInDays: planCode === "free" ? null : 30,
+    expiresInDays: planCode === "free" ? null : durationDays,
   });
 }
