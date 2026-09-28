@@ -27,6 +27,16 @@ const localSearchIntents: Record<string, SearchIntent[]> = {
       href: "/magazine/shade-curtain-guide",
     },
     {
+      title: "زبرا یا شید رول؟",
+      text: "کنترل مرحله‌ای نور زبرا را با سادگی و سطح یکدست شید رول مقایسه کنید.",
+      href: "/magazine/zebra-vs-roller-shade",
+    },
+    {
+      title: "زبرا یا ورتیکال (لوور دراپ)؟",
+      text: "برای پنجره عریض و در تراس، جهت حرکت و کنترل نور این دو سیستم را مقایسه کنید.",
+      href: "/magazine/zebra-vs-vertical-blinds",
+    },
+    {
       title: "پرده فروشی کرج",
       text: "فروشگاه را فقط بر اساس نزدیکی انتخاب نکنید؛ تنوع واقعی، اندازه‌گیری، نصب و شرایط خدمات پس از فروش را هم بررسی کنید.",
       href: "/category/curtain",
@@ -53,6 +63,16 @@ const localSearchIntents: Record<string, SearchIntent[]> = {
       href: "/category/flooring",
     },
     {
+      title: "لمینت یا وینیل/PVC؟",
+      text: "رطوبت، حس سطح، نصب و نگهداری را قبل از انتخاب بین لمینت و وینیل مقایسه کنید.",
+      href: "/magazine/laminate-vs-vinyl-flooring-2026",
+    },
+    {
+      title: "لمینت یا SPC؟",
+      text: "تفاوت هسته، مقاومت به رطوبت و زیرسازی این دو کفپوش را ببینید.",
+      href: "/magazine/laminate-vs-spc-flooring",
+    },
+    {
       title: "فروش پارکت در کرج",
       text: "موجودی واقعی، کلاس سایش، برند، متعلقات، هزینه نصب و شرایط تحویل را از فروشنده به‌صورت شفاف بپرسید.",
       href: "/category/flooring",
@@ -73,6 +93,16 @@ const localSearchIntents: Record<string, SearchIntent[]> = {
       title: "موکت تایلی کرج",
       text: "موکت تایلی برای تعویض موضعی و فضاهای پرتردد مزیت دارد؛ موکت رول برای پوشش یکپارچه انتخاب رایج‌تری است.",
       href: "/magazine/carpet-types-guide",
+    },
+    {
+      title: "موکت پرز کوتاه یا بلند؟",
+      text: "نظافت، دوام، نرمی و کاربرد هر نوع پرز را برای فضای خانه مقایسه کنید.",
+      href: "/magazine/low-pile-vs-high-pile-carpet",
+    },
+    {
+      title: "موکت رول یا تایلی؟",
+      text: "پرت، تعمیرپذیری، نصب و ظاهر یکپارچه را قبل از انتخاب مقایسه کنید.",
+      href: "/magazine/roll-carpet-vs-carpet-tile",
     },
     {
       title: "فروشگاه موکت کرج",
