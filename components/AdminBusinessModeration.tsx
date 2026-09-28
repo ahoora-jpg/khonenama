@@ -21,13 +21,21 @@ type BusinessRow = {
   plan_code?: "free" | "pro" | "premium";
   plan_name?: string;
   has_password?: number;
+  subscription_ends_at?: string;
+  complimentary?: number;
+  last_payment_status?: string;
+  last_payment_amount?: number;
+  last_payment_reference?: string;
 };
+
+type Summary = { total?: number; pending?: number; published?: number; active_subscriptions?: number; paid_count?: number; revenue?: number };
 
 export default function AdminBusinessModeration() {
   const [items, setItems] = useState<BusinessRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [query, setQuery] = useState("");
+  const [summary, setSummary] = useState<Summary>({});
 
   async function load() {
     setLoading(true);
@@ -41,6 +49,7 @@ export default function AdminBusinessModeration() {
       const result = await response.json();
       if (!response.ok || !result?.ok) throw new Error("LOAD_FAILED");
       setItems(result.businesses || []);
+      setSummary(result.summary || {});
     } catch {
       setMessage("دریافت فهرست کسب‌وکارها انجام نشد.");
     } finally {
@@ -76,22 +85,25 @@ export default function AdminBusinessModeration() {
 
   async function setTestPlan(id: number, planCode: "free" | "pro" | "premium") {
     setMessage("");
+    const durationDays = planCode === "free" ? 30 : Number(window.prompt("این پلن چند روز به‌صورت هدیه/دستی فعال باشد؟", "30") || 0);
+    if (planCode !== "free" && (!Number.isFinite(durationDays) || durationDays < 1)) return;
+    const note = window.prompt("علت فعال‌سازی را بنویسید (مثلاً آفر همکاری یا پرداخت دستی):", "") || "";
     const response = await fetch("/api/admin/businesses/" + id + "/plan", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ planCode }),
+      body: JSON.stringify({ planCode, durationDays, note }),
     });
     const result = await response.json().catch(() => ({}));
 
     if (!response.ok || !result?.ok) {
-      setMessage("تغییر آزمایشی پلن انجام نشد.");
+      setMessage("تغییر پلن انجام نشد.");
       return;
     }
 
     setMessage(
       planCode === "free"
         ? "کسب‌وکار به پلن پایه برگشت."
-        : "پلن " + (result.plan?.name || planCode) + " برای ۳۰ روز در حالت آزمایشی فعال شد."
+        : "پلن " + (result.plan?.name || planCode) + " برای " + durationDays + " روز به‌صورت مدیریتی فعال شد."
     );
     await load();
   }
@@ -173,6 +185,14 @@ export default function AdminBusinessModeration() {
 
       {message && <div className="admin-message">{message}</div>}
 
+      <div className="admin-summary-grid">
+        <div><strong>{Number(summary.total || 0).toLocaleString("fa-IR")}</strong><span>کل کسب‌وکارها</span></div>
+        <div><strong>{Number(summary.pending || 0).toLocaleString("fa-IR")}</strong><span>منتظر بررسی</span></div>
+        <div><strong>{Number(summary.active_subscriptions || 0).toLocaleString("fa-IR")}</strong><span>اشتراک فعال</span></div>
+        <div><strong>{Number(summary.paid_count || 0).toLocaleString("fa-IR")}</strong><span>پرداخت موفق</span></div>
+        <div><strong>{Number(summary.revenue || 0).toLocaleString("fa-IR")}</strong><span>درآمد ثبت‌شده (تومان)</span></div>
+      </div>
+
       <div className="admin-search-box">
         <Search size={16} />
         <input
@@ -219,14 +239,18 @@ export default function AdminBusinessModeration() {
                 <span className={"admin-plan-chip plan-" + (item.plan_code || "free")}>
                   پلن: {item.plan_name || "پایه"}
                 </span>
+                {item.subscription_ends_at && <span>پایان اشتراک: {new Date(item.subscription_ends_at).toLocaleDateString("fa-IR")}</span>}
+                {item.complimentary ? <span className="admin-gift-chip">فعال‌سازی مدیریتی/هدیه</span> : null}
+                {item.last_payment_status && <span className={"admin-payment-chip status-" + item.last_payment_status}>پرداخت: {item.last_payment_status}{item.last_payment_amount ? " · " + Number(item.last_payment_amount).toLocaleString("fa-IR") + " تومان" : ""}</span>}
+                {item.last_payment_reference && <span>پیگیری: {item.last_payment_reference}</span>}
               </div>
 
               <div className="admin-plan-test-box">
                 <div>
                   <FlaskConical size={16} />
                   <span>
-                    <strong>پیش‌نمایش درآمدی</strong>
-                    <small>فقط برای تست داخلی؛ بدون پرداخت واقعی</small>
+                    <strong>مدیریت پلن و آفر</strong>
+                    <small>فعال‌سازی دستی، هدیه یا همکاری؛ علت در سوابق ثبت می‌شود</small>
                   </span>
                 </div>
                 <div className="admin-plan-test-actions">
