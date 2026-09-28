@@ -250,17 +250,31 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                 </section>
               )}
 
-              {guide.sections.map((section) => (
-                <section key={section.heading}>
-                  <h2>{section.heading}</h2>
-                  {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                  {section.bullets && (
-                    <ul>
-                      {section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
-                    </ul>
-                  )}
-                </section>
-              ))}
+              {guide.sections.map((section) => {
+                const visibleParagraphs = section.paragraphs.slice(0, 2);
+                const extraParagraphs = section.paragraphs.slice(2);
+                const hasExtraDetails = extraParagraphs.length > 0 || Boolean(section.bullets?.length);
+
+                return (
+                  <section key={section.heading}>
+                    <h2>{section.heading}</h2>
+                    {visibleParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                    {hasExtraDetails && (
+                      <details className="guide-detail-accordion">
+                        <summary>توضیح کامل‌تر و نکات فنی</summary>
+                        <div className="guide-detail-accordion-body">
+                          {extraParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                          {section.bullets && (
+                            <ul>
+                              {section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
+                            </ul>
+                          )}
+                        </div>
+                      </details>
+                    )}
+                  </section>
+                );
+              })}
 
               <section className="guide-faq">
                 <h2>سوالات متداول</h2>

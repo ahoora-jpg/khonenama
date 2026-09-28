@@ -4045,3 +4045,31 @@
   .tool-card p,
   .home-tool-card p { font-size: 13px; }
 }
+
+.guide-detail-accordion {
+  margin: 18px 0 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255,255,255,.58);
+  overflow: hidden;
+}
+.guide-detail-accordion summary {
+  cursor: pointer;
+  padding: 13px 15px;
+  font-size: 14px;
+  font-weight: 800;
+  list-style: none;
+}
+.guide-detail-accordion summary::-webkit-details-marker { display: none; }
+.guide-detail-accordion summary::after {
+  content: "+";
+  float: left;
+  font-size: 18px;
+  line-height: 1;
+}
+.guide-detail-accordion[open] summary::after { content: "−"; }
+.guide-detail-accordion-body {
+  padding: 0 15px 15px;
+  border-top: 1px solid var(--line);
+}
+.guide-detail-accordion-body ul { margin-bottom: 0; }

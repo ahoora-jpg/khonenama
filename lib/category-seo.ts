@@ -48,7 +48,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "لمینت ضدآب است؟", answer: "همه لمینت‌ها ضدآب نیستند. مقاومت آن‌ها به ساختار و مشخصات سازنده بستگی دارد و آب ایستاده همچنان می‌تواند آسیب‌زا باشد." },
       { question: "PVC بهتر است یا لمینت؟", answer: "برای رطوبت بیشتر PVC معمولاً مطمئن‌تر است؛ برای حس نزدیک‌تر به کف چوبی، لمینت می‌تواند جذاب‌تر باشد." }
     ],
-    guides: ["parquet-vs-laminate", "laminate-vs-vinyl-flooring-2026", "laminate-vs-spc-flooring", "spc-vs-pvc-flooring", "vinyl-plank-vs-sheet-vinyl", "flooring-types-guide", "laminate-guide", "laminate-vs-pvc", "laminate-installation-guide"]
+    guides: ["parquet-vs-laminate", "laminate-vs-vinyl-flooring-2026", "laminate-vs-spc-flooring", "spc-vs-pvc-flooring", "vinyl-plank-vs-sheet-vinyl", "flooring-types-guide", "laminate-guide", "laminate-underlay-guide", "laminate-vs-pvc", "laminate-installation-guide"]
   },
   carpet: {
     slug: "carpet",

@@ -73,6 +73,11 @@ const localSearchIntents: Record<string, SearchIntent[]> = {
       href: "/magazine/laminate-vs-spc-flooring",
     },
     {
+      title: "فوم زیر لمینت لازم است؟",
+      text: "نقش Underlay در کاهش صدا، پشتیبانی از کلیک، کنترل رطوبت و گرمایش از کف را قبل از نصب بررسی کنید.",
+      href: "/magazine/laminate-underlay-guide",
+    },
+    {
       title: "فروش پارکت در کرج",
       text: "موجودی واقعی، کلاس سایش، برند، متعلقات، هزینه نصب و شرایط تحویل را از فروشنده به‌صورت شفاف بپرسید.",
       href: "/category/flooring",
