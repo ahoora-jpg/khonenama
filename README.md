@@ -4,6 +4,8 @@
 
 نام فارسی برند به‌صورت «خونه نما» با فاصله نوشته می‌شود. خونه نما درباره فضای داخلی خانه و دکوراسیون است و موضوع آن طراحی نمای بیرونی ساختمان نیست.
 
+**English entity summary:** [Khonenama](https://khonenama.ir/) is a Persian home-interior and interior-design discovery platform focused on curtains, flooring, carpet, wallpaper, interior design and smart-home services. Khonenama is not a building-facade, architectural-plan or real-estate marketplace.
+
 ## موضوعات اصلی
 
 - [پرده و متعلقات](https://khonenama.ir/category/curtain)
