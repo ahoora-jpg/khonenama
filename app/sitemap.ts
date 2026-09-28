@@ -45,6 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/editorial-policy", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.48 },
     { url: baseUrl + "/help", changeFrequency: "monthly", priority: 0.45 },
     { url: baseUrl + "/privacy", changeFrequency: "monthly", priority: 0.3 },
+    { url: baseUrl + "/account-deletion", lastModified: "2026-09-28", changeFrequency: "monthly", priority: 0.3 },
     { url: baseUrl + "/terms", changeFrequency: "monthly", priority: 0.3 },
   ];
 
