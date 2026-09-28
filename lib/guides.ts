@@ -5,6 +5,8 @@ import { seoBatch4Guides } from "@/lib/guides-seo-batch-4";
 import { seoBatch5Guides } from "@/lib/guides-seo-batch-5";
 import { seoBatch6Guides } from "@/lib/guides-seo-batch-6";
 import { seoBatch7Guides } from "@/lib/guides-seo-batch-7";
+import { seoBatch8Guides } from "@/lib/guides-seo-batch-8";
+import { seoBatch9Guides } from "@/lib/guides-seo-batch-9";
 
 export type GuideFaq = { question: string; answer: string };
 export type GuideSection = { heading: string; paragraphs: string[]; bullets?: string[] };
@@ -27,6 +29,8 @@ export type Guide = {
 };
 
 export const guides: Guide[] = [
+  ...seoBatch9Guides,
+  ...seoBatch8Guides,
   ...seoBatch7Guides,
   ...seoBatch6Guides,
   ...seoBatch5Guides,

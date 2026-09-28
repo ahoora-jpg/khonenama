@@ -29,7 +29,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "برای اتاق خواب چه پرده‌ای مناسب است؟", answer: "مدل‌های بلک‌اوت یا پارچه‌های متراکم برای کنترل بیشتر نور معمولاً مناسب‌ترند." },
       { question: "برای پرده چند متر پارچه لازم است؟", answer: "به عرض ریل، Fullness، عرض پارچه، قد نهایی، اضافه دوخت و در پارچه‌های طرح‌دار به Pattern Repeat بستگی دارد. برای برآورد سریع از محاسبه‌گر متراژ پرده خونه نما استفاده کنید." }
     ],
-    guides: ["zebra-curtain-guide", "zebra-vs-shade", "shade-curtain-guide", "blackout-curtain-guide", "zebra-vs-roller-shade", "zebra-vs-vertical-blinds", "roman-vs-roller-shade", "blackout-vs-zebra-curtain", "zebra-vs-roman-shade", "roller-vs-vertical-blinds", "sheer-vs-blackout-curtain", "punch-curtain-guide", "roman-curtain-guide", "vertical-curtain-guide", "venetian-blind-guide", "curtain-buying-guide", "best-curtain-living-room", "curtain-installation-guide", "curtain-cleaning-guide"]
+    guides: ["cellular-honeycomb-shades-guide", "solar-shades-openness-guide", "blackout-vs-room-darkening", "inside-vs-outside-mount-shades", "top-down-bottom-up-shades-guide", "cellular-vs-roller-shades", "zebra-curtain-guide", "zebra-vs-shade", "shade-curtain-guide", "blackout-curtain-guide", "zebra-vs-roller-shade", "zebra-vs-vertical-blinds", "roman-vs-roller-shade", "blackout-vs-zebra-curtain", "zebra-vs-roman-shade", "roller-vs-vertical-blinds", "sheer-vs-blackout-curtain", "punch-curtain-guide", "roman-curtain-guide", "vertical-curtain-guide", "venetian-blind-guide", "curtain-buying-guide", "best-curtain-living-room", "curtain-installation-guide", "curtain-cleaning-guide"]
   },
   flooring: {
     slug: "flooring",
@@ -48,7 +48,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "لمینت ضدآب است؟", answer: "همه لمینت‌ها ضدآب نیستند. مقاومت آن‌ها به ساختار و مشخصات سازنده بستگی دارد و آب ایستاده همچنان می‌تواند آسیب‌زا باشد." },
       { question: "PVC بهتر است یا لمینت؟", answer: "برای رطوبت بیشتر PVC معمولاً مطمئن‌تر است؛ برای حس نزدیک‌تر به کف چوبی، لمینت می‌تواند جذاب‌تر باشد." }
     ],
-    guides: ["parquet-vs-laminate", "laminate-vs-vinyl-flooring-2026", "laminate-vs-spc-flooring", "spc-vs-pvc-flooring", "vinyl-plank-vs-sheet-vinyl", "flooring-types-guide", "laminate-guide", "laminate-underlay-guide", "laminate-vs-pvc", "laminate-installation-guide"]
+    guides: ["laminate-ac-rating-usage-class-guide", "waterproof-vs-water-resistant-laminate", "laminate-expansion-gap-guide", "laminate-underfloor-heating-guide", "engineered-wood-vs-laminate", "parquet-vs-laminate", "laminate-vs-vinyl-flooring-2026", "laminate-vs-spc-flooring", "spc-vs-pvc-flooring", "vinyl-plank-vs-sheet-vinyl", "flooring-types-guide", "laminate-guide", "laminate-underlay-guide", "laminate-vs-pvc", "laminate-installation-guide"]
   },
   carpet: {
     slug: "carpet",
