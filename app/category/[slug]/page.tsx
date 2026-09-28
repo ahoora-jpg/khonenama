@@ -99,11 +99,11 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     inLanguage: "fa-IR",
     isPartOf: { "@id": "https://khonenama.ir/#website" },
     about: [
-      ...relatedGuides.slice(0, 8).map((guide) => ({ "@type": "Thing", name: guide.title })),
+      ...relatedGuides.slice(0, slug === "curtain" ? 16 : 8).map((guide) => ({ "@type": "Thing", name: guide.title })),
       ...aiAnswers.map((item) => ({ "@type": "Thing", name: item.question })),
     ],
     hasPart: [
-      ...relatedGuides.slice(0, 8).map((guide) => ({
+      ...relatedGuides.slice(0, slug === "curtain" ? 16 : 8).map((guide) => ({
         "@type": "WebPage",
         name: guide.title,
         url: "https://khonenama.ir/magazine/" + guide.slug,
@@ -264,7 +264,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               </div>
 
               <div className="category-guide-grid">
-                {relatedGuides.slice(0, 8).map((guide) => {
+                {relatedGuides.slice(0, slug === "curtain" ? 16 : 8).map((guide) => {
                   const guideVisual = getGuideVisual(guide.category, guide.slug);
                   const showThumb = !usedGuideImageSrc.has(guideVisual.src);
                   if (showThumb) usedGuideImageSrc.add(guideVisual.src);

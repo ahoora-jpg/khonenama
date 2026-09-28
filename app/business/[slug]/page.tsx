@@ -9,6 +9,15 @@ import { getPublishedBusiness, getBusinessSlugRedirect, isInternalTestBusinessSl
 import { BadgeCheck, BriefcaseBusiness, Clock3, Crown, Globe2, Instagram, MapPin, MessageCircle, Phone, Star } from "lucide-react";
 import { notFound, permanentRedirect } from "next/navigation";
 
+const categorySeoLabels: Record<string, string> = {
+  curtain: "پرده و خدمات پرده",
+  flooring: "پارکت و کفپوش",
+  carpet: "موکت",
+  wallpaper: "کاغذ دیواری و دیوارپوش",
+  "interior-design": "طراحی و دکوراسیون داخلی",
+  "smart-home": "خانه هوشمند و پرده برقی",
+};
+
 async function resolveBusiness(slug: string) {
   const demo = getBusiness(slug);
   if (demo) {
@@ -79,8 +88,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const business = await resolveBusiness(slug);
   if (!business) return {};
 
-  const title = business.name + " | " + [business.area, business.city].filter(Boolean).join("، ");
-  const description = business.description || ("پروفایل " + business.name + " در خونه نما");
+  const serviceLabel = categorySeoLabels[business.category || ""] || "خدمات دکوراسیون داخلی";
+  const locationLabel = [business.area, business.city].filter(Boolean).join("، ");
+  const title = business.name + " | " + serviceLabel + (locationLabel ? " در " + locationLabel : "") + " | خونه نما";
+  const description = business.description || ("پروفایل " + business.name + "؛ " + serviceLabel + (locationLabel ? " در " + locationLabel : "") + "، خدمات، تصاویر، اطلاعات تماس و راه‌های دریافت پیشنهاد قیمت در خونه نما.");
 
   return {
     title,
@@ -152,6 +163,8 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
     name: business.name,
     description: business.description,
     url: "https://khonenama.ir/business/" + business.slug,
+    image: business.media.map((item: any) => item.url).filter(Boolean).slice(0, 8),
+    mainEntityOfPage: "https://khonenama.ir/business/" + business.slug,
     telephone: business.phone || undefined,
     sameAs: [business.website, business.instagram].filter(Boolean),
     address: {
@@ -175,6 +188,14 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
       reviewBody: item.body,
     })),
     knowsAbout: business.services,
+    hasOfferCatalog: business.services.length ? {
+      "@type": "OfferCatalog",
+      name: "خدمات " + business.name,
+      itemListElement: business.services.map((service: string) => ({
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: service },
+      })),
+    } : undefined,
     openingHoursSpecification: business.hours
       .filter((item: any) => !item.isClosed && item.opensAt && item.closesAt)
       .map((item: any) => ({
