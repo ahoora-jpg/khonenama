@@ -68,7 +68,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "موکت پرزبلند بهتر است یا کوتاه؟", answer: "به کاربرد بستگی دارد؛ پرز کوتاه معمولاً نظافت و تردد آسان‌تری دارد." },
       { question: "برای اتاق چند متر موکت لازم است؟", answer: "برای رول فقط مترمربع کافی نیست و عرض رول، تعداد نوار و جهت خواب مهم است. برای تایلی هم ابعاد تایل، تعداد در بسته و پرت تعیین‌کننده‌اند؛ ابزار برآورد موکت خونه نما هر دو را محاسبه می‌کند." }
     ],
-    guides: ["low-pile-vs-high-pile-carpet", "roll-carpet-vs-carpet-tile", "nylon-vs-polyester-vs-polypropylene-carpet", "cut-pile-vs-loop-pile-carpet", "carpet-vs-laminate-bedroom", "carpet-types-guide", "carpet-buying-guide", "carpet-bedroom-guide"]
+    guides: ["carpet-cushion-underlay-guide", "carpet-density-pile-height-guide", "low-pile-vs-high-pile-carpet", "roll-carpet-vs-carpet-tile", "nylon-vs-polyester-vs-polypropylene-carpet", "cut-pile-vs-loop-pile-carpet", "carpet-vs-laminate-bedroom", "carpet-types-guide", "carpet-buying-guide", "carpet-bedroom-guide"]
   },
   wallpaper: {
     slug: "wallpaper",
@@ -87,7 +87,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "کاغذ دیواری برای فضای کوچک مناسب است؟", answer: "بله، اما طرح و رنگ باید با ابعاد و نور فضا هماهنگ شود تا فضا شلوغ یا کوچک‌تر دیده نشود." },
       { question: "چند رول کاغذ دیواری لازم دارم؟", answer: "به عرض کل دیوارها، ارتفاع، عرض و طول رول، Pattern Repeat و پرت بستگی دارد. برای برآورد سریع از محاسبه‌گر رول خونه نما استفاده کنید." }
     ],
-    guides: ["wall-mural-guide", "marble-sheet-wallpanel-guide", "thermowall-guide", "pvc-mdf-wallpanel-guide", "wallpaper-guide", "wallpaper-vs-wallpanel", "washable-wallpaper-guide"]
+    guides: ["wallpaper-primer-sizing-guide", "paste-the-wall-vs-paste-the-paper-guide", "peel-and-stick-vs-traditional-wallpaper", "wall-mural-guide", "marble-sheet-wallpanel-guide", "thermowall-guide", "pvc-mdf-wallpanel-guide", "wallpaper-guide", "wallpaper-vs-wallpanel", "washable-wallpaper-guide"]
   },
   "interior-design": {
     slug: "interior-design",
