@@ -4,7 +4,7 @@ import LocalSeoLanding from "@/components/LocalSeoLanding";
 export const metadata: Metadata = {
   title: "کاغذ دیواری و دیوارپوش در کرج | قیمت، نصب و مقایسه",
   description:
-    "کاغذ دیواری و دیوارپوش در کرج را برای خرید، مقایسه قیمت، گزینه اقتصادی، شرایط اقساط، ماربل شیت، ترمووال، PVC، MDF و نصب بررسی کنید.",
+    "کاغذ دیواری و دیوارپوش در کرج را برای خرید، مقایسه قیمت، گزینه اقتصادی، شرایط اقساط، پوستر دیواری، ماربل شیت، ترمووال، PVC، MDF و نصب بررسی کنید.",
   alternates: { canonical: "/karaj/wallpaper" },
   openGraph: {
     title: "کاغذ دیواری و دیوارپوش در کرج | خونه نما",
@@ -21,7 +21,7 @@ export default function KarajWallpaperPage() {
     <LocalSeoLanding
       categorySlug="wallpaper"
       h1="کاغذ دیواری و دیوارپوش در کرج؛ خرید، قیمت و نصب"
-      intro="در خونه نما، فروشگاه‌ها و مجریان کاغذ دیواری و دیوارپوش در کرج را برای کاغذ دیواری، ماربل شیت، ترمووال، PVC و MDF، زیرسازی و نصب مقایسه کنید."
+      intro="در خونه نما، فروشگاه‌ها و مجریان کاغذ دیواری و دیوارپوش در کرج را برای کاغذ دیواری، پوستر دیواری، ماربل شیت، ترمووال، PVC و MDF، زیرسازی و نصب مقایسه کنید."
       intentCards={[
         {
           title: "کاغذ دیواری و دیوارپوش با قیمت مناسب در کرج",
@@ -71,6 +71,7 @@ export default function KarajWallpaperPage() {
       guides={[
         { title: "محاسبه تعداد رول کاغذ دیواری", text: "محاسبه آنلاین با Pattern Repeat و پرت", href: "/tools/wallpaper-calculator" },
         { title: "راهنمای کاغذ دیواری در کرج", text: "خرید، زیرسازی، انتخاب نصاب و محاسبه رول", href: "/magazine/wallpaper-karaj-guide" },
+        { title: "پوستر دیواری چیست؟", text: "ابعاد، چاپ، زیرسازی و نصب", href: "/magazine/wall-mural-guide" },
         { title: "کاغذ دیواری چیست؟", text: "انواع، جنس‌ها و نکات انتخاب", href: "/magazine/wallpaper-guide" },
         { title: "کاغذ دیواری قابل شست‌وشو", text: "مقاومت، نظافت و انتخاب برای فضاهای مختلف", href: "/magazine/washable-wallpaper-guide" },
         { title: "کاغذ دیواری یا دیوارپوش؟", text: "مقایسه دوام، نصب و هزینه", href: "/magazine/wallpaper-vs-wallpanel" },

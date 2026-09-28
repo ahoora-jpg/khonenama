@@ -74,6 +74,7 @@ export default function KarajInteriorDesignPage() {
       guides={[
         { title: "هزینه طراحی داخلی در کرج", text: "روش قیمت‌گذاری، Scope و نکات قرارداد", href: "/magazine/interior-design-karaj-cost-guide" },
         { title: "چطور طراح داخلی انتخاب کنیم؟", text: "معیارهای مهم قبل از قرارداد", href: "/magazine/choose-interior-designer" },
+        { title: "کناف و سقف کاذب", text: "طراحی، سازه، اجرا و نورپردازی", href: "/magazine/knauf-false-ceiling-guide" },
         { title: "مراحل طراحی داخلی منزل", text: "از نیازسنجی تا نقشه و اجرا", href: "/magazine/interior-design-process" },
         { title: "طراحی داخلی خانه کوچک", text: "اصول آپارتمان کم‌متراژ", href: "/magazine/small-apartment-interior-design-guide" },
         { title: "ترندهای طراحی داخلی ۲۰۲۶", text: "رنگ، بافت، نور و فناوری یکپارچه", href: "/magazine/interior-design-trends-2026" },

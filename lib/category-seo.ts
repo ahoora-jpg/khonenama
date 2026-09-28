@@ -29,7 +29,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "برای اتاق خواب چه پرده‌ای مناسب است؟", answer: "مدل‌های بلک‌اوت یا پارچه‌های متراکم برای کنترل بیشتر نور معمولاً مناسب‌ترند." },
       { question: "برای پرده چند متر پارچه لازم است؟", answer: "به عرض ریل، Fullness، عرض پارچه، قد نهایی، اضافه دوخت و در پارچه‌های طرح‌دار به Pattern Repeat بستگی دارد. برای برآورد سریع از محاسبه‌گر متراژ پرده خونه نما استفاده کنید." }
     ],
-    guides: ["zebra-curtain-guide", "zebra-vs-shade", "shade-curtain-guide", "blackout-curtain-guide", "curtain-buying-guide", "best-curtain-living-room", "curtain-installation-guide", "curtain-cleaning-guide"]
+    guides: ["zebra-curtain-guide", "zebra-vs-shade", "shade-curtain-guide", "blackout-curtain-guide", "punch-curtain-guide", "roman-curtain-guide", "vertical-curtain-guide", "venetian-blind-guide", "curtain-buying-guide", "best-curtain-living-room", "curtain-installation-guide", "curtain-cleaning-guide"]
   },
   flooring: {
     slug: "flooring",
@@ -87,7 +87,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "کاغذ دیواری برای فضای کوچک مناسب است؟", answer: "بله، اما طرح و رنگ باید با ابعاد و نور فضا هماهنگ شود تا فضا شلوغ یا کوچک‌تر دیده نشود." },
       { question: "چند رول کاغذ دیواری لازم دارم؟", answer: "به عرض کل دیوارها، ارتفاع، عرض و طول رول، Pattern Repeat و پرت بستگی دارد. برای برآورد سریع از محاسبه‌گر رول خونه نما استفاده کنید." }
     ],
-    guides: ["wallpaper-guide", "wallpaper-vs-wallpanel", "washable-wallpaper-guide"]
+    guides: ["wall-mural-guide", "wallpaper-guide", "wallpaper-vs-wallpanel", "washable-wallpaper-guide"]
   },
   "interior-design": {
     slug: "interior-design",
@@ -110,7 +110,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "رنگ سال ۲۰۲۶ برای دکوراسیون چیست؟", answer: "Pantone رنگ PANTONE 11-4201 Cloud Dancer را برای ۲۰۲۶ معرفی کرده است؛ استفاده درست آن به نور، متریال و رنگ‌های مکمل بستگی دارد." },
       { question: "ترند طراحی داخلی ۲۰۲۶ چیست؟", answer: "یک سبک واحد نیست؛ گرایش به فضاهای گرم‌تر و شخصی‌تر، سلامت، طبیعت، انعطاف و فناوری کمتر دیده‌شونده از محورهای مهم سال است." }
     ],
-    guides: ["interior-design-trends-2026", "pantone-cloud-dancer-2026-interior-guide", "small-apartment-interior-design-guide", "living-room-zoning-lighting-guide", "biophilic-interior-design-guide-2026", "smart-home-interior-design-planning-guide", "interior-decoration-budget-priority-guide", "choose-interior-designer", "interior-design-process"]
+    guides: ["knauf-false-ceiling-guide", "interior-design-trends-2026", "pantone-cloud-dancer-2026-interior-guide", "small-apartment-interior-design-guide", "living-room-zoning-lighting-guide", "biophilic-interior-design-guide-2026", "smart-home-interior-design-planning-guide", "interior-decoration-budget-priority-guide", "choose-interior-designer", "interior-design-process"]
   },
   "smart-home": {
     slug: "smart-home",

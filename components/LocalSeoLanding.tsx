@@ -31,6 +31,10 @@ const localSearchIntents: Record<string, SearchIntent[]> = {
       text: "فروشگاه را فقط بر اساس نزدیکی انتخاب نکنید؛ تنوع واقعی، اندازه‌گیری، نصب و شرایط خدمات پس از فروش را هم بررسی کنید.",
       href: "/category/curtain",
     },
+    { title: "پرده پانچ کرج", text: "برای پانچ، نوع پارچه، حلقه، میله، ضریب جمع و ارتفاع نصب را قبل از سفارش مشخص کنید.", href: "/magazine/punch-curtain-guide" },
+    { title: "پرده رومن کرج", text: "در رومن، ایستایی پارچه، آستر، مکانیزم و نظم چین‌ها را در نمونه اجرا بررسی کنید.", href: "/magazine/roman-curtain-guide" },
+    { title: "پرده ورتیکال کرج", text: "برای پنجره‌های عریض، کیفیت ریل، تیغه و نحوه کنترل نور و جمع‌شدن جانبی را مقایسه کنید.", href: "/magazine/vertical-curtain-guide" },
+    { title: "پرده کرکره‌ای کرج", text: "جنس تیغه، مکانیزم، عرض تیغه، نظافت و اندازه‌گیری دقیق را پیش از خرید بررسی کنید.", href: "/magazine/venetian-blind-guide" },
   ],
   flooring: [
     {
@@ -97,6 +101,7 @@ const localSearchIntents: Record<string, SearchIntent[]> = {
       text: "قابل شستشو بودن درجات مختلف دارد و به معنی مناسب بودن برای دیوار نم‌دار نیست؛ مشخصات همان محصول را بررسی کنید.",
       href: "/magazine/wallpaper-guide",
     },
+    { title: "پوستر دیواری کرج", text: "ابعاد دیوار، کیفیت فایل و چاپ، محل برش تصویر، جنس پوستر و زیرسازی را قبل از سفارش هماهنگ کنید.", href: "/magazine/wall-mural-guide" },
   ],
   "interior-design": [
     {
@@ -119,6 +124,7 @@ const localSearchIntents: Record<string, SearchIntent[]> = {
       text: "یک گزینه واحد برای همه بهترین نیست؛ تخصص مرتبط، فرآیند کاری، نمونه پروژه واقعی و شفافیت قرارداد را مقایسه کنید.",
       href: "/karaj/interior-design",
     },
+    { title: "کناف و سقف کاذب کرج", text: "نوع سازه، ارتفاع نهایی، نورپردازی، دسترسی تأسیسات و کیفیت درزگیری را پیش از قیمت‌گیری مشخص کنید.", href: "/magazine/knauf-false-ceiling-guide" },
   ],
   "smart-home": [
     {
