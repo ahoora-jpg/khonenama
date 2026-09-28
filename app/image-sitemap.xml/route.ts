@@ -21,6 +21,12 @@ export const dynamic = "force-static";
 export function GET() {
   const categorySlugs = ["curtain", "flooring", "carpet", "wallpaper", "interior-design", "smart-home"];
 
+  const homeEntry = imageEntry(
+    `${baseUrl}/`,
+    `${baseUrl}/images/editorial/photo-1600210492486-724fe5c67fb0.webp`,
+    "خونه نما؛ دکوراسیون و فضای داخلی خانه"
+  );
+
   const categoryEntries = categorySlugs.map((slug) => {
     const visual = getCategoryVisual(slug);
     return imageEntry(`${baseUrl}/category/${slug}`, visual.src, visual.alt);
@@ -37,6 +43,7 @@ export function GET() {
   });
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${[
+    homeEntry,
     ...categoryEntries,
     ...localEntries,
     ...guideEntries,

@@ -21,10 +21,12 @@ export const metadata = {
     description:
       "خونه نما؛ مرجع پیدا کردن و مقایسه فروشگاه‌ها، متخصصان و خدمات دکوراسیون و فضای داخلی خانه.",
     url: "https://khonenama.ir/",
+    images: [{ url: "https://khonenama.ir/images/editorial/photo-1600210492486-724fe5c67fb0.webp", width: 1200, height: 675, alt: "خونه نما؛ دکوراسیون و فضای داخلی خانه" }],
     siteName: "خونه نما",
     locale: "fa_IR",
     type: "website",
   },
+  twitter: { card: "summary_large_image", title: homeTitle, images: ["https://khonenama.ir/images/editorial/photo-1600210492486-724fe5c67fb0.webp"] },
 };
 
 const websiteJsonLd = {

@@ -33,7 +33,7 @@ export const guides: Guide[] = [
     category: "پرده",
     keywords: ["پرده زبرا چیست", "انواع پرده زبرا", "مزایا و معایب پرده زبرا", "خرید پرده زبرا"],
     updated: "۱۴۰۵/۰۷/۰۵",
-    modifiedAt: "2026-09-27",
+    modifiedAt: "2026-09-28",
     readTime: "۸ دقیقه",
     relatedCategory: "/category/curtain",
     quickAnswer: "پرده زبرا یک پرده رول دولایه با نوارهای شفاف و مات است که با جابه‌جایی دو لایه، نور و حریم خصوصی را تنظیم می‌کند. برای خرید، فقط طرح را مقایسه نکنید؛ کیفیت پارچه و مکانیزم، محل نصب، ابعاد دقیق، خدمات اندازه‌گیری و نصب و در صورت نیاز موتور را هم بررسی کنید.",
@@ -81,6 +81,10 @@ export const guides: Guide[] = [
       { question: "قیمت پرده زبرا چگونه محاسبه می‌شود؟", answer: "معمولاً ابعاد، نوع پارچه، مکانیزم، یراق‌آلات و خدمات نصب روی قیمت نهایی اثر دارند." },
       { question: "پرده زبرا برای تاریکی کامل اتاق خواب کافی است؟", answer: "همه مدل‌های زبرا بلک‌اوت کامل نیستند. اگر تاریکی زیاد اولویت است، میزان عبور نور همان پارچه را بررسی کنید یا مدل بلک‌اوت و ترکیب‌های مناسب را مقایسه کنید." },
       { question: "پرده زبرا موتوردار ارزش خرید دارد؟", answer: "برای پنجره‌های بزرگ، دسترسی سخت یا سناریوهای خانه هوشمند می‌تواند کاربردی باشد، اما نوع موتور، کنترل دستی اضطراری، صدا، برق‌رسانی، سازگاری و خدمات پس از فروش باید قبل از سفارش مشخص شود." }
+    ],
+    sources: [
+      { name: "Hunter Douglas — Zebra Shades", url: "https://www.hunterdouglas.com/stories/buyers-guides/window-treatments-zebra-shades" },
+      { name: "Somfy — Motorized layered/zebra shades", url: "https://www.somfysystems.com/en-us/discover-somfy/about/press/2018-10-18-somfy-s-new-situo-remote-elevates-the-experience-of-controlling-motorized-window-covering" }
     ]
   },
   {

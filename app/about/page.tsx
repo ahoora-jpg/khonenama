@@ -16,11 +16,12 @@ export const metadata: Metadata = {
     title: pageTitle,
     description: pageDescription,
     url: pageUrl,
+    images: [{ url: "https://khonenama.ir/images/editorial/photo-1600210492486-724fe5c67fb0.webp", width: 1200, height: 675, alt: "خونه نما؛ مرجع فضای داخلی خانه" }],
     siteName: "خونه نما",
     locale: "fa_IR",
     type: "website",
   },
-  twitter: { card: "summary", title: pageTitle, description: pageDescription },
+  twitter: { card: "summary_large_image", title: pageTitle, description: pageDescription, images: ["https://khonenama.ir/images/editorial/photo-1600210492486-724fe5c67fb0.webp"] },
 };
 
 const aboutFaqs = [
