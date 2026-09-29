@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import GuidePage from "../[slug]/page";
 
 const slug = "shade-curtain-guide";
-const title = "پرده شید چیست؟ انواع شید و کاربرد هر مدل";
-const description = "شید رول چیست و چه تفاوتی با زبرا دارد؟ شید ساده، اسکرین و بلک‌اوت را از نظر نور، حریم خصوصی، نصب و کاربرد مقایسه کنید.";
+const title = "پرده شید چیست؟ انواع شید برای پنجره و نصب دیواری یا سقفی";
+const description = "پرده شید چیست و چه مدل‌هایی برای پنجره مناسب‌اند؟ شید ساده، اسکرین و بلک‌اوت را بشناسید و تفاوت نصب دیواری و سقفی را مقایسه کنید.";
 const url = `https://khonenama.ir/magazine/${slug}`;
 
 export const metadata: Metadata = {

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import GuidePage from "../[slug]/page";
 
 const slug = "curtain-installation-guide";
-const title = "نصب پرده زبرا دیواری و سقفی | آموزش اندازه‌گیری";
-const description = "آموزش نصب پرده زبرا و شید روی دیوار یا سقف؛ از اندازه‌گیری و انتخاب محل پایه تا نکات مهم قبل از سوراخ‌کاری و سفارش پرده.";
+const title = "نحوه نصب پرده زبرا سقفی و دیواری | اندازه‌گیری و اجرا";
+const description = "نحوه نصب پرده زبرا سقفی و دیواری؛ از اندازه‌گیری و انتخاب محل پایه تا نصب روی سقف یا دیوار، خطاهای رایج و نکات مهم قبل از سوراخ‌کاری.";
 const url = `https://khonenama.ir/magazine/${slug}`;
 
 export const metadata: Metadata = {
