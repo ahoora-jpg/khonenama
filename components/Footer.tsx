@@ -13,7 +13,7 @@ const groups = [
     ],
   },
   {
-    title: "کرج",
+    title: "بازار محلی فعال",
     links: [
       ["دکوراسیون در کرج", "/karaj"],
       ["پرده در کرج", "/karaj/curtain"],
@@ -63,10 +63,10 @@ export default function Footer() {
         <div className="footer-main">
           <div className="footer-brand-block">
             <a className="brand footer-brand" href="/">خونه <span>نما</span></a>
-            <p>خونه نما مرجع پیدا کردن و مقایسه فروشگاه‌ها، متخصصان و خدمات دکوراسیون و فضای داخلی خانه؛ با شروع از کرج و خیابان برغان.</p>
+            <p>خونه نما مرجع سراسری پیدا کردن و مقایسه فروشگاه‌ها، متخصصان و خدمات دکوراسیون و فضای داخلی خانه در شهرهای ایران است.</p>
 
             <div className="footer-mini-meta">
-              <span><MapPin size={14} /> کرج، البرز</span>
+              <span><MapPin size={14} /> ایران</span>
               <a href="/help"><CircleHelp size={14} /> راهنما و پشتیبانی</a>
               <span><Instagram size={14} /> خونه نما</span>
             </div>

@@ -13,12 +13,11 @@ const categories = [
 ] as const;
 
 const links = [
-  ["دکوراسیون کرج", "/karaj"],
   ["چطور کار می‌کند؟", "/#how-it-works"],
   ["راهنماها", "/magazine"],
   ["ابزارها", "/tools"],
   ["پیگیری درخواست", "/request-status"],
-  ["برغان کرج", "/karaj/baraghan"],
+  ["ثبت کسب‌وکار", "/register-business"],
 ] as const;
 
 const androidDownloadUrl = "/download-app";

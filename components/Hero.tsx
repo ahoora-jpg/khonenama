@@ -2,10 +2,10 @@ import { ArrowUpLeft, MapPin, Search, Sparkles, WandSparkles } from "lucide-reac
 import HeroCoverflow from "./HeroCoverflow";
 
 const popular = [
-  ["پرده", "/search?q=پرده&location=کرج"],
-  ["موکت", "/search?q=موکت&location=کرج"],
-  ["پارکت", "/search?q=پارکت&location=کرج"],
-  ["کاغذ دیواری", "/search?q=کاغذ+دیواری&location=کرج"],
+  ["پرده", "/search?q=پرده"],
+  ["موکت", "/search?q=موکت"],
+  ["پارکت", "/search?q=پارکت"],
+  ["کاغذ دیواری", "/search?q=کاغذ+دیواری"],
 ] as const;
 
 export default function Hero() {
@@ -52,7 +52,7 @@ export default function Hero() {
                 <MapPin size={20} />
                 <span>
                   <small>کجایی؟</small>
-                  <input name="location" aria-label="شهر یا محله" defaultValue="کرج" />
+                  <input name="location" aria-label="شهر یا محله" placeholder="مثلاً کرج، تهران یا مشهد" />
                 </span>
               </label>
 
@@ -69,7 +69,7 @@ export default function Hero() {
 
           <div className="hero-trust-row premium-trust-row">
             <div><strong>دسته‌بندی تخصصی</strong><span>محصول و خدمات خانه</span></div>
-            <div><strong>جستجوی محلی</strong><span>شروع از کرج و برغان</span></div>
+            <div><strong>جستجوی محلی</strong><span>شهر و محله خودت را انتخاب کن</span></div>
             <div><strong>پروفایل حرفه‌ای</strong><span>برای کسب‌وکارها</span></div>
           </div>
 

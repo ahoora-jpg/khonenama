@@ -51,7 +51,7 @@ const websiteJsonLd = {
     "@type": "SearchAction",
     target: {
       "@type": "EntryPoint",
-      urlTemplate: "https://khonenama.ir/search?q={search_term_string}&location=کرج",
+      urlTemplate: "https://khonenama.ir/search?q={search_term_string}",
     },
     "query-input": "required name=search_term_string",
   },
@@ -104,11 +104,8 @@ const organizationJsonLd = {
     "خانه هوشمند",
   ],
   description:
-    "خونه نما (Khonenama) مرجع فضای داخلی خانه و دکوراسیون داخلی برای پیدا کردن و مقایسه فروشگاه‌ها و متخصصان مرتبط است، با شروع از کرج و خیابان برغان.",
-  areaServed: [
-    { "@type": "City", name: "کرج" },
-    { "@type": "AdministrativeArea", name: "البرز" },
-  ],
+    "خونه نما (Khonenama) مرجع سراسری فضای داخلی خانه و دکوراسیون داخلی برای پیدا کردن و مقایسه فروشگاه‌ها و متخصصان در شهرهای ایران است.",
+  areaServed: { "@type": "Country", name: "ایران" },
 };
 
 export default function HomePage() {

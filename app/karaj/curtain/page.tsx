@@ -79,6 +79,7 @@ export default function KarajCurtainPage() {
         },
       ]}
       guides={[
+        { title: "بورس پرده کرج", text: "برغان، میانجاده/حدادی و محور جاده ملارد", href: "/karaj/curtain/markets" },
         { title: "راهنمای جامع پرده", text: "انواع پرده و معیارهای انتخاب", href: "/category/curtain" },
         { title: "محاسبه متراژ پارچه پرده", text: "عرض ریل، Fullness و Pattern Repeat", href: "/tools/curtain-fabric-calculator" },
         { title: "راهنمای نصب پرده", text: "اندازه‌گیری، نصب سقفی و دیواری", href: "/magazine/curtain-installation-guide" },

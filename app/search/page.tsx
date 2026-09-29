@@ -78,7 +78,7 @@ export default async function SearchPage({
 }) {
   const params = await searchParams;
   const query = params.q?.trim() || "";
-  const location = params.location?.trim() || "کرج";
+  const location = params.location?.trim() || "";
   const onlyVerified = params.verified === "1";
   const onlyMedia = params.media === "1";
   const onlyPremium = params.premium === "1";

@@ -58,7 +58,7 @@ const initialState: FormState = {
   businessType: "store",
   businessName: "",
   categories: [],
-  city: "کرج",
+  city: "",
   area: "",
   address: "",
   instagram: "",

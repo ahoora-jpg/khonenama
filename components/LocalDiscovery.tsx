@@ -12,12 +12,12 @@ export default function LocalDiscovery() {
       <div className="shell">
         <div className="section-heading premium-heading">
           <div>
-            <span className="section-kicker">پیدا کردن نزدیک‌تر</span>
+            <span className="section-kicker">شروع محلی از کرج</span>
             <h2 id="local-discovery-title">از شهر و محله خودت شروع کن.</h2>
           </div>
           <p>
-            خونه نما جستجوی محلی را جدی می‌گیرد؛ چون برای انتخاب فروشگاه و مجری،
-            فاصله، نمونه‌کار و دسترسی واقعی مهم است.
+            کرج نخستین بازار محلی فعال خونه نماست؛ شهرهای دیگر به‌تدریج و بر اساس حضور واقعی کسب‌وکارها اضافه می‌شوند.
+            برای انتخاب فروشگاه و مجری، فاصله، نمونه‌کار و دسترسی واقعی مهم است.
           </p>
         </div>
 

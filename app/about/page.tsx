@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 const aboutFaqs = [
   {
     question: "خونه نما چیست؟",
-    answer: "خونه نما (Khonenama) مرجع فارسی برای شناخت و مقایسه موضوعات، فروشگاه‌ها و متخصصان مرتبط با دکوراسیون و فضای داخلی خانه است؛ با تمرکز اولیه بر کرج و استان البرز.",
+    answer: "خونه نما (Khonenama) مرجع فارسی برای شناخت و مقایسه موضوعات، فروشگاه‌ها و متخصصان مرتبط با دکوراسیون و فضای داخلی خانه در شهرهای ایران است.",
   },
   {
     question: "آیا خونه نما درباره نمای بیرونی ساختمان است؟",
@@ -120,7 +120,7 @@ export default function AboutPage() {
 
             <div className="about-feature-grid">
               <div><Search size={20} /><strong>جستجوی تخصصی</strong><span>از پرده و کفپوش تا طراحی داخلی و خانه هوشمند</span></div>
-              <div><MapPin size={20} /><strong>جستجوی محلی</strong><span>شروع از کرج و توسعه بر اساس حضور واقعی کسب‌وکارها</span></div>
+              <div><MapPin size={20} /><strong>جستجوی محلی</strong><span>توسعه شهر به شهر بر اساس حضور واقعی کسب‌وکارها</span></div>
               <div><Store size={20} /><strong>پروفایل حرفه‌ای</strong><span>اطلاعات، خدمات، ساعات کاری، گالری و راه‌های ارتباط</span></div>
               <div><ShieldCheck size={20} /><strong>درخواست خصوصی</strong><span>اطلاعات مشتری و پیشنهاد قیمت در صفحه عمومی نمایش داده نمی‌شود</span></div>
             </div>

@@ -36,7 +36,7 @@ export async function POST(
   const customerName = clean(body?.customerName, 100);
   const customerPhone = normalizeIranPhone(clean(body?.customerPhone, 40));
   const requestText = clean(body?.requestText, 1400);
-  const city = clean(body?.city, 80) || "کرج";
+  const city = clean(body?.city, 80);
   const area = clean(body?.area, 120);
   const budgetMin = Number.isFinite(Number(body?.budgetMin)) ? Math.max(0, Math.round(Number(body.budgetMin))) : null;
   const budgetMax = Number.isFinite(Number(body?.budgetMax)) ? Math.max(0, Math.round(Number(body.budgetMax))) : null;
@@ -77,7 +77,7 @@ export async function POST(
     )
     .bind(
       business.category_id || null,
-      city || business.city || "کرج",
+      city || business.city || "",
       area || business.area || "",
       customerName,
       customerPhone,

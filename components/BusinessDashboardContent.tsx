@@ -128,7 +128,7 @@ export default function BusinessDashboardContent() {
     { label: "نمایش در جستجو", value: "—", icon: BarChart3 },
   ];
   const displayName = profile.businessName || "کسب‌وکار شما";
-  const location = [profile.city || "کرج", profile.area].filter(Boolean).join("، ");
+  const location = [profile.city, profile.area].filter(Boolean).join("، ") || "محدوده ثبت نشده";
   const services = profile.services || [];
   const planLabel =
     profile.plan === "premium" ? "ویژه" :

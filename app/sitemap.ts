@@ -4,8 +4,8 @@ import { listPublishedBusinessSitemapEntries } from "@/lib/server/business-sitem
 
 const baseUrl = "https://khonenama.ir";
 const seoRefreshDate = "2026-09-25";
-const homepageBrandRefreshDate = "2026-09-28";
-const aboutBrandRefreshDate = "2026-09-28";
+const homepageBrandRefreshDate = "2026-09-29";
+const aboutBrandRefreshDate = "2026-09-29";
 const pillarRefreshDate = "2026-09-27";
 const categoryRefreshDate = "2026-09-28";
 
@@ -19,6 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl, lastModified: homepageBrandRefreshDate, changeFrequency: "daily", priority: 1 },
     { url: baseUrl + "/karaj", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.95 },
     { url: baseUrl + "/karaj/curtain", lastModified: pillarRefreshDate, changeFrequency: "daily", priority: 0.94 },
+    { url: baseUrl + "/karaj/curtain/markets", lastModified: "2026-09-29", changeFrequency: "weekly", priority: 0.93 },
     { url: baseUrl + "/karaj/flooring", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.92 },
     { url: baseUrl + "/karaj/carpet", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.88 },
     { url: baseUrl + "/karaj/wallpaper", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.88 },
