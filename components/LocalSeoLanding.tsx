@@ -22,6 +22,11 @@ const localSearchIntents: Record<string, SearchIntent[]> = {
       href: "/magazine/zebra-curtain-guide",
     },
     {
+      title: "قیمت پرده زبرا در کرج",
+      text: "برای مقایسه قیمت، نوع پارچه، ابعاد، مکانیزم، یراق، نصب و ضمانت را یکسان کنید؛ روش مقایسه قیمت زبرا را قبل از استعلام ببینید.",
+      href: "/magazine/zebra-curtain-price-guide",
+    },
+    {
       title: "پرده شید کرج",
       text: "شید ساده، اسکرین و بلک‌اوت کاربرد یکسانی ندارند؛ میزان نور، حریم خصوصی و نوع اتاق را در انتخاب لحاظ کنید.",
       href: "/magazine/shade-curtain-guide",
