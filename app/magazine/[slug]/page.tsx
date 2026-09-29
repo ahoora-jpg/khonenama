@@ -37,8 +37,8 @@ const SEO_METADATA_OVERRIDES: Record<string, { title?: string; description?: str
   "carpet-bedroom-guide": { title: "موکت اتاق خواب و کودک | پرز، نظافت و صدا" },
   "smart-home-rental-apartment-guide": { title: "خانه هوشمند برای مستأجرها | بدون تخریب" },
   "smart-home-without-internet-guide": {
-    title: "خانه هوشمند بدون اینترنت | کنترل محلی و قطع اینترنت",
-    description: "در زمان قطع اینترنت خانه هوشمند چه چیزهایی باید کار کنند؟ تفاوت شبکه داخلی و اینترنت، Local Control، کنترل دستی و وابستگی Cloud را قبل از خرید بررسی کنید.",
+    title: "با قطع اینترنت خانه هوشمند چه اتفاقی می‌افتد؟ | کنترل محلی",
+    description: "با قطع اینترنت خانه هوشمند چه اتفاقی می‌افتد؟ عملکرد کنترل محلی، شبکه داخلی، کلید فیزیکی، Matter و سرویس‌های Cloud را قبل از خرید و اجرا بررسی کنید.",
   },
   "matter-controller-thread-border-router-guide": { title: "Matter Controller یا Thread Border Router؟" },
   "knx-vs-matter-smart-home-guide": { title: "KNX یا Matter؟ | تفاوت و کاربرد در خانه هوشمند" },
