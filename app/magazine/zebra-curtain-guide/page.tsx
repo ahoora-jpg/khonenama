@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import GuidePage from "../[slug]/page";
 
 const slug = "zebra-curtain-guide";
-const title = "پرده زبرا چیست؟ مزایا، معایب و انواع پرده زبرا";
-const description = "پرده زبرا چیست و چه مزایا و معایبی دارد؟ انواع زبرا، کنترل نور، کاربرد در پذیرایی و اتاق خواب و نکات مهم قبل از خرید را مقایسه کنید.";
+const title = "پرده زبرا | انواع، مزایا، معایب و راهنمای خرید";
+const description = "پرده زبرا را از نظر انواع، مزایا و معایب، کنترل نور، کاربرد در پذیرایی و اتاق خواب، نصب و نکات مهم قبل از خرید بررسی کنید.";
 const url = `https://khonenama.ir/magazine/${slug}`;
 
 export const metadata: Metadata = {
