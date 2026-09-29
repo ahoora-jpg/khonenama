@@ -49,7 +49,10 @@ const SEO_METADATA_OVERRIDES: Record<string, { title?: string; description?: str
   "pantone-cloud-dancer-2026-interior-guide": { title: "رنگ سال ۲۰۲۶ Pantone | Cloud Dancer در دکوراسیون" },
   "biophilic-interior-design-guide-2026": { title: "طراحی بیوفیلیک در خانه | راهنمای کاربردی" },
   "smart-home-karaj-cost-guide": { title: "هزینه خانه هوشمند در کرج | عوامل قیمت" },
-  "smart-lighting-scenes-guide-2026": { title: "نورپردازی هوشمند | کلید، دیمر و سناریوها" },
+  "smart-lighting-scenes-guide-2026": {
+    title: "نور و روشنایی هوشمند | کلید، دیمر، سنسور و سناریو",
+    description: "راهنمای نور و روشنایی هوشمند خانه؛ کلید و دیمر هوشمند، سنسور، زون‌بندی، کنترل محلی و سناریوهای واقعی روشنایی را بررسی کنید.",
+  },
   "small-apartment-interior-design-guide": { title: "طراحی داخلی خانه کوچک | ۱۲ اصل کاربردی" },
   "smart-home-security-guide-2026": { title: "امنیت خانه هوشمند | ۹ اقدام ضروری" },
   "living-room-zoning-lighting-guide": { title: "چیدمان پذیرایی | زون‌بندی و نورپردازی" },
