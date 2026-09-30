@@ -1,8 +1,10 @@
 name: Live Production Smoke
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Deploy Cloudflare]
+    types: [completed]
 
 concurrency:
   group: khonenama-live-smoke
@@ -10,6 +12,7 @@ concurrency:
 
 jobs:
   smoke:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -87,6 +90,7 @@ jobs:
           expect_status 401 POST "$BASE/api/me/business/media/upload" >/dev/null
           expect_status 401 GET "$BASE/api/me/business/visibility" >/dev/null
           expect_status 401 GET "$BASE/api/admin/reviews" >/dev/null
+          expect_status 401 GET "$BASE/api/admin/readiness" >/dev/null
 
           login="$(expect_status 401 POST "$BASE/api/auth/business/login" '{"phone":"09120000000","password":"definitely-wrong-password"}')"
           echo "$login" | grep -q '"error":"INVALID_CREDENTIALS"'

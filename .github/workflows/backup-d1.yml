@@ -1,0 +1,50 @@
+name: Encrypted D1 Backup
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: khonenama-d1-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate backup credentials
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          D1_BACKUP_PASSPHRASE: ${{ secrets.D1_BACKUP_PASSPHRASE }}
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN" || (echo "Missing Cloudflare token" && exit 1)
+          test "${#D1_BACKUP_PASSPHRASE}" -ge 32 || (echo "Set a strong D1_BACKUP_PASSPHRASE secret (32+ characters) and store it outside GitHub for recovery" && exit 1)
+      - run: npm install
+      - name: Export and encrypt
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: 9bbb17f959c166a9e2b73c9a087c0beb
+          D1_BACKUP_PASSPHRASE: ${{ secrets.D1_BACKUP_PASSPHRASE }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          backup_dir="$(mktemp -d)"
+          trap 'rm -rf "$backup_dir"' EXIT
+          npx --no-install wrangler d1 export khonenama-db --remote --output "$backup_dir/database.sql"
+          test -s "$backup_dir/database.sql"
+          mkdir -p encrypted-backup
+          printf '%s' "$D1_BACKUP_PASSPHRASE" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --symmetric --cipher-algo AES256 --output encrypted-backup/database.sql.gpg "$backup_dir/database.sql"
+          (cd encrypted-backup && sha256sum database.sql.gpg > SHA256SUMS)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: encrypted-d1-${{ github.run_id }}
+          path: encrypted-backup/
+          retention-days: 7
+          if-no-files-found: error
