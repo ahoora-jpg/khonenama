@@ -9,6 +9,7 @@ import {
 } from "@/lib/business-taxonomy";
 import { hashPassword, validatePassword, verifyPassword } from "@/lib/server/password";
 import { createUniqueBusinessSlug } from "@/lib/business-slug";
+import { applyLaunchOffer } from "@/lib/server/launch-offer";
 
 function normalizeDigits(value: string) {
   const fa = "۰۱۲۳۴۵۶۷۸۹";
@@ -151,6 +152,9 @@ export async function POST(request: Request) {
       .first();
 
     let userId = existingUser?.id as string | undefined;
+    if (userId && await db.prepare("SELECT id FROM businesses WHERE owner_user_id=? AND status='suspended' LIMIT 1").bind(userId).first()) {
+      return Response.json({ok:false,error:"BUSINESS_SUSPENDED"},{status:403});
+    }
 
     if (email) {
       const emailOwner = await db
@@ -304,6 +308,7 @@ export async function POST(request: Request) {
     }
 
     stage = "session-create";
+    await applyLaunchOffer(db, createdBusinessId);
     const session = await createBusinessSession(userId, request);
 
     return Response.json(

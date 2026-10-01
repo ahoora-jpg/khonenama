@@ -19,9 +19,9 @@ export async function POST(
 
   const body = await request.json().catch(() => ({}));
   const planCode = typeof body?.planCode === "string" ? body.planCode : "";
-  const durationDays = Math.max(1, Math.min(3650, Number(body?.durationDays) || 30));
+  const durationDays = Number(body?.durationDays ?? 30);
   const note = typeof body?.note === "string" ? body.note.trim().slice(0, 500) : "";
-  if (!ALLOWED.has(planCode)) {
+  if (!ALLOWED.has(planCode) || !Number.isSafeInteger(durationDays) || durationDays < 1 || durationDays > 3650) {
     return Response.json({ ok: false, error: "INVALID_PLAN" }, { status: 400 });
   }
 
@@ -40,7 +40,10 @@ export async function POST(
 
   await db.prepare("CREATE TABLE IF NOT EXISTS business_admin_actions (id INTEGER PRIMARY KEY AUTOINCREMENT,business_id INTEGER,business_name TEXT,business_slug TEXT,action TEXT NOT NULL,previous_status TEXT,reason TEXT,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   const businessInfo = await db.prepare("SELECT name, slug FROM businesses WHERE id=?").bind(businessId).first();
-  const endsAtSql = planCode === "free" ? "NULL" : "datetime('now', '+" + durationDays + " days')";
+  const active = await db.prepare("SELECT s.ends_at, p.code FROM subscriptions s JOIN plans p ON p.id=s.plan_id WHERE s.business_id=? AND s.status='active' AND (s.ends_at IS NULL OR julianday(s.ends_at)>julianday('now')) ORDER BY s.id DESC LIMIT 1").bind(businessId).first();
+  const base = active?.code === planCode && active?.ends_at ? String(active.ends_at) : "now";
+  const endsAt = planCode === "free" ? null : (await db.prepare("SELECT datetime(?, ?) AS ends_at").bind(base, "+" + durationDays + " days").first())?.ends_at;
+  if (planCode !== "free" && !endsAt) return Response.json({ ok: false, error: "INVALID_EXPIRY" }, { status: 400 });
 
   await db.batch([
     db
@@ -48,9 +51,9 @@ export async function POST(
       .bind(businessId),
     db
       .prepare(
-        "INSERT INTO subscriptions (business_id, plan_id, status, starts_at, ends_at, is_test) VALUES (?, ?, 'active', CURRENT_TIMESTAMP, " + endsAtSql + ", 1)"
+        "INSERT INTO subscriptions (business_id, plan_id, status, starts_at, ends_at, is_test) VALUES (?, ?, 'active', CURRENT_TIMESTAMP, ?, 1)"
       )
-      .bind(businessId, plan.id),
+      .bind(businessId, plan.id, endsAt),
     db.prepare("INSERT INTO business_admin_actions (business_id,business_name,business_slug,action,reason) VALUES (?,?,?,'complimentary_plan',?)").bind(businessId,businessInfo?.name || '',businessInfo?.slug || '',JSON.stringify({planCode,durationDays,note})),
   ]);
 
@@ -59,5 +62,6 @@ export async function POST(
     complimentary: true,
     plan: { code: plan.code, name: plan.name },
     expiresInDays: planCode === "free" ? null : durationDays,
+    endsAt,
   });
 }

@@ -107,6 +107,8 @@ export async function getBusinessSession(request: Request) {
       .first();
 
     if (!row?.user_id) return null;
+    const membership = await db.prepare("SELECT b.status FROM businesses b JOIN business_members bm ON bm.business_id=b.id WHERE bm.user_id=? AND bm.status='active' AND bm.role IN ('owner','manager') ORDER BY b.id DESC LIMIT 1").bind(row.user_id).first();
+    if (membership?.status === "suspended") return null;
 
     await db
       .prepare("UPDATE auth_sessions SET last_seen_at = CURRENT_TIMESTAMP WHERE id = ?")

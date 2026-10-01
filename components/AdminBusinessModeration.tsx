@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import AdminBusinessHistory from "@/components/AdminBusinessHistory";
 import { CheckCircle2, Crown, FlaskConical, KeyRound, LogOut, RefreshCw, RotateCcw, Search, Sparkles, Store, Trash2, XCircle } from "lucide-react";
 
 type BusinessRow = {
@@ -29,6 +30,7 @@ type BusinessRow = {
 };
 
 type Summary = { total?: number; pending?: number; published?: number; active_subscriptions?: number; paid_count?: number; revenue?: number };
+const statusLabels: Record<string,string> = {published:'منتشرشده',pending:'در انتظار بررسی',draft:'پیش‌نویس',suspended:'تعلیق‌شده',verified:'تأییدشده',unverified:'تأییدنشده',created:'ایجادشده',redirected:'ارجاع به درگاه',failed:'ناموفق',cancelled:'لغوشده',refunded:'بازپرداخت‌شده'};
 
 export default function AdminBusinessModeration() {
   const [items, setItems] = useState<BusinessRow[]>([]);
@@ -83,11 +85,12 @@ export default function AdminBusinessModeration() {
     await load();
   }
 
-  async function setTestPlan(id: number, planCode: "free" | "pro" | "premium") {
+  async function setTestPlan(id: number, planCode: "free" | "pro" | "premium", giftDays?: number) {
     setMessage("");
-    const durationDays = planCode === "free" ? 30 : Number(window.prompt("این پلن چند روز به‌صورت هدیه/دستی فعال باشد؟", "30") || 0);
+    if(planCode === "free" && !window.confirm("اشتراک فعلی پایان می‌یابد و امکانات پایه باقی می‌ماند. ادامه می‌دهید؟")) return;
+    const durationDays = planCode === "free" ? 30 : giftDays ?? Number(window.prompt("این پلن چند روز به‌صورت هدیه فعال باشد؟", "60") || 0);
     if (planCode !== "free" && (!Number.isFinite(durationDays) || durationDays < 1)) return;
-    const note = window.prompt("علت فعال‌سازی را بنویسید (مثلاً آفر همکاری یا پرداخت دستی):", "") || "";
+    const note = window.prompt("علت هدیه را بنویسید (مثلاً همکاری یا معرفی کسب‌وکارهای دیگر):", "") || "";
     const response = await fetch("/api/admin/businesses/" + id + "/plan", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -220,7 +223,7 @@ export default function AdminBusinessModeration() {
             <article className={"admin-business-card glass-panel status-" + item.status} key={item.id}>
               <div className="admin-business-card-head">
                 <div>
-                  <span className="status-pill">{item.status}</span>
+                  <span className="status-pill">{statusLabels[item.status] || item.status}</span>
                   <h2>{item.name}</h2>
                   <small>{item.category_name || "بدون دسته"} · {item.city}، {item.area || "—"}</small>
                 </div>
@@ -232,7 +235,7 @@ export default function AdminBusinessModeration() {
               <div className="admin-business-meta">
                 <span>مالک: {item.owner_name || "—"}</span>
                 <span>موبایل: {item.owner_phone || item.phone || "—"}</span>
-                <span>وضعیت تأیید: {item.verification_status}</span>
+                <span>وضعیت تأیید: {statusLabels[item.verification_status] || item.verification_status}</span>
                 <span className={item.has_password ? "admin-auth-chip has-password" : "admin-auth-chip"}>
                   <KeyRound size={12} /> {item.has_password ? "رمز فعال" : "حساب قدیمی بدون رمز"}
                 </span>
@@ -241,7 +244,7 @@ export default function AdminBusinessModeration() {
                 </span>
                 {item.subscription_ends_at && <span>پایان اشتراک: {new Date(item.subscription_ends_at).toLocaleDateString("fa-IR")}</span>}
                 {item.complimentary ? <span className="admin-gift-chip">فعال‌سازی مدیریتی/هدیه</span> : null}
-                {item.last_payment_status && <span className={"admin-payment-chip status-" + item.last_payment_status}>پرداخت: {item.last_payment_status}{item.last_payment_amount ? " · " + Number(item.last_payment_amount).toLocaleString("fa-IR") + " تومان" : ""}</span>}
+                {item.last_payment_status && <span className={"admin-payment-chip status-" + item.last_payment_status}>پرداخت: {statusLabels[item.last_payment_status] || item.last_payment_status}؛ مبلغ و واحد پول در فهرست پرداخت‌ها</span>}
                 {item.last_payment_reference && <span>پیگیری: {item.last_payment_reference}</span>}
               </div>
 
@@ -254,6 +257,8 @@ export default function AdminBusinessModeration() {
                   </span>
                 </div>
                 <div className="admin-plan-test-actions">
+                  <button type="button" onClick={()=>setTestPlan(item.id,"pro",60)}>هدیه حرفه‌ای ۶۰روزه</button>
+                  <button type="button" onClick={()=>setTestPlan(item.id,"pro",90)}>هدیه حرفه‌ای ۹۰روزه</button>
                   <button type="button" className={(item.plan_code || "free") === "free" ? "is-active" : ""} onClick={() => setTestPlan(item.id, "free")}>
                     پایه
                   </button>
@@ -267,6 +272,7 @@ export default function AdminBusinessModeration() {
               </div>
 
               <div className="admin-business-actions">
+                <AdminBusinessHistory id={item.id} />
                 {item.status === "published" && (
                   <a className="pill-button" href={"/business/" + item.slug} target="_blank" rel="noreferrer">
                     <Store size={15} /> مشاهده صفحه عمومی
@@ -274,7 +280,7 @@ export default function AdminBusinessModeration() {
                 )}
                 {item.status !== "suspended" ? (
                   <button className="pill-button admin-reject" type="button" onClick={() => lifecycle(item, "remove")}>
-                    <Trash2 size={15} /> حذف از سایت
+                    <Trash2 size={15} /> تعلیق و مسدودسازی دسترسی
                   </button>
                 ) : (
                   <>
@@ -286,7 +292,7 @@ export default function AdminBusinessModeration() {
                     </button>
                   </>
                 )}
-                {item.status === "pending" && (
+                {item.status !== "suspended" && (item.status === "pending" || item.review_status === "pending" || item.verification_status === "unverified") && (
                   <>
                     <button className="pill-button admin-reject" type="button" onClick={() => review(item.id, "reject")}>
                       <XCircle size={15} /> رد درخواست تأیید

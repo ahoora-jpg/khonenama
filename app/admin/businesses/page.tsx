@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminBusinessModeration from "@/components/AdminBusinessModeration";
+import AdminLaunchOffer from "@/components/AdminLaunchOffer";
+import AdminPayments from "@/components/AdminPayments";
 
 export const metadata: Metadata = {
   title: "مدیریت کسب‌وکارها | خونه نما",
@@ -15,6 +17,8 @@ export default function AdminBusinessesPage() {
       <section className="inner-page dashboard-page">
         <div className="shell">
           <AdminBusinessModeration />
+          <AdminLaunchOffer />
+          <AdminPayments />
         </div>
       </section>
       <Footer />

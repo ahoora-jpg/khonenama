@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BusinessOnboardingWizard from "@/components/BusinessOnboardingWizard";
+import LaunchOfferBanner from "@/components/LaunchOfferBanner";
 import { BadgeCheck, MapPin, ShieldCheck, Store } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export default function RegisterBusinessPage() {
 
       <section className="inner-page register-page onboarding-page">
         <div className="shell">
+          <LaunchOfferBanner />
           <div className="onboarding-page-heading">
             <div>
               <span className="section-kicker">ثبت کسب‌وکار</span>

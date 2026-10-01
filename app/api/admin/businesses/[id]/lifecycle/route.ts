@@ -58,6 +58,7 @@ export async function POST(
   }
 
   if (action === "remove") {
+    if (business.status === "suspended") return Response.json({ ok: true, status: "suspended", unchanged: true });
     await db.batch([
       db
         .prepare(
@@ -73,6 +74,7 @@ export async function POST(
   }
 
   if (action === "restore") {
+    if (business.status !== "suspended") return Response.json({ ok: true, status: business.status, unchanged: true });
     const previous = await db
       .prepare(
         "SELECT previous_status FROM business_admin_actions WHERE business_id = ? AND action = 'remove' ORDER BY id DESC LIMIT 1"

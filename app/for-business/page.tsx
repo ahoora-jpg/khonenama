@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import LaunchOfferBanner from "@/components/LaunchOfferBanner";
 import { businessPlans } from "@/lib/business-plans";
 import { businessDiscoveryAnswers } from "@/lib/ai-search-content";
 import {
@@ -101,6 +102,7 @@ export default function ForBusinessPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <Header />
+      <div className="shell"><LaunchOfferBanner /></div>
 
       <section className="business-landing-hero">
         <div className="shell business-landing-grid">
