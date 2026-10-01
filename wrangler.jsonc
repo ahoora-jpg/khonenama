@@ -21,6 +21,9 @@
     }
   ],
   "keep_vars": true,
+  "routes": [
+    { "pattern": "www.khonenama.ir/*", "zone_name": "khonenama.ir" }
+  ],
   "vars": {
     "IMAGEKIT_URL_ENDPOINT": "https://ik.imagekit.io/khonenama"
   }
