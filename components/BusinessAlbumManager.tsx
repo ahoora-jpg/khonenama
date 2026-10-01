@@ -37,7 +37,7 @@ export default function BusinessAlbumManager() {
   return <section className="dashboard-panel glass-panel">
     <h2>آلبوم‌های نمونه‌کار</h2>
     <p>عکس‌های گالری را بر اساس پروژه یا نوع خدمت دسته‌بندی کنید و برای هر آلبوم توضیح کامل بنویسید. مشتری با کیوآرکد وارد گالری شما می‌شود و آلبوم دلخواه را باز می‌کند.</p>
-    {limit === 0 && <p>گالری ۵ عکس و کیوآرکد رایگان است. آلبوم‌بندی در اشتراک حرفه‌ای و ویژه فعال می‌شود؛ فروش اشتراک پس از راه‌اندازی پرداخت در دسترس خواهد بود.</p>}
+    {limit === 0 && <p>۶ تصویر شامل تصویر اصلی و نمونه‌کارها، همراه با کیوآرکد رایگان است. آلبوم‌بندی در اشتراک حرفه‌ای و ویژه فعال می‌شود؛ فروش اشتراک پس از راه‌اندازی پرداخت در دسترس خواهد بود.</p>}
     {albums.map(album => <div key={album.id} style={{ marginBottom: "0.75rem" }}>{album.title} <button type="button" className="pill-button" disabled={busy} onClick={() => remove(album.id)}>حذف آلبوم</button></div>)}
     {limit !== null && limit > 0 && <form onSubmit={create}>
       <p>ظرفیت آلبوم: {albums.length.toLocaleString("fa-IR")} از {limit.toLocaleString("fa-IR")}</p>

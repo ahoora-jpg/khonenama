@@ -16,7 +16,7 @@ export const planPresentation: Record<BusinessPlanCode, {
     shortLabel: "پایه",
     publicBadge: null,
     searchPriority: 0,
-    galleryLimit: 5,
+    galleryLimit: 6,
     albumLimit: 0,
     analytics: false,
     reviewReply: false,

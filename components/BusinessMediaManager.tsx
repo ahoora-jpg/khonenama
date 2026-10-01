@@ -190,7 +190,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
               ? "پلن ویژه؛ ظرفیت گالری گسترده"
               : plan === "pro"
                 ? "پلن حرفه‌ای؛ ظرفیت بیشتر گالری"
-                : "پلن پایه؛ تا ۵ تصویر"}
+                : "پلن پایه؛ ۶ تصویر شامل تصویر اصلی و نمونه‌کارها"}
           </small>
         </div>
 
@@ -213,6 +213,9 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
         </button>
       </div>
 
+      {plan === "free" && (
+        <p className="business-media-config-note">پیشنهاد برای ویترین شما: یک تصویر اصلی و پنج عکس نمونه‌کار. تصویر اصلی هم کاور است و هم بالای صفحه نمایش داده می‌شود؛ لازم نیست آن را دوباره بارگذاری کنید. ظرفیت کل ۶ تصویر است. برای پروژه‌های بیشتر و آلبوم‌بندی، امکانات پلن حرفه‌ای را ببینید.</p>
+      )}
       {!configured && (
         <div className="business-media-config-note">
           اتصال فضای تصاویر موقتاً در دسترس نیست. دوباره وارد پنل شوید یا با پشتیبانی تماس بگیرید.
