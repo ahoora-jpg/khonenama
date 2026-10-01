@@ -99,6 +99,7 @@ export default function Footer() {
         <div className="footer-bottom">
           <span>© ۲۰۲۶ خونه نما · همه حقوق محفوظ است.</span>
           <div className="footer-credit">
+            <a href="/admin/login" rel="nofollow" style={{ fontSize: "12px", fontWeight: 400 }}>ورود مدیریت</a>
             <span>طراحی و توسعه وب:</span>
             <a href="https://ahoora-studio.ir/" target="_blank" rel="noopener">
               Ahoora Studio <ExternalLink size={12} />
