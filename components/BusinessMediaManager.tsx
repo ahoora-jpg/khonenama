@@ -190,7 +190,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
               ? "پلن ویژه؛ ظرفیت گالری گسترده"
               : plan === "pro"
                 ? "پلن حرفه‌ای؛ ظرفیت بیشتر گالری"
-                : "پلن پایه؛ تا ۶ تصویر"}
+                : "پلن پایه؛ تا ۵ تصویر"}
           </small>
         </div>
 

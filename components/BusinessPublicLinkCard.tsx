@@ -105,6 +105,14 @@ export default function BusinessPublicLinkCard({
         </p>
       </div>
 
+      {isPublished && (
+        <div style={{ textAlign: "center", margin: "1rem 0" }}>
+          <img src="/api/me/business/qr" alt="کیوآرکد اختصاصی گالری کسب‌وکار" width={192} height={192} />
+          <p>از آلبوم کارهای ما دیدن کنید</p>
+          <a className="pill-button" href="/api/me/business/qr" download="khonenama-gallery.svg">دانلود کیوآرکد برای چاپ</a>
+          <small style={{ display: "block", marginTop: "0.5rem" }}>این کد با تغییر آدرس پروفایل ثابت می‌ماند و مستقیم گالری شما را باز می‌کند.</small>
+        </div>
+      )}
       <div className="business-public-link-box">
         {editing ? (
           <>

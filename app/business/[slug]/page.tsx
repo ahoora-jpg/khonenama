@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { env } from "cloudflare:workers";
+import { listBusinessAlbums } from "@/lib/server/business-albums";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import QuoteRequestForm from "@/components/QuoteRequestForm";
@@ -23,6 +25,7 @@ async function resolveBusiness(slug: string) {
   if (demo) {
     return {
       source: "demo" as const,
+      id: 0,
       slug: demo.slug,
       name: demo.name,
       description: demo.description,
@@ -59,6 +62,7 @@ async function resolveBusiness(slug: string) {
 
   return {
     source: "d1" as const,
+    id: live.id,
     slug: live.slug,
     name: live.name,
     description: live.description,
@@ -120,6 +124,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
     notFound();
   }
 
+  const albums = business.source === "d1" ? await listBusinessAlbums((env as any).DB, business.id) : [];
   const liveRelated = business.category
     ? await listPublishedBusinesses({ categorySlug: business.category, city: business.city, limit: 6 })
     : [];
@@ -210,7 +215,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
     <main>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd).replace(/</g, "\\u003c") }}
       />
       {business.source === "d1" && <BusinessAnalyticsTracker slug={business.slug} />}
       <Header />
@@ -313,9 +318,21 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
             </aside>
           </div>
 
-          <section className="profile-section">
+          <section className="profile-section" id="gallery">
             <span className="section-kicker">نمونه‌کار</span>
             <h2>گالری پروژه‌ها</h2>
+            {albums.map(album => (
+              <details key={album.id} className="glass-panel" style={{ padding: "1rem", marginBottom: "1rem" }}>
+                <summary style={{ cursor: "pointer", fontWeight: 700 }}>
+                  {album.media[0] && <img src={album.media[0].url} alt={album.title} width={96} height={72} loading="lazy" style={{ objectFit: "cover", borderRadius: 8, verticalAlign: "middle", marginInlineEnd: 12 }} />}
+                  {album.title} — {album.media.length.toLocaleString("fa-IR")} عکس
+                </summary>
+                {album.description && <p style={{ whiteSpace: "pre-wrap" }}>{album.description}</p>}
+                <div className="business-public-gallery">
+                  {album.media.map(item => <figure key={item.id}><img src={item.url} alt={item.altText || album.title} loading="lazy" />{item.altText && <figcaption>{item.altText}</figcaption>}</figure>)}
+                </div>
+              </details>
+            ))}
             {business.media.length ? (
               <div className="business-public-gallery">
                 {business.media.map((item: any) => (

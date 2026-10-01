@@ -131,18 +131,11 @@ export async function POST(request: Request) {
 
   const sortOrder = currentCount + 1;
 
-  if (kind === "cover") {
-    await owned.db
-      .prepare("UPDATE business_media SET kind = 'image' WHERE business_id = ? AND kind = 'cover'")
-      .bind(owned.business.id)
-      .run();
-  }
-
   const inserted = await owned.db
     .prepare(
       "INSERT INTO business_media " +
       "(business_id, kind, storage_key, alt_text, sort_order, provider, provider_file_id, file_url, file_path, thumbnail_url) " +
-      "VALUES (?, ?, ?, NULLIF(?, ''), ?, 'imagekit', ?, ?, ?, NULLIF(?, '')) RETURNING id"
+      "SELECT ?, ?, ?, NULLIF(?, ''), ?, 'imagekit', ?, ?, ?, NULLIF(?, '') WHERE (SELECT COUNT(*) FROM business_media WHERE business_id = ?) < ? AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
     )
     .bind(
       owned.business.id,
@@ -153,11 +146,19 @@ export async function POST(request: Request) {
       providerFileId,
       verified.url,
       verified.filePath,
-      verified.thumbnailUrl
+      verified.thumbnailUrl,
+      owned.business.id,
+      galleryLimit,
+      owned.business.id,
+      providerFileId
     )
     .first();
 
-  return Response.json({ ok: true, id: inserted?.id });
+  if (!inserted?.id) return Response.json({ ok: false, error: "GALLERY_LIMIT_REACHED", limit: galleryLimit }, { status: 409 });
+  if (kind === "cover") {
+    await owned.db.prepare("UPDATE business_media SET kind = 'image' WHERE business_id = ? AND kind = 'cover' AND id <> ?").bind(owned.business.id, inserted.id).run();
+  }
+  return Response.json({ ok: true, id: inserted.id });
 }
 
 export async function PATCH(request: Request) {

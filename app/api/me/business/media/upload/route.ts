@@ -122,7 +122,7 @@ export async function POST(request: Request) {
       .prepare(
         "INSERT INTO business_media " +
           "(business_id, kind, storage_key, alt_text, sort_order, provider, provider_file_id, file_url, file_path, thumbnail_url) " +
-          "VALUES (?, ?, ?, NULL, ?, 'imagekit', ?, ?, ?, NULLIF(?, '')) RETURNING id"
+          "SELECT ?, ?, ?, NULL, ?, 'imagekit', ?, ?, ?, NULLIF(?, '') WHERE (SELECT COUNT(*) FROM business_media WHERE business_id = ?) < ? AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
       )
       .bind(
         owned.business.id,
@@ -132,12 +132,17 @@ export async function POST(request: Request) {
         uploaded.fileId,
         verified.url,
         verified.filePath,
-        verified.thumbnailUrl
+        verified.thumbnailUrl,
+        owned.business.id,
+        galleryLimit,
+        owned.business.id,
+        uploaded.fileId
       )
       .first();
 
     if (!inserted?.id) {
-      throw new Error("MEDIA_INSERT_FAILED");
+      await deleteImageKitFile(uploaded.fileId).catch(() => {});
+      return Response.json({ ok: false, error: "GALLERY_LIMIT_REACHED", limit: galleryLimit }, { status: 409 });
     }
 
     return Response.json(

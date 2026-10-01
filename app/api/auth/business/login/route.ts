@@ -49,7 +49,7 @@ async function loginRateLimitState(db: any, keyHash: string) {
   await ensureLoginRateLimitSchema(db);
   const row = await db.prepare(
     "SELECT failures, window_started, blocked_until, " +
-    "CASE WHEN blocked_until IS NOT NULL AND blocked_until > CURRENT_TIMESTAMP THEN 1 ELSE 0 END AS blocked " +
+    "CASE WHEN blocked_until IS NOT NULL AND julianday(blocked_until) > julianday('now') THEN 1 ELSE 0 END AS blocked " +
     "FROM auth_rate_limits WHERE key_hash = ? LIMIT 1"
   ).bind(keyHash).first();
 
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
     const phone = normalizeIranPhone(typeof body?.phone === "string" ? body.phone : "");
     const password = typeof body?.password === "string" ? body.password : "";
 
-    if (!/^09\d{9}$/.test(phone) || password.length < 8) {
+    if (!/^09\d{9}$/.test(phone) || password.length < 8 || password.length > 128) {
       return Response.json({ ok: false, error: "INVALID_CREDENTIALS" }, { status: 400 });
     }
 

@@ -46,42 +46,38 @@ export async function activateSubscriptionFromVerifiedPayment(
       ? "NULL"
       : "datetime('now', '+30 days')";
 
-  await db.batch([
+  const payload = JSON.stringify({
+    activationId: crypto.randomUUID(),
+    businessId: Number(payment.business_id),
+    planCode: String(payment.plan_code),
+    activatedAt: new Date().toISOString(),
+  });
+  const results = await db.batch([
+    db.prepare(
+      "INSERT INTO payment_events (payment_id, event_type, provider_code, payload_json) SELECT ?, 'subscription_activated', ?, ? WHERE NOT EXISTS (SELECT 1 FROM payment_events WHERE payment_id = ? AND event_type = 'subscription_activated') AND EXISTS (SELECT 1 FROM payments WHERE id = ? AND status = 'verified')"
+    ).bind(paymentId, payment.provider_reference || null, payload, paymentId, paymentId),
     db
       .prepare(
-        "UPDATE invoices SET status = 'paid', paid_at = COALESCE(paid_at, CURRENT_TIMESTAMP), updated_at = CURRENT_TIMESTAMP WHERE id = ?"
+        "UPDATE invoices SET status = 'paid', paid_at = COALESCE(paid_at, CURRENT_TIMESTAMP), updated_at = CURRENT_TIMESTAMP WHERE id = ? AND EXISTS (SELECT 1 FROM payment_events WHERE payment_id = ? AND payload_json = ?)"
       )
-      .bind(payment.invoice_id),
+      .bind(payment.invoice_id, paymentId, payload),
     db
       .prepare(
-        "UPDATE subscriptions SET status = 'expired', ends_at = COALESCE(ends_at, CURRENT_TIMESTAMP) WHERE business_id = ? AND status = 'active'"
+        "UPDATE subscriptions SET status = 'expired', ends_at = COALESCE(ends_at, CURRENT_TIMESTAMP) WHERE business_id = ? AND status = 'active' AND EXISTS (SELECT 1 FROM payment_events WHERE payment_id = ? AND payload_json = ?)"
       )
-      .bind(payment.business_id),
+      .bind(payment.business_id, paymentId, payload),
     db
       .prepare(
-        "INSERT INTO subscriptions (business_id, plan_id, status, starts_at, ends_at) VALUES (?, ?, 'active', CURRENT_TIMESTAMP, " +
+        "INSERT INTO subscriptions (business_id, plan_id, status, starts_at, ends_at) SELECT ?, ?, 'active', CURRENT_TIMESTAMP, " +
           endsAtSql +
-          ")"
+          " WHERE EXISTS (SELECT 1 FROM payment_events WHERE payment_id = ? AND payload_json = ?)"
       )
-      .bind(payment.business_id, payment.plan_id),
-    db
-      .prepare(
-        "INSERT INTO payment_events (payment_id, event_type, provider_code, payload_json) VALUES (?, 'subscription_activated', ?, ?)"
-      )
-      .bind(
-        paymentId,
-        payment.provider_reference || null,
-        JSON.stringify({
-          businessId: Number(payment.business_id),
-          planCode: String(payment.plan_code),
-          activatedAt: new Date().toISOString(),
-        })
-      ),
+      .bind(payment.business_id, payment.plan_id, paymentId, payload),
   ]);
 
   return {
     ok: true,
-    idempotent: false,
+    idempotent: !results[0]?.meta?.changes,
     businessId: Number(payment.business_id),
     planCode: String(payment.plan_code),
     planName: String(payment.plan_name || ""),

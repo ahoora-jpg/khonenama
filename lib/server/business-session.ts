@@ -86,6 +86,12 @@ export async function createBusinessSession(userId: string, request: Request) {
 
 export async function getBusinessSession(request: Request) {
   try {
+    // Reject cross-site cookie mutations while preserving native Bearer clients.
+    if (!["GET", "HEAD", "OPTIONS"].includes(request.method.toUpperCase())) {
+      const origin = request.headers.get("origin");
+      if (request.headers.get("sec-fetch-site") === "cross-site") return null;
+      if (origin && origin !== new URL(request.url).origin) return null;
+    }
     const db = (env as any).DB;
     if (!db) return null;
 
@@ -95,7 +101,7 @@ export async function getBusinessSession(request: Request) {
     const tokenHash = await sha256(token);
     const row = await db
       .prepare(
-        "SELECT s.id AS session_id, s.user_id, s.expires_at, u.full_name, u.phone, u.phone_verified_at FROM auth_sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ? AND s.expires_at > CURRENT_TIMESTAMP AND u.status = 'active' LIMIT 1"
+        "SELECT s.id AS session_id, s.user_id, s.expires_at, u.full_name, u.phone, u.phone_verified_at FROM auth_sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ? AND julianday(s.expires_at) > julianday('now') AND u.status = 'active' LIMIT 1"
       )
       .bind(tokenHash)
       .first();

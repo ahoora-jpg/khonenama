@@ -29,7 +29,7 @@ export async function GET(request: Request) {
         checkoutImplemented: false,
         callbackImplemented: false,
         pricedPaidPlans: paidPlans.filter((plan) => plan.amountToman !== null && plan.purchasable).map((plan) => plan.code),
-        blockers: ["PAYMENT_PROVIDER_NOT_IMPLEMENTED", "PAID_PLAN_PRICING_NOT_ACTIVE", "CONCURRENT_ACTIVATION_NOT_VALIDATED", "LEGAL_AND_MERCHANT_APPROVAL_NOT_VERIFIED"],
+        blockers: ["PAYMENT_PROVIDER_NOT_IMPLEMENTED", "PAID_PLAN_PRICING_NOT_ACTIVE", "LEGAL_AND_MERCHANT_APPROVAL_NOT_VERIFIED"],
       },
       operationalChecks: {
         backupRestoreDrill: "not_verified",

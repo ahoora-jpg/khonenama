@@ -69,10 +69,15 @@ export async function createAdminCookie() {
 }
 
 export async function isAdminRequest(request: Request) {
+  if (!["GET", "HEAD", "OPTIONS"].includes(request.method.toUpperCase())) {
+    const origin = request.headers.get("origin");
+    if (request.headers.get("sec-fetch-site") === "cross-site" || (origin && origin !== new URL(request.url).origin)) return false;
+  }
   const secret = String((env as any).ADMIN_ACCESS_KEY || "");
   if (!secret) return false;
 
-  const token = cookieValue(request, COOKIE_NAME);
+  let token = "";
+  try { token = cookieValue(request, COOKIE_NAME); } catch { return false; }
   if (!token) return false;
 
   const [payload, signature] = token.split(".");
