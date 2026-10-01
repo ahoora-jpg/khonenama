@@ -101,3 +101,10 @@ test('Admin login rate limit counts concurrent attempts atomically and resets an
   assert.equal(results.filter(Boolean).length, 10);
   sqlite.exec("UPDATE admin_login_rate_limits SET window_started=datetime('now','-16 minutes')"); assert.equal(await limiter.allowAdminLogin(request), true);
 });
+test('Public links reject script URLs, credentials and false Instagram domains', () => {
+  const links = load('lib/public-links.ts');
+  for (const value of ['javascript:alert(1)', 'data:text/html,<script>', 'java\nscript:alert(1)', 'https://user:pass@example.com']) assert.equal(links.safeWebsiteUrl(value), '');
+  assert.equal(links.safeWebsiteUrl('example.com'), 'https://example.com/');
+  assert.equal(links.safeInstagramUrl('https://instagram.com.evil.example/profile'), '');
+  assert.equal(links.safeInstagramUrl('@real_vendor'), 'https://www.instagram.com/real_vendor');
+});

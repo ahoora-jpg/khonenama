@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { env } from "cloudflare:workers";
+import { safeWebsiteUrl, safeInstagramUrl } from "@/lib/public-links";
 import { listBusinessAlbums } from "@/lib/server/business-albums";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -71,8 +72,8 @@ async function resolveBusiness(slug: string) {
     address: live.address,
     phone: live.phone,
     whatsapp: live.whatsapp,
-    website: live.website,
-    instagram: live.instagram,
+    website: safeWebsiteUrl(live.website),
+    instagram: safeInstagramUrl(live.instagram),
     verified: live.verificationStatus === "verified" || live.verificationStatus === "professional",
     featured: live.featured,
     services: live.services,
