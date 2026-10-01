@@ -1,9 +1,9 @@
 import { ArrowUpLeft, MapPin, Search, Store } from "lucide-react";
 
 const links = [
-  { title: "دکوراسیون در کرج", text: "فروشگاه‌ها و متخصصان دکوراسیون در سراسر کرج", href: "/karaj", icon: MapPin },
-  { title: "دکوراسیون برغان", text: "پرده، کفپوش، دیوارپوش و خدمات نزدیک خیابان برغان", href: "/karaj/baraghan", icon: Store },
-  { title: "پرده در کرج", text: "فروشگاه‌ها و خدمات پرده، دوخت و نصب", href: "/karaj/curtain", icon: Search },
+  { title: "کسب‌وکارهای شهر شما", text: "شهر یا محله خود را در جستجو وارد کنید", href: "/search", icon: MapPin },
+  { title: "فروشگاه‌ها و متخصصان", text: "بر اساس نوع خدمت، اطلاعات و نمونه‌کار انتخاب کنید", href: "/#categories", icon: Search },
+  { title: "معرفی کسب‌وکار شما", text: "فروشگاه یا خدمات خود را با محدوده فعالیت واقعی معرفی کنید", href: "/register-business", icon: Store },
 ];
 
 export default function LocalDiscovery() {
@@ -12,11 +12,11 @@ export default function LocalDiscovery() {
       <div className="shell">
         <div className="section-heading premium-heading">
           <div>
-            <span className="section-kicker">شروع محلی از کرج</span>
+            <span className="section-kicker">دکوراسیون در شهرهای ایران</span>
             <h2 id="local-discovery-title">از شهر و محله خودت شروع کن.</h2>
           </div>
           <p>
-            کرج نخستین بازار محلی فعال خونه نماست؛ شهرهای دیگر به‌تدریج و بر اساس حضور واقعی کسب‌وکارها اضافه می‌شوند.
+            شهر و نوع خدمت موردنیاز را مشخص کنید و کسب‌وکارهای ثبت‌شده را بر اساس محدوده فعالیتشان بررسی کنید.
             برای انتخاب فروشگاه و مجری، فاصله، نمونه‌کار و دسترسی واقعی مهم است.
           </p>
         </div>

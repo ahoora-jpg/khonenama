@@ -47,7 +47,7 @@ export default function Hero() {
                 <MapPin size={20} />
                 <span>
                   <small>کجایی؟</small>
-                  <input name="location" aria-label="شهر یا محله" placeholder="مثلاً کرج، تهران یا مشهد" />
+                  <input name="location" aria-label="شهر یا محله" placeholder="نام شهر یا محله شما" />
                 </span>
               </label>
 

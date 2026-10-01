@@ -13,16 +13,14 @@ const groups = [
     ],
   },
   {
-    title: "بازار محلی فعال",
+    title: "انتخاب خدمات",
     links: [
-      ["دکوراسیون در کرج", "/karaj"],
-      ["پرده در کرج", "/karaj/curtain"],
-      ["کفپوش و پارکت در کرج", "/karaj/flooring"],
-      ["موکت در کرج", "/karaj/carpet"],
-      ["کاغذ دیواری در کرج", "/karaj/wallpaper"],
-      ["طراحی داخلی در کرج", "/karaj/interior-design"],
-      ["خانه هوشمند در کرج", "/karaj/smart-home"],
-      ["برغان کرج", "/karaj/baraghan"],
+      ["جستجو در شهر شما", "/search"],
+      ["محاسبه پارچه پرده", "/tools/curtain-fabric-calculator"],
+      ["برآورد کفپوش", "/tools/flooring-estimator"],
+      ["برآورد موکت", "/tools/carpet-estimator"],
+      ["محاسبه کاغذ دیواری", "/tools/wallpaper-calculator"],
+      ["برآورد خانه هوشمند", "/tools/smart-home-scope"],
     ],
   },
   {

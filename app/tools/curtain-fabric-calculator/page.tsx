@@ -166,7 +166,7 @@ export default function CurtainFabricCalculatorPage() {
             <div>
               <a href="/magazine/curtain-buying-guide">راهنمای خرید پرده <ArrowUpLeft size={15} /></a>
               <a href="/category/curtain">فروشگاه‌ها و متخصصان <ArrowUpLeft size={15} /></a>
-              <a href="/karaj/curtain">پرده در کرج <ArrowUpLeft size={15} /></a>
+              <a href="/category/curtain">فروشگاه‌ها و خدمات پرده <ArrowUpLeft size={15} /></a>
             </div>
           </section>
         </div>

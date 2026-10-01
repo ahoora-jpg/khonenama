@@ -162,7 +162,7 @@ export default function FlooringEstimatorPage() {
             <div>
               <a href="/magazine/parquet-vs-laminate">پارکت یا لمینت؟ <ArrowUpLeft size={15} /></a>
               <a href="/category/flooring">فروشگاه‌ها و متخصصان <ArrowUpLeft size={15} /></a>
-              <a href="/karaj/flooring">پارکت و لمینت در کرج <ArrowUpLeft size={15} /></a>
+              <a href="/category/flooring">فروشگاه‌ها و خدمات پارکت و لمینت <ArrowUpLeft size={15} /></a>
             </div>
           </section>
         </div>

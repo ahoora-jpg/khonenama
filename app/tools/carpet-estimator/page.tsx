@@ -138,7 +138,7 @@ export default function CarpetEstimatorPage() {
             <div>
               <a href="/magazine/carpet-buying-guide">راهنمای خرید موکت <ArrowUpLeft size={15} /></a>
               <a href="/category/carpet">فروشگاه‌ها و متخصصان <ArrowUpLeft size={15} /></a>
-              <a href="/karaj/carpet">موکت در کرج <ArrowUpLeft size={15} /></a>
+              <a href="/category/carpet">فروشگاه‌ها و خدمات موکت <ArrowUpLeft size={15} /></a>
             </div>
           </section>
         </div>

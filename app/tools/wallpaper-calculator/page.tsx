@@ -177,7 +177,7 @@ export default function WallpaperCalculatorPage() {
             <div>
               <a href="/magazine/wallpaper-guide">راهنمای انتخاب کاغذ دیواری <ArrowUpLeft size={15} /></a>
               <a href="/category/wallpaper">فروشگاه‌ها و متخصصان <ArrowUpLeft size={15} /></a>
-              <a href="/karaj/wallpaper">کاغذ دیواری در کرج <ArrowUpLeft size={15} /></a>
+              <a href="/category/wallpaper">فروشگاه‌ها و خدمات کاغذ دیواری <ArrowUpLeft size={15} /></a>
             </div>
           </section>
         </div>
