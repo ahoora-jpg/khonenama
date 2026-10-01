@@ -60,7 +60,7 @@ export default function Footer() {
       <div className="shell footer glass-panel premium-footer">
         <div className="footer-main">
           <div className="footer-brand-block">
-            <a className="brand footer-brand" href="/">خونه <span>نما</span></a>
+            <a className="brand footer-brand" href="/" aria-label="خونه نما"><img src="/khonenama-brand.webp" alt="خونه نما" width={660} height={203} style={{ width: "220px", maxWidth: "100%", height: "auto", display: "block" }} /></a>
             <p>خونه نما مرجع سراسری پیدا کردن و مقایسه فروشگاه‌ها، متخصصان و خدمات دکوراسیون و فضای داخلی خانه در شهرهای ایران است.</p>
 
             <div className="footer-mini-meta">

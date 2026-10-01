@@ -86,8 +86,8 @@ const organizationJsonLd = {
   ],
   logo: {
     "@type": "ImageObject",
-    url: "https://khonenama.ir/khonenama-logo.svg",
-    contentUrl: "https://khonenama.ir/khonenama-logo.svg",
+    url: "https://khonenama.ir/khonenama-brand.webp",
+    contentUrl: "https://khonenama.ir/khonenama-brand.webp",
     caption: "خونه نما",
   },
   mainEntityOfPage: "https://khonenama.ir/about",
