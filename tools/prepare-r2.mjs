@@ -11,7 +11,7 @@ const name = 'khonenama-business-media';
 if ((listed.result?.buckets || []).some(bucket => bucket.name === name)) {
   console.log('R2 bucket already exists:', name);
 } else {
-  const created = await fetch(base, { method: 'POST', headers, body: JSON.stringify({ name }) });
+  const created = await fetch(base, { method: 'POST', headers, body: JSON.stringify({ name, storage_class: 'Standard' }) });
   const result = await created.json();
   if (!created.ok || !result.success) throw new Error(`Cannot create R2 bucket: HTTP ${created.status}; ${JSON.stringify(result.errors)}`);
   console.log('Created private R2 bucket:', name);

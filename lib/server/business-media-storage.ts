@@ -21,7 +21,7 @@ async function downloadProcessedImage(url: string): Promise<Uint8Array> {
   const parsed = new URL(url);
   const endpoint = new URL(String((env as any).IMAGEKIT_URL_ENDPOINT));
   if (parsed.protocol !== "https:" || parsed.origin !== endpoint.origin) throw new Error("INVALID_MEDIA");
-  const response = await fetch(parsed, { redirect: "error" });
+  const response = await fetch(parsed, { redirect: "error", signal: AbortSignal.timeout(60_000) });
   if (!response.ok || !response.body || response.headers.get("content-type")?.split(";")[0] !== "image/webp") throw new Error("MEDIA_PROCESSING_FAILED");
   const reader = response.body.getReader();
   const chunks: Uint8Array[] = [];
@@ -48,6 +48,7 @@ async function downloadProcessedImage(url: string): Promise<Uint8Array> {
 }
 
 export async function deleteStoredBusinessImage(provider: string, fileId: string) {
+  if (provider !== "r2" && provider !== "imagekit") throw new Error("INVALID_MEDIA_PROVIDER");
   if (provider !== "r2") return deleteImageKitFile(fileId);
   if (!KEY_PATTERN.test(fileId)) throw new Error("INVALID_MEDIA_KEY");
   const bucket = (env as any).BUSINESS_MEDIA;

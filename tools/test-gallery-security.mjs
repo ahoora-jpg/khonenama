@@ -10,7 +10,7 @@ import QRCode from 'qrcode';
 function load(path, imports = {}) {
   const exports = {};
   const code = ts.transpileModule(readFileSync(path, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true } }).outputText;
-  vm.runInNewContext(code, { exports, require: name => { assert.ok(name in imports, name); return imports[name]; }, Response, Request, File, URL, crypto: webcrypto, console, Date, Set, Map, TextEncoder });
+  vm.runInNewContext(code, { exports, require: name => { assert.ok(name in imports, name); return imports[name]; }, Response, Request, File, URL, TransformStream, crypto: webcrypto, console, Date, Set, Map, TextEncoder });
   return exports;
 }
 function fixture(plan = 'pro') {
@@ -77,6 +77,7 @@ test('Concurrent photo uploads cannot exceed six and rejected uploads are remove
   const removed = []; let sequence = 0;
   const route = load('app/api/me/business/media/upload/route.ts', {
     '@/lib/business-entitlements': load('lib/business-entitlements.ts'),
+    '@/lib/server/business-upload-form': load('lib/server/business-upload-form.ts'),
     '@/lib/server/business-media': { getOwnedBusiness: async () => ({ db, business: { id: 1 } }), ensureBusinessMediaSchema: async () => {} },
     '@/lib/server/business-media-storage': { mediaStorageConfigured: () => true, uploadStoredBusinessImage: async () => { const id = 'new' + (++sequence); return { provider: 'imagekit', fileId: id, filePath: '/khonenama/businesses/1/' + id, fileType: 'image', mime: 'image/jpeg', size: 4, url: 'https://example.test/' + id, thumbnailUrl: '' }; }, deleteStoredBusinessImage: async (_provider, id) => removed.push(id) },
   });

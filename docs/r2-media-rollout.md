@@ -33,3 +33,16 @@ Deleting a gallery image removes both R2 variants. Failed partial writes are cle
 Changing the provider flag back to imagekit changes future uploads only. Keep the R2
 binding while any existing record uses R2. Backups, a full old-image migration and a
 restore drill are separate tasks and have not been performed by this rollout.
+
+## Pre-activation checks completed
+
+The entire multipart upload is bounded to 9 MiB before parsing (the actual file remains
+limited to 8 MiB). Transfers from the transitional encoder are bounded to 8 MiB and
+60 seconds, reject redirects and unknown origins, and require WebP content. Unit tests
+cover oversized extra form fields and downloads, invalid request bodies, unknown
+storage providers, partial writes, preview privacy, and unchanged ImageKit mode.
+
+Account activation and R2 API permission are still outstanding: the current GitHub
+deployment token returns HTTP 403 / code 10000 for R2. After owner activates billing,
+create the bucket via dashboard or grant the deployment token the narrowly scoped
+Workers R2 Storage Write permission. Never paste credentials into chat.

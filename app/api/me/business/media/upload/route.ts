@@ -1,5 +1,6 @@
 import { normalizePlanCode, planPresentation } from "@/lib/business-entitlements";
 import { ensureBusinessMediaSchema, getOwnedBusiness } from "@/lib/server/business-media";
+import { readBusinessUploadForm } from "@/lib/server/business-upload-form";
 import {
   deleteStoredBusinessImage,
   mediaStorageConfigured,
@@ -63,8 +64,14 @@ export async function POST(request: Request) {
     );
   }
 
-  const form = await request.formData().catch(() => null);
-  const file = form?.get("file");
+  let form: FormData;
+  try {
+    form = await readBusinessUploadForm(request);
+  } catch (error) {
+    const tooLarge = error instanceof Error && error.message === "FILE_TOO_LARGE";
+    return Response.json({ ok: false, error: tooLarge ? "FILE_TOO_LARGE" : "INVALID_FILE" }, { status: tooLarge ? 413 : 400 });
+  }
+  const file = form.get("file");
 
   if (!(file instanceof File) || file.size < 1) {
     return Response.json({ ok: false, error: "INVALID_FILE" }, { status: 400 });

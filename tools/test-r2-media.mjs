@@ -8,10 +8,10 @@ import { webcrypto } from 'node:crypto';
 function load(path, imports, globals = {}) {
   const exports = {};
   const code = ts.transpileModule(readFileSync(path, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
-  vm.runInNewContext(code, { exports, require: name => { assert.ok(name in imports, name); return imports[name]; }, URL, Response, Request, Headers, File, crypto: webcrypto, console, Uint8Array, Set, Number, ...globals });
+  vm.runInNewContext(code, { exports, require: name => { assert.ok(name in imports, name); return imports[name]; }, URL, Response, Request, Headers, File, AbortSignal, crypto: webcrypto, console, Uint8Array, Set, Number, ...globals });
   return exports;
 }
-function storageFixture({ mode = 'r2', failThumbnail = false, badFolder = false, badDimensions = false } = {}) {
+function storageFixture({ mode = 'r2', failThumbnail = false, badFolder = false, badDimensions = false, externalUrl = false, oversizedDownload = false } = {}) {
   const objects = new Map();
   const deletedTemps = [];
   const bucket = {
@@ -23,10 +23,10 @@ function storageFixture({ mode = 'r2', failThumbnail = false, badFolder = false,
     '@/lib/server/imagekit': {
       imageKitServerConfigured: () => true,
       uploadImageKitFile: async () => ({ fileId: 'temporary' }),
-      getImageKitFileDetails: async () => ({ fileId: 'temporary', filePath: '/khonenama/businesses/' + (badFolder ? 2 : 1) + '/image.webp', fileType: 'image', mime: 'image/webp', size: 4, width: badDimensions ? 9000 : 2560, height: 1920, url: 'https://ik.imagekit.io/khonenama/image.webp' }),
+      getImageKitFileDetails: async () => ({ fileId: 'temporary', filePath: '/khonenama/businesses/' + (badFolder ? 2 : 1) + '/image.webp', fileType: 'image', mime: 'image/webp', size: 4, width: badDimensions ? 9000 : 2560, height: 1920, url: externalUrl ? 'https://untrusted.example/image.webp' : 'https://ik.imagekit.io/khonenama/image.webp' }),
       deleteImageKitFile: async id => deletedTemps.push(id),
     },
-  }, { fetch: async () => new Response(new Uint8Array([1, 2, 3, 4]), { headers: { 'Content-Type': 'image/webp' } }) });
+  }, { fetch: async () => new Response(oversizedDownload ? new Uint8Array(9 * 1024 * 1024) : new Uint8Array([1, 2, 3, 4]), { headers: { 'Content-Type': 'image/webp' } }) });
   const upload = () => api.uploadStoredBusinessImage(new File(['raw'], 'image.jpg', { type: 'image/jpeg' }), { folder: '/khonenama/businesses/1', fileName: 'image.jpg', businessId: 1 });
   return { api, upload, objects, deletedTemps };
 }
@@ -69,6 +69,15 @@ test('ImageKit mode preserves its permanent file and never writes R2', async () 
 test('R2 deletion rejects arbitrary paths', async () => {
   const f = storageFixture();
   await assert.rejects(f.api.deleteStoredBusinessImage('r2', '../other'), /INVALID_MEDIA_KEY/);
+  await assert.rejects(f.api.deleteStoredBusinessImage('unknown-provider', 'temporary'), /INVALID_MEDIA_PROVIDER/);
+});
+test('Untrusted URLs and oversized downloads never persist to R2', async () => {
+  for (const options of [{ externalUrl: true }, { oversizedDownload: true }]) {
+    const f = storageFixture(options);
+    await assert.rejects(f.upload(), /INVALID_MEDIA|FILE_TOO_LARGE/);
+    assert.equal(f.objects.size, 0);
+    assert.equal(f.deletedTemps.length, 1);
+  }
 });
 
 function servingFixture({ published = true, paused = false, owner = false, registered = true } = {}) {
