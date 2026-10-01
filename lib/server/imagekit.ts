@@ -72,6 +72,8 @@ export async function uploadImageKitFile(
   form.append("fileName", options.fileName);
   form.append("folder", options.folder);
   form.append("useUniqueFileName", "true");
+  // Apply before permanent storage, including uploads from clients bypassing the browser.
+  form.append("transformation", JSON.stringify({ pre: "w-2560,h-2560,c-at_max,f-webp,q-90" }));
   if (options.tags) form.append("tags", options.tags);
 
   const response = await fetch("https://upload.imagekit.io/api/v1/files/upload", {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { prepareBusinessImage } from "@/lib/prepare-business-image";
 import {
   ArrowDown,
   ArrowUp,
@@ -77,7 +78,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
     }
 
     const form = new FormData();
-    form.append("file", file);
+    form.append("file", await prepareBusinessImage(file));
 
     const response = await fetch("/api/me/business/media/upload", {
       method: "POST",
@@ -116,7 +117,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
     setMessage("");
     try {
       for (let index = 0; index < selected.length; index += 1) {
-        setProgress("در حال آپلود تصویر " + (index + 1) + " از " + selected.length);
+        setProgress("در حال آماده‌سازی و آپلود تصویر " + (index + 1) + " از " + selected.length);
         await uploadOne(selected[index]);
       }
       setProgress("");
@@ -124,6 +125,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       await load();
     } catch (error: any) {
       setProgress("");
+      await load();
       setMessage(error?.message || "آپلود تصاویر انجام نشد.");
     } finally {
       setUploading(false);
