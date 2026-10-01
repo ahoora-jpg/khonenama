@@ -17,7 +17,6 @@ const links = [
   ["راهنماها", "/magazine"],
   ["ابزارها", "/tools"],
   ["پیگیری درخواست", "/request-status"],
-  ["ثبت کسب‌وکار", "/register-business"],
 ] as const;
 
 const androidDownloadUrl = "/download-app";
@@ -71,7 +70,6 @@ export default function Header() {
           <a className="icon-button desktop-search depth-button" href="/search" aria-label="جستجو">
             <Search size={19} />
           </a>
-          <a className="desktop-business-login" href="/for-business">برای کسب‌وکارها</a>
           <a className="desktop-business-login" href="/business/login">ورود کسب‌وکار</a>
           <a className="pill-button dark desktop-cta premium-cta-button" href="/register-business">
             <Store size={17} />

@@ -19,20 +19,15 @@ export default function Hero() {
           </div>
 
           <h1 className="hero-identity-title">
-            خونه نما؛ مرجع دکوراسیون داخلی و فضای داخلی خانه
+            فروشگاه و متخصص دکوراسیون داخلی را پیدا کن
           </h1>
         </header>
-
-        <div className="hero-showcase premium-visual-wrap">
-          <HeroCoverflow />
-        </div>
 
         <div className="hero-after-showcase">
           <div className="hero-after-copy">
             <h2 className="hero-slogan">برای خونه‌ات، بهتر انتخاب کن.</h2>
             <p className="hero-lead">
-              خونه نما (Khonenama) برای پیدا کردن و مقایسه فروشگاه‌ها، متخصصان، متریال و ایده‌های
-              دکوراسیون و فضای داخلی خانه ساخته شده؛ از پرده و کفپوش تا طراحی داخلی و خانه هوشمند.
+              از پرده و کفپوش تا طراحی داخلی؛ خدمات را پیدا کن، نمونه‌کارها را ببین و با کسب‌وکار مرتبط تماس بگیر.
             </p>
           </div>
 
@@ -56,7 +51,7 @@ export default function Hero() {
                 </span>
               </label>
 
-              <button type="submit">جستجو <ArrowUpLeft size={17} /></button>
+              <button type="submit">پیدا کن <ArrowUpLeft size={17} /></button>
             </form>
 
             <div className="quick-links" aria-label="جستجوهای محبوب">
@@ -76,6 +71,9 @@ export default function Hero() {
           <a href="/#categories" className="hero-scroll-hint">
             <WandSparkles size={16} /> دیدن دسته‌بندی‌ها
           </a>
+        </div>
+        <div className="hero-showcase premium-visual-wrap">
+          <HeroCoverflow />
         </div>
       </div>
     </section>
