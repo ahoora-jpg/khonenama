@@ -84,6 +84,10 @@ jobs:
           echo "$robots" | grep -q 'Disallow: /api'
 
           expect_status 401 GET "$BASE/api/me/business" >/dev/null
+          expect_status 401 GET "$BASE/api/me/business/qr" >/dev/null
+          expect_status 401 GET "$BASE/api/me/business/albums" >/dev/null
+          expect_status 401 POST "$BASE/api/me/business/albums" '{"title":"unauthorized","description":"","mediaIds":[1]}' >/dev/null
+          expect_status 404 GET "$BASE/g/invalid" >/dev/null
           expect_status 401 GET "$BASE/api/me/business/leads" >/dev/null
           expect_status 401 GET "$BASE/api/me/business/reviews" >/dev/null
           expect_status 401 GET "$BASE/api/me/business/media/auth" >/dev/null
