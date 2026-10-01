@@ -119,6 +119,8 @@ export type ImageKitFileDetails = {
   fileType: string;
   mime: string;
   size: number;
+  width: number;
+  height: number;
 };
 
 export async function getImageKitFileDetails(fileId: string): Promise<ImageKitFileDetails> {
@@ -153,6 +155,8 @@ export async function getImageKitFileDetails(fileId: string): Promise<ImageKitFi
     fileType: typeof details?.fileType === "string" ? details.fileType : "",
     mime: typeof details?.mime === "string" ? details.mime : "",
     size: Number(details?.size || 0),
+    width: Number(details?.width || 0),
+    height: Number(details?.height || 0),
   };
 }
 

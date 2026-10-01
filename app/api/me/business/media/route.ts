@@ -1,10 +1,9 @@
 import { normalizePlanCode, planPresentation } from "@/lib/business-entitlements";
 import { getOwnedBusiness, ensureBusinessMediaSchema } from "@/lib/server/business-media";
 import {
-  deleteImageKitFile,
   getImageKitFileDetails,
-  imageKitServerConfigured,
 } from "@/lib/server/imagekit";
+import { deleteStoredBusinessImage, mediaStorageConfigured, useR2Media } from "@/lib/server/business-media-storage";
 
 const MAX_MEDIA_BYTES = 8 * 1024 * 1024;
 const ALLOWED_IMAGE_MIME = new Set([
@@ -52,7 +51,7 @@ export async function GET(request: Request) {
 
   return Response.json({
     ok: true,
-    configured: imageKitServerConfigured(),
+    configured: mediaStorageConfigured(),
     media: rows?.results || [],
   });
 }
@@ -63,6 +62,9 @@ export async function POST(request: Request) {
     return Response.json({ ok: false, error: "UNAUTHENTICATED" }, { status: 401 });
   }
 
+  if (useR2Media()) {
+    return Response.json({ ok: false, error: "USE_SERVER_UPLOAD", uploadUrl: "/api/me/business/media/upload" }, { status: 410 });
+  }
   await ensureBusinessMediaSchema(owned.db);
 
   const body = await request.json().catch(() => ({}));
@@ -255,7 +257,7 @@ export async function DELETE(request: Request) {
 
   const media = await owned.db
     .prepare(
-      "SELECT id, provider_file_id, storage_key FROM business_media WHERE id = ? AND business_id = ? LIMIT 1"
+      "SELECT id, provider, provider_file_id, storage_key FROM business_media WHERE id = ? AND business_id = ? LIMIT 1"
     )
     .bind(mediaId, owned.business.id)
     .first();
@@ -265,7 +267,7 @@ export async function DELETE(request: Request) {
   }
 
   const fileId = String(media.provider_file_id || media.storage_key || "");
-  if (fileId) await deleteImageKitFile(fileId);
+  if (fileId) await deleteStoredBusinessImage(String(media.provider || "imagekit"), fileId);
 
   await owned.db
     .prepare("DELETE FROM business_media WHERE id = ? AND business_id = ?")

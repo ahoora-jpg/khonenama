@@ -1,6 +1,7 @@
 import { normalizePlanCode, planPresentation } from "@/lib/business-entitlements";
 import { ensureBusinessMediaSchema, getOwnedBusiness } from "@/lib/server/business-media";
 import { createImageKitUploadAuth, imageKitConfigured } from "@/lib/server/imagekit";
+import { useR2Media } from "@/lib/server/business-media-storage";
 
 export async function GET(request: Request) {
   const owned = await getOwnedBusiness(request);
@@ -8,6 +9,9 @@ export async function GET(request: Request) {
     return Response.json({ ok: false, error: "UNAUTHENTICATED" }, { status: 401 });
   }
 
+  if (useR2Media()) {
+    return Response.json({ ok: false, error: "USE_SERVER_UPLOAD", uploadUrl: "/api/me/business/media/upload" }, { status: 410, headers: { "Cache-Control": "no-store" } });
+  }
   if (!imageKitConfigured()) {
     return Response.json({ ok: false, error: "IMAGEKIT_NOT_CONFIGURED" }, { status: 503 });
   }

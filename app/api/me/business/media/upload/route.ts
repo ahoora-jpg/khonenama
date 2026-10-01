@@ -1,11 +1,10 @@
 import { normalizePlanCode, planPresentation } from "@/lib/business-entitlements";
 import { ensureBusinessMediaSchema, getOwnedBusiness } from "@/lib/server/business-media";
 import {
-  deleteImageKitFile,
-  getImageKitFileDetails,
-  imageKitServerConfigured,
-  uploadImageKitFile,
-} from "@/lib/server/imagekit";
+  deleteStoredBusinessImage,
+  mediaStorageConfigured,
+  uploadStoredBusinessImage,
+} from "@/lib/server/business-media-storage";
 
 const MAX_MEDIA_BYTES = 8 * 1024 * 1024;
 const ALLOWED_IMAGE_MIME = new Set([
@@ -42,8 +41,8 @@ export async function POST(request: Request) {
     return Response.json({ ok: false, error: "UNAUTHENTICATED" }, { status: 401 });
   }
 
-  if (!imageKitServerConfigured()) {
-    return Response.json({ ok: false, error: "IMAGEKIT_NOT_CONFIGURED" }, { status: 503 });
+  if (!mediaStorageConfigured()) {
+    return Response.json({ ok: false, error: "MEDIA_STORAGE_NOT_CONFIGURED" }, { status: 503 });
   }
 
   await ensureBusinessMediaSchema(owned.db);
@@ -79,41 +78,27 @@ export async function POST(request: Request) {
 
   const folder = "/khonenama/businesses/" + owned.business.id;
   let uploadedFileId = "";
+  let uploadedProvider = "imagekit";
 
   try {
-    const uploaded = await uploadImageKitFile(file, {
+    const verified = await uploadStoredBusinessImage(file, {
       fileName: safeFileName(file.name),
       folder,
       tags: "khonenama,business-gallery",
+      businessId: Number(owned.business.id),
     });
-    uploadedFileId = uploaded.fileId;
-
-    const verified = await getImageKitFileDetails(uploaded.fileId);
-    const expectedFolder = folder + "/";
-
-    if (
-      verified.fileId !== uploaded.fileId ||
-      !verified.filePath.startsWith(expectedFolder) ||
-      verified.fileType !== "image" ||
-      !ALLOWED_IMAGE_MIME.has(verified.mime) ||
-      !Number.isFinite(verified.size) ||
-      verified.size < 1 ||
-      verified.size > MAX_MEDIA_BYTES ||
-      !verified.url
-    ) {
-      await deleteImageKitFile(uploaded.fileId).catch(() => {});
-      return Response.json({ ok: false, error: "INVALID_MEDIA" }, { status: 400 });
-    }
+    uploadedFileId = verified.fileId;
+    uploadedProvider = verified.provider;
 
     const duplicate = await owned.db
       .prepare(
         "SELECT id FROM business_media WHERE business_id = ? AND provider_file_id = ? LIMIT 1"
       )
-      .bind(owned.business.id, uploaded.fileId)
+      .bind(owned.business.id, verified.fileId)
       .first();
 
     if (duplicate?.id) {
-      await deleteImageKitFile(uploaded.fileId).catch(() => {});
+      await deleteStoredBusinessImage(uploadedProvider, uploadedFileId).catch(() => {});
       return Response.json({ ok: false, error: "MEDIA_ALREADY_REGISTERED" }, { status: 409 });
     }
 
@@ -122,26 +107,27 @@ export async function POST(request: Request) {
       .prepare(
         "INSERT INTO business_media " +
           "(business_id, kind, storage_key, alt_text, sort_order, provider, provider_file_id, file_url, file_path, thumbnail_url) " +
-          "SELECT ?, ?, ?, NULL, ?, 'imagekit', ?, ?, ?, NULLIF(?, '') WHERE (SELECT COUNT(*) FROM business_media WHERE business_id = ?) < ? AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
+          "SELECT ?, ?, ?, NULL, ?, ?, ?, ?, ?, NULLIF(?, '') WHERE (SELECT COUNT(*) FROM business_media WHERE business_id = ?) < ? AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
       )
       .bind(
         owned.business.id,
         kind,
-        uploaded.fileId,
+        verified.fileId,
         currentCount + 1,
-        uploaded.fileId,
+        uploadedProvider,
+        verified.fileId,
         verified.url,
         verified.filePath,
         verified.thumbnailUrl,
         owned.business.id,
         galleryLimit,
         owned.business.id,
-        uploaded.fileId
+        verified.fileId
       )
       .first();
 
     if (!inserted?.id) {
-      await deleteImageKitFile(uploaded.fileId).catch(() => {});
+      await deleteStoredBusinessImage(uploadedProvider, uploadedFileId).catch(() => {});
       return Response.json({ ok: false, error: "GALLERY_LIMIT_REACHED", limit: galleryLimit }, { status: 409 });
     }
 
@@ -160,7 +146,7 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     if (uploadedFileId) {
-      await deleteImageKitFile(uploadedFileId).catch(() => {});
+      await deleteStoredBusinessImage(uploadedProvider, uploadedFileId).catch(() => {});
     }
 
     const message = error instanceof Error ? error.message : "";
@@ -171,6 +157,12 @@ export async function POST(request: Request) {
     }
     if (message === "IMAGEKIT_NOT_CONFIGURED") {
       return Response.json({ ok: false, error: "IMAGEKIT_NOT_CONFIGURED" }, { status: 503 });
+    }
+    if (message === "MEDIA_STORAGE_NOT_CONFIGURED") {
+      return Response.json({ ok: false, error: message }, { status: 503 });
+    }
+    if (message === "INVALID_MEDIA" || message === "MEDIA_PROCESSING_FAILED") {
+      return Response.json({ ok: false, error: "MEDIA_PROCESSING_FAILED" }, { status: 422 });
     }
     return Response.json({ ok: false, error: "MEDIA_UPLOAD_FAILED" }, { status: 500 });
   }

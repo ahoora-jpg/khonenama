@@ -78,7 +78,7 @@ test('Concurrent photo uploads cannot exceed six and rejected uploads are remove
   const route = load('app/api/me/business/media/upload/route.ts', {
     '@/lib/business-entitlements': load('lib/business-entitlements.ts'),
     '@/lib/server/business-media': { getOwnedBusiness: async () => ({ db, business: { id: 1 } }), ensureBusinessMediaSchema: async () => {} },
-    '@/lib/server/imagekit': { imageKitServerConfigured: () => true, uploadImageKitFile: async () => ({ fileId: 'new' + (++sequence) }), getImageKitFileDetails: async id => ({ fileId: id, filePath: '/khonenama/businesses/1/' + id, fileType: 'image', mime: 'image/jpeg', size: 4, url: 'https://example.test/' + id, thumbnailUrl: '' }), deleteImageKitFile: async id => removed.push(id) },
+    '@/lib/server/business-media-storage': { mediaStorageConfigured: () => true, uploadStoredBusinessImage: async () => { const id = 'new' + (++sequence); return { provider: 'imagekit', fileId: id, filePath: '/khonenama/businesses/1/' + id, fileType: 'image', mime: 'image/jpeg', size: 4, url: 'https://example.test/' + id, thumbnailUrl: '' }; }, deleteStoredBusinessImage: async (_provider, id) => removed.push(id) },
   });
   const upload = () => { const form = new FormData(); form.set('file', new File(['test'], 'test.jpg', { type: 'image/jpeg' })); return route.POST(new Request('https://khonenama.ir/api/me/business/media/upload', { method: 'POST', body: form })); };
   const responses = await Promise.all([upload(), upload()]);

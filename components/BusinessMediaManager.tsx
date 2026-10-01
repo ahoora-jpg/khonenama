@@ -87,7 +87,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
 
     const result = await response.json().catch(() => ({}));
     if (!response.ok || !result?.ok) {
-      if (result?.error === "IMAGEKIT_NOT_CONFIGURED") {
+      if (result?.error === "IMAGEKIT_NOT_CONFIGURED" || result?.error === "MEDIA_STORAGE_NOT_CONFIGURED") {
         setConfigured(false);
         throw new Error("فضای تصاویر هنوز به سایت متصل نشده است.");
       }
@@ -99,6 +99,9 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       }
       if (result?.error === "INVALID_FILE_TYPE") {
         throw new Error("فرمت این تصویر مجاز نیست.");
+      }
+      if (result?.error === "MEDIA_PROCESSING_FAILED") {
+        throw new Error("آماده‌سازی این تصویر انجام نشد. عکس دیگری انتخاب کنید یا دوباره تلاش کنید.");
       }
       throw new Error("آپلود تصویر انجام نشد.");
     }

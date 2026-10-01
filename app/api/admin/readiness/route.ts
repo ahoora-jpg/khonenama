@@ -23,7 +23,12 @@ export async function GET(request: Request) {
       ok: true,
       checkedAt: new Date().toISOString(),
       database: { connected: true, missingTables },
-      media: { provider: "imagekit", serverUploadConfigured: Boolean(imagekit.privateKey && imagekit.urlEndpoint) },
+      media: {
+        provider: (env as any).MEDIA_STORAGE_PROVIDER === "r2" ? "r2" : "imagekit",
+        encoder: "imagekit",
+        r2Bound: Boolean((env as any).BUSINESS_MEDIA),
+        serverUploadConfigured: Boolean(imagekit.privateKey && imagekit.urlEndpoint) && ((env as any).MEDIA_STORAGE_PROVIDER !== "r2" || Boolean((env as any).BUSINESS_MEDIA)),
+      },
       billing: {
         readyForRealPayments: false,
         checkoutImplemented: false,
