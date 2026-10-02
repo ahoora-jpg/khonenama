@@ -16,14 +16,18 @@ if(!business)throw Error('Business profile unavailable');
 console.log('Profile',JSON.stringify({id:business.id,name:business.name,slug:business.slug,status:business.status}));
 const isTest=newlyCreated||String(business.name).includes('آزمایشی');
 if(!isTest){console.log('Existing real business preserved; no media or profile mutations');process.exit(3);}
+await request('/api/me/business/visibility',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({ownerPaused:false})});
 const currentMedia=await request('/api/me/business/media');
 if(!(currentMedia.body?.media?.length)){const imagePath=process.env.TEST_BUSINESS_IMAGE||'public/images/editorial/photo-1780817612741-f8f3785d9908.webp';const data=new FormData();data.set('file',new File([readFileSync(imagePath)],'khonenama-test-cover.webp',{type:'image/webp'}));await request('/api/me/business/media/upload',{method:'POST',body:data});}
-await request('/api/me/business/media');
+const verifiedMedia=await request('/api/me/business/media');
+for(const media of verifiedMedia.body?.media||[]){const response=await fetch(media.file_url,{signal:AbortSignal.timeout(90000)});const bytes=await response.arrayBuffer();report.push({check:'stored-image',status:response.status,type:response.headers.get('content-type'),bytes:bytes.byteLength});}
 await request('/api/me/business/public-link',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({slug:business.slug})});
 const qr=await request('/api/me/business/qr');
 mkdirSync('outputs',{recursive:true});if(qr.response.ok)writeFileSync('outputs/test-business-qr.svg',qr.text);
 await request('/business/'+encodeURIComponent(business.slug));
 await request('/g/'+business.id);
+const search=await request('/api/v1/businesses?q='+encodeURIComponent('غرفه آزمایشی')+'&location='+encodeURIComponent('تهران'));
+report.push({check:'search-matches-test-business',matched:search.text.includes(business.slug)});
 await request('/api/me/business/albums');
 const paused=await request('/api/me/business/visibility',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({ownerPaused:true})});
 await request('/api/auth/logout',{method:'POST'});

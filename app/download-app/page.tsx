@@ -75,7 +75,7 @@ export default function DownloadAppPage() {
 
           <p className="app-download-security">
             فایل رسمی فقط از همین صفحه یا مخزن رسمی GitHub خونه نما دریافت شود. اثرانگشت SHA-256 نسخه ۱.۱.۰:
-            <code>68c0e20f9984871bf30ccd5e1dbafa4e01b3453779f8edb8b0c603421d632f0b</code>
+            <code>43e0fc19d58f6e44e1bb7cbc394ecb7e5515f07c8bdea072a33726474d7ea43c</code>
           </p>
         </div>
       </section>
