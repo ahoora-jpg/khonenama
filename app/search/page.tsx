@@ -77,8 +77,8 @@ export default async function SearchPage({
   }>;
 }) {
   const params = await searchParams;
-  const query = params.q?.trim() || "";
-  const location = params.location?.trim() || "";
+  const query = normalizeSearchText(params.q || "");
+  const location = normalizeSearchText(params.location || "");
   const onlyVerified = params.verified === "1";
   const onlyMedia = params.media === "1";
   const onlyPremium = params.premium === "1";
@@ -143,7 +143,7 @@ export default async function SearchPage({
         <div className="shell">
           <div className="page-heading">
             <span className="section-kicker">نتایج جستجو</span>
-            <h1>{query || "دکوراسیون"} در {location}</h1>
+            <h1>{query || "دکوراسیون"}{location ? " در " + location : "؛ جستجو در سراسر ایران"}</h1>
             <p>
               کسب‌وکارهای منتشرشده خونه نما بر اساس عبارت جستجو و موقعیت نمایش داده می‌شوند.
             </p>
