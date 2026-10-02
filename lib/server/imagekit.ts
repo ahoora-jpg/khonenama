@@ -128,7 +128,7 @@ export async function getImageKitFileDetails(fileId: string): Promise<ImageKitFi
   if (!privateKey) throw new Error("IMAGEKIT_NOT_CONFIGURED");
 
   const response = await fetch(
-    "https://api.imagekit.io/v1/files/" + encodeURIComponent(fileId),
+    "https://api.imagekit.io/v1/files/" + encodeURIComponent(fileId) + "/details",
     {
       method: "GET",
       headers: { Authorization: imageKitAuthHeader(privateKey) },

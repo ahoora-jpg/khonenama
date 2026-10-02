@@ -17,9 +17,9 @@ console.log('Profile',JSON.stringify({id:business.id,name:business.name,slug:bus
 const isTest=newlyCreated||String(business.name).includes('آزمایشی');
 if(!isTest){console.log('Existing real business preserved; no media or profile mutations');process.exit(3);}
 const currentMedia=await request('/api/me/business/media');
-if(!(currentMedia.body?.media?.length)){const imagePath='C:/Users/Apadana/OneDrive/Desktop/ChatGPT Image Oct 1, 2026, 07_00_02 PM-1.png';const data=new FormData();data.set('file',new File([readFileSync(imagePath)],'khonenama-test-cover.png',{type:'image/png'}));data.set('kind','cover');data.set('altText','تصویر معرفی خونه‌نما برای آزمون گالری');await request('/api/me/business/media/upload',{method:'POST',body:data});}
+if(!(currentMedia.body?.media?.length)){const imagePath=process.env.TEST_BUSINESS_IMAGE||'public/images/editorial/photo-1780817612741-f8f3785d9908.webp';const data=new FormData();data.set('file',new File([readFileSync(imagePath)],'khonenama-test-cover.webp',{type:'image/webp'}));await request('/api/me/business/media/upload',{method:'POST',body:data});}
 await request('/api/me/business/media');
-await request('/api/me/business/public-link');
+await request('/api/me/business/public-link',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({slug:business.slug})});
 const qr=await request('/api/me/business/qr');
 mkdirSync('outputs',{recursive:true});if(qr.response.ok)writeFileSync('outputs/test-business-qr.svg',qr.text);
 await request('/business/'+encodeURIComponent(business.slug));

@@ -26,3 +26,20 @@ test('Every server upload requests processing before storage, with no raw fallba
   fail = true;
   await assert.rejects(upload(), /IMAGEKIT_UPLOAD_FAILED/);
 });
+
+test('File verification uses the ImageKit details endpoint while deletion uses the asset endpoint', async () => {
+  const exports = {};
+  const calls = [];
+  vm.runInNewContext(ts.transpileModule(readFileSync('lib/server/imagekit.ts', 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, {
+    exports, require: () => ({ env: { IMAGEKIT_PRIVATE_KEY: 'test-only' } }), btoa,
+    fetch: async (url, options) => {
+      calls.push([url, options.method]);
+      return new Response(JSON.stringify({ fileId: 'asset/id', fileType: 'image', mime: 'image/webp', size: 128, width: 100, height: 100 }), { status: 200 });
+    },
+  });
+  const details = await exports.getImageKitFileDetails('asset/id');
+  assert.equal(details.fileType, 'image');
+  assert.equal(details.size, 128);
+  await exports.deleteImageKitFile('asset/id');
+  assert.deepEqual(calls, [['https://api.imagekit.io/v1/files/asset%2Fid/details', 'GET'], ['https://api.imagekit.io/v1/files/asset%2Fid', 'DELETE']]);
+});
