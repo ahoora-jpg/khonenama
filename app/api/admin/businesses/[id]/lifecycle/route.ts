@@ -1,5 +1,7 @@
 import { env } from "cloudflare:workers";
 import { isAdminRequest } from "@/lib/server/admin-session";
+import { ensureBusinessMediaSchema } from "@/lib/server/business-media";
+import { deleteStoredBusinessImage } from "@/lib/server/business-media-storage";
 
 async function ensureAuditTable(db: any) {
   await db.prepare(
@@ -101,6 +103,12 @@ export async function POST(
     return Response.json({ ok: true, status: restoreStatus, action: "restore" });
   }
 
+  if (business.status !== "suspended") {
+    return Response.json({ ok: false, error: "REMOVE_BEFORE_PURGE" }, { status: 409 });
+  }
+  if (body?.confirmationName !== business.name) {
+    return Response.json({ ok: false, error: "CONFIRMATION_REQUIRED" }, { status: 400 });
+  }
   const invoiceCount = await db
     .prepare("SELECT COUNT(*) AS count FROM invoices WHERE business_id = ?")
     .bind(businessId)
@@ -117,14 +125,26 @@ export async function POST(
     );
   }
 
-  await db
+  await ensureBusinessMediaSchema(db);
+  const media = await db.prepare("SELECT provider, provider_file_id, storage_key FROM business_media WHERE business_id = ?").bind(businessId).all();
+  try {
+    for (const image of media.results || []) {
+      const fileId = String(image.provider_file_id || image.storage_key || "");
+      if (fileId) await deleteStoredBusinessImage(String(image.provider || "imagekit"), fileId);
+    }
+  } catch {
+    return Response.json({ ok: false, error: "MEDIA_CLEANUP_FAILED" }, { status: 502 });
+  }
+  const deletion = await db.batch([db
     .prepare(
       "INSERT INTO business_admin_actions (business_id, business_name, business_slug, action, previous_status, reason) VALUES (?, ?, ?, 'purge', ?, NULLIF(?, ''))"
     )
-    .bind(businessId, business.name, business.slug, business.status, reason)
-    .run();
-
-  await db.prepare("DELETE FROM businesses WHERE id = ?").bind(businessId).run();
+    .bind(businessId, business.name, business.slug, business.status, reason),
+    db.prepare("DELETE FROM businesses WHERE id = ? AND status = 'suspended'").bind(businessId),
+  ]);
+  if (!deletion[1]?.meta?.changes) {
+    return Response.json({ ok: false, error: "BUSINESS_CHANGED" }, { status: 409 });
+  }
 
   return Response.json({ ok: true, action: "purge", deleted: true });
 }

@@ -38,10 +38,11 @@ export default function AdminBusinessModeration() {
   const [message, setMessage] = useState("");
   const [query, setQuery] = useState("");
   const [summary, setSummary] = useState<Summary>({});
+  const [showRemoved, setShowRemoved] = useState(false);
+  const [busyId, setBusyId] = useState<number | null>(null);
 
   async function load() {
     setLoading(true);
-    setMessage("");
     try {
       const response = await fetch("/api/admin/businesses", { cache: "no-store" });
       if (response.status === 401) {
@@ -115,9 +116,10 @@ export default function AdminBusinessModeration() {
     setMessage("");
 
     let reason = "";
+    let confirmationName = "";
     if (action === "remove") {
       reason = window.prompt("دلیل حذف از سایت را بنویسید:", "") || "";
-      if (!window.confirm("پروفایل «" + item.name + "» فوراً از نمایش عمومی حذف شود؟")) return;
+      if (!window.confirm("کسب‌وکار «" + item.name + "» از سایت و دسته‌بندی‌ها حذف و دسترسی غرفه مسدود شود؟ اطلاعات برای بازگردانی باقی می‌ماند.")) return;
     }
 
     if (action === "restore") {
@@ -133,19 +135,24 @@ export default function AdminBusinessModeration() {
         setMessage("حذف دائمی لغو شد؛ نام واردشده با نام کسب‌وکار یکسان نبود.");
         return;
       }
+      confirmationName = confirmation;
       reason = "permanent admin purge";
     }
 
+    setBusyId(item.id);
+    try {
     const response = await fetch("/api/admin/businesses/" + item.id + "/lifecycle", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action, reason }),
+      body: JSON.stringify({ action, reason, confirmationName }),
     });
     const result = await response.json().catch(() => ({}));
 
     if (!response.ok || !result?.ok) {
       if (result?.error === "FINANCIAL_RECORDS_MUST_BE_RETAINED") {
         setMessage("این کسب‌وکار سابقه مالی دارد؛ از سایت حذف می‌ماند اما سوابق مالی و حسابرسی نباید پاک شوند.");
+      } else if (result?.error === "MEDIA_CLEANUP_FAILED") {
+        setMessage("پاک‌کردن عکس‌ها کامل نشد؛ کسب‌وکار همچنان از سایت حذف است. دوباره تلاش کنید.");
       } else {
         setMessage("عملیات حذف/بازگردانی انجام نشد.");
       }
@@ -160,12 +167,23 @@ export default function AdminBusinessModeration() {
           : "کسب‌وکار به‌صورت دائمی حذف شد."
     );
     await load();
+    } catch {
+      setMessage("ارتباط با سرور برقرار نشد؛ دوباره تلاش کنید.");
+    } finally {
+      setBusyId(null);
+    }
   }
 
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
     window.location.href = "/admin/login";
   }
+
+  const filteredItems = items.filter((item) => {
+    if ((item.status === "suspended") !== showRemoved) return false;
+    const needle = query.trim().toLowerCase();
+    return !needle || [item.name, item.owner_name, item.owner_phone, item.phone].filter(Boolean).join(" ").toLowerCase().includes(needle);
+  });
 
   return (
     <div className="admin-moderation">
@@ -204,22 +222,16 @@ export default function AdminBusinessModeration() {
           placeholder="جستجو بین نام کسب‌وکار یا مالک؛ مثلاً مهرعلی علایی"
         />
       </div>
+      <div className="dashboard-heading-actions" role="group" aria-label="فیلتر کسب‌وکارها">
+        <button type="button" className={"pill-button" + (!showRemoved ? " dark" : "")} aria-pressed={!showRemoved} onClick={() => setShowRemoved(false)}>کسب‌وکارهای موجود</button>
+        <button type="button" className={"pill-button" + (showRemoved ? " dark" : "")} aria-pressed={showRemoved} onClick={() => setShowRemoved(true)}>حذف‌شده‌ها و مسدودشده‌ها</button>
+      </div>
 
       {loading ? (
         <div className="dashboard-panel glass-panel admin-loading">در حال دریافت اطلاعات...</div>
       ) : (
         <div className="admin-business-list">
-          {items
-            .filter((item) => {
-              const needle = query.trim().toLowerCase();
-              if (!needle) return true;
-              return [item.name, item.owner_name, item.owner_phone, item.phone]
-                .filter(Boolean)
-                .join(" ")
-                .toLowerCase()
-                .includes(needle);
-            })
-            .map((item) => (
+          {filteredItems.map((item) => (
             <article className={"admin-business-card glass-panel status-" + item.status} key={item.id}>
               <div className="admin-business-card-head">
                 <div>
@@ -279,15 +291,15 @@ export default function AdminBusinessModeration() {
                   </a>
                 )}
                 {item.status !== "suspended" ? (
-                  <button className="pill-button admin-reject" type="button" onClick={() => lifecycle(item, "remove")}>
-                    <Trash2 size={15} /> تعلیق و مسدودسازی دسترسی
+                  <button className="pill-button admin-reject" type="button" disabled={busyId === item.id} onClick={() => lifecycle(item, "remove")}>
+                    <Trash2 size={15} /> حذف از سایت
                   </button>
                 ) : (
                   <>
-                    <button className="pill-button" type="button" onClick={() => lifecycle(item, "restore")}>
+                    <button className="pill-button" type="button" disabled={busyId === item.id} onClick={() => lifecycle(item, "restore")}>
                       <RotateCcw size={15} /> بازگردانی
                     </button>
-                    <button className="pill-button admin-purge" type="button" onClick={() => lifecycle(item, "purge")}>
+                    <button className="pill-button admin-purge" type="button" disabled={busyId === item.id} onClick={() => lifecycle(item, "purge")}>
                       <Trash2 size={15} /> حذف دائمی
                     </button>
                   </>
@@ -306,7 +318,7 @@ export default function AdminBusinessModeration() {
             </article>
           ))}
 
-          {!items.length && (
+          {!filteredItems.length && (
             <div className="dashboard-panel glass-panel admin-loading">هیچ کسب‌وکاری برای نمایش وجود ندارد.</div>
           )}
         </div>
