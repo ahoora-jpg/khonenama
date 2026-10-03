@@ -19,8 +19,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install
+      - run: npm ci
       - name: Security audit
         run: npm audit --audit-level=high
       - run: npx tsc --noEmit
+      - run: node --test tools/test-build-glob.mjs
+      - run: npm run check:vinext
       - run: npm run build:vinext
