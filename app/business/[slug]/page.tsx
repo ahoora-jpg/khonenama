@@ -12,6 +12,9 @@ import { getPublishedBusiness, getBusinessSlugRedirect, isInternalTestBusinessSl
 import { BadgeCheck, BriefcaseBusiness, Clock3, Crown, Globe2, Instagram, MapPin, MessageCircle, Phone, Star } from "lucide-react";
 import { notFound, permanentRedirect } from "next/navigation";
 
+// Subscription visibility must be evaluated at request time, including at expiry.
+export const dynamic = "force-dynamic";
+
 const categorySeoLabels: Record<string, string> = {
   curtain: "پرده و خدمات پرده",
   flooring: "پارکت و کفپوش",
