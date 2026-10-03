@@ -89,13 +89,14 @@ export default function AdminBusinessModeration() {
   async function setTestPlan(id: number, planCode: "free" | "pro" | "premium", giftDays?: number) {
     setMessage("");
     if(planCode === "free" && !window.confirm("اشتراک فعلی پایان می‌یابد و امکانات پایه باقی می‌ماند. ادامه می‌دهید؟")) return;
-    const durationDays = planCode === "free" ? 30 : giftDays ?? Number(window.prompt("این پلن چند روز به‌صورت هدیه فعال باشد؟", "60") || 0);
+    const durationMonths = planCode === "free" || giftDays !== undefined ? undefined : Number(window.prompt("چند ماه هدیه فعال شود؟ هر ماه ۳۰ روز؛ مثلاً ۱۲ ماه", "12") || 0);
+    const durationDays = planCode === "free" ? 30 : giftDays ?? Number(durationMonths) * 30;
     if (planCode !== "free" && (!Number.isFinite(durationDays) || durationDays < 1)) return;
     const note = window.prompt("علت هدیه را بنویسید (مثلاً همکاری یا معرفی کسب‌وکارهای دیگر):", "") || "";
     const response = await fetch("/api/admin/businesses/" + id + "/plan", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ planCode, durationDays, note }),
+      body: JSON.stringify({ planCode, durationDays, durationMonths, note }),
     });
     const result = await response.json().catch(() => ({}));
 

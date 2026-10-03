@@ -27,9 +27,9 @@ type MediaItem = {
 };
 
 const limits: Record<string, number> = {
-  free: 6,
-  pro: 20,
-  premium: 40,
+  free: 10,
+  pro: 30,
+  premium: 60,
 };
 
 export default function BusinessMediaManager({ plan = "free" }: { plan?: string }) {
@@ -41,12 +41,14 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
   const [message, setMessage] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [altDraft, setAltDraft] = useState("");
+  const [uploadKind, setUploadKind] = useState<"image" | "cover" | "logo">("image");
   const fileRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
 
   const limit = limits[plan] || limits.free;
-  const remaining = Math.max(0, limit - media.length);
+  const remaining = Math.max(0, limit - media.filter(item => item.kind === "image").length);
 
+  const available = uploadKind === "image" ? remaining : media.some(item => item.kind === uploadKind) ? 0 : 1;
   const sortedMedia = useMemo(
     () => [...media].sort((a, b) => (a.kind === "cover" ? -1 : b.kind === "cover" ? 1 : a.sort_order - b.sort_order)),
     [media]
@@ -79,6 +81,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
     }
 
     const form = new FormData();
+    form.append("kind", uploadKind);
     form.append("file", await prepareBusinessImage(file));
 
     const response = await fetch("/api/me/business/media/upload", {
@@ -111,7 +114,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
   async function chooseFiles(files: FileList | null) {
     if (!files?.length) return;
 
-    const selected = Array.from(files).slice(0, remaining);
+    const selected = Array.from(files).slice(0, available);
     if (!selected.length) {
       setMessage("ظرفیت تصاویر این پلن تکمیل شده است.");
       return;
@@ -190,16 +193,17 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
 
       <div className="business-media-toolbar">
         <div>
-          <strong>{media.length} از {limit} تصویر</strong>
+          <strong>{media.filter(item => item.kind === "image").length} از {limit} تصویر</strong>
           <small>
             {plan === "premium"
               ? "پلن ویژه؛ ظرفیت گالری گسترده"
               : plan === "pro"
                 ? "پلن حرفه‌ای؛ ظرفیت بیشتر گالری"
-                : "پلن پایه؛ ۶ تصویر شامل تصویر اصلی و نمونه‌کارها"}
+                : "پایه؛ ۱۰ عکس نمونه‌کار، جدا از تصویر اصلی و پروفایل"}
           </small>
         </div>
 
+        <label>نوع عکس<select value={uploadKind} onChange={e => setUploadKind(e.target.value as "image" | "cover" | "logo")}><option value="image">نمونه‌کار</option><option value="cover">تصویر اصلی (یک عکس)</option><option value="logo">پروفایل (یک عکس)</option></select></label>
         <input
           ref={fileRef}
           type="file"
@@ -209,11 +213,11 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
           onChange={(event) => chooseFiles(event.target.files)}
         />
         <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={(event) => chooseFiles(event.target.files)} />
-        <button className="pill-button" type="button" disabled={uploading || !configured || remaining === 0} onClick={() => cameraRef.current?.click()}><Camera size={15} /> عکس گرفتن</button>
+        <button className="pill-button" type="button" disabled={uploading || !configured || available === 0} onClick={() => cameraRef.current?.click()}><Camera size={15} /> عکس گرفتن</button>
         <button
           className="pill-button dark"
           type="button"
-          disabled={uploading || !configured || remaining === 0}
+          disabled={uploading || !configured || available === 0}
           onClick={() => fileRef.current?.click()}
         >
           {uploading ? <Loader2 className="spin" size={15} /> : <Upload size={15} />}
@@ -222,7 +226,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       </div>
 
       {plan === "free" && (
-        <p className="business-media-config-note">پیشنهاد برای ویترین شما: یک تصویر اصلی و پنج عکس نمونه‌کار. تصویر اصلی هم کاور است و هم بالای صفحه نمایش داده می‌شود؛ لازم نیست آن را دوباره بارگذاری کنید. ظرفیت کل ۶ تصویر است. برای پروژه‌های بیشتر و آلبوم‌بندی، امکانات پلن حرفه‌ای را ببینید.</p>
+        <p className="business-media-config-note">ثبت‌نام شما با سطح پایه رایگان است: ۱۰ عکس نمونه‌کار، تصویر اصلی و پروفایل جداگانه. برای ۳۰ عکس و دسته‌بندی آلبوم‌ها سطح حرفه‌ای، و برای ۶۰ عکس سطح ویژه را انتخاب کنید.</p>
       )}
       {!configured && (
         <div className="business-media-config-note">
@@ -248,7 +252,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
               )}
 
               <div className="business-media-actions">
-                {item.kind !== "cover" && (
+                {item.kind === "image" && (
                   <button type="button" title="انتخاب به‌عنوان تصویر اصلی" onClick={() => patch(item.id, "cover")}>
                     <Star size={14} />
                   </button>
@@ -261,7 +265,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
                 </button>
                 <button
                   type="button"
-                  title="ویرایش توضیح تصویر"
+                  title="نام و شرح عکس"
                   onClick={() => {
                     setEditingId(item.id);
                     setAltDraft(item.alt_text || "");
@@ -279,7 +283,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
                   <input
                     value={altDraft}
                     onChange={(event) => setAltDraft(event.target.value)}
-                    placeholder="توضیح کوتاه تصویر برای دسترس‌پذیری و سئو"
+                    placeholder="نام و شرح کوتاه عکس"
                     maxLength={300}
                   />
                   <button
@@ -303,7 +307,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
         <div className="dashboard-upload business-media-empty">
           <ImagePlus size={25} />
           <strong>هنوز تصویری ثبت نشده است</strong>
-          <small>اولین تصویر به‌صورت خودکار تصویر اصلی پروفایل می‌شود.</small>
+          <small>نوع عکس را انتخاب کنید؛ برای تعویض تصویر اصلی یا پروفایل، عکس فعلی را حذف کنید.</small>
         </div>
       )}
     </section>

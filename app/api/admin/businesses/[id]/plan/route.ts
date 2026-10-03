@@ -19,9 +19,10 @@ export async function POST(
 
   const body = await request.json().catch(() => ({}));
   const planCode = typeof body?.planCode === "string" ? body.planCode : "";
-  const durationDays = Number(body?.durationDays ?? 30);
+  const durationMonths = body?.durationMonths === undefined ? null : Number(body.durationMonths);
+  const durationDays = durationMonths === null ? Number(body?.durationDays ?? 30) : durationMonths * 30;
   const note = typeof body?.note === "string" ? body.note.trim().slice(0, 500) : "";
-  if (!ALLOWED.has(planCode) || !Number.isSafeInteger(durationDays) || durationDays < 1 || durationDays > 3650) {
+  if ((durationMonths !== null && (!Number.isSafeInteger(durationMonths) || durationMonths < 1 || durationMonths > 120)) || !ALLOWED.has(planCode) || !Number.isSafeInteger(durationDays) || durationDays < 1 || durationDays > 3650) {
     return Response.json({ ok: false, error: "INVALID_PLAN" }, { status: 400 });
   }
 
@@ -54,7 +55,7 @@ export async function POST(
         "INSERT INTO subscriptions (business_id, plan_id, status, starts_at, ends_at, is_test) VALUES (?, ?, 'active', CURRENT_TIMESTAMP, ?, 1)"
       )
       .bind(businessId, plan.id, endsAt),
-    db.prepare("INSERT INTO business_admin_actions (business_id,business_name,business_slug,action,reason) VALUES (?,?,?,'complimentary_plan',?)").bind(businessId,businessInfo?.name || '',businessInfo?.slug || '',JSON.stringify({planCode,durationDays,note})),
+    db.prepare("INSERT INTO business_admin_actions (business_id,business_name,business_slug,action,reason) VALUES (?,?,?,'complimentary_plan',?)").bind(businessId,businessInfo?.name || '',businessInfo?.slug || '',JSON.stringify({planCode,durationDays,durationMonths,note})),
   ]);
 
   return Response.json({

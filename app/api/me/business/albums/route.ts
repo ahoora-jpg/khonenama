@@ -14,7 +14,7 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   if (!body || typeof body.title !== "string" || !body.title.trim() || body.title.length > 100 || typeof body.description !== "string" || body.description.length > 2000 || !Array.isArray(body.mediaIds)) return Response.json({ ok: false, error: "INVALID_ALBUM" }, { status: 400, headers });
   const ids = [...new Set<number>(body.mediaIds)];
-  if (!ids.length || ids.length > 40 || ids.some(id => !Number.isSafeInteger(id) || id < 1)) return Response.json({ ok: false, error: "INVALID_MEDIA" }, { status: 400, headers });
+  if (!ids.length || ids.length > 60 || ids.some(id => !Number.isSafeInteger(id) || id < 1)) return Response.json({ ok: false, error: "INVALID_MEDIA" }, { status: 400, headers });
   const limit = await getAlbumLimit(owned.db, owned.business.id);
   if (!limit) return Response.json({ ok: false, error: "PAID_PLAN_REQUIRED" }, { status: 403, headers });
   await ensureAlbumSchema(owned.db);

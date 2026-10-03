@@ -20,7 +20,7 @@ export async function GET(request: Request) {
 
   const [countRow, planRow] = await Promise.all([
     owned.db
-      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ?")
+      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ? AND kind = 'image'")
       .bind(owned.business.id)
       .first(),
     owned.db

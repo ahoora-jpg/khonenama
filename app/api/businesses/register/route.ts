@@ -9,7 +9,7 @@ import {
 } from "@/lib/business-taxonomy";
 import { hashPassword, validatePassword, verifyPassword } from "@/lib/server/password";
 import { createUniqueBusinessSlug } from "@/lib/business-slug";
-import { applyLaunchOffer } from "@/lib/server/launch-offer";
+
 
 function normalizeDigits(value: string) {
   const fa = "۰۱۲۳۴۵۶۷۸۹";
@@ -308,7 +308,7 @@ export async function POST(request: Request) {
     }
 
     stage = "session-create";
-    await applyLaunchOffer(db, createdBusinessId);
+    // All new businesses start on the free plan; upgrades happen after registration.
     const session = await createBusinessSession(userId, request);
 
     return Response.json(

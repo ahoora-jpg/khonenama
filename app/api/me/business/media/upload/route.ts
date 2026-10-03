@@ -48,22 +48,6 @@ export async function POST(request: Request) {
 
   await ensureBusinessMediaSchema(owned.db);
 
-  const [countRow, galleryLimit] = await Promise.all([
-    owned.db
-      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ?")
-      .bind(owned.business.id)
-      .first(),
-    getGalleryLimit(owned.db, Number(owned.business.id)),
-  ]);
-
-  const currentCount = Number(countRow?.count || 0);
-  if (currentCount >= galleryLimit) {
-    return Response.json(
-      { ok: false, error: "GALLERY_LIMIT_REACHED", limit: galleryLimit },
-      { status: 409 }
-    );
-  }
-
   let form: FormData;
   try {
     form = await readBusinessUploadForm(request);
@@ -71,6 +55,24 @@ export async function POST(request: Request) {
     const tooLarge = error instanceof Error && error.message === "FILE_TOO_LARGE";
     return Response.json({ ok: false, error: tooLarge ? "FILE_TOO_LARGE" : "INVALID_FILE" }, { status: tooLarge ? 413 : 400 });
   }
+  const kind = form.get("kind") === "cover" || form.get("kind") === "logo" ? String(form.get("kind")) : "image";
+  const [countRow, galleryLimit] = await Promise.all([
+    owned.db
+      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ? AND kind = ?")
+      .bind(owned.business.id, kind)
+      .first(),
+    getGalleryLimit(owned.db, Number(owned.business.id)),
+  ]);
+
+  const currentCount = Number(countRow?.count || 0);
+  const slotLimit = kind === "image" ? galleryLimit : 1;
+  if (currentCount >= slotLimit) {
+    return Response.json(
+      { ok: false, error: "GALLERY_LIMIT_REACHED", limit: galleryLimit },
+      { status: 409 }
+    );
+  }
+
   const file = form.get("file");
 
   if (!(file instanceof File) || file.size < 1) {
@@ -109,12 +111,12 @@ export async function POST(request: Request) {
       return Response.json({ ok: false, error: "MEDIA_ALREADY_REGISTERED" }, { status: 409 });
     }
 
-    const kind = currentCount === 0 ? "cover" : "image";
+
     const inserted = await owned.db
       .prepare(
         "INSERT INTO business_media " +
           "(business_id, kind, storage_key, alt_text, sort_order, provider, provider_file_id, file_url, file_path, thumbnail_url) " +
-          "SELECT ?, ?, ?, NULL, ?, ?, ?, ?, ?, NULLIF(?, '') WHERE (SELECT COUNT(*) FROM business_media WHERE business_id = ?) < ? AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
+          "SELECT ?, ?, ?, NULL, ?, ?, ?, ?, ?, NULLIF(?, '') WHERE (SELECT COUNT(*) FROM business_media WHERE business_id = ? AND kind = ?) < ? AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
       )
       .bind(
         owned.business.id,
@@ -127,7 +129,8 @@ export async function POST(request: Request) {
         verified.filePath,
         verified.thumbnailUrl,
         owned.business.id,
-        galleryLimit,
+        kind,
+        slotLimit,
         owned.business.id,
         verified.fileId
       )

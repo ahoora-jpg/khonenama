@@ -809,39 +809,14 @@ export default function BusinessOnboardingWizard() {
               </div>
             </div>
 
-            <div className="plan-choice-row">
-              <button
-                type="button"
-                className={
-                  form.plan === "free"
-                    ? "plan-choice is-selected"
-                    : "plan-choice"
-                }
-                onClick={() => update("plan", "free")}
-              >
-                <span>پایه</span>
-                <strong>رایگان</strong>
-                <small>شروع و انتشار پروفایل</small>
-              </button>
-              <button type="button" className="plan-choice is-disabled" disabled>
-                <span>حرفه‌ای</span>
-                <strong>به‌زودی</strong>
-                <small>پس از اتصال پرداخت از داخل پنل فعال می‌شود.</small>
-              </button>
-              <button type="button" className="plan-choice is-disabled" disabled>
-                <span>ویژه</span>
-                <strong>به‌زودی</strong>
-                <small>پس از اتصال پرداخت از داخل پنل فعال می‌شود.</small>
-              </button>
-            </div>
-
+            <p>ثبت اولیه با سطح پایه رایگان انجام می‌شود؛ پس از ثبت می‌توانید امکانات بیشتر را از پنل بررسی کنید.</p>
             {saved && (
               <div className="onboarding-success">
                 <CheckCircle2 size={22} />
                 <div>
                   <strong>پروفایل در دیتابیس خونه نما ذخیره شد.</strong>
                   <small>
-                    حساب شما از این پس با شماره همراه و رمز عبور قابل ورود است. حالا می‌توانید تصاویر و اطلاعات تکمیلی را از پنل مدیریت کنید.
+                    حساب شما از این پس با شماره همراه و رمز عبور قابل ورود است. اکنون ۱۰ عکس نمونه‌کار رایگان دارید؛ حرفه‌ای ۳۰ عکس با دسته‌بندی و ویژه ۶۰ عکس با دسته‌بندی دارد. تصویر اصلی و پروفایل جدا هستند. در پنل می‌توانید با دوربین گوشی عکس بگیرید یا از گالری انتخاب کنید.
                   </small>
                   <a className="pill-button dark onboarding-dashboard-link" href="/dashboard#media">
                     رفتن به پنل و افزودن تصاویر

@@ -24,8 +24,8 @@ function fixture(plan = 'pro') {
   return { db, sqlite, route, albums };
 }
 function request(body, method = 'POST') { return new Request('https://khonenama.ir/api/me/business/albums', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); }
-test('Free plan has six images including the cover and cannot create a paid album', async () => {
-  const entitlements = load('lib/business-entitlements.ts'); assert.equal(entitlements.planPresentation.free.galleryLimit, 6);
+test('Free plan has ten portfolio images excluding cover and profile and cannot create a paid album', async () => {
+  const entitlements = load('lib/business-entitlements.ts'); assert.equal(entitlements.planPresentation.free.galleryLimit, 10);
   const { route } = fixture('free'); assert.equal((await route.POST(request({ title: 'Project', description: '', mediaIds: [1] }))).status, 403);
 });
 test('Album rejects another business photo without creating data', async () => {
@@ -71,9 +71,10 @@ test('Cookie mutations from another origin fail before any database access', asy
 test('ISO session expiry expires at its actual time, not at the end of the day', () => {
   const sqlite = new DatabaseSync(':memory:'); assert.equal(sqlite.prepare("SELECT julianday('2026-10-01T01:00:00.000Z') > julianday('2026-10-01 02:00:00') AS valid").get().valid, 0);
 });
-test('Concurrent photo uploads cannot exceed six and rejected uploads are removed', async () => {
+test('Concurrent photo uploads cannot exceed ten portfolio photos and rejected uploads are removed', async () => {
   const { db, sqlite } = fixture('free');
   sqlite.exec("ALTER TABLE business_media ADD COLUMN kind TEXT; ALTER TABLE business_media ADD COLUMN storage_key TEXT; ALTER TABLE business_media ADD COLUMN provider TEXT; ALTER TABLE business_media ADD COLUMN provider_file_id TEXT; ALTER TABLE business_media ADD COLUMN file_path TEXT; ALTER TABLE business_media ADD COLUMN thumbnail_url TEXT; INSERT INTO business_media(id,business_id,file_url,sort_order) VALUES(3,1,'a',2),(4,1,'b',3),(5,1,'c',4),(6,1,'d',5)");
+  sqlite.exec("UPDATE business_media SET kind='image'; INSERT INTO business_media(id,business_id,kind,file_url,sort_order) VALUES(7,1,'image','e',6),(8,1,'image','f',7),(9,1,'image','g',8),(10,1,'image','h',9),(11,1,'cover','cover',10),(12,1,'logo','logo',11)");
   const removed = []; let sequence = 0;
   const route = load('app/api/me/business/media/upload/route.ts', {
     '@/lib/business-entitlements': load('lib/business-entitlements.ts'),
@@ -81,9 +82,16 @@ test('Concurrent photo uploads cannot exceed six and rejected uploads are remove
     '@/lib/server/business-media': { getOwnedBusiness: async () => ({ db, business: { id: 1 } }), ensureBusinessMediaSchema: async () => {} },
     '@/lib/server/business-media-storage': { mediaStorageConfigured: () => true, uploadStoredBusinessImage: async () => { const id = 'new' + (++sequence); return { provider: 'imagekit', fileId: id, filePath: '/khonenama/businesses/1/' + id, fileType: 'image', mime: 'image/jpeg', size: 4, url: 'https://example.test/' + id, thumbnailUrl: '' }; }, deleteStoredBusinessImage: async (_provider, id) => removed.push(id) },
   });
-  const upload = () => { const form = new FormData(); form.set('file', new File(['test'], 'test.jpg', { type: 'image/jpeg' })); return route.POST(new Request('https://khonenama.ir/api/me/business/media/upload', { method: 'POST', body: form })); };
+  const upload = (kind = "image") => { const form = new FormData(); form.set("kind", kind); form.set('file', new File(['test'], 'test.jpg', { type: 'image/jpeg' })); return route.POST(new Request('https://khonenama.ir/api/me/business/media/upload', { method: 'POST', body: form })); };
   const responses = await Promise.all([upload(), upload()]);
-  assert.deepEqual(responses.map(r => r.status).sort(), [201, 409]); assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM business_media WHERE business_id=1').get().n, 6); assert.equal(removed.length, 1);
+  assert.deepEqual(responses.map(r => r.status).sort(), [201, 409]); assert.equal(sqlite.prepare("SELECT COUNT(*) n FROM business_media WHERE business_id=1 AND kind='image'").get().n, 10); assert.equal(removed.length, 1);
+  // Cover and profile have independent single slots even with all ten portfolio slots used.
+  sqlite.exec("DELETE FROM business_media WHERE id IN (11,12)");
+  assert.equal((await upload('cover')).status, 201);
+  assert.equal((await upload('logo')).status, 201);
+  assert.equal((await upload('cover')).status, 409);
+  assert.equal((await upload('logo')).status, 409);
+  assert.equal(sqlite.prepare("SELECT COUNT(*) n FROM business_media WHERE business_id=1 AND kind='image'").get().n, 10);
 });
 test('Concurrent verified-payment callbacks activate a subscription exactly once', async () => {
   const { db, sqlite } = fixture();

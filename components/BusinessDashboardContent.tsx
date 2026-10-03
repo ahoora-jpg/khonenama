@@ -175,6 +175,7 @@ export default function BusinessDashboardContent() {
       </aside>
 
       <div className="business-dashboard-main">
+        <section className="dashboard-panel glass-panel"><h2>سه سطح برای غرفه شما</h2><p>ثبت اولیه با پایه رایگان: ۱۰ عکس نمونه‌کار. حرفه‌ای: ۳۰ عکس و دسته‌بندی آلبوم‌ها. ویژه: ۶۰ عکس و دسته‌بندی آلبوم‌ها. تصویر اصلی و پروفایل جدا از این ظرفیت هستند.</p><a href="/dashboard/billing">مشاهده امکانات ارتقا</a><p>از بخش گالری می‌توانید با دوربین گوشی عکس بگیرید یا از گالری گوشی انتخاب کنید.</p></section>
         <div className="dashboard-heading" id="overview">
           <div>
             <span className="section-kicker">پنل کسب‌وکار</span>

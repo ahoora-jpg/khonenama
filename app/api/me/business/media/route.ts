@@ -78,13 +78,14 @@ export async function POST(request: Request) {
 
   const [countRow, galleryLimit] = await Promise.all([
     owned.db
-      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ?")
+      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ? AND kind = 'image'")
       .bind(owned.business.id)
       .first(),
     getGalleryLimit(owned.db, Number(owned.business.id)),
   ]);
 
   const currentCount = Number(countRow?.count || 0);
+  if (kind !== "image") return Response.json({ ok: false, error: "USE_SERVER_UPLOAD" }, { status: 410 });
   if (currentCount >= galleryLimit) {
     return Response.json(
       { ok: false, error: "GALLERY_LIMIT_REACHED", limit: galleryLimit },
@@ -137,7 +138,7 @@ export async function POST(request: Request) {
     .prepare(
       "INSERT INTO business_media " +
       "(business_id, kind, storage_key, alt_text, sort_order, provider, provider_file_id, file_url, file_path, thumbnail_url) " +
-      "SELECT ?, ?, ?, NULLIF(?, ''), ?, 'imagekit', ?, ?, ?, NULLIF(?, '') WHERE (SELECT COUNT(*) FROM business_media WHERE business_id = ?) < ? AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
+      "SELECT ?, ?, ?, NULLIF(?, ''), ?, 'imagekit', ?, ?, ?, NULLIF(?, '') WHERE (SELECT COUNT(*) FROM business_media WHERE business_id = ? AND kind = 'image') < ? AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
     )
     .bind(
       owned.business.id,
@@ -188,14 +189,15 @@ export async function PATCH(request: Request) {
     return Response.json({ ok: false, error: "MEDIA_NOT_FOUND" }, { status: 404 });
   }
 
-  if (action === "cover") {
+  if (action === "logo" || action === "cover") {
+    if (media.kind !== "image" && media.kind !== action) return Response.json({ ok: false, error: "INVALID_ACTION" }, { status: 400 });
     await owned.db.batch([
       owned.db
-        .prepare("UPDATE business_media SET kind = 'image' WHERE business_id = ? AND kind = 'cover'")
-        .bind(owned.business.id),
+        .prepare("UPDATE business_media SET kind = 'image' WHERE business_id = ? AND kind = ?")
+        .bind(owned.business.id, action),
       owned.db
-        .prepare("UPDATE business_media SET kind = 'cover' WHERE id = ? AND business_id = ?")
-        .bind(mediaId, owned.business.id),
+        .prepare("UPDATE business_media SET kind = ? WHERE id = ? AND business_id = ?")
+        .bind(action, mediaId, owned.business.id),
     ]);
     return Response.json({ ok: true });
   }
