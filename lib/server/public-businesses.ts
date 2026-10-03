@@ -244,7 +244,7 @@ export async function listPublishedBusinesses(options: {
     const sql =
       "SELECT DISTINCT b.*, c.slug AS category_slug, c.name AS category_name FROM businesses b LEFT JOIN business_categories bc ON bc.business_id = b.id AND bc.is_primary = 1 LEFT JOIN categories c ON c.id = bc.category_id WHERE " +
       where.join(" AND ") +
-      " ORDER BY CASE COALESCE((SELECT p2.code FROM subscriptions s2 JOIN plans p2 ON p2.id = s2.plan_id WHERE s2.business_id = b.id AND s2.status = 'active' AND (s2.ends_at IS NULL OR s2.ends_at > CURRENT_TIMESTAMP) ORDER BY s2.id DESC LIMIT 1), 'free') WHEN 'premium' THEN 0 WHEN 'pro' THEN 1 ELSE 2 END, b.is_featured DESC, b.updated_at DESC, b.id DESC LIMIT " +
+      " ORDER BY CASE COALESCE((SELECT p2.code FROM subscriptions s2 JOIN plans p2 ON p2.id = s2.plan_id WHERE s2.business_id = b.id AND s2.status = 'active' AND (s2.ends_at IS NULL OR julianday(s2.ends_at) > julianday('now')) ORDER BY s2.id DESC LIMIT 1), 'free') WHEN 'premium' THEN 0 WHEN 'pro' THEN 1 ELSE 2 END, b.is_featured DESC, b.updated_at DESC, b.id DESC LIMIT " +
       limit;
 
     const rows = await db.prepare(sql).bind(...binds).all();
