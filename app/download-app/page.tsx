@@ -5,10 +5,10 @@ import { CheckCircle2, Download, ShieldCheck, Smartphone } from "lucide-react";
 
 const pageUrl = "https://khonenama.ir/download-app";
 const apkUrl =
-  "https://github.com/ahoora-jpg/khonenama-mobile/releases/latest/download/khonenama-production.apk?v=4";
+  "https://github.com/ahoora-jpg/khonenama-mobile/releases/download/mobile-7/khonenama-production.apk";
 
 export const metadata: Metadata = {
-  title: { absolute: "دانلود اپ اندروید خونه نما | نسخه ۱.۱.۰" },
+  title: { absolute: "دانلود اپ اندروید خونه نما | نسخه ۱.۲.۰" },
   description: "دانلود مستقیم اپلیکیشن اندروید خونه نما و راهنمای نصب امن نسخه رسمی صاحبان کسب‌وکار.",
   alternates: { canonical: pageUrl },
   robots: { index: true, follow: true },
@@ -18,7 +18,7 @@ const installSteps = [
   ["۱", "دانلود فایل", "روی دکمه دانلود مستقیم بزنید و اجازه دهید فایل APK کامل دریافت شود."],
   ["۲", "بازکردن فایل", "پس از پایان دانلود، فایل khonenama-production.apk را از اعلان دانلود یا پوشه Downloads باز کنید."],
   ["۳", "اجازه نصب", "اگر اندروید پیام نصب از این منبع را نشان داد، فقط برای همان مرورگر یا فایل‌منیجر گزینه اجازه نصب را فعال کنید."],
-  ["۴", "نصب یا به‌روزرسانی", "گزینه Install یا Update را بزنید. نسخه ۱.۱.۰ بدون حذف نسخه قبلی نصب می‌شود."],
+  ["۴", "نصب یا به‌روزرسانی", "گزینه Install یا Update را بزنید. نسخه ۱.۲.۰ بدون حذف نسخه قبلی نصب می‌شود."],
 ] as const;
 
 export default function DownloadAppPage() {
@@ -30,15 +30,15 @@ export default function DownloadAppPage() {
           <article className="app-download-hero glass-panel">
             <span className="section-kicker">اپ رسمی اندروید خونه نما</span>
             <div className="app-download-icon" aria-hidden="true"><Smartphone size={34} /></div>
-            <h1>مدیریت درخواست‌های کسب‌وکار، همیشه همراه شما</h1>
+            <h1>غرفه، گالری و درخواست‌های کسب‌وکار، همیشه همراه شما</h1>
             <p>
-              نسخه رسمی اپ خونه نما برای ورود یا ثبت کسب‌وکار، دریافت درخواست مشتری و پاسخ‌گویی از روی گوشی آماده است.
+              نسخه جدید اپ خونه نما برای ثبت کسب‌وکار، عکاسی و آپلود نمونه‌کار، مدیریت گالری و آلبوم، نمایش کیوآرکد و پاسخ‌گویی به درخواست مشتری است.
             </p>
             <a className="pill-button dark app-download-primary" href={apkUrl}>
-              <Download size={20} /> دانلود مستقیم نسخه ۱.۱.۰
+              <Download size={20} /> دانلود مستقیم نسخه ۱.۲.۰
             </a>
             <div className="app-download-facts">
-              <span><CheckCircle2 size={16} /> نسخه ۱.۱.۰</span>
+              <span><CheckCircle2 size={16} /> نسخه ۱.۲.۰</span>
               <span><CheckCircle2 size={16} /> به‌روزرسانی بدون حذف نسخه قبل</span>
               <span><ShieldCheck size={16} /> امضاشده با کلید دائمی خونه نما</span>
             </div>
@@ -74,8 +74,8 @@ export default function DownloadAppPage() {
           </section>
 
           <p className="app-download-security">
-            فایل رسمی فقط از همین صفحه یا مخزن رسمی GitHub خونه نما دریافت شود. اثرانگشت SHA-256 نسخه ۱.۱.۰:
-            <code>43e0fc19d58f6e44e1bb7cbc394ecb7e5515f07c8bdea072a33726474d7ea43c</code>
+            فایل رسمی فقط از همین صفحه یا مخزن رسمی GitHub خونه نما دریافت شود. اثرانگشت SHA-256 نسخه ۱.۲.۰:
+            <code>3e8acc1ef5d9246b79a28890821ce2d8835abc7761b95427aee837dac0f92a60</code>
           </p>
         </div>
       </section>
