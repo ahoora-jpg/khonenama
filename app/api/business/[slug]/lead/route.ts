@@ -64,12 +64,13 @@ export async function POST(
     return Response.json({ ok: false, error: "INVALID_BUDGET" }, { status: 400 });
   }
 
+  await db.prepare("CREATE TABLE IF NOT EXISTS business_visibility_controls (business_id INTEGER PRIMARY KEY, owner_paused INTEGER NOT NULL DEFAULT 0, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   const business = await db
     .prepare(
       "SELECT b.id, b.city, b.area, bc.category_id " +
       "FROM businesses b " +
       "LEFT JOIN business_categories bc ON bc.business_id = b.id AND bc.is_primary = 1 " +
-      "WHERE b.slug = ? AND b.status = 'published' LIMIT 1"
+      "WHERE b.slug = ? AND b.status = 'published' AND NOT EXISTS (SELECT 1 FROM business_visibility_controls v WHERE v.business_id = b.id AND v.owner_paused = 1) LIMIT 1"
     )
     .bind(slug)
     .first();
