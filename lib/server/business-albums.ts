@@ -23,3 +23,9 @@ export async function listBusinessAlbums(db: any, businessId: number) {
   }
   return [...albums.values()];
 }
+
+export async function listPublicBusinessAlbums(db:any,businessId:number,planCode:unknown,mediaIds:number[]){
+ const plan=planPresentation[normalizePlanCode(planCode)];if(!plan.albumLimit)return [];
+ const allowed=new Set(mediaIds);const albums=await listBusinessAlbums(db,businessId);
+ return albums.slice(0,plan.albumLimit).map(a=>({...a,media:a.media.filter(m=>allowed.has(m.id))}));
+}

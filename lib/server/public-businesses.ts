@@ -1,3 +1,4 @@
+import {selectPublicMedia} from "@/lib/subscription-lifecycle";
 import { env } from "cloudflare:workers";
 import { ensureBusinessMediaSchema } from "@/lib/server/business-media";
 
@@ -79,7 +80,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         .first(),
       db
         .prepare(
-          "SELECT p.code, p.name FROM subscriptions s JOIN plans p ON p.id = s.plan_id WHERE s.business_id = ? AND s.status = 'active' AND (s.ends_at IS NULL OR s.ends_at > CURRENT_TIMESTAMP) ORDER BY s.id DESC LIMIT 1"
+          "SELECT p.code, p.name FROM subscriptions s JOIN plans p ON p.id = s.plan_id WHERE s.business_id = ? AND s.status = 'active' AND (s.ends_at IS NULL OR julianday(s.ends_at) > julianday('now')) ORDER BY s.id DESC LIMIT 1"
         )
         .bind(row.id)
         .first(),
@@ -133,14 +134,14 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         primary: Boolean(item.is_primary),
       })),
       services: (servicesResult?.results || []).map((item: any) => item.name),
-      media: (mediaResult?.results || []).map((item: any) => ({
+      media: selectPublicMedia<PublicBusiness["media"][number]>((mediaResult?.results || []).map((item: any) => ({
         id: Number(item.id),
         kind: item.kind || "image",
         url: item.file_url || "",
         thumbnailUrl: item.thumbnail_url || "",
         altText: item.alt_text || "",
         sortOrder: Number(item.sort_order || 0),
-      })),
+      })), planResult?.code),
       hours: (hoursResult?.results || []).map((item: any) => ({
         weekday: Number(item.weekday),
         opensAt: item.opens_at || "",

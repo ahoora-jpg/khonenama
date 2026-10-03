@@ -27,7 +27,7 @@ export async function GET(request: Request) {
       .prepare(
         "SELECT p.code FROM subscriptions s JOIN plans p ON p.id = s.plan_id " +
           "WHERE s.business_id = ? AND s.status = 'active' " +
-          "AND (s.ends_at IS NULL OR s.ends_at > CURRENT_TIMESTAMP) " +
+          "AND (s.ends_at IS NULL OR julianday(s.ends_at) > julianday('now')) " +
           "ORDER BY s.id DESC LIMIT 1"
       )
       .bind(owned.business.id)

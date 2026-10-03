@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { env } from "cloudflare:workers";
 import { safeWebsiteUrl, safeInstagramUrl } from "@/lib/public-links";
-import { listBusinessAlbums } from "@/lib/server/business-albums";
+import { listPublicBusinessAlbums } from "@/lib/server/business-albums";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import QuoteRequestForm from "@/components/QuoteRequestForm";
@@ -125,7 +125,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
     notFound();
   }
 
-  const albums = business.source === "d1" ? await listBusinessAlbums((env as any).DB, business.id) : [];
+  const albums = business.source === "d1" ? await listPublicBusinessAlbums((env as any).DB, business.id, business.planCode, business.media.map((m:any)=>m.id)) : [];
   const liveRelated = business.category
     ? await listPublishedBusinesses({ categorySlug: business.category, city: business.city, limit: 6 })
     : [];

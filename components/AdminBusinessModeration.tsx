@@ -89,8 +89,15 @@ export default function AdminBusinessModeration() {
   async function setTestPlan(id: number, planCode: "free" | "pro" | "premium", giftDays?: number) {
     setMessage("");
     if(planCode === "free" && !window.confirm("اشتراک فعلی پایان می‌یابد و امکانات پایه باقی می‌ماند. ادامه می‌دهید؟")) return;
-    const durationMonths = planCode === "free" || giftDays !== undefined ? undefined : Number(window.prompt("چند ماه هدیه فعال شود؟ هر ماه ۳۰ روز؛ مثلاً ۱۲ ماه", "12") || 0);
-    const durationDays = planCode === "free" ? 30 : giftDays ?? Number(durationMonths) * 30;
+    let durationMonths: number | undefined;
+    let durationDays = planCode === "free" ? 30 : giftDays ?? 0;
+    if (planCode !== "free" && giftDays === undefined) {
+      const value = (window.prompt("مدت هدیه را با واحد بنویسید؛ مثلاً ۴۰ روز، ۶۰ روز یا ۱۲ ماه. هر ماه ۳۰ روز است.", "40 روز") || "").replace(/[۰-۹]/g, c => String("۰۱۲۳۴۵۶۷۸۹".indexOf(c))).replace(/[٠-٩]/g, c => String("٠١٢٣٤٥٦٧٨٩".indexOf(c))).trim();
+      const match = value.match(/^(\d+)\s*(روز|ماه)?$/);
+      if (!match) { setMessage("مدت را به صورت عدد و روز یا ماه وارد کنید."); return; }
+      if (match[2] === "ماه") durationMonths = Number(match[1]);
+      durationDays = Number(match[1]) * (match[2] === "ماه" ? 30 : 1);
+    }
     if (planCode !== "free" && (!Number.isFinite(durationDays) || durationDays < 1)) return;
     const note = window.prompt("علت هدیه را بنویسید (مثلاً همکاری یا معرفی کسب‌وکارهای دیگر):", "") || "";
     const response = await fetch("/api/admin/businesses/" + id + "/plan", {
