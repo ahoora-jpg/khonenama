@@ -182,6 +182,7 @@ export default function BusinessReviews({
                     className={value <= selectedRating ? "is-active" : ""}
                     onClick={() => setSelectedRating(value)}
                     aria-label={value + " ستاره"}
+                    aria-pressed={selectedRating === value}
                   >
                     <Star size={18} fill={value <= selectedRating ? "currentColor" : "none"} />
                   </button>

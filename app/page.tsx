@@ -1,5 +1,9 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import HomeBusinessShelf from "@/components/HomeBusinessShelf";
+import { listPublishedBusinesses } from "@/lib/server/public-businesses";
+
+export const dynamic = "force-dynamic";
 import Categories from "@/components/Categories";
 import HomeTools from "@/components/HomeTools";
 import InspirationGallery from "@/components/InspirationGallery";
@@ -108,7 +112,9 @@ const organizationJsonLd = {
   areaServed: { "@type": "Country", name: "ایران" },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const businesses = await listPublishedBusinesses({ limit: 6 });
+  const shelf = businesses.map(b => ({ slug: b.slug, name: b.name, city: b.city, area: b.area, category: b.category, categoryName: b.categoryName, coverUrl: b.media.find(m => m.kind === "cover")?.url || b.media.find(m => m.kind !== "logo")?.url || "", verified: ["verified", "professional"].includes(b.verificationStatus), rating: b.rating, reviewCount: b.reviewCount }));
   return (
     <main>
       <script
@@ -125,6 +131,13 @@ export default function HomePage() {
       />
       <Header />
       <Hero />
+      <HomeBusinessShelf initialBusinesses={shelf} />
+      <Categories />
+      <HomeTools />
+      <GuidesHome />
+      <InspirationGallery />
+      <LocalDiscovery />
+      <HowItWorks />
       <section className="brand-definition" aria-labelledby="brand-definition-title">
         <div className="shell">
           <div className="brand-definition-card glass-panel">
@@ -137,12 +150,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      <Categories />
-      <HomeTools />
-      <InspirationGallery />
-      <LocalDiscovery />
-      <GuidesHome />
-      <HowItWorks />
       <BusinessCTA />
       <Footer />
     </main>

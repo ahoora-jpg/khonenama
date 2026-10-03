@@ -258,7 +258,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
 
               <div className="profile-meta-grid">
                 <div><MapPin size={17} /><span><strong>موقعیت</strong><small>{business.city}، {business.area}</small></span></div>
-                <div><Star size={17} fill="currentColor" /><span><strong>{business.reviewCount ? business.rating : "جدید"}</strong><small>{business.reviewCount ? business.reviewCount + " نظر" : "بدون نظر"}</small></span></div>
+                <a href="#reviews"><Star size={17} fill={business.reviewCount ? "currentColor" : "none"} /><span><strong>{business.reviewCount ? business.rating : "بدون امتیاز"}</strong><small>{business.reviewCount ? business.reviewCount + " نظر" : "اولین نظر را ثبت کنید"}</small></span></a>
               </div>
 
               <div className="profile-actions">
@@ -279,6 +279,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                   </a>
                 )}
                 <a className="pill-button profile-secondary" data-analytics-event="quote_start" href="#quote"><MessageCircle size={17} /> درخواست قیمت</a>
+                {business.source !== "demo" && <a className="pill-button profile-secondary" href="#reviews"><Star size={17} /> ثبت نظر و امتیاز</a>}
               </div>
             </div>
           </div>

@@ -34,14 +34,14 @@ export default function BusinessPublicLinkCard({
     return "https://khonenama.ir/business/" + currentSlug;
   }, [currentSlug]);
 
-  async function copyLink() {
+  async function copyLink(forReview = false) {
     if (!publicUrl) return;
 
     try {
-      await navigator.clipboard.writeText(publicUrl);
+      await navigator.clipboard.writeText(publicUrl + (forReview ? "#reviews" : ""));
     } catch {
       const input = document.createElement("textarea");
-      input.value = publicUrl;
+      input.value = publicUrl + (forReview ? "#reviews" : "");
       input.style.position = "fixed";
       input.style.opacity = "0";
       document.body.appendChild(input);
@@ -144,7 +144,7 @@ export default function BusinessPublicLinkCard({
         ) : (
           <>
             <code dir="ltr">{publicUrl}</code>
-            <button className="pill-button dark" type="button" onClick={copyLink}>
+            <button className="pill-button dark" type="button" onClick={() => void copyLink()}>
               {copied ? <Check size={15} /> : <Copy size={15} />}
               {copied ? "کپی شد" : "کپی لینک"}
             </button>
@@ -167,6 +167,8 @@ export default function BusinessPublicLinkCard({
             <ExternalLink size={15} /> مشاهده صفحه
           </a>
         )}
+
+        {!editing && isPublished && <button className="pill-button" type="button" onClick={() => void copyLink(true)}><Copy size={15} /> کپی لینک ثبت نظر مشتری</button>}
 
         {!editing && !isPublished && (
           <small>
