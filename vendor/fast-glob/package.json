@@ -1,0 +1,8 @@
+{
+  "name": "@khonenama/build-glob",
+  "version": "3.3.3",
+  "private": true,
+  "description": "Tinyglobby adapter for the fast-glob calls used by vite-plugin-dynamic-import",
+  "main": "index.cjs",
+  "dependencies": { "tinyglobby": "0.2.15" }
+}
