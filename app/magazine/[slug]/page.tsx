@@ -100,6 +100,7 @@ function getRelatedGuides(guide: Guide) {
     "curtain-installation-guide": ["zebra-curtain-guide", "shade-curtain-guide", "zebra-curtain-price-guide", "curtain-cleaning-guide"],
     "zebra-curtain-price-guide": ["zebra-curtain-guide", "curtain-installation-guide", "shade-curtain-guide", "curtain-buying-guide"],
     "curtain-cleaning-guide": ["curtain-installation-guide", "zebra-curtain-guide", "shade-curtain-guide", "curtain-buying-guide"],
+    "zebra-vs-shade": ["shade-curtain-guide", "zebra-curtain-guide", "curtain-installation-guide", "zebra-curtain-price-guide"],
   };
   const selectedPaths = curtainPaths[guide.slug];
   if (selectedPaths) {
