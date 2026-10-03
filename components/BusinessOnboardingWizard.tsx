@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import BusinessMediaManager from "@/components/BusinessMediaManager";
 import {
   ArrowLeft,
   ArrowRight,
@@ -824,6 +825,7 @@ export default function BusinessOnboardingWizard() {
                 </div>
               </div>
             )}
+            {saved && <BusinessMediaManager plan="free" />}
             {saveError && (
               <div className="onboarding-error">{saveError}</div>
             )}

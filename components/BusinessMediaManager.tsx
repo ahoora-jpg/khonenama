@@ -203,7 +203,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
           </small>
         </div>
 
-        <label>نوع عکس<select value={uploadKind} onChange={e => setUploadKind(e.target.value as "image" | "cover" | "logo")}><option value="image">نمونه‌کار</option><option value="cover">تصویر اصلی (یک عکس)</option><option value="logo">پروفایل (یک عکس)</option></select></label>
+        <label>نوع عکس<select aria-label="نوع عکس" disabled={uploading} value={uploadKind} onChange={e => setUploadKind(e.target.value as "image" | "cover" | "logo")}><option value="image">نمونه‌کار</option><option value="cover">تصویر اصلی (یک عکس)</option><option value="logo">پروفایل (یک عکس)</option></select></label>
         <input
           ref={fileRef}
           type="file"
