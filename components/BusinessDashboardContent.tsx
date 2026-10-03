@@ -183,6 +183,7 @@ export default function BusinessDashboardContent() {
             <span className={"dashboard-current-plan plan-" + (profile.plan || "free")}>پلن فعلی: {planLabel}</span>
           </div>
           <div className="dashboard-heading-actions">
+            <a className="pill-button" href="#public-link">کیوآرکد گالری</a>
             <button className="icon-button" type="button" aria-label="اعلان‌ها"><Bell size={18} /></button>
             <a className="pill-button dark" href="/dashboard/profile"><Store size={17} /> ویرایش پروفایل</a>
           </div>

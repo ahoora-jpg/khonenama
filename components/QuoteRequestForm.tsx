@@ -118,7 +118,7 @@ export default function QuoteRequestForm({
   }
 
   return (
-    <form className="quote-request-form glass-panel" onSubmit={submit}>
+    <form id="quote" className="quote-request-form glass-panel" onSubmit={submit}>
       <div className="quote-form-heading">
         <span className="quote-form-icon"><MessageCircle size={20} /></span>
         <div>

@@ -42,6 +42,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [altDraft, setAltDraft] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
 
   const limit = limits[plan] || limits.free;
   const remaining = Math.max(0, limit - media.length);
@@ -207,6 +208,8 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
           hidden
           onChange={(event) => chooseFiles(event.target.files)}
         />
+        <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={(event) => chooseFiles(event.target.files)} />
+        <button className="pill-button" type="button" disabled={uploading || !configured || remaining === 0} onClick={() => cameraRef.current?.click()}><Camera size={15} /> عکس گرفتن</button>
         <button
           className="pill-button dark"
           type="button"

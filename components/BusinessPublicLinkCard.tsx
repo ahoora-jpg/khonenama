@@ -95,10 +95,10 @@ export default function BusinessPublicLinkCard({
   const isPublished = status === "published";
 
   return (
-    <section className="dashboard-panel glass-panel business-public-link-card">
+    <section id="public-link" className="dashboard-panel glass-panel business-public-link-card">
       <div className="business-public-link-copy">
         <span className="section-kicker">لینک اختصاصی کسب‌وکار</span>
-        <h2><Link2 size={20} /> آدرس ثابت پروفایل شما</h2>
+        <h2><Link2 size={20} /> لینک اختصاصی و کیوآرکد گالری شما</h2>
         <p>
           این لینک مخصوص همین کسب‌وکار است و می‌توانید آن را در Google Business،
           شبکه‌های اجتماعی، آگهی‌ها، سایت شخصی و هر جای دیگری قرار دهید.
