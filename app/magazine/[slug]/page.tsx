@@ -25,7 +25,10 @@ const SEO_METADATA_OVERRIDES: Record<string, { title?: string; description?: str
   "choose-interior-designer": { title: "انتخاب طراح داخلی | ۷ معیار قبل از قرارداد" },
   "wallpaper-karaj-guide": { title: "کاغذ دیواری کرج | خرید، نصب و محاسبه رول" },
   "washable-wallpaper-guide": { title: "کاغذ دیواری قابل شست‌وشو | راهنمای انتخاب" },
-  "zebra-curtain-price-guide": { title: "قیمت پرده زبرا | عوامل مؤثر و روش مقایسه" },
+  "zebra-curtain-price-guide": {
+    title: "قیمت پرده زبرا و انتخاب اقتصادی | چک‌لیست استعلام",
+    description: "برای خرید پرده زبرا ارزان، پیشنهادها را با ابعاد، رده پارچه، مکانیزم، یراق، حمل و نصب یکسان مقایسه کنید؛ چک‌لیست استعلام و نکات ضمانت را بخوانید.",
+  },
   "laminate-vs-pvc": {
     description: "لمینت و کفپوش PVC را از نظر رطوبت، ظاهر، نصب، دوام و نگهداری مقایسه کنید تا برای فضای خانه انتخاب دقیق‌تری داشته باشید.",
   },
@@ -91,6 +94,17 @@ function guideTopicTerms(guide: Guide) {
 }
 
 function getRelatedGuides(guide: Guide) {
+  const curtainPaths: Record<string, string[]> = {
+    "zebra-curtain-guide": ["zebra-curtain-price-guide", "curtain-installation-guide", "shade-curtain-guide", "zebra-vs-shade"],
+    "shade-curtain-guide": ["curtain-installation-guide", "zebra-vs-shade", "blackout-curtain-guide", "curtain-cleaning-guide"],
+    "curtain-installation-guide": ["zebra-curtain-guide", "shade-curtain-guide", "zebra-curtain-price-guide", "curtain-cleaning-guide"],
+    "zebra-curtain-price-guide": ["zebra-curtain-guide", "curtain-installation-guide", "shade-curtain-guide", "curtain-buying-guide"],
+    "curtain-cleaning-guide": ["curtain-installation-guide", "zebra-curtain-guide", "shade-curtain-guide", "curtain-buying-guide"],
+  };
+  const selectedPaths = curtainPaths[guide.slug];
+  if (selectedPaths) {
+    return selectedPaths.map(getGuide).filter((item): item is Guide => Boolean(item));
+  }
   const currentTerms = guideTopicTerms(guide);
   return guides
     .filter((item) => item.slug !== guide.slug)
@@ -278,6 +292,16 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                   <p>
                     اگر سقف کاذب، مسیر برق یا سطح نامناسب دارید، نصب دیواری می‌تواند عملی‌تر باشد. اگر هدف پوشش یکپارچه‌تر و افزایش ارتفاع بصری است، نصب سقفی ارزش بررسی دارد. در هر دو حالت، جنس دیوار یا سقف و پیچ و رول‌پلاک متناسب با آن باید قبل از اجرا مشخص شود.
                   </p>
+                  <p>
+                    برای بررسی <a href="/magazine/zebra-curtain-guide">مزایا و معایب پرده زبرا</a>، راهنمای انتخاب مدل را بخوانید؛ برای <a href="/magazine/zebra-curtain-price-guide">مقایسه قیمت زبرا و هزینه نصب</a>، مشخصات پیشنهاد فروشنده را جداگانه بررسی کنید.
+                  </p>
+                </section>
+              )}
+
+              {guide.slug === "zebra-curtain-price-guide" && (
+                <section>
+                  <h2>استعلام قیمت پرده زبرا در کرج</h2>
+                  <p>برای بررسی فروشگاه‌ها و خدمات محلی، به صفحه <a href="/karaj/curtain">پرده در کرج</a> بروید و مشخصات یکسان را برای استعلام آماده کنید. قیمت نهایی، موجودی و زمان تحویل باید مستقیماً با فروشنده تأیید شوند.</p>
                 </section>
               )}
 
