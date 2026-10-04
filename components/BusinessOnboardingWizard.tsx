@@ -39,6 +39,8 @@ type FormState = {
   businessType: "store" | "company" | "individual";
   businessName: string;
   categories: string[];
+  categorySuggestion: string;
+  serviceSuggestion: string;
   city: string;
   area: string;
   address: string;
@@ -59,6 +61,8 @@ const initialState: FormState = {
   businessType: "store",
   businessName: "",
   categories: [],
+  categorySuggestion: "",
+  serviceSuggestion: "",
   city: "",
   area: "",
   address: "",
@@ -154,11 +158,11 @@ export default function BusinessOnboardingWizard() {
       return (
         form.businessName.trim().length > 1 &&
         form.city.trim().length > 1 &&
-        form.categories.length > 0
+        (form.categories.length > 0 || form.categorySuggestion.trim().length >= 2)
       );
     }
     if (step === 2) {
-      return form.services.length > 0 && form.serviceAreas.length > 0;
+      return (form.services.length > 0 || form.serviceSuggestion.trim().length >= 2 || form.categorySuggestion.trim().length >= 2) && form.serviceAreas.length > 0;
     }
     if (step === 3) return form.description.trim().length >= 20;
     return true;
@@ -489,6 +493,11 @@ export default function BusinessOnboardingWizard() {
               <small className="field-hint">
                 می‌توانید چند گزینه را هم‌زمان انتخاب کنید؛ مثلاً پرده، موکت، کفپوش و کاغذ دیواری.
               </small>
+              <label>
+                <span>دسته مورد نظر شما در فهرست نیست؟</span>
+                <input className="form-input" value={form.categorySuggestion} maxLength={120} onChange={event => update("categorySuggestion", event.target.value)} placeholder="نام دسته پیشنهادی را با املای درست بنویسید" />
+              </label>
+              <small className="field-hint">پیشنهاد همراه حساب شما ثبت می‌شود و پیش از افزودن به فهرست بررسی خواهد شد. اگر فقط پیشنهاد جدید دارید، غرفه تا تکمیل دسته و خدمات پیش‌نویس می‌ماند.</small>
             </div>
 
             <div className="form-row two-columns">
@@ -621,6 +630,12 @@ export default function BusinessOnboardingWizard() {
                 ابتدا در مرحله قبل حداقل یک دسته فعالیت انتخاب کنید.
               </div>
             )}
+
+            <label>
+              <span>خدمت یا محصول شما در فهرست نیست؟</span>
+              <input className="form-input" value={form.serviceSuggestion} maxLength={120} onChange={event => update("serviceSuggestion", event.target.value)} placeholder="نام خدمت یا محصول پیشنهادی با املای درست" />
+            </label>
+            <small className="field-hint">پیشنهاد شما جدا از خدمات تأییدشده ذخیره می‌شود؛ پس از بررسی، نام یکسان برای همه کسب‌وکارها استفاده خواهد شد.</small>
 
             <div className="choice-block">
               <strong>محدوده‌های فعالیت</strong>
@@ -811,6 +826,7 @@ export default function BusinessOnboardingWizard() {
             </div>
 
             <p>ثبت اولیه با سطح پایه رایگان انجام می‌شود؛ پس از ثبت می‌توانید امکانات بیشتر را از پنل بررسی کنید.</p>
+            {(form.categorySuggestion || form.serviceSuggestion) && <p>پیشنهاد شما برای بررسی: {[form.categorySuggestion, form.serviceSuggestion].filter(Boolean).join("، ")}. اگر دسته یا خدمت موجودی انتخاب نکرده‌اید، غرفه تا تکمیل آن‌ها پیش‌نویس می‌ماند.</p>}
             {saved && (
               <div className="onboarding-success">
                 <CheckCircle2 size={22} />

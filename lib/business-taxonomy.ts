@@ -27,6 +27,7 @@ export const BUSINESS_CATEGORIES: readonly BusinessCategoryOption[] = [
       "اندازه‌گیری پرده",
       "دوخت پرده",
       "نصب و تعمیر پرده",
+      "پارچه پرده",
     ],
   },
   {
@@ -72,6 +73,13 @@ export const BUSINESS_CATEGORIES: readonly BusinessCategoryOption[] = [
       "پنل دکوراتیو",
       "زیرسازی دیوار",
       "نصب کاغذ دیواری و دیوارپوش",
+      "دیوارپوش چسبی و خودچسب",
+      "کاغذ دیواری خودچسب",
+      "برچسب دیوار",
+      "دیوارپوش فومی",
+      "دیوارپوش چوبی",
+      "سنگ دکوراتیو داخلی",
+      "سنگ آنتیک دیوار",
     ],
   },
   {
@@ -93,6 +101,9 @@ export const BUSINESS_CATEGORIES: readonly BusinessCategoryOption[] = [
       "آینه دکوراتیو",
       "بازسازی داخلی",
       "اجرا و نظارت پروژه",
+      "روکش و پیراهن مبل",
+      "پارچه مبلی",
+      "دوخت روکش مبل",
     ],
   },
   {

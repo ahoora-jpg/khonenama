@@ -9,6 +9,8 @@ import {
 } from "@/lib/business-taxonomy";
 import { hashPassword, validatePassword, verifyPassword } from "@/lib/server/password";
 import { createUniqueBusinessSlug } from "@/lib/business-slug";
+import { taxonomySuggestions } from "@/lib/taxonomy-suggestions";
+import { saveTaxonomySuggestions } from "@/lib/server/taxonomy-suggestions";
 
 
 function normalizeDigits(value: string) {
@@ -64,6 +66,7 @@ export async function POST(request: Request) {
         : [];
 
     const categories = [...new Set(requestedCategories.filter(isBusinessCategorySlug))];
+    const suggestions = taxonomySuggestions(body || {});
 
     const requestedServices: string[] = Array.isArray(body?.services)
       ? body.services.map((item: unknown) => cleanText(item, 120))
@@ -90,7 +93,7 @@ export async function POST(request: Request) {
       return Response.json({ ok: false, error: passwordError }, { status: 400 });
     }
 
-    if (!categories.length) {
+    if (!categories.length && !suggestions.some(item => item.kind === "category")) {
       return Response.json({ ok: false, error: "INVALID_CATEGORY" }, { status: 400 });
     }
 
@@ -98,7 +101,7 @@ export async function POST(request: Request) {
     const selectedServices = [...new Set(requestedServices.filter((item) => allowedServices.has(item)))];
     const selectedAreas = [...new Set(requestedAreas.filter(Boolean))].slice(0, 30);
 
-    if (!selectedServices.length || !selectedAreas.length || description.length < 20) {
+    if ((!selectedServices.length && !suggestions.length) || !selectedAreas.length || description.length < 20) {
       return Response.json({ ok: false, error: "INCOMPLETE_PROFILE" }, { status: 400 });
     }
 
@@ -234,12 +237,13 @@ export async function POST(request: Request) {
     }
 
     stage = "business-create";
+    const publicationStatus = categories.length && selectedServices.length ? "published" : "draft";
     const slug = await createUniqueBusinessSlug(db, businessName, city);
     const business = await db
       .prepare(
-        "INSERT INTO businesses (slug, name, description, business_type, city, area, address, phone, website, instagram, status, verification_status, owner_user_id) VALUES (?, ?, ?, ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, NULLIF(?, ''), NULLIF(?, ''), 'published', 'unverified', ?) RETURNING id"
+        "INSERT INTO businesses (slug, name, description, business_type, city, area, address, phone, website, instagram, status, verification_status, owner_user_id) VALUES (?, ?, ?, ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, NULLIF(?, ''), NULLIF(?, ''), ?, 'unverified', ?) RETURNING id"
       )
-      .bind(slug, businessName, description, businessType, city, area, address, phone, website, instagram, userId)
+      .bind(slug, businessName, description, businessType, city, area, address, phone, website, instagram, publicationStatus, userId)
       .first();
 
     createdBusinessId = Number(business?.id);
@@ -294,6 +298,7 @@ export async function POST(request: Request) {
     }
 
     stage = "subscription-save";
+    await saveTaxonomySuggestions(db, createdBusinessId, body, categories);
     const freePlan = await db
       .prepare("SELECT id FROM plans WHERE code = 'free' AND is_active = 1 LIMIT 1")
       .first();
@@ -317,7 +322,7 @@ export async function POST(request: Request) {
         business: {
           id: createdBusinessId,
           slug,
-          status: "published",
+          status: publicationStatus,
           verificationStatus: "unverified",
         },
         owner: {
