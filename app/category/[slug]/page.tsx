@@ -20,6 +20,7 @@ const categoryPillars = [
 ];
 
 const categoryToolUrls: Record<string, string> = {
+  flooring: "https://khonenama.ir/tools/flooring-estimator",
   curtain: "https://khonenama.ir/tools/curtain-fabric-calculator",
   wallpaper: "https://khonenama.ir/tools/wallpaper-calculator",
   carpet: "https://khonenama.ir/tools/carpet-estimator",
@@ -210,6 +211,17 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               </a>
             </div>
           </section>
+          {slug === "flooring" && (
+            <section className="category-tool-card glass-panel" aria-label="ابزار محاسبه کفپوش">
+              <span><Calculator size={20} /></span>
+              <div>
+                <h2>چند بسته لمینت یا چند متر کفپوش لازم دارید؟</h2>
+                <p>ابعاد فضا، پوشش بسته و پرت را برای پارکت و لمینت محاسبه کنید؛ برای کفپوش رولی، عرض رول و جهت برش را هم وارد کنید.</p>
+              </div>
+              <a href="/tools/flooring-estimator">محاسبه متراژ و تعداد بسته کفپوش <ArrowUpLeft size={14} /></a>
+            </section>
+          )}
+
           {slug === "wallpaper" && (
             <section className="category-tool-card glass-panel" aria-label="ابزار محاسبه کاغذ دیواری">
               <span><Calculator size={20} /></span>
@@ -288,7 +300,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             </section>
           )}
 
-          <section className="category-results">
+          <section id="businesses" className="category-results">
             <div className="section-heading compact-heading">
               <div>
                 <span className="section-kicker">کسب‌وکارهای مرتبط</span>
@@ -360,3 +372,4 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     </main>
   );
 }
+
