@@ -49,35 +49,29 @@ const breadcrumbJsonLd = {
   ],
 };
 
+const faqs = [
+  {
+    "question": "چطور تعداد بسته لمینت را حساب کنیم؟",
+    "answer": "مساحت فضا را در یک به‌علاوه درصد پرت تقسیم بر صد ضرب کنید، سپس حاصل را بر پوشش مترمربعی هر بسته تقسیم و تعداد بسته را رو به بالا گرد کنید. پوشش بسته را از مشخصات همان محصول بخوانید."
+  },
+  {
+    "question": "برای پارکت و لمینت چند درصد پرت بگذاریم؟",
+    "answer": "یک عدد ثابت برای همه پروژه‌ها وجود ندارد. شکل فضا، ابعاد پلانک، جهت و الگوی نصب روی پرت اثر دارند؛ درصد نهایی را با مجری و مشخصات محصول کنترل کنید."
+  },
+  {
+    "question": "برای PVC رولی چرا عرض رول مهم است؟",
+    "answer": "خرید به نوارهای کامل از رول وابسته است. عرض رول، تعداد نوارها، طول هر برش و جهت نصب روی مقدار خرید اثر دارند؛ مترمربع خالص به‌تنهایی کافی نیست."
+  }
+];
+
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "چطور تعداد بسته لمینت را محاسبه کنیم؟",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "مساحت فضا را حساب کنید، درصد پرت متناسب با شکل و الگوی نصب اضافه کنید، سپس حاصل را بر پوشش مترمربعی هر بسته تقسیم و تعداد بسته را رو به بالا گرد کنید.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "برای پارکت و لمینت چند درصد پرت در نظر بگیریم؟",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "پرت به شکل فضا، جهت نصب، ابعاد تایل یا پلانک و الگوی چیدمان بستگی دارد. ابزار مقدار پرت را قابل تنظیم گذاشته و عدد نهایی باید با مجری و مشخصات محصول کنترل شود.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "کفپوش PVC رولی را چطور محاسبه کنیم؟",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "برای کفپوش رولی فقط مترمربع کافی نیست. عرض رول، تعداد نوارهای کامل، طول هر برش و امکان تغییر جهت رول روی متراژ طولی خرید اثر دارند.",
-      },
-    },
-  ],
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: { "@type": "Answer", text: faq.answer },
+  })),
 };
 
 export default function FlooringEstimatorPage() {
@@ -133,23 +127,23 @@ export default function FlooringEstimatorPage() {
             </div>
           </section>
 
+          <section className="wallpaper-tool-copy" aria-label="مثال محاسبه تعداد بسته">
+            <h2>مثال محاسبه تعداد بسته لمینت</h2>
+            <p>برای اتاق فرضی ۳٫۵ در ۴٫۵ متر، مساحت خالص ۱۵٫۷۵ مترمربع است. اگر برای این مثال پرت را ۸ درصد و پوشش هر بسته را ۲٫۲ مترمربع فرض کنیم، مساحت با پرت ۱۷٫۰۱ مترمربع می‌شود؛ ۱۷٫۰۱ تقسیم بر ۲٫۲ برابر ۷٫۷۳ است و با گرد کردن رو به بالا، ۸ بسته با پوشش مجموع ۱۷٫۶ مترمربع لازم می‌شود.</p>
+            <p>این اعداد نمونه‌اند؛ درصد پرت و پوشش بسته را برای محصول و نقشه واقعی خود جایگزین کنید.</p>
+          </section>
+
           <section className="wallpaper-tool-faq">
             <div className="section-heading compact-heading">
               <div><span className="section-kicker">پاسخ کوتاه</span><h2>سوالات رایج محاسبه کفپوش</h2></div>
             </div>
             <div className="guide-faq">
-              <details>
-                <summary>چطور تعداد بسته لمینت را حساب کنیم؟</summary>
-                <p>مساحت فضا را با پرت جمع کنید، سپس بر متراژ پوشش هر بسته تقسیم و نتیجه را رو به بالا گرد کنید؛ بسته ناقص قابل سفارش نیست.</p>
-              </details>
-              <details>
-                <summary>برای پارکت و لمینت چند درصد پرت بگذاریم؟</summary>
-                <p>یک عدد ثابت برای همه پروژه‌ها وجود ندارد. پلان ساده و نصب مستقیم معمولاً پرت کمتری از فضای شکسته یا الگوهای مورب و هفت‌وهشتی دارد.</p>
-              </details>
-              <details>
-                <summary>برای PVC رولی چرا عرض رول مهم است؟</summary>
-                <p>چون خرید به نوارهای کامل از رول وابسته است. اگر عرض فضا مضرب عرض رول نباشد، بخشی از متریال به‌صورت پرت باقی می‌ماند.</p>
-              </details>
+              {faqs.map((faq) => (
+                <details key={faq.question}>
+                  <summary>{faq.question}</summary>
+                  <p>{faq.answer}</p>
+                </details>
+              ))}
             </div>
           </section>
 
@@ -162,7 +156,7 @@ export default function FlooringEstimatorPage() {
             <div>
               <a href="/magazine/parquet-vs-laminate">پارکت یا لمینت؟ <ArrowUpLeft size={15} /></a>
               <a href="/category/flooring">فروشگاه‌ها و متخصصان <ArrowUpLeft size={15} /></a>
-              <a href="/category/flooring">فروشگاه‌ها و خدمات پارکت و لمینت <ArrowUpLeft size={15} /></a>
+              <a href="/magazine/laminate-installation-guide">راهنمای زیرسازی و نصب لمینت <ArrowUpLeft size={15} /></a>
             </div>
           </section>
         </div>
@@ -172,3 +166,4 @@ export default function FlooringEstimatorPage() {
     </main>
   );
 }
+
