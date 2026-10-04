@@ -70,7 +70,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     promoted: business.promoted,
     coverUrl: business.media.find((item) => item.kind === "cover")?.url || business.media[0]?.url || "",
   }));
-  const relatedGuides = guides.filter((guide) => seo.guides.includes(guide.slug));
+  const relatedGuides = seo.guides
+    .map((guideSlug) => guides.find((guide) => guide.slug === guideSlug))
+    .filter((guide): guide is (typeof guides)[number] => Boolean(guide));
   const aiAnswers = getAiSearchContent(slug);
   const visual = getCategoryVisual(slug);
 
@@ -297,6 +299,15 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                   );
                 })}
               </div>
+              {relatedGuides.length > (slug === "curtain" ? 16 : 8) && (
+                <nav aria-label="راهنماهای تکمیلی این دسته">
+                  <ul>
+                    {relatedGuides.slice(slug === "curtain" ? 16 : 8).map((guide) => (
+                      <li key={guide.slug}><a href={"/magazine/" + guide.slug}>{guide.title}</a></li>
+                    ))}
+                  </ul>
+                </nav>
+              )}
             </section>
           )}
 
