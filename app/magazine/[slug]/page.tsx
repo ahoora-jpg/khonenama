@@ -391,6 +391,17 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                 </div>
               )}
 
+              {guide.category === "کفپوش" && (
+                <div className="guide-side-card guide-tool-link glass-panel">
+                  <Calculator size={18} />
+                  <h3>متراژ کفپوش و تعداد بسته را حساب کن</h3>
+                  <p>ابعاد فضا، پوشش هر بسته و پرت را وارد کن؛ برای کفپوش رولی، عرض رول و جهت برش را هم بررسی کن.</p>
+                  <a href="/tools/flooring-estimator">
+                    محاسبه‌گر پارکت، لمینت و کفپوش <ArrowUpLeft size={15} />
+                  </a>
+                </div>
+              )}
+
               {guide.category === "موکت" && (
                 <div className="guide-side-card guide-tool-link glass-panel">
                   <Calculator size={18} />
@@ -406,7 +417,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                 <span className="section-kicker">مسیر بعدی</span>
                 <h3>فروشگاه‌ها و متخصصان مرتبط را ببین</h3>
                 <p>بعد از شناخت گزینه‌ها، کسب‌وکارهای مرتبط را در خونه نما مقایسه کن.</p>
-                <a href={guide.relatedCategory || "/search"}>
+                <a href={guide.relatedCategory ? guide.relatedCategory + "#businesses" : "/search"}>
                   مشاهده کسب‌وکارها <ArrowUpLeft size={15} />
                 </a>
               </div>
@@ -438,3 +449,4 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     </main>
   );
 }
+
