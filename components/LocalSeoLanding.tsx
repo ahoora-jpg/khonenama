@@ -395,7 +395,7 @@ export default async function LocalSeoLanding({
             </section>
           )}
 
-          <section className="category-results">
+          <section id="businesses" className="category-results">
             <div className="section-heading compact-heading">
               <div><span className="section-kicker">کسب‌وکارهای مرتبط</span><h2>فروشگاه‌ها و متخصصان در کرج</h2></div>
             </div>
