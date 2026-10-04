@@ -6,8 +6,9 @@ const baseUrl = "https://khonenama.ir";
 const seoRefreshDate = "2026-09-25";
 const homepageBrandRefreshDate = "2026-09-29";
 const aboutBrandRefreshDate = "2026-09-29";
-const pillarRefreshDate = "2026-09-27";
 const categoryRefreshDate = "2026-09-28";
+// Fixed date of published content/link changes, never the sitemap request date.
+const sixDomainSeoRefreshDate = "2026-10-04";
 
 // Business profiles change independently of code deploys. Generate the sitemap
 // at request time so search engines see newly publishable profiles without
@@ -18,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified: homepageBrandRefreshDate, changeFrequency: "daily", priority: 1 },
     { url: baseUrl + "/karaj", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.95 },
-    { url: baseUrl + "/karaj/curtain", lastModified: pillarRefreshDate, changeFrequency: "daily", priority: 0.94 },
+    { url: baseUrl + "/karaj/curtain", lastModified: sixDomainSeoRefreshDate, changeFrequency: "daily", priority: 0.94 },
     { url: baseUrl + "/karaj/curtain/markets", lastModified: "2026-09-29", changeFrequency: "weekly", priority: 0.93 },
     { url: baseUrl + "/karaj/flooring", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.92 },
     { url: baseUrl + "/karaj/carpet", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.88 },
@@ -27,7 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/karaj/smart-home", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.9 },
     { url: baseUrl + "/karaj/baraghan", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.92 },
     { url: baseUrl + "/category/curtain", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.9 },
-    { url: baseUrl + "/category/flooring", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.88 },
+    { url: baseUrl + "/category/flooring", lastModified: sixDomainSeoRefreshDate, changeFrequency: "weekly", priority: 0.88 },
     { url: baseUrl + "/category/carpet", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/category/wallpaper", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/category/interior-design", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
@@ -36,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/tools", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/tools/wallpaper-calculator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/curtain-fabric-calculator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
-    { url: baseUrl + "/tools/flooring-estimator", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.86 },
+    { url: baseUrl + "/tools/flooring-estimator", lastModified: sixDomainSeoRefreshDate, changeFrequency: "monthly", priority: 0.86 },
     { url: baseUrl + "/tools/smart-home-scope", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/carpet-estimator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/for-business", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.72 },
@@ -60,9 +61,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const guidePages: MetadataRoute.Sitemap = guides.map((guide) => ({
     url: baseUrl + "/magazine/" + guide.slug,
-    lastModified: refreshedGuides.has(guide.slug)
-      ? seoRefreshDate
-      : guide.modifiedAt || guide.publishedAt || "2026-09-19",
+    lastModified: guide.relatedCategory
+      ? [sixDomainSeoRefreshDate, guide.modifiedAt || guide.publishedAt || "2026-09-19"].sort().at(-1)
+      : refreshedGuides.has(guide.slug)
+        ? seoRefreshDate
+        : guide.modifiedAt || guide.publishedAt || "2026-09-19",
     changeFrequency: guide.category === "راهنمای محلی" ? "weekly" : "monthly",
     priority: guide.category === "راهنمای محلی" ? 0.82 : 0.76,
   }));
