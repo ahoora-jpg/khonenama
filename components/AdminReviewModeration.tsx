@@ -9,6 +9,7 @@ type ReviewRow = {
   rating: number;
   title: string;
   body: string;
+  reply?: string;
   status: string;
   verified_interaction: number;
   created_at: string;
@@ -44,7 +45,7 @@ export default function AdminReviewModeration() {
     load();
   }, []);
 
-  async function decide(reviewId: number, action: "approve" | "reject") {
+  async function decide(reviewId: number, action: "approve" | "reject" | "hide-reply") {
     const response = await fetch("/api/admin/reviews", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -55,7 +56,7 @@ export default function AdminReviewModeration() {
       setMessage("ثبت تصمیم انجام نشد.");
       return;
     }
-    setMessage(action === "approve" ? "نظر منتشر شد." : "نظر رد شد.");
+    setMessage(action === "hide-reply" ? "پاسخ کسب‌وکار پنهان شد؛ نظر مشتری باقی ماند." : action === "approve" ? "نظر منتشر شد." : "نظر رد شد.");
     await load();
   }
 
@@ -102,6 +103,7 @@ export default function AdminReviewModeration() {
               )}
 
               <p>{item.body}</p>
+              {item.reply && <div><strong>پاسخ کسب‌وکار</strong><p>{item.reply}</p><button type="button" className="pill-button" onClick={()=>decide(item.id,'hide-reply')}>پنهان‌کردن پاسخ؛ حفظ نظر مشتری</button></div>}
 
               {item.status === "pending" && (
                 <div className="admin-business-actions">
