@@ -22,6 +22,7 @@ export async function GET(request: Request) {
   if (!owned) return Response.json({ ok: false, error: "UNAUTHENTICATED" }, { status: 401 });
 
   await ensureSchema(owned.db);
+  await owned.db.prepare("CREATE TABLE IF NOT EXISTS lead_quotes (id INTEGER PRIMARY KEY AUTOINCREMENT, lead_id INTEGER NOT NULL, business_id INTEGER NOT NULL, amount INTEGER, message TEXT, status TEXT NOT NULL DEFAULT 'draft', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, UNIQUE(lead_id,business_id))").run();
 
   const rows = await owned.db.prepare(
     "SELECT event_date, profile_views, phone_clicks, whatsapp_clicks, website_clicks, instagram_clicks, quote_starts, quote_submits " +
@@ -43,5 +44,7 @@ export async function GET(request: Request) {
     instagramClicks:0, quoteStarts:0, quoteSubmits:0
   });
 
+  const proposals = await owned.db.prepare("SELECT COUNT(*) AS sent, SUM(CASE WHEN q.status='accepted' THEN 1 ELSE 0 END) AS accepted, AVG(MAX(0,(julianday(q.created_at)-julianday(l.created_at))*1440)) AS response_minutes FROM lead_quotes q JOIN leads l ON l.id=q.lead_id WHERE q.business_id=? AND q.created_at >= datetime('now','-30 days') AND q.status IN ('sent','accepted','rejected')").bind(owned.business.id).first();
+  totals.proposalsSent=Number(proposals?.sent||0); totals.proposalsAccepted=Number(proposals?.accepted||0); totals.averageResponseMinutes=proposals?.response_minutes==null?null:Math.round(proposals.response_minutes);
   return Response.json({ ok: true, totals, daily }, { headers: { "Cache-Control":"no-store" } });
 }

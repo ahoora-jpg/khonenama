@@ -11,6 +11,9 @@ type Totals = {
   instagramClicks: number;
   quoteStarts: number;
   quoteSubmits: number;
+  proposalsSent?: number;
+  proposalsAccepted?: number;
+  averageResponseMinutes?: number|null;
 };
 
 const empty: Totals = {
@@ -65,6 +68,10 @@ export default function BusinessAnalyticsPanel({ plan = "free" }: { plan?: strin
           <span>وب‌سایت <strong>{totals.websiteClicks}</strong></span>
           <span>اینستاگرام <strong>{totals.instagramClicks}</strong></span>
           <span>شروع فرم قیمت <strong>{totals.quoteStarts}</strong></span>
+          <span>پیشنهادهای ارسال‌شده <strong>{totals.proposalsSent||0}</strong></span>
+          <span>پیشنهادهای انتخاب‌شده <strong>{totals.proposalsAccepted||0}</strong></span>
+          <span>میانگین زمان پاسخ اولیه <strong>{totals.averageResponseMinutes==null?'—':totals.averageResponseMinutes+' دقیقه'}</strong></span>
+          <p>انتخاب پیشنهاد یا کلیک تماس به معنی خرید یا پرداخت قطعی نیست.</p>
         </div>
       ) : (
         <div className="analytics-upgrade-note">
