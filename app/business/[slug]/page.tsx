@@ -6,6 +6,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import QuoteRequestForm from "@/components/QuoteRequestForm";
 import BusinessAnalyticsTracker from "@/components/BusinessAnalyticsTracker";
+import SavedBusinessButton from "@/components/SavedBusinessButton";
+import SupportForm from "@/components/SupportForm";
+import PublicCampaigns from "@/components/PublicCampaigns";
 import BusinessReviews from "@/components/BusinessReviews";
 import { businesses as demoBusinesses, getBusiness } from "@/lib/demo-data";
 import { getPublishedBusiness, getBusinessSlugRedirect, isInternalTestBusinessSlug, listPublishedBusinesses } from "@/lib/server/public-businesses";
@@ -241,7 +244,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
               <div className="profile-title-row">
                 <div>
                   <div className="profile-name-line">
-                    <h1>{business.name}</h1>
+                    <h1>{business.name}</h1>{business.source !== "demo" && <><SavedBusinessButton slug={business.slug}/><SupportForm businessSlug={business.slug}/></>}
                     {business.source === "demo" && <span className="demo-profile-pill">نمونه نمایشی</span>}
                     {business.verified && <BadgeCheck size={22} className="verified-icon" />}
                     {business.planCode === "pro" && (
@@ -332,6 +335,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                   {album.media[0] && <img src={album.media[0].url} alt={album.title} width={96} height={72} loading="lazy" style={{ objectFit: "cover", borderRadius: 8, verticalAlign: "middle", marginInlineEnd: 12 }} />}
                   {album.title} — {album.media.length.toLocaleString("fa-IR")} عکس
                 </summary>
+                {album.project && <p>{[album.project.service,album.project.materials,album.project.area].filter(Boolean).join(" · ")}</p>}
                 {album.description && <p style={{ whiteSpace: "pre-wrap" }}>{album.description}</p>}
                 <div className="business-public-gallery">
                   {album.media.map(item => <figure key={item.id}><img src={item.url} alt={item.altText || album.title} loading="lazy" />{item.altText && <figcaption>{item.altText}</figcaption>}</figure>)}
@@ -354,6 +358,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
             )}
           </section>
 
+          {business.source !== "demo" && <PublicCampaigns slug={business.slug}/>}
           <BusinessReviews
             businessSlug={business.slug}
             businessName={business.name}

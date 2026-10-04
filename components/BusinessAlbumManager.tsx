@@ -7,6 +7,7 @@ export default function BusinessAlbumManager() {
   const [limit, setLimit] = useState<number | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [project, setProject] = useState({service:'',materials:'',area:''});
   const [selected, setSelected] = useState<number[]>([]);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
@@ -20,7 +21,7 @@ export default function BusinessAlbumManager() {
   async function create(event: React.FormEvent) {
     event.preventDefault(); setBusy(true); setMessage("");
     try {
-      const response = await fetch("/api/me/business/albums", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title, description, mediaIds: selected }) });
+      const response = await fetch("/api/me/business/albums", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title, description, mediaIds: selected, project }) });
       const data = await response.json();
       if (!response.ok) { setMessage(data.error === "PAID_PLAN_REQUIRED" ? "ساخت آلبوم به اشتراک فعال نیاز دارد." : "آلبوم ثبت نشد؛ ظرفیت و عکس‌های انتخابی را بررسی کنید."); return; }
       setTitle(""); setDescription(""); setSelected([]); await load(); setMessage("آلبوم ساخته شد و در گالری عمومی شما دیده می‌شود.");
@@ -43,6 +44,8 @@ export default function BusinessAlbumManager() {
       <p>ظرفیت آلبوم: {albums.length.toLocaleString("fa-IR")} از {limit.toLocaleString("fa-IR")}</p>
       <label>نام آلبوم<input required maxLength={100} value={title} onChange={e => setTitle(e.target.value)} /></label>
       <label>شرح پروژه<textarea maxLength={2000} value={description} onChange={e => setDescription(e.target.value)} /></label>
+      {(['service','materials','area'] as const).map(key=><label key={key}>{{service:'خدمت انجام‌شده',materials:'متریال استفاده‌شده',area:'شهر یا محدوده؛ بدون آدرس خصوصی'}[key]}<input maxLength={300} value={project[key]} onChange={e=>setProject({...project,[key]:e.target.value})}/></label>)}
+      <p>برای تصاویر قبل و بعد، عنوان هر عکس را در بخش گالری با «قبل از اجرا» یا «بعد از اجرا» مشخص کنید. عکس مشتری را فقط با اجازه او منتشر کنید.</p>
       <p>عکس‌ها را از گالری انتخاب کنید. برای دریافت عکس‌های تازه، ابتدا گالری را به‌روزرسانی کنید.</p>
       <button type="button" className="pill-button" onClick={() => load().catch(() => setMessage("دریافت عکس‌ها انجام نشد."))}>به‌روزرسانی عکس‌ها</button>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>{media.map(item => <label key={item.id}><input type="checkbox" checked={selected.includes(item.id)} onChange={e => setSelected(e.target.checked ? [...selected, item.id] : selected.filter(id => id !== item.id))} /><img src={item.file_url} alt={item.alt_text || "انتخاب عکس نمونه‌کار"} width={80} height={80} loading="lazy" style={{ objectFit: "cover" }} /></label>)}</div>

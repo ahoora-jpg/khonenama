@@ -1,6 +1,7 @@
 import {selectPublicMedia} from "@/lib/subscription-lifecycle";
 import { env } from "cloudflare:workers";
 import { ensureBusinessMediaSchema } from "@/lib/server/business-media";
+import { ensureReviewReplies } from "@/lib/server/review-replies";
 
 export type PublicBusiness = {
   id: number;
@@ -28,7 +29,7 @@ export type PublicBusiness = {
   promoted: boolean;
   rating: number;
   reviewCount: number;
-  reviews: { id: number; name: string; rating: number; body: string; verifiedInteraction: boolean; createdAt: string }[];
+  reviews: { id: number; name: string; rating: number; body: string; reply: string; verifiedInteraction: boolean; createdAt: string }[];
 };
 
 const INTERNAL_TEST_BUSINESS_SLUGS = new Set(["alayy-dkvr-krj"]);
@@ -56,6 +57,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
   if (!db || !rows.length) return [];
 
   await ensureBusinessMediaSchema(db);
+  await ensureReviewReplies(db);
 
   const result: PublicBusiness[] = [];
   for (const row of rows) {
@@ -104,7 +106,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         .all(),
       db
         .prepare(
-          "SELECT id, rating, title, body, verified_interaction, created_at FROM reviews " +
+          "SELECT id, rating, title, body, verified_interaction, created_at, (SELECT body FROM review_replies rr WHERE rr.review_id = reviews.id) AS reply FROM reviews " +
           "WHERE business_id = ? AND status = 'published' ORDER BY created_at DESC, id DESC LIMIT 8"
         )
         .bind(row.id)
@@ -158,6 +160,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         name: item.title || "مشتری خونه نما",
         rating: Number(item.rating || 0),
         body: item.body || "",
+        reply: item.reply || "",
         verifiedInteraction: Boolean(item.verified_interaction),
         createdAt: item.created_at || "",
       })),
@@ -244,7 +247,7 @@ export async function listPublishedBusinesses(options: {
     const sql =
       "SELECT DISTINCT b.*, c.slug AS category_slug, c.name AS category_name FROM businesses b LEFT JOIN business_categories bc ON bc.business_id = b.id AND bc.is_primary = 1 LEFT JOIN categories c ON c.id = bc.category_id WHERE " +
       where.join(" AND ") +
-      " ORDER BY CASE COALESCE((SELECT p2.code FROM subscriptions s2 JOIN plans p2 ON p2.id = s2.plan_id WHERE s2.business_id = b.id AND s2.status = 'active' AND (s2.ends_at IS NULL OR julianday(s2.ends_at) > julianday('now')) ORDER BY s2.id DESC LIMIT 1), 'free') WHEN 'premium' THEN 0 WHEN 'pro' THEN 1 ELSE 2 END, b.is_featured DESC, b.updated_at DESC, b.id DESC LIMIT " +
+      " ORDER BY (SELECT (COALESCE(SUM(r.rating),0) + 15.0) / (COUNT(*) + 5.0) FROM reviews r WHERE r.business_id = b.id AND r.status = 'published') DESC, b.id DESC LIMIT " +
       limit;
 
     const rows = await db.prepare(sql).bind(...binds).all();

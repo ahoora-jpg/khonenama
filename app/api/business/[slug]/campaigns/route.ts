@@ -1,0 +1,2 @@
+import {env} from 'cloudflare:workers';import {getPublishedBusiness} from '@/lib/server/public-businesses';import {publicCampaigns} from '@/lib/server/campaigns';
+export async function GET(r:Request,{params}:{params:Promise<{slug:string}>}){const {slug}=await params;if(!await getPublishedBusiness(slug))return Response.json({ok:false},{status:404});return Response.json({ok:true,campaigns:await publicCampaigns((env as any).DB,slug)},{headers:{'Cache-Control':'no-store'}});}

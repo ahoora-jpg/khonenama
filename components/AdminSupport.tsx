@@ -1,0 +1,9 @@
+"use client";
+import { useEffect,useState } from 'react';
+type Ticket={id:number;business_slug:string;review_id:number|null;contact:string;message:string;status:string;admin_reply:string};
+export default function AdminSupport(){
+ const [items,setItems]=useState<Ticket[]>([]),[error,setError]=useState(''),[busy,setBusy]=useState(false);
+ async function load(){try{const r=await fetch('/api/admin/support',{cache:'no-store'});const data=await r.json();if(!r.ok||!data.ok)throw new Error();setItems(data.tickets);}catch{setError('دریافت گزارش‌ها انجام نشد.');}}
+ useEffect(()=>{void load();},[]);
+ return <section><h1>گزارش‌ها و پشتیبانی</h1><p role="status">{error}</p><a href="/admin/businesses">مدیریت غرفه‌ها</a>{items.map(ticket=><article className="dashboard-panel glass-panel" key={ticket.id}><h2>SUP-{ticket.id}</h2><p>{ticket.contact} · {ticket.business_slug} {ticket.review_id?' · نظر '+ticket.review_id:''}</p><p>{ticket.message}</p><label>وضعیت<select value={ticket.status} onChange={e=>setItems(rows=>rows.map(row=>row.id===ticket.id?{...row,status:e.target.value}:row))}><option value="open">جدید</option><option value="in_progress">در حال رسیدگی</option><option value="resolved">رسیدگی‌شده</option></select></label><label>پاسخ مدیر<textarea maxLength={2000} value={ticket.admin_reply} onChange={e=>setItems(rows=>rows.map(row=>row.id===ticket.id?{...row,admin_reply:e.target.value}:row))}/></label><button disabled={busy} onClick={async()=>{setBusy(true);try{const r=await fetch('/api/admin/support',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ticket.id,status:ticket.status,reply:ticket.admin_reply})});if(!r.ok)throw new Error();setError('ذخیره شد.');}catch{setError('ذخیره انجام نشد.');}finally{setBusy(false);}}}>ذخیره رسیدگی</button></article>)}</section>;
+}

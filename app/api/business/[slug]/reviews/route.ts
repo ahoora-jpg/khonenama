@@ -128,6 +128,8 @@ export async function POST(
     }
   }
 
+  const duplicateText = await db.prepare("SELECT id FROM reviews WHERE business_id = ? AND body = ? AND created_at > datetime('now','-7 days') LIMIT 1").bind(business.id, reviewBody).first();
+  if (duplicateText) return Response.json({ok:false,error:"RECENT_DUPLICATE"},{status:409});
   const inserted = await db
     .prepare(
       "INSERT INTO reviews (business_id, rating, title, body, status, verified_interaction) " +

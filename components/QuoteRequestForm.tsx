@@ -151,7 +151,7 @@ export default function QuoteRequestForm({
             value={requestText}
             onChange={(e) => setRequestText(e.target.value)}
             rows={4}
-            placeholder="مثلاً برای پذیرایی حدود ۶ متر پرده زبرا با اندازه‌گیری و نصب قیمت می‌خواهم."
+            placeholder="نوع خدمت و متریال، ابعاد فضا، وضعیت زیرکار، نیاز به نصب و زمان موردنظر را بنویسید."
           />
         </label>
         <label>

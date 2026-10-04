@@ -2,12 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { BadgeCheck, CheckCircle2, ShieldCheck, Star } from "lucide-react";
+import SupportForm from "@/components/SupportForm";
 
 type PublicReview = {
   id: number;
   name: string;
   rating: number;
   body: string;
+  reply?: string;
   verifiedInteraction: boolean;
   createdAt: string;
 };
@@ -142,6 +144,8 @@ export default function BusinessReviews({
                 </span>
               </div>
               <p>{review.body}</p>
+              {review.reply && <blockquote><strong>پاسخ کسب‌وکار</strong><p>{review.reply}</p></blockquote>}
+              {!demo && <SupportForm businessSlug={businessSlug} reviewId={review.id} />}
             </article>
           ))}
         </div>

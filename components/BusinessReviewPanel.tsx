@@ -8,6 +8,7 @@ type OwnerReview = {
   rating: number;
   title: string;
   body: string;
+  reply?: string;
   status: string;
   verified_interaction: number;
   created_at: string;
@@ -17,6 +18,22 @@ export default function BusinessReviewPanel() {
   const [reviews, setReviews] = useState<OwnerReview[]>([]);
   const [summary, setSummary] = useState({ published: 0, pending: 0, average: 0 });
   const [loading, setLoading] = useState(true);
+  const [drafts, setDrafts] = useState<Record<number, string>>({});
+  const [saving, setSaving] = useState<number | null>(null);
+  const [message, setMessage] = useState("");
+
+  async function reply(review: OwnerReview) {
+    setSaving(review.id); setMessage("");
+    try {
+      const body = (drafts[review.id] ?? review.reply ?? "").trim();
+      const response = await fetch("/api/me/business/reviews", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ reviewId: review.id, body }) });
+      const result = await response.json();
+      if (!response.ok || !result.ok) throw new Error();
+      setReviews(items => items.map(item => item.id === review.id ? { ...item, reply: body } : item));
+      setMessage("پاسخ ذخیره شد و در صفحه غرفه نمایش داده می‌شود.");
+    } catch { setMessage("پاسخ ذخیره نشد؛ متن باید بین ۳ و ۱۵۰۰ نویسه باشد."); }
+    finally { setSaving(null); }
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -53,6 +70,7 @@ export default function BusinessReviewPanel() {
         <span>{summary.published} منتشرشده</span>
         <span>{summary.pending} در انتظار بررسی</span>
       </div>
+      {message && <p role="status">{message}</p>}
 
       {loading ? (
         <div className="dashboard-empty-state"><strong>در حال دریافت نظرها...</strong></div>
@@ -72,6 +90,7 @@ export default function BusinessReviewPanel() {
                 ))}
               </span>
               <p>{review.body}</p>
+              {review.status === "published" && <div><label>پاسخ شما<textarea maxLength={1500} value={drafts[review.id] ?? review.reply ?? ""} onChange={event => setDrafts(items => ({ ...items, [review.id]: event.target.value }))} /></label><button type="button" disabled={saving !== null} onClick={() => reply(review)}>{saving === review.id ? "در حال ذخیره…" : "ثبت پاسخ"}</button></div>}
               <small>{review.status === "published" ? "منتشرشده" : review.status === "pending" ? "در انتظار بررسی" : "منتشرنشده"}</small>
             </article>
           ))}

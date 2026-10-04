@@ -345,7 +345,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                           <span className="plan-listing-badge is-pro"><BriefcaseBusiness size={13} /> حرفه‌ای</span>
                         )}
                         {business.planCode === "premium" && (
-                          <span className="plan-listing-badge is-premium"><Crown size={13} /> جایگاه ویژه</span>
+                          <span className="plan-listing-badge is-premium"><Crown size={13} /> اشتراک ویژه</span>
                         )}
                       </div>
                       <p>{business.description}</p>

@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
-  return children;
+  return <><nav className="shell"><a href="/admin/businesses">غرفه‌ها</a> · <a href="/admin/reviews">نظرها</a> · <a href="/admin/support">گزارش‌ها و پشتیبانی</a> · <a href="/admin/campaigns">جشنواره‌ها</a></nav>{children}</>;
 }

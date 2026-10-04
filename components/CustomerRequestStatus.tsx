@@ -40,6 +40,10 @@ export default function CustomerRequestStatus({ initialCode = "" }: { initialCod
   const [result, setResult] = useState<Result | null>(null);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  async function decide(slug:string, action:'accept'|'reject') {
+    setLoading(true);
+    try {const r=await fetch('/api/lead/decision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({requestCode,customerPhone,businessSlug:slug,action})});if(!r.ok)throw new Error();setResult(current=>current?{...current,businesses:current.businesses.map(b=>b.slug===slug&&b.quote?{...b,quote:{...b.quote,status:action==='accept'?'accepted':'rejected'}}:b)}:null);setMessage('انتخاب ثبت شد؛ قرارداد یا پرداخت محسوب نمی‌شود.');}catch{setMessage('ثبت انتخاب انجام نشد.');}finally{setLoading(false);}
+  }
 
   async function lookup(event: React.FormEvent) {
     event.preventDefault();
@@ -138,6 +142,9 @@ export default function CustomerRequestStatus({ initialCode = "" }: { initialCod
                       <span>پیشنهاد ثبت‌شده</span>
                       {business.quote.amount != null && <strong>{money(business.quote.amount)}</strong>}
                       {business.quote.message && <p>{business.quote.message}</p>}
+                      <p>{business.quote.status==='accepted'?'پیشنهاد انتخاب‌شده':business.quote.status==='rejected'?'پیشنهاد ردشده':'منتظر تصمیم شما'}</p>
+                      <button disabled={loading} onClick={()=>decide(business.slug,'accept')}>انتخاب پیشنهاد</button>
+                      <button disabled={loading} onClick={()=>decide(business.slug,'reject')}>رد پیشنهاد</button>
                     </div>
                   </div>
                 ) : (

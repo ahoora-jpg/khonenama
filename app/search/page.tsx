@@ -37,7 +37,7 @@ function relevanceScore(
 ) {
   const q = normalizeSearchText(query);
   const loc = normalizeSearchText(location);
-  if (!q) return (business.promoted ? 5 : 0) + (normalizeSearchText(business.area) === loc ? 3 : 0);
+  if (!q) return 0 + (normalizeSearchText(business.area) === loc ? 3 : 0);
 
   const name = normalizeSearchText(business.name);
   const description = normalizeSearchText(business.description);
@@ -60,7 +60,7 @@ function relevanceScore(
   if (description.includes(q)) score += 24;
   if (normalizeSearchText(business.area) === loc) score += 12;
   else if (normalizeSearchText(business.city) === loc) score += 6;
-  if (business.promoted) score += 2;
+
 
   return score;
 }
@@ -197,7 +197,7 @@ export default async function SearchPage({
                         <span className="plan-listing-badge is-pro"><BriefcaseBusiness size={13} /> حرفه‌ای</span>
                       )}
                       {business.planCode === "premium" && (
-                        <span className="plan-listing-badge is-premium"><Crown size={13} /> جایگاه ویژه</span>
+                        <span className="plan-listing-badge is-premium"><Crown size={13} /> اشتراک ویژه</span>
                       )}
                     </div>
                     <p>{business.description}</p>

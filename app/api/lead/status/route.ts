@@ -100,7 +100,7 @@ export async function POST(request: Request) {
         phone: row.phone || "",
         whatsapp: row.whatsapp || "",
         quote:
-          row.quote_status === "sent" || row.quote_status === "accepted"
+          row.quote_status === "sent" || row.quote_status === "accepted" || row.quote_status === "rejected"
             ? {
                 amount: row.amount ?? null,
                 message: row.message || "",

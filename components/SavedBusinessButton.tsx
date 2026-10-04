@@ -1,0 +1,4 @@
+"use client";
+import { useEffect,useState } from 'react';
+export const SAVED_KEY='khonenama-saved-businesses';
+export default function SavedBusinessButton({slug}:{slug:string}){const [saved,setSaved]=useState(false),[error,setError]=useState('');useEffect(()=>{try{setSaved(JSON.parse(localStorage.getItem(SAVED_KEY)||'[]').includes(slug));}catch{}},[slug]);return <span><button type="button" aria-pressed={saved} onClick={()=>{try{const rows=JSON.parse(localStorage.getItem(SAVED_KEY)||'[]');const next=saved?rows.filter((s:string)=>s!==slug):[...new Set([...rows,slug])].slice(-30);localStorage.setItem(SAVED_KEY,JSON.stringify(next));setSaved(!saved);}catch{setError('ذخیره در این مرورگر ممکن نیست.');}}}>{saved?'حذف از علاقه‌مندی‌ها':'ذخیره غرفه'}</button> <a href="/saved">علاقه‌مندی‌ها و مقایسه</a><small role="status">{error}</small></span>;}

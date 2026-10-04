@@ -242,6 +242,7 @@ export default function BusinessDashboardContent() {
             <p>موقعیت فعلی: {location || "ثبت نشده"}</p>
           </section>
 
+          <p><a href="/dashboard/campaigns">مدیریت کمپین و جشنواره</a> · <a href="/support">پشتیبانی و گزارش مشکل</a></p>
           <BusinessLeadInbox />
         </div>
 
