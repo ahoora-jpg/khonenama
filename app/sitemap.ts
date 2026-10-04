@@ -6,7 +6,7 @@ const baseUrl = "https://khonenama.ir";
 const seoRefreshDate = "2026-09-25";
 const homepageBrandRefreshDate = "2026-09-29";
 const aboutBrandRefreshDate = "2026-09-29";
-const categoryRefreshDate = "2026-09-28";
+const categoryRefreshDate = "2026-10-04";
 // Fixed date of published content/link changes, never the sitemap request date.
 const sixDomainSeoRefreshDate = "2026-10-04";
 
