@@ -17,7 +17,7 @@ const SEO_METADATA_OVERRIDES: Record<string, { title?: string; description?: str
   "interior-design-karaj-cost-guide": { title: "هزینه طراحی داخلی در کرج | روش قیمت‌گذاری" },
   "curtain-buying-guide": { title: "راهنمای انتخاب پرده منزل | مدل، اندازه و نصب" },
   "wallpaper-vs-wallpanel": {
-    description: "کاغذ دیواری و دیوارپوش را از نظر ظاهر، زیرسازی، نصب، نگهداری و کاربرد مقایسه کنید تا گزینه مناسب فضای خانه را انتخاب کنید.",
+    description: "کاغذ دیواری و دیوارپوش چسبی، فومی، چوبی و سنگی را از نظر جنس، زیرکار، اتصال، نگهداری و هزینه اجرا مقایسه کنید؛ نکات انتخاب تی‌وی وال را بخوانید.",
   },
   "smart-home-guide": { title: "خانه هوشمند چیست؟ | راهنمای شروع" },
   "carpet-buying-guide": { title: "راهنمای خرید موکت | مشخصات مهم قبل از سفارش" },
@@ -102,7 +102,7 @@ function getRelatedGuides(guide: Guide) {
     "curtain-cleaning-guide": ["curtain-installation-guide", "zebra-curtain-guide", "shade-curtain-guide", "curtain-buying-guide"],
     "zebra-vs-shade": ["shade-curtain-guide", "zebra-curtain-guide", "curtain-installation-guide", "zebra-curtain-price-guide"],
   };
-  const selectedPaths = curtainPaths[guide.slug];
+  const selectedPaths = guide.relatedGuideSlugs || curtainPaths[guide.slug];
   if (selectedPaths) {
     return selectedPaths.map(getGuide).filter((item): item is Guide => Boolean(item));
   }
@@ -449,4 +449,3 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     </main>
   );
 }
-
