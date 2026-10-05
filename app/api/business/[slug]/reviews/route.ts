@@ -136,25 +136,16 @@ export async function POST(
 
   const duplicateText = await db.prepare("SELECT id FROM reviews WHERE business_id = ? AND body = ? AND created_at > datetime('now','-7 days') LIMIT 1").bind(business.id, reviewBody).first();
   if (duplicateText) return Response.json({ok:false,error:"RECENT_DUPLICATE"},{status:409});
-  const inserted = await db
-    .prepare(
-      "INSERT INTO reviews (business_id, rating, title, body, status, verified_interaction) " +
-      "VALUES (?, ?, ?, ?, 'pending', ?) RETURNING id"
-    )
-    .bind(business.id, rating, reviewerName, reviewBody, verifiedInteraction)
-    .first();
-
-  const reviewId = Number(inserted?.id);
-  if (!reviewId) {
-    return Response.json({ ok: false, error: "REVIEW_CREATE_FAILED" }, { status: 500 });
-  }
-
-  if (verifiedLeadId) {
-    await db
-      .prepare("INSERT INTO review_sources (review_id, lead_id, business_id) VALUES (?, ?, ?)")
-      .bind(reviewId, verifiedLeadId, business.id)
-      .run();
-  }
+  // Keep the review and its evidence in one transaction; a competing submission
+  // must never leave an orphan with a verified-interaction flag.
+  const reviewId = Number.parseInt(crypto.randomUUID().replace(/-/g, '').slice(0, 12), 16) || 1;
+  const inserted = await db.batch([
+    db.prepare("INSERT INTO reviews (id,business_id,rating,title,body,status,verified_interaction) SELECT ?,?,?,?,?,'pending',? WHERE ? IS NULL OR NOT EXISTS(SELECT 1 FROM review_sources WHERE lead_id=?)")
+      .bind(reviewId,business.id,rating,reviewerName,reviewBody,verifiedInteraction,verifiedLeadId,verifiedLeadId),
+    db.prepare("INSERT INTO review_sources(review_id,lead_id,business_id) SELECT id,?,business_id FROM reviews WHERE id=? AND ? IS NOT NULL")
+      .bind(verifiedLeadId,reviewId,verifiedLeadId),
+  ]);
+  if (!inserted[0]?.meta?.changes) return Response.json({ok:false,error:'REQUEST_ALREADY_REVIEWED'},{status:409});
 
   return Response.json(
     {
