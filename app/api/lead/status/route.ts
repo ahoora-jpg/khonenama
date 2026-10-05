@@ -1,3 +1,4 @@
+import { verifyLeadAccessCode } from "@/lib/server/lead-access";
 import { env } from "cloudflare:workers";
 
 function normalizeDigits(value: string) {
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
   const customerPhone = normalizeIranPhone(
     typeof body?.customerPhone === "string" ? body.customerPhone : ""
   );
-  const leadId = leadIdFromCode(requestCode);
+  const leadId = await verifyLeadAccessCode(db, normalizeDigits(requestCode));
 
   if (!leadId || !/^09\d{9}$/.test(customerPhone)) {
     return Response.json({ ok: false, error: "INVALID_LOOKUP" }, { status: 400 });
@@ -84,7 +85,7 @@ export async function POST(request: Request) {
     {
       ok: true,
       request: {
-        code: "KH-" + String(leadId).padStart(6, "0"),
+        code: requestCode,
         customerName: lead.customer_name || "",
         requestText: lead.request_text || "",
         city: lead.city || "",

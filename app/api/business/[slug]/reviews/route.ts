@@ -1,3 +1,4 @@
+import { verifyLeadAccessCode } from "@/lib/server/lead-access";
 import { env } from "cloudflare:workers";
 
 function clean(value: unknown, max: number) {
@@ -58,7 +59,7 @@ export async function POST(
   const reviewerName = clean(body?.reviewerName, 80);
   const reviewBody = clean(body?.body, 1200);
   const rating = Number(body?.rating);
-  const requestCode = clean(body?.requestCode, 40);
+  const requestCode = clean(body?.requestCode, 100);
   const customerPhone = normalizeIranPhone(clean(body?.customerPhone, 40));
 
   if (reviewerName.length < 2) {
@@ -86,7 +87,7 @@ export async function POST(
   let verifiedLeadId: number | null = null;
 
   if (requestCode) {
-    const leadId = leadIdFromCode(requestCode);
+    const leadId = await verifyLeadAccessCode(db, normalizeDigits(requestCode));
     if (!leadId || !/^09\d{9}$/.test(customerPhone)) {
       return Response.json({ ok: false, error: "INVALID_REQUEST_CODE" }, { status: 400 });
     }

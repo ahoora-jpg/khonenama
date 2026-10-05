@@ -1,7 +1,7 @@
 import { env } from "cloudflare:workers";
 import { createBusinessSession } from "@/lib/server/business-session";
-import { hashPassword, verifyPassword } from "@/lib/server/password";
-import { isAdminRequest } from "@/lib/server/admin-session";
+import { verifyPassword } from "@/lib/server/password";
+
 
 function normalizeDigits(value: string) {
   const fa = "۰۱۲۳۴۵۶۷۸۹";
@@ -24,7 +24,7 @@ const LOGIN_MAX_FAILURES = 10;
 
 async function rateLimitKey(request: Request) {
   const forwarded = request.headers.get("cf-connecting-ip")
-    || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+
     || "unknown";
   const bytes = new TextEncoder().encode("business-login:" + forwarded);
   const digest = await crypto.subtle.digest("SHA-256", bytes);
@@ -143,29 +143,7 @@ export async function POST(request: Request) {
       console.warn("password verification runtime error", error);
     }
 
-    if (!valid && verifyRuntimeError && Number(user.password_iterations || 0) > 100000) {
-      const adminRepairAllowed = await isAdminRequest(request);
-      if (adminRepairAllowed) {
-        const credentials = await hashPassword(password);
-        await db
-          .prepare(
-            "UPDATE users SET password_hash = ?, password_salt = ?, password_iterations = ?, password_set_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?"
-          )
-          .bind(
-            credentials.hash,
-            credentials.salt,
-            credentials.iterations,
-            user.id
-          )
-          .run();
-        valid = true;
-      } else {
-        return Response.json(
-          { ok: false, error: "PASSWORD_REHASH_REQUIRED" },
-          { status: 409 }
-        );
-      }
-    }
+    if (verifyRuntimeError) return Response.json({ ok: false, error: "AUTH_UNAVAILABLE" }, { status: 503 });
 
     if (!valid) {
       await recordLoginFailure(db, loginKey);

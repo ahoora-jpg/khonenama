@@ -1,0 +1,12 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+import ts from 'typescript';
+import {webcrypto} from 'node:crypto';
+function load(path, imports={}) {const exports={};vm.runInNewContext(ts.transpileModule(readFileSync(path,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{exports,require:n=>imports[n],Request,Response,URL,crypto:webcrypto,TextEncoder,console});return exports;}
+const policy=load('lib/request-security.ts');
+const req=(extra={})=>new Request('https://khonenama.ir/api/support',{method:'POST',headers:{'content-type':'application/json',...extra},body:'{}'});
+test('Cross-origin browser mutations rejected while native no-Origin requests work',()=>{assert.equal(policy.crossSiteMutation(req({origin:'https://evil.example'})),true);assert.equal(policy.crossSiteMutation(req({'sec-fetch-site':'cross-site'})),true);assert.equal(policy.crossSiteMutation(req({origin:'https://khonenama.ir'})),false);assert.equal(policy.crossSiteMutation(req({authorization:'Bearer native'})),false);});
+test('Middleware adds clickjacking protection and never caches private APIs',async()=>{const mw=load('middleware.ts',{'next/server':{NextResponse:{next:()=>new Response(null),json:Response.json}},'cloudflare:workers':{env:{DB:{prepare:()=>({run:async()=>{},bind:()=>({first:async()=>({attempts:1})})})}}},'./lib/request-security':policy});const result=await mw.middleware(req());assert.equal(result.headers.get('x-frame-options'),'DENY');assert.equal(result.headers.get('cache-control'),'private, no-store');assert.ok(result.headers.get('permissions-policy').includes('camera=(self)'));assert.equal((await mw.middleware(req({origin:'https://evil.example'}))).status,403);});
+test('Middleware blocks oversized JSON, exhausted limits, and database failures',async()=>{const create=db=>load('middleware.ts',{'next/server':{NextResponse:{next:()=>new Response(null),json:Response.json}},'cloudflare:workers':{env:{DB:db}},'./lib/request-security':policy});assert.equal((await create(null).middleware(req())).status,503);const db={prepare:()=>({run:async()=>{},bind:()=>({first:async()=>({attempts:11})})})};assert.equal((await create(db).middleware(req())).status,429);assert.equal((await create(db).middleware(new Request('https://khonenama.ir/api/support',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({message:'a'.repeat(66000)})}))).status,413);});

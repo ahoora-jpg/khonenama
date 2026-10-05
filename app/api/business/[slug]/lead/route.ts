@@ -1,3 +1,4 @@
+import { createLeadAccessCode } from "@/lib/server/lead-access";
 import { env } from "cloudflare:workers";
 import { sendBusinessLeadPush } from "@/lib/server/business-push";
 
@@ -88,13 +89,7 @@ export async function POST(
     .bind(business.id, customerPhone)
     .first();
 
-  if (duplicate?.id) {
-    return Response.json({
-      ok: true,
-      duplicate: true,
-      requestCode: "KH-" + String(duplicate.id).padStart(6, "0"),
-    });
-  }
+  if (duplicate?.id) return Response.json({ ok: false, error: "RECENT_DUPLICATE" }, { status: 409 });
 
   const lead = await db
     .prepare(
@@ -130,7 +125,7 @@ export async function POST(
   return Response.json(
     {
       ok: true,
-      requestCode: "KH-" + String(leadId).padStart(6, "0"),
+      requestCode: await createLeadAccessCode(db, leadId),
     },
     { status: 201, headers: { "Cache-Control": "no-store" } }
   );

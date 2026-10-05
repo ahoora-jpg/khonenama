@@ -206,7 +206,7 @@ export default function BusinessReviews({
 
             <label>
               <span>کد درخواست خونه نما ـ اختیاری</span>
-              <input dir="ltr" value={requestCode} onChange={(e) => setRequestCode(e.target.value)} placeholder="KH-000001" />
+              <input dir="ltr" value={requestCode} onChange={(e) => setRequestCode(e.target.value)} placeholder="کد کامل درخواست را وارد کنید" />
               <small>اگر از خونه نما درخواست قیمت داده‌ای، با این کد نظر «تعامل تأییدشده» می‌گیرد.</small>
             </label>
 

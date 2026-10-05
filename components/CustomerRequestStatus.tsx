@@ -95,7 +95,7 @@ export default function CustomerRequestStatus({ initialCode = "" }: { initialCod
         <div className="request-status-fields">
           <label>
             <span>کد درخواست</span>
-            <input dir="ltr" value={requestCode} onChange={(e) => setRequestCode(e.target.value)} placeholder="KH-000001" />
+            <input dir="ltr" value={requestCode} onChange={(e) => setRequestCode(e.target.value)} placeholder="کد کامل درخواست را وارد کنید" />
           </label>
           <label>
             <span>شماره همراه</span>
