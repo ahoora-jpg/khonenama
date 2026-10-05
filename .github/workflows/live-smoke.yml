@@ -28,8 +28,8 @@ jobs:
             url="$3"
             data="${4:-}"
             body_file="$(mktemp)"
-            if [ "$method" = "POST" ]; then
-              actual="$(curl -sS -o "$body_file" -w "%{http_code}" -X POST "$url" -H 'Content-Type: application/json' --data "$data")"
+            if [ "$method" = "POST" ] || [ "$method" = "PATCH" ]; then
+              actual="$(curl -sS -o "$body_file" -w "%{http_code}" -X "$method" "$url" -H 'Content-Type: application/json' --data "$data")"
             else
               actual="$(curl -sS -o "$body_file" -w "%{http_code}" "$url")"
             fi
@@ -113,7 +113,7 @@ jobs:
           expect_status 401 GET "$BASE/api/billing/history" >/dev/null
           expect_status 401 POST "$BASE/api/billing/reconcile" '{"id":"unauthorized"}' >/dev/null
           expect_status 401 GET "$BASE/api/admin/billing" >/dev/null
-          expect_status 401 POST "$BASE/api/admin/billing" '{}' >/dev/null
+          expect_status 401 PATCH "$BASE/api/admin/billing" '{}' >/dev/null
           expect_status 200 GET "$BASE/api/billing/plans" >/dev/null
           expect_status 200 GET "$BASE/billing/result" >/dev/null
 

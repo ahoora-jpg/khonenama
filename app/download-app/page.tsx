@@ -5,10 +5,10 @@ import { CheckCircle2, Download, ShieldCheck, Smartphone } from "lucide-react";
 
 const pageUrl = "https://khonenama.ir/download-app";
 const apkUrl =
-  "https://github.com/ahoora-jpg/khonenama-mobile/releases/download/mobile-13/khonenama-production.apk";
+  "https://github.com/ahoora-jpg/khonenama-mobile/releases/download/mobile-14/khonenama-production.apk";
 
 export const metadata: Metadata = {
-  title: { absolute: "دانلود اپ اندروید خونه نما | نسخه ۱.۲.۴" },
+  title: { absolute: "دانلود اپ اندروید خونه نما | نسخه ۱.۲.۵" },
   description: "دانلود مستقیم اپلیکیشن اندروید خونه نما و راهنمای نصب امن نسخه رسمی صاحبان کسب‌وکار.",
   alternates: { canonical: pageUrl },
   robots: { index: true, follow: true },
@@ -18,7 +18,7 @@ const installSteps = [
   ["۱", "دانلود فایل", "روی دکمه دانلود مستقیم بزنید و اجازه دهید فایل APK کامل دریافت شود."],
   ["۲", "بازکردن فایل", "پس از پایان دانلود، فایل khonenama-production.apk را از اعلان دانلود یا پوشه Downloads باز کنید."],
   ["۳", "اجازه نصب", "اگر اندروید پیام نصب از این منبع را نشان داد، فقط برای همان مرورگر یا فایل‌منیجر گزینه اجازه نصب را فعال کنید."],
-  ["۴", "نصب یا به‌روزرسانی", "گزینه Install یا Update را بزنید. نسخه ۱.۲.۴ بدون حذف نسخه قبلی نصب می‌شود."],
+  ["۴", "نصب یا به‌روزرسانی", "گزینه Install یا Update را بزنید. نسخه ۱.۲.۵ بدون حذف نسخه قبلی نصب می‌شود."],
 ] as const;
 
 export default function DownloadAppPage() {
@@ -35,10 +35,10 @@ export default function DownloadAppPage() {
               نسخه جدید اپ خونه نما برای ثبت کسب‌وکار، عکاسی و آپلود نمونه‌کار، مدیریت گالری و آلبوم، نمایش کیوآرکد و پاسخ‌گویی به درخواست مشتری است.
             </p>
             <a className="pill-button dark app-download-primary" href={apkUrl}>
-              <Download size={20} /> دانلود مستقیم نسخه ۱.۲.۴
+              <Download size={20} /> دانلود مستقیم نسخه ۱.۲.۵
             </a>
             <div className="app-download-facts">
-              <span><CheckCircle2 size={16} /> نسخه ۱.۲.۴</span>
+              <span><CheckCircle2 size={16} /> نسخه ۱.۲.۵</span>
               <span><CheckCircle2 size={16} /> به‌روزرسانی بدون حذف نسخه قبل</span>
               <span><ShieldCheck size={16} /> امضاشده با کلید دائمی خونه نما</span>
             </div>
@@ -74,8 +74,8 @@ export default function DownloadAppPage() {
           </section>
 
           <p className="app-download-security">
-            فایل رسمی فقط از همین صفحه یا مخزن رسمی GitHub خونه نما دریافت شود. اثرانگشت SHA-256 نسخه ۱.۲.۴:
-            <code>baeade6df572237bc910f935d0871d984f66bf871af641d0b1bce1fdb80dd1f6</code>
+            فایل رسمی فقط از همین صفحه یا مخزن رسمی GitHub خونه نما دریافت شود. اثرانگشت SHA-256 نسخه ۱.۲.۵:
+            <code>a490c549bad2a01eb3e549132091f8ece532a1e7c7e1184991b2116a6fe701c9</code>
           </p>
         </div>
       </section>
@@ -83,3 +83,4 @@ export default function DownloadAppPage() {
     </main>
   );
 }
+
