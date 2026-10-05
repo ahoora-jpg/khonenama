@@ -80,7 +80,7 @@ export const seoBatch4Guides: Guide[] = [
     modifiedAt: "2026-10-05",
     readTime: "۷ دقیقه",
     relatedCategory: "/category/curtain",
-    relatedGuides: ["curtain-fullness-guide", "curtain-buying-guide", "curtain-installation-guide"],
+    relatedGuideSlugs: ["curtain-fullness-guide", "curtain-buying-guide", "curtain-installation-guide"],
     quickAnswer: "پرده پانچ، که به آن پرده پانچی هم می‌گویند، پرده‌ای است که حلقه‌های فلزی یا پلاستیکی در بالای پارچه قرار می‌گیرند و مستقیماً روی میله حرکت می‌کنند. ظاهر مرتب، نصب ساده و موج‌های نسبتاً یکنواخت از ویژگی‌های رایج آن است.",
     sections: [
       {
@@ -109,8 +109,7 @@ export const seoBatch4Guides: Guide[] = [
         heading: "خرید پرده پانچ آماده در کرج",
         paragraphs: [
           "برای انتخاب فروشنده در کرج، مشخصات پنل موردنظر، ابعاد میله، محله و نیاز به نصب را در استعلام بنویسید. از فروشنده درباره موجودی واقعی همان مدل، هزینه حمل و نصب، زمان تحویل و شرایط تعویض سؤال کنید؛ موجودی و قیمت همه فروشگاه‌ها یکسان نیست."
-        ],
-        links: [{ label: "بررسی غرفه‌ها و خدمات پرده در کرج", href: "/karaj/curtain#businesses" }]
+        ]
       },
       { heading: "پرده پانچ برای چه فضایی مناسب است؟", paragraphs: ["برای اتاق خواب، پذیرایی و فضاهای مدرن گزینه رایجی است، به‌خصوص وقتی ظاهر ساده و باز و بسته‌شدن راحت مهم باشد."] },
       { heading: "چه پارچه‌ای برای پانچ مناسب است؟", paragraphs: ["انتخاب پارچه به میزان نور، حریم خصوصی و فرم موج موردنظر بستگی دارد. پارچه خیلی خشک یا خیلی سنگین می‌تواند حرکت و فرم پرده را تغییر دهد."] },
