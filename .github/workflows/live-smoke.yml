@@ -99,8 +99,8 @@ jobs:
           login="$(expect_status 401 POST "$BASE/api/auth/business/login" '{"phone":"09120000000","password":"definitely-wrong-password"}')"
           echo "$login" | grep -q '"error":"INVALID_CREDENTIALS"'
 
-          lookup="$(expect_status 404 POST "$BASE/api/lead/status" '{"requestCode":"KH-999999999","customerPhone":"09120000000"}')"
-          echo "$lookup" | grep -q '"error":"REQUEST_NOT_FOUND"'
+          lookup="$(expect_status 400 POST "$BASE/api/lead/status" '{"requestCode":"KH-999999999","customerPhone":"09120000000"}')"
+          echo "$lookup" | grep -q '"error":"INVALID_LOOKUP"'
 
           lead_honeypot="$(expect_status 200 POST "$BASE/api/business/alayy-dkvr-krj/lead" '{"website":"bot-smoke"}')"
           echo "$lead_honeypot" | grep -q '"ok":true'
