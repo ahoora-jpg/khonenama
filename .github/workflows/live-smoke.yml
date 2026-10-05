@@ -34,8 +34,8 @@ jobs:
               actual="$(curl -sS -o "$body_file" -w "%{http_code}" "$url")"
             fi
             if [ "$actual" != "$expected" ]; then
-              echo "Expected $expected but got $actual for $method $url"
-              cat "$body_file"
+              echo "Expected $expected but got $actual for $method $url" >&2
+              cat "$body_file" >&2
               exit 1
             fi
             cat "$body_file"
@@ -108,8 +108,14 @@ jobs:
           review_honeypot="$(expect_status 200 POST "$BASE/api/business/alayy-dkvr-krj/reviews" '{"website":"bot-smoke"}')"
           echo "$review_honeypot" | grep -q '"ok":true'
 
-          billing="$(expect_status 409 POST "$BASE/api/billing/checkout" '{"planCode":"pro"}')"
-          echo "$billing" | grep -q '"error":"PLAN_PRICING_NOT_ACTIVE"'
+          billing="$(expect_status 401 POST "$BASE/api/billing/checkout" '{"planCode":"pro"}')"
+          echo "$billing" | grep -q '"error":"UNAUTHORIZED"'
+          expect_status 401 GET "$BASE/api/billing/history" >/dev/null
+          expect_status 401 POST "$BASE/api/billing/reconcile" '{"id":"unauthorized"}' >/dev/null
+          expect_status 401 GET "$BASE/api/admin/billing" >/dev/null
+          expect_status 401 POST "$BASE/api/admin/billing" '{}' >/dev/null
+          expect_status 200 GET "$BASE/api/billing/plans" >/dev/null
+          expect_status 200 GET "$BASE/billing/result" >/dev/null
 
           registration="$(expect_status 400 POST "$BASE/api/businesses/register" '{}')"
           echo "$registration" | grep -q '"error":"INVALID_REQUIRED_FIELDS"'
