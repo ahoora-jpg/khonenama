@@ -13,6 +13,9 @@ export async function requestSecurityGate(request: NextRequest) {
     return protect(NextResponse.json({ ok: false, error: "FORBIDDEN" }, { status: 403 }));
   }
   if (path.startsWith("/api/") && !["GET", "HEAD", "OPTIONS"].includes(request.method) && request.headers.get("content-type")?.includes("application/json")) {
+    if (Number(request.headers.get("content-length") || 0) > 65536) {
+      return protect(NextResponse.json({ok:false,error:"REQUEST_TOO_LARGE"},{status:413}));
+    }
     const reader = request.clone().body?.getReader();
     let bytes = 0;
     if (reader) {
@@ -22,7 +25,7 @@ export async function requestSecurityGate(request: NextRequest) {
           if (chunk.done) break;
           bytes += chunk.value.byteLength;
           if (bytes > 65536) {
-            void reader.cancel().catch(() => {});
+            reader.releaseLock();
             return protect(NextResponse.json({ok:false,error:"REQUEST_TOO_LARGE"},{status:413}));
           }
         }
