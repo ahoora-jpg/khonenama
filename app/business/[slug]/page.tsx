@@ -335,7 +335,11 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                   {album.media[0] && <img src={album.media[0].url} alt={album.title} width={96} height={72} loading="lazy" style={{ objectFit: "cover", borderRadius: 8, verticalAlign: "middle", marginInlineEnd: 12 }} />}
                   {album.title} — {album.media.length.toLocaleString("fa-IR")} عکس
                 </summary>
-                {album.project && <p>{[album.project.service,album.project.materials,album.project.area].filter(Boolean).join(" · ")}</p>}
+                {album.project && <dl>
+                  {album.project.service && <div><dt>خدمت انجام‌شده</dt><dd>{album.project.service}</dd></div>}
+                  {album.project.materials && <div><dt>متریال پروژه</dt><dd>{album.project.materials}</dd></div>}
+                  {album.project.area && <div><dt>محدوده پروژه</dt><dd>{album.project.area}</dd></div>}
+                </dl>
                 {album.description && <p style={{ whiteSpace: "pre-wrap" }}>{album.description}</p>}
                 <div className="business-public-gallery">
                   {album.media.map(item => <figure key={item.id}><img src={item.url} alt={item.altText || album.title} loading="lazy" />{item.altText && <figcaption>{item.altText}</figcaption>}</figure>)}
