@@ -18,8 +18,8 @@ export const businessPlans = [
   {
     code: "pro",
     name: "حرفه‌ای",
-    priceLabel: "قیمت هنگام فعال‌سازی",
-    amountToman: null,
+    priceLabel: "۲۵۰ هزار تومان برای ۳۰ روز",
+    amountToman: 250000,
     description: "برای کسب‌وکارهایی که می‌خواهند مشتری بیشتری جذب کنند",
     badge: "پیشنهادی",
     features: [
@@ -35,8 +35,8 @@ export const businessPlans = [
   {
     code: "premium",
     name: "ویژه",
-    priceLabel: "قیمت هنگام فعال‌سازی",
-    amountToman: null,
+    priceLabel: "۳۵۰ هزار تومان برای ۳۰ روز",
+    amountToman: 350000,
     description: "برای نمایش نمونه‌کارها و آلبوم‌های بیشتر",
     badge: "ظرفیت بیشتر نمونه‌کار",
     features: [

@@ -1,7 +1,7 @@
 # Subscription payment activation
 
 Paid tiers: `pro` (حرفه‌ای), `premium` (ویژه). Free registration is unchanged.
-No price is seeded. The example 350,000 toman is used only in isolated tests.
+On 2026-10-05 the owner approved 30-day subscriptions: pro 250,000 toman, premium 350,000 toman. Migration 0009 and the idempotent runtime configuration apply these once, without overwriting later administrator edits. A first purchase starts on server-verified payment, not unpaid registration; a same-tier renewal preserves remaining validity.
 
 ## Before opening real checkout
 
