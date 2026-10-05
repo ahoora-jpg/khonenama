@@ -28,6 +28,10 @@ export default function KarajCurtainPage() {
       intro="در خونه نما، فروشگاه‌ها و خدمات پرده در کرج را برای زبرا، شید، پرده پارچه‌ای، پرده هوشمند، اندازه‌گیری و نصب پیدا و مقایسه کنید؛ بدون ادعای قیمت یا شرایط فروش ساختگی."
       intentCards={[
         {
+          title: "پرده پانچ و پانچی آماده در کرج",
+          text: "برای خرید مدل آماده، تعداد پنل، عرض صاف پارچه یا عرض پوشش، ارتفاع و سازگاری حلقه با میله را بررسی کنید. موجودی همان مدل، امکان کوتاه‌کردن، هزینه حمل و نصب و شرایط تعویض را از فروشنده تأیید کنید؛ مدل سفارشی بر اساس اندازه شما دوخته می‌شود.",
+        },
+        {
           title: "بهترین پرده در کرج را چطور انتخاب کنیم؟",
           text: "«بهترین» برای همه یکسان نیست؛ نور، حریم خصوصی، سبک خانه، بودجه، کیفیت پارچه و یراق، نمونه‌کار و کیفیت نصب را کنار هم بسنجید.",
         },
@@ -92,7 +96,7 @@ export default function KarajCurtainPage() {
         { title: "محاسبه متراژ پارچه پرده", text: "عرض ریل، Fullness و Pattern Repeat", href: "/tools/curtain-fabric-calculator" },
         { title: "راهنمای نصب پرده", text: "اندازه‌گیری، نصب سقفی و دیواری", href: "/magazine/curtain-installation-guide" },
         { title: "راهنمای خرید پرده", text: "بودجه، پارچه، دوخت، یراق و نصب", href: "/magazine/curtain-buying-guide" },
-        { title: "پرده پانچ", text: "پارچه، حلقه، اندازه‌گیری و کاربرد", href: "/magazine/punch-curtain-guide" },
+        { title: "پرده پانچ آماده یا سفارشی", text: "تعداد پنل، اندازه‌گیری و عوامل قیمت", href: "/magazine/punch-curtain-guide" },
         { title: "پرده رومن", text: "چین‌ها، پارچه، آستر و مکانیزم", href: "/magazine/roman-curtain-guide" },
         { title: "پرده ورتیکال", text: "تیغه عمودی، نور و پنجره عریض", href: "/magazine/vertical-curtain-guide" },
         { title: "پرده کرکره‌ای", text: "مدل آلومینیومی و چوبی", href: "/magazine/venetian-blind-guide" },
