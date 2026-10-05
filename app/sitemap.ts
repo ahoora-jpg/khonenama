@@ -5,7 +5,7 @@ import { listPublishedBusinessSitemapEntries } from "@/lib/server/business-sitem
 const baseUrl = "https://khonenama.ir";
 const seoRefreshDate = "2026-09-25";
 const homepageBrandRefreshDate = "2026-09-29";
-const aboutBrandRefreshDate = "2026-09-29";
+const aboutBrandRefreshDate = "2026-10-05";
 const categoryRefreshDate = "2026-10-04";
 // Fixed date of published content/link changes, never the sitemap request date.
 const sixDomainSeoRefreshDate = "2026-10-04";
@@ -40,12 +40,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/tools/flooring-estimator", lastModified: sixDomainSeoRefreshDate, changeFrequency: "monthly", priority: 0.86 },
     { url: baseUrl + "/tools/smart-home-scope", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/carpet-estimator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
-    { url: baseUrl + "/for-business", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.72 },
-    { url: baseUrl + "/download-app", lastModified: "2026-09-27", changeFrequency: "monthly", priority: 0.64 },
-    { url: baseUrl + "/for-business/online-discovery-guide", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.74 },
+    { url: baseUrl + "/for-business", lastModified: "2026-10-05", changeFrequency: "monthly", priority: 0.72 },
+    { url: baseUrl + "/download-app", lastModified: "2026-10-04", changeFrequency: "monthly", priority: 0.64 },
+    { url: baseUrl + "/for-business/online-discovery-guide", lastModified: "2026-10-05", changeFrequency: "monthly", priority: 0.74 },
     { url: baseUrl + "/about", lastModified: aboutBrandRefreshDate, changeFrequency: "monthly", priority: 0.5 },
     { url: baseUrl + "/editorial-policy", lastModified: seoRefreshDate, changeFrequency: "monthly", priority: 0.48 },
-    { url: baseUrl + "/help", changeFrequency: "monthly", priority: 0.45 },
+    { url: baseUrl + "/help", lastModified: "2026-10-05", changeFrequency: "monthly", priority: 0.45 },
     { url: baseUrl + "/privacy", changeFrequency: "monthly", priority: 0.3 },
     { url: baseUrl + "/account-deletion", lastModified: "2026-09-28", changeFrequency: "monthly", priority: 0.3 },
     { url: baseUrl + "/terms", changeFrequency: "monthly", priority: 0.3 },
