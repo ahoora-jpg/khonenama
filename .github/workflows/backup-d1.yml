@@ -26,7 +26,7 @@ jobs:
         run: |
           test -n "$CLOUDFLARE_API_TOKEN" || (echo "Missing Cloudflare token" && exit 1)
           test "${#D1_BACKUP_PASSPHRASE}" -ge 32 || (echo "Set a strong D1_BACKUP_PASSPHRASE secret (32+ characters) and store it outside GitHub for recovery" && exit 1)
-      - run: npm install
+      - run: npm ci
       - name: Export and encrypt
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
