@@ -19,6 +19,7 @@ export async function POST(
   const action = body?.action === "approve" ? "approve" : body?.action === "reject" ? "reject" : "";
   const note = typeof body?.note === "string" ? body.note.trim().slice(0, 1000) : "";
 
+  if (action==='reject' && note.length<3) return Response.json({ok:false,error:'REASON_REQUIRED'},{status:400});
   if (!action) {
     return Response.json({ ok: false, error: "INVALID_ACTION" }, { status: 400 });
   }

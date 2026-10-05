@@ -3,7 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, Clock3, LockKeyhole, MessageCircle, Phone, RefreshCw, Send } from "lucide-react";
 
-type LeadRow = {
+import QuoteTermsEditor from '@/components/QuoteTermsEditor';
+import { emptyQuoteTerms, type QuoteTerms } from '@/lib/quote-terms';
+type LeadRow = { revision?:string;terms?:QuoteTerms;recipient_status?:string;agreed?:{amount:number};
   id: number;
   customer_name: string;
   customer_phone: string;
@@ -35,7 +37,7 @@ export default function BusinessLeadInbox() {
   const [leads, setLeads] = useState<LeadRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
-  const [drafts, setDrafts] = useState<Record<number, { amount: string; message: string }>>({});
+  const [drafts, setDrafts] = useState<Record<number, { amount: string; message: string; terms: QuoteTerms }>>({});
 
   async function load() {
     setLoading(true);
@@ -49,10 +51,10 @@ export default function BusinessLeadInbox() {
       setDrafts((current) => {
         const next = { ...current };
         for (const row of rows) {
-          if (!next[row.id]) {
+          {
             next[row.id] = {
               amount: row.quote_amount ? String(row.quote_amount) : "",
-              message: row.quote_message || "",
+              message: row.quote_message || "", terms: row.terms || emptyQuoteTerms(),
             };
           }
         }
@@ -89,7 +91,7 @@ export default function BusinessLeadInbox() {
   }
 
   async function sendQuote(leadId: number) {
-    const draft = drafts[leadId] || { amount: "", message: "" };
+    const draft = drafts[leadId] || { amount: "", message: "", terms: emptyQuoteTerms() };
     setMessage("");
 
     const response = await fetch("/api/me/business/leads", {
@@ -99,12 +101,13 @@ export default function BusinessLeadInbox() {
         leadId,
         action: "quote",
         amount: draft.amount,
-        message: draft.message,
+        message: draft.message, terms: draft.terms,
+        expectedRevision: leads.find(row=>row.id===leadId)?.revision,
       }),
     });
     const result = await response.json().catch(() => ({}));
     if (!response.ok || !result?.ok) {
-      setMessage("ثبت پیشنهاد قیمت انجام نشد.");
+      setMessage(result.error==='STALE_QUOTE'?'پیشنهاد تغییر کرده؛ صفحه را تازه کنید.':'ثبت نشد؛ اقلام قیمت و همه شرایط را کامل کنید.');
       return;
     }
     setMessage("پیشنهاد قیمت به‌صورت خصوصی در پرونده درخواست ذخیره شد.");
@@ -145,7 +148,7 @@ export default function BusinessLeadInbox() {
       ) : (
         <div className="lead-card-list">
           {leads.map((lead) => {
-            const draft = drafts[lead.id] || { amount: "", message: "" };
+            const draft = drafts[lead.id] || { amount: "", message: "", terms: emptyQuoteTerms() };
             return (
               <article className={"lead-card status-" + lead.status} key={lead.id}>
                 <div className="lead-card-top">
@@ -154,7 +157,7 @@ export default function BusinessLeadInbox() {
                     <h3>{lead.customer_name}</h3>
                     <a href={"tel:" + lead.customer_phone}><Phone size={13} /> {lead.customer_phone}</a>
                   </div>
-                  <span className="lead-status">{statusLabel(lead.status)}</span>
+                  <span className="lead-status">{statusLabel((lead.recipient_status || lead.status) as LeadRow["status"])}</span>
                 </div>
 
                 <p className="lead-request-text">{lead.request_text}</p>
@@ -174,6 +177,8 @@ export default function BusinessLeadInbox() {
                     <strong>پیشنهاد خصوصی شما</strong>
                     <small>این مبلغ در صفحه عمومی نمایش داده نمی‌شود.</small>
                   </div>
+                  {lead.agreed && <p>مبلغ انتخاب‌شده قبلی: {money(lead.agreed.amount)}؛ تغییر تازه تنها پس از تأیید مشتری جایگزین می‌شود.</p>}
+                  <QuoteTermsEditor value={draft.terms} onChange={terms=>setDrafts(current=>({...current,[lead.id]:{...draft,terms}}))}/>
                   <div className="lead-quote-grid">
                     <input
                       dir="ltr"
@@ -208,14 +213,14 @@ export default function BusinessLeadInbox() {
                 </div>
 
                 <div className="lead-status-actions">
-                  {lead.status !== "closed" && (
-                    <button type="button" onClick={() => updateStatus(lead.id, "closed")}>بستن درخواست</button>
+                  {(lead.recipient_status || lead.status) !== "closed" && (
+                    <button type="button" onClick={() => updateStatus(lead.id, "closed")}>بستن پیگیری این غرفه</button>
                   )}
-                  {lead.status === "closed" && (
+                  {["closed","cancelled"].includes(lead.recipient_status || lead.status) && (
                     <button type="button" onClick={() => updateStatus(lead.id, "open")}>بازکردن دوباره</button>
                   )}
-                  {lead.status !== "cancelled" && (
-                    <button type="button" onClick={() => updateStatus(lead.id, "cancelled")}>لغو</button>
+                  {(lead.recipient_status || lead.status) !== "cancelled" && (
+                    <button type="button" onClick={() => updateStatus(lead.id, "cancelled")}>اعلام لغو این غرفه</button>
                   )}
                 </div>
               </article>

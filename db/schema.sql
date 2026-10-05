@@ -356,3 +356,9 @@ CREATE TABLE IF NOT EXISTS billing_configuration_versions (id TEXT PRIMARY KEY, 
 INSERT INTO billing_price_audit(plan_code,amount_toman,duration_days,enabled) SELECT plan_code,CASE plan_code WHEN 'pro' THEN 250000 ELSE 350000 END,30,1 FROM billing_prices WHERE NOT EXISTS(SELECT 1 FROM billing_configuration_versions WHERE id='20261005-monthly-prices');
 UPDATE billing_prices SET amount_toman=CASE plan_code WHEN 'pro' THEN 250000 ELSE 350000 END,duration_days=30,enabled=1,updated_at=CURRENT_TIMESTAMP WHERE NOT EXISTS(SELECT 1 FROM billing_configuration_versions WHERE id='20261005-monthly-prices');
 INSERT OR IGNORE INTO billing_configuration_versions(id) VALUES('20261005-monthly-prices');
+
+CREATE TABLE IF NOT EXISTS lead_quote_details (quote_id INTEGER PRIMARY KEY REFERENCES lead_quotes(id) ON DELETE CASCADE, revision TEXT NOT NULL, details_json TEXT NOT NULL, agreed_json TEXT, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS lead_recipient_progress (lead_id INTEGER NOT NULL REFERENCES leads(id) ON DELETE CASCADE,business_id INTEGER NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,status TEXT NOT NULL DEFAULT 'open',updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY(lead_id,business_id));
+CREATE TABLE IF NOT EXISTS support_ticket_details(ticket_id INTEGER PRIMARY KEY REFERENCES support_tickets(id) ON DELETE CASCADE,topic TEXT NOT NULL DEFAULT 'general',assignee TEXT NOT NULL DEFAULT '',next_step TEXT NOT NULL DEFAULT 'در انتظار تعیین مسئول و بررسی اولیه');
+
+CREATE TABLE IF NOT EXISTS lead_quote_events(id INTEGER PRIMARY KEY AUTOINCREMENT,quote_id INTEGER NOT NULL REFERENCES lead_quotes(id) ON DELETE CASCADE,revision TEXT NOT NULL,event TEXT NOT NULL CHECK(event IN ('proposal','accept','reject')),payload_json TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,UNIQUE(quote_id,revision,event));

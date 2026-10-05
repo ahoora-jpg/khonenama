@@ -58,7 +58,7 @@ export default function BusinessAnalyticsPanel({ plan = "free" }: { plan?: strin
         <div><Eye size={18} /><strong>{loading ? "—" : totals.profileViews}</strong><small>بازدید پروفایل</small></div>
         <div><MousePointerClick size={18} /><strong>{loading ? "—" : contactClicks}</strong><small>کلیک ارتباط</small></div>
         <div><MessageCircle size={18} /><strong>{loading ? "—" : totals.quoteSubmits}</strong><small>درخواست قیمت</small></div>
-        <div><Sparkles size={18} /><strong>{loading ? "—" : conversion + "٪"}</strong><small>نرخ تبدیل</small></div>
+        <div><Sparkles size={18} /><strong>{loading ? "—" : conversion + "٪"}</strong><small>نرخ ثبت درخواست از بازدید</small></div>
       </div>
 
       {advanced ? (
@@ -70,7 +70,7 @@ export default function BusinessAnalyticsPanel({ plan = "free" }: { plan?: strin
           <span>شروع فرم قیمت <strong>{totals.quoteStarts}</strong></span>
           <span>پیشنهادهای ارسال‌شده <strong>{totals.proposalsSent||0}</strong></span>
           <span>پیشنهادهای انتخاب‌شده <strong>{totals.proposalsAccepted||0}</strong></span>
-          <span>میانگین زمان پاسخ اولیه <strong>{totals.averageResponseMinutes==null?'—':totals.averageResponseMinutes+' دقیقه'}</strong></span>
+          <span>میانگین زمان پاسخ اولیه؛ نه وعده حضور <strong>{totals.averageResponseMinutes==null?'—':totals.averageResponseMinutes+' دقیقه'}</strong></span>
           <p>انتخاب پیشنهاد یا کلیک تماس به معنی خرید یا پرداخت قطعی نیست.</p>
         </div>
       ) : (

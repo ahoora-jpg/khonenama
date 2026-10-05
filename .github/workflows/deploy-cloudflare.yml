@@ -26,7 +26,7 @@ jobs:
           test -n "$CLOUDFLARE_API_TOKEN" || (echo "Missing GitHub Actions secret: CLOUDFLARE_API_TOKEN" && exit 1)
           test -n "$CLOUDFLARE_ACCOUNT_ID" || (echo "Missing Cloudflare account ID" && exit 1)
       - run: npm ci
-      - run: node --test tools/test-billing.mjs tools/test-subscription-lifecycle.mjs tools/test-gallery-security.mjs tools/test-commercial-readiness.mjs tools/test-admin-offers.mjs tools/test-image-upload-processing.mjs tools/test-r2-media.mjs tools/test-business-upload.mjs tools/test-admin-business-lifecycle.mjs tools/test-build-glob.mjs tools/test-marketplace-workflows.mjs tools/test-request-security.mjs
+      - run: node --test tools/test-customer-safeguards.mjs tools/test-billing.mjs tools/test-subscription-lifecycle.mjs tools/test-gallery-security.mjs tools/test-commercial-readiness.mjs tools/test-admin-offers.mjs tools/test-image-upload-processing.mjs tools/test-r2-media.mjs tools/test-business-upload.mjs tools/test-admin-business-lifecycle.mjs tools/test-build-glob.mjs tools/test-marketplace-workflows.mjs tools/test-request-security.mjs
       - run: npx tsc --noEmit --incremental false
       - run: npm run deploy
         env:

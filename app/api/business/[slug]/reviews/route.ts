@@ -57,7 +57,12 @@ export async function POST(
   }
 
   const reviewerName = clean(body?.reviewerName, 80);
-  const reviewBody = clean(body?.body, 1200);
+  const rawReviewBody = clean(body?.body, 1200);
+  const service = clean(body?.service,150);
+  const experienceDate = typeof body?.experienceDate==='string' ? body.experienceDate : '';
+  const date = new Date(experienceDate+'T00:00:00Z');
+  if (service.length<2 || !/^\d{4}-\d{2}-\d{2}$/.test(experienceDate) || !Number.isFinite(date.getTime()) || date.toISOString().slice(0,10)!==experienceDate || experienceDate > new Date().toISOString().slice(0,10)) return Response.json({ok:false,error:'INVALID_EXPERIENCE'},{status:400});
+  const reviewBody = 'خدمت: '+service+' · تاریخ تجربه: '+experienceDate+'\n'+rawReviewBody;
   const rating = Number(body?.rating);
   const requestCode = clean(body?.requestCode, 100);
   const customerPhone = normalizeIranPhone(clean(body?.customerPhone, 40));
@@ -68,7 +73,7 @@ export async function POST(
   if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
     return Response.json({ ok: false, error: "INVALID_RATING" }, { status: 400 });
   }
-  if (reviewBody.length < 10) {
+  if (rawReviewBody.length < 10) {
     return Response.json({ ok: false, error: "REVIEW_TOO_SHORT" }, { status: 400 });
   }
 

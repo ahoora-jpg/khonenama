@@ -1,3 +1,5 @@
+export const supportTopics = {general:'پرسش عمومی',price:'اختلاف مبلغ',absence:'عدم حضور',incomplete:'کار ناقص',damage:'خسارت',materials:'تغییر متریال',recurrence:'ایراد مجدد و مراجعه دوباره',review:'گزارش نظر نامناسب',subscription:'اشتراک و انقضا',appeal:'اعتراض به وضعیت غرفه',category:'پیشنهاد دسته جدید'};
 export async function ensureSupportTickets(db: any) {
   await db.prepare("CREATE TABLE IF NOT EXISTS support_tickets (id INTEGER PRIMARY KEY AUTOINCREMENT, business_slug TEXT, review_id INTEGER, contact TEXT NOT NULL, message TEXT NOT NULL, tracking_token TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'open', admin_reply TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
+  await db.prepare("CREATE TABLE IF NOT EXISTS support_ticket_details(ticket_id INTEGER PRIMARY KEY REFERENCES support_tickets(id) ON DELETE CASCADE,topic TEXT NOT NULL DEFAULT 'general',assignee TEXT NOT NULL DEFAULT '',next_step TEXT NOT NULL DEFAULT 'در انتظار تعیین مسئول و بررسی اولیه')").run();
 }

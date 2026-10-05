@@ -31,6 +31,7 @@ const emptyForm: ProfileForm = {
 
 export default function BusinessProfileEditor() {
   const [form, setForm] = useState<ProfileForm>(emptyForm);
+  const [moderationReason,setModerationReason]=useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -51,6 +52,7 @@ export default function BusinessProfileEditor() {
 
         if (!cancelled) {
           const business = result.business;
+          setModerationReason(business.moderation?.reason || '');
           setForm({
             name: business.name || "",
             description: business.description || "",
@@ -128,7 +130,8 @@ export default function BusinessProfileEditor() {
       </div>
 
       {error && <div className="onboarding-error">{error}</div>}
-      {message && (
+      {moderationReason && <p role="status">دلیل وضعیت غرفه: {moderationReason}؛ اطلاعات را در همین پنل اصلاح کنید یا از <a href="/support">پشتیبانی، موضوع اعتراض به وضعیت غرفه</a> استفاده کنید.</p>}
+        {message && (
         <div className="onboarding-success">
           <CheckCircle2 size={20} />
           <strong>{message}</strong>

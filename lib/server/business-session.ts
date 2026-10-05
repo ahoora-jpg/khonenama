@@ -84,7 +84,7 @@ export async function createBusinessSession(userId: string, request: Request) {
   return { token, cookie, expiresAt };
 }
 
-export async function getBusinessSession(request: Request) {
+export async function getBusinessSession(request: Request, options: {readSuspendedProfile?:boolean} = {}) {
   try {
     // Reject cross-site cookie mutations while preserving native Bearer clients.
     if (!["GET", "HEAD", "OPTIONS"].includes(request.method.toUpperCase())) {
@@ -108,7 +108,8 @@ export async function getBusinessSession(request: Request) {
 
     if (!row?.user_id) return null;
     const membership = await db.prepare("SELECT b.status FROM businesses b JOIN business_members bm ON bm.business_id=b.id WHERE bm.user_id=? AND bm.status='active' AND bm.role IN ('owner','manager') ORDER BY b.id DESC LIMIT 1").bind(row.user_id).first();
-    if (membership?.status === "suspended") return null;
+    const profileRead = options.readSuspendedProfile === true && request.method === 'GET' && new URL(request.url).pathname === '/api/me/business';
+    if (membership?.status === "suspended" && !profileRead) return null;
 
     await db
       .prepare("UPDATE auth_sessions SET last_seen_at = CURRENT_TIMESTAMP WHERE id = ?")

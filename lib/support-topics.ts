@@ -1,0 +1,1 @@
+export const supportTopicLabels = {general:'پرسش عمومی',price:'اختلاف مبلغ',absence:'عدم حضور',incomplete:'کار ناقص',damage:'خسارت',materials:'تغییر متریال',recurrence:'ایراد مجدد و مراجعه دوباره',review:'گزارش نظر نامناسب',subscription:'اشتراک و انقضا',appeal:'اعتراض به وضعیت غرفه',category:'پیشنهاد دسته جدید'};

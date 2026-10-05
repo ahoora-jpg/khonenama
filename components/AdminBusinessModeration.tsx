@@ -70,6 +70,7 @@ export default function AdminBusinessModeration() {
         ? window.prompt("دلیل رد یا اصلاح موردنیاز را بنویسید:", "") || ""
         : "";
 
+    if (action==='reject' && note.trim().length<3) {setMessage('برای رد، دلیل قابل فهم و روش اصلاح را بنویسید.');return;}
     const response = await fetch("/api/admin/businesses/" + id + "/review", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -126,7 +127,8 @@ export default function AdminBusinessModeration() {
     let reason = "";
     let confirmationName = "";
     if (action === "remove") {
-      reason = window.prompt("دلیل حذف از سایت را بنویسید:", "") || "";
+      reason = window.prompt("دلیل توقف و اصلاح موردنیاز را بنویسید:", "") || "";
+      if (reason.trim().length<3) {setMessage('توقف بدون دلیل ثبت نمی‌شود.');return;}
       if (!window.confirm("کسب‌وکار «" + item.name + "» از سایت و دسته‌بندی‌ها حذف و دسترسی غرفه مسدود شود؟ اطلاعات برای بازگردانی باقی می‌ماند.")) return;
     }
 

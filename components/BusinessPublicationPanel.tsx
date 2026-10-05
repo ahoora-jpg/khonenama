@@ -8,9 +8,11 @@ type Status = "draft" | "pending" | "published" | "suspended" | "";
 export default function BusinessPublicationPanel({
   initialStatus = "",
   initialVerificationStatus = "",
+  initialModerationReason = "",
 }: {
   initialStatus?: Status;
   initialVerificationStatus?: string;
+  initialModerationReason?: string;
 }) {
   const [status, setStatus] = useState<Status>(initialStatus);
   const [verificationStatus, setVerificationStatus] = useState(initialVerificationStatus);
@@ -59,6 +61,7 @@ export default function BusinessPublicationPanel({
           <span className="section-kicker">وضعیت پروفایل</span>
           <h2>نمایش عمومی متوقف شده</h2>
           <p>این پروفایل توسط مدیریت از نمایش عمومی خارج شده است.</p>
+          <p>دلیل: {initialModerationReason || "برای دریافت توضیح با پشتیبانی تماس بگیرید."} برای اصلاح یا اعتراض از <a href="/support">پشتیبانی با موضوع اعتراض به وضعیت غرفه</a> استفاده کنید.</p>
         </div>
       </section>
     );

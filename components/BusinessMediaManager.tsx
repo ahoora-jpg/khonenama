@@ -191,6 +191,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
         <Camera size={20} />
       </div>
 
+      <p>تصاویر باید متعلق به کسب‌وکار یا با اجازه صاحب اثر باشند. تصویر الهام‌بخش را نمونه‌کار اجراشده معرفی نکنید؛ چهره، نشانی دقیق، شماره تماس و مدارک مشتری را پیش از انتشار حذف یا محو کنید.</p>
       <div className="business-media-toolbar">
         <div>
           <strong>{media.filter(item => item.kind === "image").length} از {limit} تصویر</strong>

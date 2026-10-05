@@ -97,7 +97,7 @@ export default function AdminReviewModeration() {
               </div>
 
               {item.verified_interaction ? (
-                <span className="verified-interaction-badge"><BadgeCheck size={12} /> تعامل تأییدشده</span>
+                <span className="verified-interaction-badge"><BadgeCheck size={12} /> درخواست ثبت‌شده</span>
               ) : (
                 <span className="unverified-review-badge">بدون کد تعامل</span>
               )}

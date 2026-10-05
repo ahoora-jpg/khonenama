@@ -26,6 +26,8 @@ jobs:
       - run: node --test tools/test-build-glob.mjs
       - name: Payment activation and callback security
         run: node --test tools/test-billing.mjs
+      - name: Customer safeguards and private support
+        run: node --test tools/test-customer-safeguards.mjs tools/test-marketplace-workflows.mjs tools/test-admin-offers.mjs
       - name: Booth publication and discovery
         run: node --test tools/test-business-sitemap.mjs tools/test-commercial-readiness.mjs tools/test-admin-business-lifecycle.mjs
       - run: npm run check:vinext

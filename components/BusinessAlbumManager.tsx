@@ -45,7 +45,7 @@ export default function BusinessAlbumManager() {
       <label>نام آلبوم<input required maxLength={100} value={title} onChange={e => setTitle(e.target.value)} /></label>
       <label>شرح پروژه<textarea maxLength={2000} value={description} onChange={e => setDescription(e.target.value)} /></label>
       {(['service','materials','area'] as const).map(key=><label key={key}>{{service:'خدمت انجام‌شده',materials:'متریال استفاده‌شده',area:'شهر یا محدوده؛ بدون آدرس خصوصی'}[key]}<input maxLength={300} value={project[key]} onChange={e=>setProject({...project,[key]:e.target.value})}/></label>)}
-      <p>برای تصاویر قبل و بعد، عنوان هر عکس را در بخش گالری با «قبل از اجرا» یا «بعد از اجرا» مشخص کنید. عکس مشتری را فقط با اجازه او منتشر کنید.</p>
+      <p>برای تصاویر قبل و بعد، عنوان هر عکس را در بخش گالری با «قبل از اجرا» یا «بعد از اجرا» مشخص کنید. تصاویر باید متعلق به شما یا با اجازه صاحب اثر باشند. عکس مشتری را فقط با اجازه او منتشر کنید. تصویر الهام‌بخش را نمونه‌کار اجراشده معرفی نکنید؛ چهره، نشانی دقیق، شماره و مدارک مشتری را پیش از انتشار حذف یا محو کنید.</p>
       <p>عکس‌ها را از گالری انتخاب کنید. برای دریافت عکس‌های تازه، ابتدا گالری را به‌روزرسانی کنید.</p>
       <button type="button" className="pill-button" onClick={() => load().catch(() => setMessage("دریافت عکس‌ها انجام نشد."))}>به‌روزرسانی عکس‌ها</button>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>{media.map(item => <label key={item.id}><input type="checkbox" checked={selected.includes(item.id)} onChange={e => setSelected(e.target.checked ? [...selected, item.id] : selected.filter(id => id !== item.id))} /><img src={item.file_url} alt={item.alt_text || "انتخاب عکس نمونه‌کار"} width={80} height={80} loading="lazy" style={{ objectFit: "cover" }} /></label>)}</div>

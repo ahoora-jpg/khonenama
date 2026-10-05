@@ -1,0 +1,10 @@
+export async function ensureQuoteDetails(db: any) {
+  await db.batch([
+    db.prepare("CREATE TABLE IF NOT EXISTS lead_quote_events(id INTEGER PRIMARY KEY AUTOINCREMENT,quote_id INTEGER NOT NULL REFERENCES lead_quotes(id) ON DELETE CASCADE,revision TEXT NOT NULL,event TEXT NOT NULL CHECK(event IN ('proposal','accept','reject')),payload_json TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,UNIQUE(quote_id,revision,event))"),
+    db.prepare("CREATE TABLE IF NOT EXISTS lead_quote_details (quote_id INTEGER PRIMARY KEY REFERENCES lead_quotes(id) ON DELETE CASCADE, revision TEXT NOT NULL, details_json TEXT NOT NULL, agreed_json TEXT, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)"),
+    db.prepare("CREATE TABLE IF NOT EXISTS lead_recipient_progress (lead_id INTEGER NOT NULL REFERENCES leads(id) ON DELETE CASCADE, business_id INTEGER NOT NULL REFERENCES businesses(id) ON DELETE CASCADE, status TEXT NOT NULL DEFAULT 'open', updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(lead_id,business_id))"),
+  ]);
+}
+export function parseQuoteJson(value: unknown) {
+  try { return typeof value === 'string' ? JSON.parse(value) : null; } catch { return null; }
+}

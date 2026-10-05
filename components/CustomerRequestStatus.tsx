@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckCircle2, Clock3, LockKeyhole, MessageCircle, Phone, Search } from "lucide-react";
 
+import { quoteTermsText, type QuoteTerms } from '@/lib/quote-terms';
 type Result = {
   request: {
     code: string;
@@ -19,12 +20,12 @@ type Result = {
     slug: string;
     name: string;
     phone: string;
-    whatsapp: string;
+    whatsapp: string; participationStatus?:string;
     quote: null | {
       amount: number | null;
       message: string;
       status: string;
-      updatedAt: string;
+      updatedAt: string; revision?:string; terms?:QuoteTerms; agreed?:{amount:number;message:string;terms:QuoteTerms};
     };
   }[];
 };
@@ -42,7 +43,7 @@ export default function CustomerRequestStatus({ initialCode = "" }: { initialCod
   const [loading, setLoading] = useState(false);
   async function decide(slug:string, action:'accept'|'reject') {
     setLoading(true);
-    try {const r=await fetch('/api/lead/decision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({requestCode,customerPhone,businessSlug:slug,action})});if(!r.ok)throw new Error();setResult(current=>current?{...current,businesses:current.businesses.map(b=>b.slug===slug&&b.quote?{...b,quote:{...b.quote,status:action==='accept'?'accepted':'rejected'}}:b)}:null);setMessage('انتخاب ثبت شد؛ قرارداد یا پرداخت محسوب نمی‌شود.');}catch{setMessage('ثبت انتخاب انجام نشد.');}finally{setLoading(false);}
+    try {const r=await fetch('/api/lead/decision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({requestCode,customerPhone,businessSlug:slug,action,expectedRevision:result?.businesses.find(b=>b.slug===slug)?.quote?.revision})});if(!r.ok)throw new Error();const refreshed=await fetch('/api/lead/status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({requestCode,customerPhone})});if(!refreshed.ok)throw new Error();const data=await refreshed.json();setResult({request:data.request,businesses:data.businesses||[]});setMessage('انتخاب ثبت شد؛ قرارداد یا پرداخت محسوب نمی‌شود.');}catch{setMessage('ثبت انتخاب انجام نشد.');}finally{setLoading(false);}
   }
 
   async function lookup(event: React.FormEvent) {
@@ -135,6 +136,7 @@ export default function CustomerRequestStatus({ initialCode = "" }: { initialCod
                   <h3>{business.name}</h3>
                   <a href={"/business/" + business.slug}>مشاهده پروفایل</a>
                 </div>
+                {['closed','cancelled'].includes(business.participationStatus || '') && <p role="status">این غرفه پیگیری را بسته یا لغو کرده است؛ انتخاب پیشنهاد در این وضعیت ممکن نیست.</p>}
                 {business.quote ? (
                   <div className="customer-quote-value">
                     <CheckCircle2 size={18} />
@@ -142,9 +144,12 @@ export default function CustomerRequestStatus({ initialCode = "" }: { initialCod
                       <span>پیشنهاد ثبت‌شده</span>
                       {business.quote.amount != null && <strong>{money(business.quote.amount)}</strong>}
                       {business.quote.message && <p>{business.quote.message}</p>}
+                      <p style={{whiteSpace:'pre-line'}}>{quoteTermsText(business.quote.terms)}</p>
+                      {business.quote.agreed && business.quote.status!=='accepted' && <details><summary>شرایط انتخاب‌شده قبلی؛ تغییر تازه هنوز تأیید نشده</summary><strong>{money(business.quote.agreed.amount)}</strong><p style={{whiteSpace:'pre-line'}}>{quoteTermsText(business.quote.agreed.terms)}</p></details>}
+                      <p>قبل از قبول پیشنهاد، اقلام شامل و خارج از قیمت را بررسی کنید. پیش از تأیید تحویل، کار را با موارد توافق‌شده مقایسه کنید. ضمانت فروشنده، ضمانت خونه‌نما نیست.</p>
                       <p>{business.quote.status==='accepted'?'پیشنهاد انتخاب‌شده':business.quote.status==='rejected'?'پیشنهاد ردشده':'منتظر تصمیم شما'}</p>
-                      <button disabled={loading} onClick={()=>decide(business.slug,'accept')}>انتخاب پیشنهاد</button>
-                      <button disabled={loading} onClick={()=>decide(business.slug,'reject')}>رد پیشنهاد</button>
+                      <button disabled={loading || ["closed","cancelled"].includes(business.participationStatus || "")} onClick={()=>decide(business.slug,'accept')}>انتخاب پیشنهاد</button>
+                      <button disabled={loading || ["closed","cancelled"].includes(business.participationStatus || "")} onClick={()=>decide(business.slug,'reject')}>رد پیشنهاد</button>
                     </div>
                   </div>
                 ) : (

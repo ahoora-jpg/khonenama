@@ -39,6 +39,7 @@ type StoredProfile = {
   services?: string[];
   serviceAreas?: string[];
   status?: string;
+  moderationReason?: string;
   verificationStatus?: string;
   completion?: number;
   plan?: string;
@@ -89,6 +90,7 @@ export default function BusinessDashboardContent() {
               services: Array.isArray(business.services) ? business.services.map((item: any) => item.name) : [],
               serviceAreas: Array.isArray(business.serviceAreas) ? business.serviceAreas.map((item: any) => item.area).filter(Boolean) : [],
               status: business.status,
+              moderationReason: business.moderation?.reason || "",
               verificationStatus: business.verification_status,
               completion: business.completion,
               plan: business.plan?.code || "free",
@@ -255,6 +257,7 @@ export default function BusinessDashboardContent() {
         <BusinessPublicationPanel
           initialStatus={(profile.status || "") as any}
           initialVerificationStatus={profile.verificationStatus || ""}
+          initialModerationReason={profile.moderationReason || ""}
         />
 
         <section className="dashboard-panel glass-panel dashboard-verification-panel">

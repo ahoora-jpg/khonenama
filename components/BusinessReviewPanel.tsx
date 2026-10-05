@@ -81,7 +81,7 @@ export default function BusinessReviewPanel() {
               <div>
                 <strong>{review.title || "مشتری خونه نما"}</strong>
                 {review.verified_interaction ? (
-                  <span className="verified-interaction-badge"><BadgeCheck size={11} /> تعامل تأییدشده</span>
+                  <span className="verified-interaction-badge"><BadgeCheck size={11} /> درخواست ثبت‌شده</span>
                 ) : null}
               </div>
               <span className="review-stars">

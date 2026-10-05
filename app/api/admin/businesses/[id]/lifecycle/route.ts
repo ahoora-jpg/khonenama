@@ -43,6 +43,7 @@ export async function POST(
     body?.action === "purge" ? "purge" : "";
   const reason = typeof body?.reason === "string" ? body.reason.trim().slice(0, 700) : "";
 
+  if (action==='remove' && reason.length<3) return Response.json({ok:false,error:'REASON_REQUIRED'},{status:400});
   if (!action) {
     return Response.json({ ok: false, error: "INVALID_ACTION" }, { status: 400 });
   }

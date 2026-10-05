@@ -30,7 +30,9 @@ export default function BusinessReviews({
   demo?: boolean;
 }) {
   const [reviewerName, setReviewerName] = useState("");
-  const [selectedRating, setSelectedRating] = useState(5);
+  const [selectedRating, setSelectedRating] = useState(0);
+  const [service,setService] = useState('');
+  const [experienceDate,setExperienceDate] = useState('');
   const [body, setBody] = useState("");
   const [requestCode, setRequestCode] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -58,7 +60,7 @@ export default function BusinessReviews({
       return;
     }
     if (requestCode.trim() && customerPhone.trim().length < 10) {
-      setMessage("برای تأیید خرید یا تعامل، شماره همراه همان درخواست را وارد کنید.");
+      setMessage("برای تطبیق درخواست، شماره همراه همان درخواست را وارد کنید.");
       return;
     }
 
@@ -68,7 +70,7 @@ export default function BusinessReviews({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          reviewerName,
+          reviewerName, service, experienceDate,
           rating: selectedRating,
           body,
           requestCode,
@@ -80,6 +82,7 @@ export default function BusinessReviews({
 
       if (!response.ok || !result?.ok) {
         const messages: Record<string, string> = {
+          INVALID_EXPERIENCE: 'خدمت و تاریخ واقعی تجربه را وارد کنید.',
           INVALID_NAME: "نام را کامل وارد کنید.",
           INVALID_RATING: "امتیاز معتبر نیست.",
           REVIEW_TOO_SHORT: "متن نظر خیلی کوتاه است.",
@@ -97,10 +100,10 @@ export default function BusinessReviews({
       setBody("");
       setRequestCode("");
       setCustomerPhone("");
-      setSelectedRating(5);
+      setSelectedRating(0);
       setMessage(
         result.verifiedInteraction
-          ? "نظر شما با نشان تعامل تأییدشده ثبت شد و بعد از بررسی منتشر می‌شود."
+          ? "نظر شما با نشان درخواست ثبت‌شده ثبت شد و بعد از بررسی منتشر می‌شود."
           : "نظر شما ثبت شد و بعد از بررسی خونه نما منتشر می‌شود."
       );
     } catch {
@@ -133,7 +136,7 @@ export default function BusinessReviews({
                   <strong>{review.name}</strong>
                   {review.verifiedInteraction && (
                     <span className="verified-interaction-badge">
-                      <BadgeCheck size={12} /> تعامل تأییدشده
+                      <BadgeCheck size={12} /> درخواست ثبت‌شده
                     </span>
                   )}
                 </div>
@@ -170,7 +173,8 @@ export default function BusinessReviews({
             <ShieldCheck size={21} />
           </div>
 
-          <div className="review-form-grid">
+          <p>نظر مثبت و منفی با قواعد یکسان بررسی می‌شوند؛ انتقاد معتبر حذف نمی‌شود. توهین، افشای اطلاعات، نظر ساختگی و تبلیغ نامرتبط پذیرفته نیست. صاحب غرفه فقط حق پاسخ دارد. پاداش مشروط به نظر مثبت و فشار برای پنج ستاره مجاز نیست. نشان درخواست ثبت‌شده فقط تطبیق کد خصوصی، شماره درخواست و غرفه است؛ تحویل یا کیفیت را تأیید نمی‌کند.</p>
+          <div className="review-form-grid"><label>خدمت تجربه‌شده<input required minLength={2} maxLength={150} value={service} onChange={e=>setService(e.target.value)}/></label><label>تاریخ تجربه<input type="date" required max={new Date().toISOString().slice(0,10)} value={experienceDate} onChange={e=>setExperienceDate(e.target.value)}/></label>
             <label>
               <span>نام نمایشی</span>
               <input value={reviewerName} onChange={(e) => setReviewerName(e.target.value)} placeholder="مثلاً علی رضایی" />
@@ -207,7 +211,7 @@ export default function BusinessReviews({
             <label>
               <span>کد درخواست خونه نما ـ اختیاری</span>
               <input dir="ltr" value={requestCode} onChange={(e) => setRequestCode(e.target.value)} placeholder="کد کامل درخواست را وارد کنید" />
-              <small>اگر از خونه نما درخواست قیمت داده‌ای، با این کد نظر «تعامل تأییدشده» می‌گیرد.</small>
+              <small>اگر از خونه نما درخواست قیمت داده‌ای، با این کد نظر «درخواست ثبت‌شده» می‌گیرد.</small>
             </label>
 
             <label>

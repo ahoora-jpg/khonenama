@@ -1,3 +1,4 @@
+import { ensureQuoteDetails, parseQuoteJson } from '@/lib/server/quote-details';
 import { verifyLeadAccessCode } from "@/lib/server/lead-access";
 import { env } from "cloudflare:workers";
 
@@ -56,6 +57,7 @@ export async function POST(request: Request) {
   }
 
   await ensureQuoteSchema(db);
+  await ensureQuoteDetails(db);
 
   const lead = await db
     .prepare(
@@ -72,10 +74,11 @@ export async function POST(request: Request) {
   const recipients = await db
     .prepare(
       "SELECT b.slug, b.name, b.phone, b.whatsapp, " +
-      "q.amount, q.message, q.status AS quote_status, q.updated_at AS quote_updated_at " +
+      "q.amount, q.message, q.status AS quote_status, q.updated_at AS quote_updated_at,d.revision,d.details_json,d.agreed_json,p.status AS recipient_status,p.updated_at AS progress_updated_at " +
       "FROM lead_recipients lr " +
       "JOIN businesses b ON b.id = lr.business_id " +
       "LEFT JOIN lead_quotes q ON q.lead_id = lr.lead_id AND q.business_id = lr.business_id " +
+      "LEFT JOIN lead_quote_details d ON d.quote_id=q.id LEFT JOIN lead_recipient_progress p ON p.lead_id=lr.lead_id AND p.business_id=lr.business_id " +
       "WHERE lr.lead_id = ? ORDER BY b.id"
     )
     .bind(leadId)
@@ -100,6 +103,8 @@ export async function POST(request: Request) {
         name: row.name,
         phone: row.phone || "",
         whatsapp: row.whatsapp || "",
+        participationStatus: row.recipient_status || 'open',
+        participationUpdatedAt: row.progress_updated_at || null,
         quote:
           row.quote_status === "sent" || row.quote_status === "accepted" || row.quote_status === "rejected"
             ? {
@@ -107,6 +112,9 @@ export async function POST(request: Request) {
                 message: row.message || "",
                 status: row.quote_status,
                 updatedAt: row.quote_updated_at || "",
+                revision: row.revision || null,
+                terms: parseQuoteJson(row.details_json),
+                agreed: parseQuoteJson(row.agreed_json),
               }
             : null,
       })),
