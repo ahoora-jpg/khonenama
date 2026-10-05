@@ -1,3 +1,4 @@
+import { requestSecurityGate } from "./lib/request-gate";
 import { NextRequest, NextResponse } from "next/server";
 
 export function proxy(request: NextRequest) {
@@ -17,7 +18,7 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(target, 308);
   }
 
-  return NextResponse.next();
+  return requestSecurityGate(request);
 }
 
 export const config = {

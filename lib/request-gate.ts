@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { env } from "cloudflare:workers";
-import { crossSiteMutation, publicRequestLimit, securityHeaders } from "./lib/request-security";
+import { crossSiteMutation, publicRequestLimit, securityHeaders } from "./request-security";
 
-export async function middleware(request: NextRequest) {
+export async function requestSecurityGate(request: NextRequest) {
   const path = new URL(request.url).pathname;
   const protect = (response: Response) => {
     for (const [key, value] of Object.entries(securityHeaders)) response.headers.set(key, value);
@@ -51,4 +51,4 @@ export async function middleware(request: NextRequest) {
   return protect(NextResponse.next());
 }
 
-export const config = { matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"] };
+
