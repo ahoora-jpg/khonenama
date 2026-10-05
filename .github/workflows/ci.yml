@@ -24,5 +24,7 @@ jobs:
         run: npm audit --audit-level=high
       - run: npx tsc --noEmit
       - run: node --test tools/test-build-glob.mjs
+      - name: Booth publication and discovery
+        run: node --test tools/test-business-sitemap.mjs tools/test-commercial-readiness.mjs tools/test-admin-business-lifecycle.mjs
       - run: npm run check:vinext
       - run: npm run build:vinext

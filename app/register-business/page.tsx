@@ -26,7 +26,7 @@ export default function RegisterBusinessPage() {
               <span className="section-kicker">ثبت کسب‌وکار</span>
               <h1>پروفایل کسب‌وکارت را بساز.</h1>
               <p>
-                اطلاعات را مرحله‌به‌مرحله وارد کن؛ ثبت اولیه رایگان است و بعداً از داخل پنل می‌توانی امکانات حرفه‌ای را فعال کنی.
+                اطلاعات واقعی را مرحله‌به‌مرحله وارد کن؛ ثبت اولیه رایگان است. ذخیره اطلاعات با انتشار غرفه فرق دارد و نمایش عمومی پس از تکمیل و بررسی انجام می‌شود.
               </p>
             </div>
             <a className="text-link-arrow" href="/for-business">درباره خونه نما برای کسب‌وکارها</a>
@@ -39,6 +39,11 @@ export default function RegisterBusinessPage() {
             <span><BadgeCheck size={17} /> مسیر دریافت نشان تأییدشده</span>
           </div>
 
+          <details className="glass-panel" style={{ padding: "1rem", marginBottom: "1rem" }}>
+            <summary>پیش از شروع ثبت‌نام چه اطلاعاتی آماده کنم؟</summary>
+            <p>نام و توضیح واقعی کسب‌وکار، دسته و خدمات، شهر و محدوده فعالیت، راه تماس عمومی و تصاویر متعلق به خودتان را آماده کنید. مشخصات و عکس خصوصی مشتری را در غرفه عمومی وارد نکنید.</p>
+            <a href="/for-business/online-discovery-guide#profile-checklist">چک‌لیست کامل آماده‌سازی غرفه در شش حوزه</a>
+          </details>
           <BusinessOnboardingWizard />
         </div>
       </section>
