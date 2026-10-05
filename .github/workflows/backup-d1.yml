@@ -41,6 +41,9 @@ jobs:
           test -s "$backup_dir/database.sql"
           mkdir -p encrypted-backup
           printf '%s' "$D1_BACKUP_PASSPHRASE" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --symmetric --cipher-algo AES256 --output encrypted-backup/database.sql.gpg "$backup_dir/database.sql"
+          printf '%s' "$D1_BACKUP_PASSPHRASE" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --decrypt --output "$backup_dir/roundtrip.sql" encrypted-backup/database.sql.gpg
+          cmp "$backup_dir/database.sql" "$backup_dir/roundtrip.sql"
+          BACKUP_RESTORE_FILE="$backup_dir/roundtrip.sql" node --input-type=module -e "import { DatabaseSync } from 'node:sqlite'; import { readFileSync } from 'node:fs'; const db=new DatabaseSync(':memory:'); db.exec(readFileSync(process.env.BACKUP_RESTORE_FILE,'utf8')); const checks=db.prepare('PRAGMA quick_check').all(); if(checks.length!==1 || checks[0].quick_check!=='ok') throw new Error('Backup restore integrity failed'); if(!db.prepare(\"SELECT name FROM sqlite_master WHERE name='businesses'\").get()) throw new Error('Business schema missing from backup'); db.close(); console.log('Encrypted backup decrypts and restores into isolated SQLite successfully');"
           (cd encrypted-backup && sha256sum database.sql.gpg > SHA256SUMS)
       - uses: actions/upload-artifact@v4
         with:
