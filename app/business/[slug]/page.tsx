@@ -339,7 +339,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                   {album.project.service && <div><dt>خدمت انجام‌شده</dt><dd>{album.project.service}</dd></div>}
                   {album.project.materials && <div><dt>متریال پروژه</dt><dd>{album.project.materials}</dd></div>}
                   {album.project.area && <div><dt>محدوده پروژه</dt><dd>{album.project.area}</dd></div>}
-                </dl>
+                </dl>}
                 {album.description && <p style={{ whiteSpace: "pre-wrap" }}>{album.description}</p>}
                 <div className="business-public-gallery">
                   {album.media.map(item => <figure key={item.id}><img src={item.url} alt={item.altText || album.title} loading="lazy" />{item.altText && <figcaption>{item.altText}</figcaption>}</figure>)}
