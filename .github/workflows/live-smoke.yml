@@ -114,4 +114,13 @@ jobs:
           registration="$(expect_status 400 POST "$BASE/api/businesses/register" '{}')"
           echo "$registration" | grep -q '"error":"INVALID_REQUIRED_FIELDS"'
 
+          curl -fsS -D /tmp/security-headers.txt "$BASE/support" -o /dev/null
+          grep -qi 'x-frame-options: DENY' /tmp/security-headers.txt
+          grep -qi 'content-security-policy:' /tmp/security-headers.txt
+          forbidden="$(curl -sS -o /dev/null -w '%{http_code}' -X POST "$BASE/api/auth/business/login" -H 'Origin: https://evil.example' -H 'Content-Type: application/json' --data '{}')"
+          test "$forbidden" = 403
+          python -c 'import json; print(json.dumps({"message": "x" * 66000}))' > /tmp/oversized-security-request.json
+          oversized="$(curl -sS -o /tmp/oversized-response.json -w '%{http_code}' -X POST "$BASE/api/support" -H 'Content-Type: application/json' --data-binary @/tmp/oversized-security-request.json)"
+          test "$oversized" = 413
+
           echo "Live production smoke checks passed."
