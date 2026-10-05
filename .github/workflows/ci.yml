@@ -24,6 +24,8 @@ jobs:
         run: npm audit --audit-level=high
       - run: npx tsc --noEmit
       - run: node --test tools/test-build-glob.mjs
+      - name: Payment activation and callback security
+        run: node --test tools/test-billing.mjs
       - name: Booth publication and discovery
         run: node --test tools/test-business-sitemap.mjs tools/test-commercial-readiness.mjs tools/test-admin-business-lifecycle.mjs
       - run: npm run check:vinext

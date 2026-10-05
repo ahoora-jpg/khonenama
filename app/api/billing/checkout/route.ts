@@ -1,35 +1,14 @@
-import { getBusinessPlan } from "@/lib/business-plans";
-
+import { env } from 'cloudflare:workers';
+import { getOwnedBusiness } from '@/lib/server/business-media';
+import { BillingError, billingHeaders, createCheckout } from '@/lib/server/billing';
+import { paymentProvider } from '@/lib/server/payment-provider';
 export async function POST(request: Request) {
+  const owner = await getOwnedBusiness(request);
+  if (!owner) return Response.json({ok:false,error:'UNAUTHORIZED'},{status:401});
   const body = await request.json().catch(() => ({}));
-  const planCode = typeof body?.planCode === "string" ? body.planCode : "";
-  const plan = getBusinessPlan(planCode);
-
-  if (!plan) {
-    return Response.json({ ok: false, error: "PLAN_NOT_FOUND" }, { status: 404 });
+  try {
+    return Response.json({ok:true,...await createCheckout(owner,body,paymentProvider(env as any))},{status:201,headers:billingHeaders});
+  } catch(error) {
+    return Response.json({ok:false,error:error instanceof BillingError ? error.code : 'CHECKOUT_RETRY_REQUIRED'},{status:error instanceof BillingError ? error.status : 409,headers:billingHeaders});
   }
-
-  if (plan.code === "free") {
-    return Response.json(
-      { ok: false, error: "FREE_PLAN_DOES_NOT_REQUIRE_PAYMENT" },
-      { status: 409 }
-    );
-  }
-
-  if (plan.amountToman === null) {
-    return Response.json(
-      { ok: false, error: "PLAN_PRICING_NOT_ACTIVE" },
-      { status: 409 }
-    );
-  }
-
-  return Response.json(
-    {
-      ok: false,
-      error: "PAYMENT_PROVIDER_NOT_CONFIGURED",
-      message:
-        "Checkout is intentionally disabled until the production payment provider, merchant credentials, D1 binding and server-side session are configured.",
-    },
-    { status: 503 }
-  );
 }

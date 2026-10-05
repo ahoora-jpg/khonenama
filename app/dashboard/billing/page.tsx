@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BusinessPlanCards from "@/components/BusinessPlanCards";
 import BusinessSessionGuard from "@/components/BusinessSessionGuard";
+import BillingHistory from "@/components/BillingHistory";
 import { CreditCard, FileText, ReceiptText, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -29,7 +30,7 @@ export default function BillingPage() {
           <div className="billing-security-strip">
             <span><ShieldCheck size={17} /> اطلاعات کارت در خونه نما ذخیره نمی‌شود</span>
             <span><ReceiptText size={17} /> هر پرداخت با فاکتور و شناسه مستقل</span>
-            <span><CreditCard size={17} /> فعال‌سازی فقط بعد از Verify درگاه</span>
+            <span><CreditCard size={17} /> فعال‌سازی پس از تأیید درگاه</span>
           </div>
 
           <BusinessPlanCards />
@@ -43,9 +44,9 @@ export default function BillingPage() {
               <ol className="billing-flow-list">
                 <li><span>۱</span><p>کاربر فقط <b>شناسه پلن</b> را انتخاب می‌کند.</p></li>
                 <li><span>۲</span><p>سرور قیمت فعال همان پلن را از تنظیمات/دیتابیس می‌خواند.</p></li>
-                <li><span>۳</span><p>تخفیف معتبر، مالیات یا اعتبار احتمالی روی سرور محاسبه می‌شود.</p></li>
-                <li><span>۴</span><p>Invoice ساخته می‌شود و مبلغ همان فاکتور به درگاه ارسال می‌شود.</p></li>
-                <li><span>۵</span><p>بعد از Callback، تراکنش دوباره Verify و سپس اشتراک فعال می‌شود.</p></li>
+                <li><span>۳</span><p>مبلغ نهایی و مدت پیش از پرداخت نمایش داده می‌شوند؛ هزینه اضافه‌ای هنگام بازگشت دریافت نمی‌شود.</p></li>
+                <li><span>۴</span><p>فاکتور ساخته می‌شود و مبلغ همان فاکتور به درگاه ارسال می‌شود.</p></li>
+                <li><span>۵</span><p>بعد از بازگشت، تراکنش از درگاه استعلام و اشتراک به‌صورت خودکار فعال می‌شود.</p></li>
               </ol>
             </section>
 
@@ -54,11 +55,7 @@ export default function BillingPage() {
                 <div><span className="section-kicker">سوابق</span><h2>فاکتورها و پرداخت‌ها</h2></div>
                 <ReceiptText size={20} />
               </div>
-              <div className="dashboard-empty-state">
-                <ReceiptText size={22} />
-                <strong>هنوز فاکتوری ندارید</strong>
-                <small>پس از فعال‌شدن پلن‌های پولی، فاکتورها و وضعیت پرداخت در این قسمت نمایش داده می‌شوند.</small>
-              </div>
+              <BillingHistory />
             </section>
           </div>
           </BusinessSessionGuard>

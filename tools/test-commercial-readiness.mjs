@@ -48,6 +48,7 @@ test('Readiness denies anonymous callers before accessing infrastructure', async
     'cloudflare:workers': { env: new Proxy({}, { get() { throw new Error('Infrastructure accessed before authorization'); } }) },
     '@/lib/server/admin-session': { isAdminRequest: async () => false },
     '@/lib/server/imagekit': { getImageKitConfig: () => { throw new Error('Secret inspected before authorization'); } },
+    '@/lib/server/payment-provider': { paymentProvider: () => null },
     '@/lib/business-plans': { businessPlans: [] },
   });
   const response = await route.GET(new Request('https://khonenama.ir/api/admin/readiness'));
@@ -60,6 +61,7 @@ test('Readiness reports missing schema and never declares unfinished payments re
     'cloudflare:workers': { env: { DB: { prepare: () => ({ all: async () => ({ results: [{ name: 'businesses' }] }) }) } } },
     '@/lib/server/admin-session': { isAdminRequest: async () => true },
     '@/lib/server/imagekit': { getImageKitConfig: () => ({ privateKey: 'private-test-value', urlEndpoint: 'https://example.test' }) },
+    '@/lib/server/payment-provider': { paymentProvider: () => null },
     '@/lib/business-plans': { businessPlans: [{ code: 'pro', amountToman: null, purchasable: false }] },
   });
   const response = await route.GET(new Request('https://khonenama.ir/api/admin/readiness'));
@@ -68,3 +70,4 @@ test('Readiness reports missing schema and never declares unfinished payments re
   assert.equal(body.billing.readyForRealPayments, false);
   assert.ok(!JSON.stringify(body).includes('private-test-value'));
 });
+

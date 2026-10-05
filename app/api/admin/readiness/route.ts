@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import { isAdminRequest } from "@/lib/server/admin-session";
 import { getImageKitConfig } from "@/lib/server/imagekit";
 import { businessPlans } from "@/lib/business-plans";
+import { paymentProvider } from "@/lib/server/payment-provider";
 
 const headers = { "Cache-Control": "no-store" };
 const requiredTables = ["businesses", "users", "business_members", "auth_sessions", "verification_requests", "leads", "lead_recipients", "lead_quotes", "plans", "subscriptions", "invoices", "payments", "payment_events"];
@@ -19,6 +20,8 @@ export async function GET(request: Request) {
     const missingTables = requiredTables.filter((table) => !present.has(table));
     const imagekit = getImageKitConfig();
     const paidPlans = businessPlans.filter((plan) => plan.code !== "free");
+    const pricedPaidPlans = present.has("billing_prices") ? (await db.prepare("SELECT plan_code FROM billing_prices WHERE enabled=1 AND amount_toman>0").all()).results.map((r: any) => r.plan_code) : [];
+    const providerConfigured = !!paymentProvider(env as any);
     return Response.json({
       ok: true,
       checkedAt: new Date().toISOString(),
@@ -31,10 +34,11 @@ export async function GET(request: Request) {
       },
       billing: {
         readyForRealPayments: false,
-        checkoutImplemented: false,
-        callbackImplemented: false,
-        pricedPaidPlans: paidPlans.filter((plan) => plan.amountToman !== null && plan.purchasable).map((plan) => plan.code),
-        blockers: ["PAYMENT_PROVIDER_NOT_IMPLEMENTED", "PAID_PLAN_PRICING_NOT_ACTIVE", "LEGAL_AND_MERCHANT_APPROVAL_NOT_VERIFIED"],
+        checkoutImplemented: true,
+        callbackImplemented: true,
+        providerConfigured,
+        pricedPaidPlans,
+        blockers: [...(!providerConfigured ? ["PAYMENT_PROVIDER_NOT_CONFIGURED"] : []), ...(pricedPaidPlans.length < paidPlans.length ? ["PAID_PLAN_PRICING_NOT_ACTIVE"] : []), "REAL_GATEWAY_END_TO_END_TEST_NOT_VERIFIED"],
       },
       operationalChecks: {
         backupRestoreDrill: "not_verified",

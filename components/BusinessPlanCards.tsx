@@ -1,68 +1,12 @@
 "use client";
-
-import { useEffect, useState } from "react";
-import { Check, Crown, Sparkles } from "lucide-react";
-import { businessPlans } from "@/lib/business-plans";
-
-export default function BusinessPlanCards() {
-  const [currentPlan, setCurrentPlan] = useState("free");
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/api/me/business", { cache: "no-store" })
-      .then((response) => response.json())
-      .then((result) => {
-        if (!cancelled && result?.ok) {
-          setCurrentPlan(result.business?.plan?.code || "free");
-        }
-      })
-      .catch(() => {})
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return (
-    <div className="business-plan-grid billing-plan-grid">
-      {businessPlans.map((plan) => {
-        const active = currentPlan === plan.code;
-        return (
-          <article
-            className={
-              "business-plan-card " +
-              (plan.code === "pro" ? "is-highlighted " : "") +
-              (active ? "is-current-plan " : "") +
-              "plan-card-" + plan.code
-            }
-            key={plan.code}
-          >
-            <span className="business-plan-badge">
-              {plan.code === "premium" && <Crown size={13} />}
-              {plan.code === "pro" && <Sparkles size={13} />}
-              {plan.badge}
-            </span>
-            <h2>{plan.name}</h2>
-            <strong>{plan.priceLabel}</strong>
-            <p>{plan.description}</p>
-            <ul>
-              {plan.features.map((feature) => <li key={feature}><Check size={15} /> {feature}</li>)}
-            </ul>
-            {active ? (
-              <span className="billing-current-plan"><Check size={14} /> {loading ? "در حال بررسی..." : "پلن فعلی"}</span>
-            ) : plan.code === "free" ? (
-              <span className="billing-plan-note">امکان بازگشت به پایه از پنل پشتیبانی</span>
-            ) : (
-              <button className="pill-button billing-disabled" type="button" disabled>
-                <Sparkles size={15} /> فعال‌سازی پس از تعیین قیمت
-              </button>
-            )}
-          </article>
-        );
-      })}
-    </div>
-  );
+import { useEffect, useState } from 'react';
+import { Check, Crown, Sparkles } from 'lucide-react';
+import { businessPlans } from '@/lib/business-plans';
+type Plan = {code:string;name:string;amountToman:number|null;durationDays:number|null;purchasable:boolean};
+const errors:Record<string,string>={QUOTE_CHANGED:'قیمت یا مدت تغییر کرده؛ صفحه را تازه کنید و دوباره مبلغ را بررسی کنید.',LOWER_PLAN_ACTIVE:'اشتراک بالاتر شما هنوز فعال است؛ پس از پایان آن می‌توانید اشتراک پایین‌تر بخرید.',INDEFINITE_PLAN_ACTIVE:'همین اشتراک بدون تاریخ پایان برای شما فعال است.',PAYMENT_PROVIDER_NOT_CONFIGURED:'درگاه هنوز فعال نشده است.',PAYMENT_REQUEST_FAILED:'ارتباط با درگاه انجام نشد؛ مبلغی در سایت دریافت نشده است.',CHECKOUT_ALREADY_CREATED:'این درخواست قبلاً ثبت شده؛ سوابق پرداخت را بررسی کنید.',ALREADY_PAID:'پرداخت این درخواست تأیید شده است؛ سوابق را ببینید.'};
+export default function BusinessPlanCards(){
+  const [current,setCurrent]=useState('free'),[catalog,setCatalog]=useState<Plan[]>([]),[message,setMessage]=useState(''),[busy,setBusy]=useState(false),[selected,setSelected]=useState<Plan|null>(null),[key,setKey]=useState('');
+  useEffect(()=>{let active=true;Promise.all([fetch('/api/billing/plans',{cache:'no-store'}).then(r=>r.json()),fetch('/api/me/business',{cache:'no-store'}).then(r=>r.json())]).then(([c,p])=>{if(active){setCatalog(c.plans||[]);setCurrent(p.business?.plan?.code||'free');}}).catch(()=>setMessage('دریافت اشتراک‌ها انجام نشد؛ صفحه را دوباره باز کنید.'));return()=>{active=false;};},[]);
+  async function pay(){if(!selected||busy)return;setBusy(true);setMessage('');try{const r=await fetch('/api/billing/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({planCode:selected.code,expectedAmountToman:selected.amountToman,expectedDurationDays:selected.durationDays,requestKey:key})});const d=await r.json();if(!r.ok||!d.ok)throw Error(errors[d.error]||'ثبت پرداخت انجام نشد؛ پیش از تلاش دوباره، سوابق پرداخت را بررسی کنید.');const url=new URL(d.redirectUrl);if(url.protocol!=='https:'||url.hostname!=='www.zarinpal.com'||!/^\/pg\/StartPay\/A[a-zA-Z0-9]{35}$/.test(url.pathname))throw Error('نشانی درگاه معتبر نیست.');window.location.assign(url.href);}catch(e){setMessage(e instanceof Error?e.message:'اتصال انجام نشد.');}finally{setBusy(false);}}
+  return <><div className="business-plan-grid billing-plan-grid">{businessPlans.map(plan=>{const price=catalog.find(p=>p.code===plan.code);return <article className={'business-plan-card '+(plan.code==='pro'?'is-highlighted ':'')+(current===plan.code?'is-current-plan ':'')+'plan-card-'+plan.code} key={plan.code}><span className="business-plan-badge">{plan.code==='premium'?<Crown size={13}/>:<Sparkles size={13}/>} {plan.badge}</span><h2>{plan.name}</h2><strong>{plan.code==='free'?'رایگان':price?.amountToman?`${price.amountToman.toLocaleString('fa-IR')} تومان برای ${price.durationDays?.toLocaleString('fa-IR')} روز`:'قیمت هنوز نهایی نشده'}</strong><p>{plan.description}</p><ul>{plan.features.map(f=><li key={f}><Check size={15}/>{f}</li>)}</ul>{current===plan.code&&<p className="billing-current-plan">اشتراک فعلی شما</p>}{plan.code!=='free'&&<button type="button" className="pill-button" disabled={busy||!price?.purchasable} onClick={()=>{setSelected(price!);setKey(crypto.randomUUID());setMessage('');}}>{price?.purchasable?(current===plan.code?'تمدید اشتراک':'انتخاب و مشاهده مبلغ'):'خرید پس از اتصال درگاه'}</button>}</article>;})}</div>{selected&&<section className="dashboard-panel glass-panel" aria-label="تأیید مبلغ خرید"><h2>{current===selected.code?'تمدید':'خرید'} اشتراک {selected.name}</h2><p>مبلغ نهایی: <b>{selected.amountToman?.toLocaleString('fa-IR')} تومان</b> · مدت: {selected.durationDays?.toLocaleString('fa-IR')} روز</p><p>تمدید همان اشتراک به اعتبار باقی‌مانده اضافه می‌شود. با انتخاب اشتراک بالاتر، مدت جدید از زمان پرداخت شروع می‌شود. این خرید یک‌باره است و برداشت خودکار ندارد.</p><button className="pill-button" type="button" disabled={busy} onClick={()=>void pay()}>{busy?'در حال اتصال…':'تأیید مبلغ و رفتن به درگاه'}</button> <button type="button" disabled={busy} onClick={()=>setSelected(null)}>انصراف</button></section>}<p role="status">{message}</p></>;
 }

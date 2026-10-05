@@ -98,7 +98,8 @@ test('Concurrent verified-payment callbacks activate a subscription exactly once
   sqlite.exec("ALTER TABLE plans ADD COLUMN name TEXT; ALTER TABLE subscriptions ADD COLUMN starts_at TEXT; CREATE TABLE invoices(id INTEGER PRIMARY KEY,status TEXT,business_id INTEGER,plan_id INTEGER,paid_at TEXT,updated_at TEXT); CREATE TABLE payments(id INTEGER PRIMARY KEY,invoice_id INTEGER,status TEXT,provider_reference TEXT); CREATE TABLE payment_events(id INTEGER PRIMARY KEY,payment_id INTEGER,event_type TEXT,provider_code TEXT,payload_json TEXT); INSERT INTO invoices VALUES(1,'pending',1,1,NULL,NULL); INSERT INTO payments VALUES(1,1,'verified','ref')");
   const originalBatch = db.batch.bind(db); let pending = Promise.resolve();
   db.batch = statements => { const result = pending.then(() => originalBatch(statements)); pending = result.catch(() => {}); return result; };
-  const activation = load('lib/server/subscription-activation.ts');
+  sqlite.exec("ALTER TABLE subscriptions ADD COLUMN is_test INTEGER DEFAULT 0; ALTER TABLE invoices ADD COLUMN total_amount INTEGER DEFAULT 100; ALTER TABLE invoices ADD COLUMN currency TEXT DEFAULT 'IRT'; ALTER TABLE payments ADD COLUMN amount INTEGER DEFAULT 100; ALTER TABLE payments ADD COLUMN currency TEXT DEFAULT 'IRT'; ALTER TABLE payments ADD COLUMN provider TEXT DEFAULT 'zarinpal'; CREATE TABLE billing_checkouts(payment_id INTEGER,business_id INTEGER,plan_code TEXT,amount_toman INTEGER,duration_days INTEGER,activation_ends_at TEXT); INSERT INTO billing_checkouts VALUES(1,1,'pro',100,30,NULL); CREATE TABLE billing_receipts(payment_id INTEGER,provider TEXT,reference TEXT); INSERT INTO billing_receipts VALUES(1,'zarinpal','ref');");
+  const activation = load('lib/server/billing-activation.ts');
   const results = await Promise.all([activation.activateSubscriptionFromVerifiedPayment(db, 1), activation.activateSubscriptionFromVerifiedPayment(db, 1)]);
   assert.equal(results.filter(r => !r.idempotent).length, 1); assert.equal(sqlite.prepare("SELECT COUNT(*) n FROM payment_events WHERE event_type='subscription_activated'").get().n, 1); assert.equal(sqlite.prepare("SELECT COUNT(*) n FROM subscriptions WHERE status='active'").get().n, 1);
 });
@@ -117,3 +118,4 @@ test('Public links reject script URLs, credentials and false Instagram domains',
   assert.equal(links.safeInstagramUrl('https://instagram.com.evil.example/profile'), '');
   assert.equal(links.safeInstagramUrl('@real_vendor'), 'https://www.instagram.com/real_vendor');
 });
+
