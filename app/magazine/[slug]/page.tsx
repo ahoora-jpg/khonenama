@@ -9,6 +9,9 @@ import { notFound } from "next/navigation";
 
 const CURTAIN_INSTALLATION_SLUG = "curtain-installation-guide";
 const CURTAIN_INSTALLATION_MODIFIED_AT = "2026-09-23";
+const SHEET_WALLCOVERING_GUIDES = new Set([
+  "marble-sheet-wallpanel-guide", "thermowall-guide", "pvc-mdf-wallpanel-guide", "wall-mural-guide",
+]);
 
 const SEO_METADATA_OVERRIDES: Record<string, { title?: string; description?: string }> = {
   "flooring-karaj-guide": { title: "پارکت و لمینت کرج | خرید، نصب و هزینه" },
@@ -133,7 +136,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const visual = getGuideVisual(guide.category, guide.slug);
   const isCurtainInstallation = guide.slug === CURTAIN_INSTALLATION_SLUG;
   const modifiedAt = isCurtainInstallation
-    ? CURTAIN_INSTALLATION_MODIFIED_AT
+    ? guide.modifiedAt || CURTAIN_INSTALLATION_MODIFIED_AT
     : guide.modifiedAt || guide.publishedAt;
   const seoOverride = SEO_METADATA_OVERRIDES[guide.slug];
   const metadataTitle = seoOverride?.title || guide.title;
@@ -172,7 +175,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const visual = getGuideVisual(guide.category, guide.slug);
   const isCurtainInstallation = guide.slug === CURTAIN_INSTALLATION_SLUG;
   const modifiedAt = isCurtainInstallation
-    ? CURTAIN_INSTALLATION_MODIFIED_AT
+    ? guide.modifiedAt || CURTAIN_INSTALLATION_MODIFIED_AT
     : guide.modifiedAt || guide.publishedAt || "2026-09-19";
   const fallbackQuickAnswer = [guide.sections[0]?.paragraphs?.[0], guide.sections[1]?.paragraphs?.[0]]
     .filter(Boolean)
@@ -256,7 +259,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             <p>{guide.excerpt}</p>
             <div className="guide-meta">
               <span><Clock3 size={14} /> {guide.readTime}</span>
-              <span>به‌روزرسانی: {isCurtainInstallation ? "۱۴۰۵/۰۷/۰۱" : guide.updated}</span>
+              <span>به‌روزرسانی: {guide.updated}</span>
               <a href="/about">درباره خونه نما</a>
               <a href="/editorial-policy">سیاست تحریریه</a>
             </div>
@@ -358,7 +361,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             </div>
 
             <aside className="guide-side">
-              {guide.category === "کاغذ دیواری" && (
+              {guide.category === "کاغذ دیواری" && !SHEET_WALLCOVERING_GUIDES.has(guide.slug) && (
                 <div className="guide-side-card guide-tool-link glass-panel">
                   <Calculator size={18} />
                   <h3>تعداد رول را محاسبه کن</h3>
@@ -369,11 +372,20 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                 </div>
               )}
 
+              {SHEET_WALLCOVERING_GUIDES.has(guide.slug) && (
+                <div className="guide-side-card guide-tool-link glass-panel">
+                  <Calculator size={18} />
+                  <h3>ابعاد و نقشه برش دیوارپوش را آماده کنید</h3>
+                  <p>عرض و ارتفاع دیوار، اندازه و پوشش مؤثر پنل، جهت طرح و بازشوها را با مجری تأیید کنید؛ محاسبه تعداد رول کاغذ دیواری برای ورق، پنل یا پوستر سفارشی مناسب نیست.</p>
+                  <a href="/category/wallpaper#businesses">فروشندگان و مجریان دیوارپوش <ArrowUpLeft size={15} /></a>
+                </div>
+              )}
+
               {guide.category === "پرده" && (
                 <div className="guide-side-card guide-tool-link glass-panel">
                   <Calculator size={18} />
                   <h3>متراژ پارچه پرده را حساب کن</h3>
-                  <p>عرض ریل، قد پرده، Fullness و Pattern Repeat را وارد کن تا متراژ تقریبی پارچه مشخص شود.</p>
+                  <p>برای پرده پارچه‌ای، عرض ریل، قد، ضریب جمع و تکرار طرح را وارد کنید. این ابزار ابعاد سفارش زبرا یا شید رول را تعیین نمی‌کند.</p>
                   <a href="/tools/curtain-fabric-calculator">
                     محاسبه‌گر متراژ پرده <ArrowUpLeft size={15} />
                   </a>
@@ -416,10 +428,12 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               <div className="guide-side-card glass-panel">
                 <span className="section-kicker">مسیر بعدی</span>
                 <h3>فروشگاه‌ها و متخصصان مرتبط را ببین</h3>
-                <p>بعد از شناخت گزینه‌ها، کسب‌وکارهای مرتبط را در خونه نما مقایسه کن.</p>
+                <p>بعد از شناخت گزینه‌ها، خدمات و محدوده فعالیت غرفه واقعی را بررسی کنید و با مشخصات یکسان استعلام بگیرید.</p>
                 <a href={guide.relatedCategory ? guide.relatedCategory + "#businesses" : "/search"}>
                   مشاهده کسب‌وکارها <ArrowUpLeft size={15} />
                 </a>
+                <a href="/help#compare-quotes">چک‌لیست مقایسه قیمت و هزینه‌های جانبی</a>
+                <a href="/help#handover-checklist">نکات بررسی و تحویل کار</a>
               </div>
 
               <PreferredSourceCTA compact />
