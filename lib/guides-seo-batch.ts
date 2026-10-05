@@ -86,7 +86,7 @@ export const seoBatchGuides: Guide[] = [
     readTime: "۴ دقیقه",
     relatedCategory: "/category/carpet",
     quickAnswer: "برای موکت اتاق خواب، نرمی را همراه با نظافت، تراکم، شرایط زیرسازی و دستور نگهداری محصول مقایسه کنید. پرز بلند ظاهر نرم‌تری دارد، اما اگر نظافت مکرر اولویت دارد، نمونه‌های کم‌پرز را هم بررسی کنید. بهترین انتخاب به استفاده اتاق و مشخصات همان محصول بستگی دارد.",
-    relatedGuideSlugs: ["carpet-buying-guide", "carpet-cushion-underlay-guide", "carpet-roll-vs-tile"],
+    relatedGuideSlugs: ["carpet-buying-guide", "carpet-cushion-underlay-guide", "roll-carpet-vs-carpet-tile"],
     sources: [{ name: "Carpet and Rug Institute — انتخاب موکت و زیرلایه", url: "https://carpet-rug.org/carpet-for-homes/selecting-the-right-carpet/" }],
     sections: [
       { heading: "برای اتاق خواب، راحتی تنها معیار نیست", paragraphs: ["نرمی زیر پا مهم است، اما نظافت، تراکم، میزان پرزدهی و مقاومت در برابر لکه هم باید بررسی شود. انتخابی که فقط در روز اول نرم باشد ولی تمیزکردن آن دشوار شود، الزاماً انتخاب خوبی نیست."] },
