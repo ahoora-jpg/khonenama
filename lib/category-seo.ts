@@ -55,7 +55,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "لمینت ضدآب است؟", answer: "همه لمینت‌ها ضدآب نیستند. مقاومت آن‌ها به ساختار و مشخصات سازنده بستگی دارد و آب ایستاده همچنان می‌تواند آسیب‌زا باشد." },
       { question: "PVC بهتر است یا لمینت؟", answer: "برای رطوبت بیشتر PVC معمولاً مطمئن‌تر است؛ برای حس نزدیک‌تر به کف چوبی، لمینت می‌تواند جذاب‌تر باشد." }
     ],
-    guides: ["laminate-ac-rating-usage-class-guide", "waterproof-vs-water-resistant-laminate", "laminate-expansion-gap-guide", "laminate-underfloor-heating-guide", "engineered-wood-vs-laminate", "parquet-vs-laminate", "laminate-vs-vinyl-flooring-2026", "laminate-vs-spc-flooring", "spc-vs-pvc-flooring", "vinyl-plank-vs-sheet-vinyl", "flooring-types-guide", "laminate-guide", "laminate-underlay-guide", "laminate-vs-pvc", "laminate-installation-guide"]
+    guides: ["skirting-floor-profiles-guide","laminate-ac-rating-usage-class-guide", "waterproof-vs-water-resistant-laminate", "laminate-expansion-gap-guide", "laminate-underfloor-heating-guide", "engineered-wood-vs-laminate", "parquet-vs-laminate", "laminate-vs-vinyl-flooring-2026", "laminate-vs-spc-flooring", "spc-vs-pvc-flooring", "vinyl-plank-vs-sheet-vinyl", "flooring-types-guide", "laminate-guide", "laminate-underlay-guide", "laminate-vs-pvc", "laminate-installation-guide"]
   },
   carpet: {
     slug: "carpet",
@@ -102,7 +102,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "کاغذ دیواری برای فضای کوچک مناسب است؟", answer: "بله، اما طرح و رنگ باید با ابعاد و نور فضا هماهنگ شود تا فضا شلوغ یا کوچک‌تر دیده نشود." },
       { question: "چند رول کاغذ دیواری لازم دارم؟", answer: "به عرض کل دیوارها، ارتفاع، عرض و طول رول، Pattern Repeat و پرت بستگی دارد. برای برآورد سریع از محاسبه‌گر رول خونه نما استفاده کنید." }
     ],
-    guides: ["wallpaper-primer-sizing-guide", "paste-the-wall-vs-paste-the-paper-guide", "peel-and-stick-vs-traditional-wallpaper", "wall-mural-guide", "marble-sheet-wallpanel-guide", "thermowall-guide", "pvc-mdf-wallpanel-guide", "wallpaper-guide", "wallpaper-vs-wallpanel", "washable-wallpaper-guide"]
+    guides: ["wall-moulding-decor-guide","wallpaper-primer-sizing-guide", "paste-the-wall-vs-paste-the-paper-guide", "peel-and-stick-vs-traditional-wallpaper", "wall-mural-guide", "marble-sheet-wallpanel-guide", "thermowall-guide", "pvc-mdf-wallpanel-guide", "wallpaper-guide", "wallpaper-vs-wallpanel", "washable-wallpaper-guide"]
   },
   "interior-design": {
     slug: "interior-design",
@@ -130,7 +130,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "رنگ سال ۲۰۲۶ برای دکوراسیون چیست؟", answer: "Pantone رنگ PANTONE 11-4201 Cloud Dancer را برای ۲۰۲۶ معرفی کرده است؛ استفاده درست آن به نور، متریال و رنگ‌های مکمل بستگی دارد." },
       { question: "ترند طراحی داخلی ۲۰۲۶ چیست؟", answer: "یک سبک واحد نیست؛ گرایش به فضاهای گرم‌تر و شخصی‌تر، سلامت، طبیعت، انعطاف و فناوری کمتر دیده‌شونده از محورهای مهم سال است." }
     ],
-    guides: ["knauf-false-ceiling-guide", "interior-design-trends-2026", "pantone-cloud-dancer-2026-interior-guide", "small-apartment-interior-design-guide", "living-room-zoning-lighting-guide", "biophilic-interior-design-guide-2026", "smart-home-interior-design-planning-guide", "interior-decoration-budget-priority-guide", "choose-interior-designer", "interior-design-process"]
+    guides: ["interior-decorative-stone-guide","cabinet-hardware-selection-guide","wall-moulding-decor-guide","knauf-false-ceiling-guide", "interior-design-trends-2026", "pantone-cloud-dancer-2026-interior-guide", "small-apartment-interior-design-guide", "living-room-zoning-lighting-guide", "biophilic-interior-design-guide-2026", "smart-home-interior-design-planning-guide", "interior-decoration-budget-priority-guide", "choose-interior-designer", "interior-design-process"]
   },
   "smart-home": {
     slug: "smart-home",
@@ -159,7 +159,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "از کدام بخش شروع کنیم؟", answer: "اگر هدف راحتی روزمره است، روشنایی، پرده برقی و قفل هوشمند شروع‌های رایجی هستند؛ اگر امنیت یا مدیریت انرژی اولویت دارد، مسیر انتخاب متفاوت می‌شود." },
       { question: "قبل از گرفتن قیمت خانه هوشمند چه چیزی مشخص کنیم؟", answer: "حداقل تعداد نقاط، نوع پروژه، نیاز به کنترل محلی، Remote Access و گروه‌های اصلی مثل روشنایی، پرده، دما و امنیت را مشخص کنید تا پیشنهادها قابل‌مقایسه‌تر شوند." }
     ],
-    guides: ["knx-vs-matter-smart-home-guide", "matter-controller-thread-border-router-guide", "smart-home-without-internet-guide", "smart-lock-buying-security-guide", "smart-home-rental-apartment-guide", "presence-vs-motion-sensor-smart-home-guide", "matter-thread-zigbee-wifi-guide-2026", "smart-home-security-guide-2026", "smart-lighting-scenes-guide-2026", "smart-curtain-daylight-guide", "smart-home-guide", "smart-lighting-guide", "smart-curtain-guide"]
+    guides: ["water-leak-sensor-guide","knx-vs-matter-smart-home-guide", "matter-controller-thread-border-router-guide", "smart-home-without-internet-guide", "smart-lock-buying-security-guide", "smart-home-rental-apartment-guide", "presence-vs-motion-sensor-smart-home-guide", "matter-thread-zigbee-wifi-guide-2026", "smart-home-security-guide-2026", "smart-lighting-scenes-guide-2026", "smart-curtain-daylight-guide", "smart-home-guide", "smart-lighting-guide", "smart-curtain-guide"]
   },
 };
 
