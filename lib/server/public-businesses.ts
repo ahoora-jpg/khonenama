@@ -194,6 +194,7 @@ export async function getPublishedBusiness(slug: string): Promise<PublicBusiness
 
 export async function listPublishedBusinesses(options: {
   categorySlug?: string;
+  serviceName?: string;
   city?: string;
   area?: string;
   location?: string;
@@ -217,6 +218,12 @@ export async function listPublishedBusinesses(options: {
         "EXISTS (SELECT 1 FROM business_categories bcx JOIN categories cx ON cx.id = bcx.category_id WHERE bcx.business_id = b.id AND cx.slug = ?)"
       );
       binds.push(options.categorySlug);
+    }
+
+    if (options.serviceName) {
+      where.push("EXISTS (SELECT 1 FROM business_services bss JOIN services ss ON ss.id = bss.service_id WHERE bss.business_id = b.id AND ss.name = ?)");
+      binds.push(options.serviceName);
+      where.push("length(trim(COALESCE(b.name,''))) >= 2 AND length(trim(COALESCE(b.description,''))) >= 20 AND length(trim(COALESCE(b.city,''))) >= 2 AND EXISTS (SELECT 1 FROM business_service_areas sa WHERE sa.business_id = b.id)");
     }
 
     if (options.city) {
@@ -276,3 +283,4 @@ export async function getBusinessSlugRedirect(oldSlug: string): Promise<string |
     return null;
   }
 }
+
