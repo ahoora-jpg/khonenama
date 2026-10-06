@@ -33,7 +33,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "برای اتاق خواب چه پرده‌ای مناسب است؟", answer: "مدل‌های بلک‌اوت یا پارچه‌های متراکم برای کنترل بیشتر نور معمولاً مناسب‌ترند." },
       { question: "برای پرده چند متر پارچه لازم است؟", answer: "به عرض ریل، Fullness، عرض پارچه، قد نهایی، اضافه دوخت و در پارچه‌های طرح‌دار به Pattern Repeat بستگی دارد. برای برآورد سریع از محاسبه‌گر متراژ پرده خونه نما استفاده کنید." }
     ],
-    guides: ["zebra-curtain-guide","shade-curtain-guide","curtain-installation-guide","zebra-curtain-price-guide","curtain-cleaning-guide","zebra-vs-shade","curtain-fullness-guide","ripple-fold-vs-pinch-pleat-vs-grommet","linen-vs-polyester-curtain-fabric","thermal-vs-blackout-curtains","curtain-track-vs-rod-guide","cellular-honeycomb-shades-guide","solar-shades-openness-guide","blackout-vs-room-darkening","inside-vs-outside-mount-shades","top-down-bottom-up-shades-guide","cellular-vs-roller-shades","blackout-curtain-guide","zebra-vs-roller-shade","zebra-vs-vertical-blinds","roman-vs-roller-shade","blackout-vs-zebra-curtain","zebra-vs-roman-shade","roller-vs-vertical-blinds","sheer-vs-blackout-curtain","punch-curtain-guide","roman-curtain-guide","vertical-curtain-guide","venetian-blind-guide","curtain-buying-guide","best-curtain-living-room"]
+    guides: ["bamboo-woven-curtain-guide","zebra-curtain-guide","shade-curtain-guide","curtain-installation-guide","zebra-curtain-price-guide","curtain-cleaning-guide","zebra-vs-shade","curtain-fullness-guide","ripple-fold-vs-pinch-pleat-vs-grommet","linen-vs-polyester-curtain-fabric","thermal-vs-blackout-curtains","curtain-track-vs-rod-guide","cellular-honeycomb-shades-guide","solar-shades-openness-guide","blackout-vs-room-darkening","inside-vs-outside-mount-shades","top-down-bottom-up-shades-guide","cellular-vs-roller-shades","blackout-curtain-guide","zebra-vs-roller-shade","zebra-vs-vertical-blinds","roman-vs-roller-shade","blackout-vs-zebra-curtain","zebra-vs-roman-shade","roller-vs-vertical-blinds","sheer-vs-blackout-curtain","punch-curtain-guide","roman-curtain-guide","vertical-curtain-guide","venetian-blind-guide","curtain-buying-guide","best-curtain-living-room"]
   },
   flooring: {
     slug: "flooring",
@@ -78,7 +78,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "موکت پرزبلند بهتر است یا کوتاه؟", answer: "به کاربرد بستگی دارد؛ پرز کوتاه معمولاً نظافت و تردد آسان‌تری دارد." },
       { question: "برای اتاق چند متر موکت لازم است؟", answer: "برای رول فقط مترمربع کافی نیست و عرض رول، تعداد نوار و جهت خواب مهم است. برای تایلی هم ابعاد تایل، تعداد در بسته و پرت تعیین‌کننده‌اند؛ ابزار برآورد موکت خونه نما هر دو را محاسبه می‌کند." }
     ],
-    guides: ["carpet-cushion-underlay-guide", "carpet-density-pile-height-guide", "low-pile-vs-high-pile-carpet", "roll-carpet-vs-carpet-tile", "nylon-vs-polyester-vs-polypropylene-carpet", "cut-pile-vs-loop-pile-carpet", "carpet-vs-laminate-bedroom", "carpet-types-guide", "carpet-buying-guide", "carpet-bedroom-guide"]
+    guides: ["carpet-binding-doormat-guide", "carpet-cushion-underlay-guide", "carpet-density-pile-height-guide", "low-pile-vs-high-pile-carpet", "roll-carpet-vs-carpet-tile", "nylon-vs-polyester-vs-polypropylene-carpet", "cut-pile-vs-loop-pile-carpet", "carpet-vs-laminate-bedroom", "carpet-types-guide", "carpet-buying-guide", "carpet-bedroom-guide"]
   },
   wallpaper: {
     slug: "wallpaper",
@@ -166,3 +166,4 @@ export const categorySeo: Record<string, CategorySeo> = {
 export function getCategorySeo(slug: string) {
   return categorySeo[slug];
 }
+
