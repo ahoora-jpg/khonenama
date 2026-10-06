@@ -4,6 +4,10 @@ const token = process.env.CLOUDFLARE_API_TOKEN;
 if (!account || !token) throw new Error('Missing Cloudflare credentials');
 const base = `https://api.cloudflare.com/client/v4/accounts/${account}/r2/buckets`;
 const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
+// Print only public token metadata, never the credential or API response body.
+const verification = await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify', { headers });
+const verified = await verification.json();
+console.log('Deployment token verification:', JSON.stringify({ http: verification.status, success: verified.success === true, id: verified.result?.id, status: verified.result?.status }));
 const list = await fetch(base, { headers });
 const listed = await list.json();
 if (!list.ok || !listed.success) throw new Error(`Cannot access R2: HTTP ${list.status}; ${JSON.stringify(listed.errors)}`);
