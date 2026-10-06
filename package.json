@@ -43,6 +43,7 @@
     "wrangler": "4.145.0"
   },
   "overrides": {
+    "sharp": "0.35.5",
     "image-size": "2.0.4",
     "fast-glob": "$fast-glob"
   }
