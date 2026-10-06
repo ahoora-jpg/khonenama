@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getCategory } from "@/lib/demo-data";
 import { getCategorySeo } from "@/lib/category-seo";
+import { serviceCatalog, servicePath } from "@/lib/service-catalog";
 import { BUSINESS_CATEGORIES } from "@/lib/business-taxonomy";
 import { getAiSearchContent } from "@/lib/ai-search-content";
 import { guides } from "@/lib/guides";
@@ -200,7 +201,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           <section className="category-results" aria-label="محصولات و خدمات این دسته">
             <h2>محصولات و خدمات این دسته</h2>
             <p>این فهرست محدوده فعالیت‌های قابل ثبت است؛ ارائه هر مورد به خدمات درج‌شده در غرفه واقعی کسب‌وکار بستگی دارد.</p>
-            <ul>{BUSINESS_CATEGORIES.find(item => item.slug === slug)?.services.map(service => <li key={service}>{service}</li>)}</ul>
+            {[...new Set(serviceCatalog.filter(item => item.category === slug).map(item => item.group))].map(group => <details key={group}><summary>{group}</summary><ul>{serviceCatalog.filter(item => item.category === slug && item.group === group).map(item => <li key={item.name}><a href={servicePath(item)}>{item.name}</a></li>)}</ul></details>)}
+            <p>در صفحه هر مورد، فقط غرفه‌هایی نمایش داده می‌شوند که آن محصول یا خدمت را در غرفه خود انتخاب کرده‌اند؛ موجودی و محدوده اجرا را پیش از سفارش تأیید کنید.</p>
           </section>
 
           <section className="category-results" aria-labelledby="related-pillars-heading">
@@ -393,4 +395,5 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     </main>
   );
 }
+
 
