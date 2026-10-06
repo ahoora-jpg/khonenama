@@ -29,6 +29,6 @@ jobs:
       - name: Customer safeguards and private support
         run: node --test tools/test-customer-safeguards.mjs tools/test-marketplace-workflows.mjs tools/test-admin-offers.mjs
       - name: Booth publication and discovery
-        run: node --test tools/test-business-sitemap.mjs tools/test-commercial-readiness.mjs tools/test-admin-business-lifecycle.mjs
+        run: node --test tools/test-service-discovery.mjs tools/test-business-sitemap.mjs tools/test-commercial-readiness.mjs tools/test-admin-business-lifecycle.mjs
       - run: npm run check:vinext
       - run: npm run build:vinext

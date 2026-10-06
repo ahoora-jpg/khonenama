@@ -1,3 +1,4 @@
+import { listServiceSitemapEntries } from "@/lib/server/service-sitemap";
 import type { MetadataRoute } from "next";
 import { guides } from "@/lib/guides";
 import { listPublishedBusinessSitemapEntries } from "@/lib/server/business-sitemap";
@@ -6,7 +7,7 @@ const baseUrl = "https://khonenama.ir";
 const seoRefreshDate = "2026-09-25";
 const homepageBrandRefreshDate = "2026-09-29";
 const aboutBrandRefreshDate = "2026-10-05";
-const categoryRefreshDate = "2026-10-04";
+const categoryRefreshDate = "2026-10-06";
 // Fixed date of published content/link changes, never the sitemap request date.
 const sixDomainSeoRefreshDate = "2026-10-04";
 
@@ -28,7 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/karaj/smart-home", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.9 },
     { url: baseUrl + "/karaj/baraghan", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.92 },
     { url: baseUrl + "/category/curtain", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.9 },
-    { url: baseUrl + "/category/flooring", lastModified: sixDomainSeoRefreshDate, changeFrequency: "weekly", priority: 0.88 },
+    { url: baseUrl + "/category/flooring", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.88 },
     { url: baseUrl + "/category/carpet", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/category/wallpaper", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/category/interior-design", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
@@ -78,5 +79,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: business.planCode === "premium" ? 0.86 : 0.78,
   }));
 
-  return [...staticPages, ...guidePages, ...businessPages];
+  return [...staticPages, ...guidePages, ...businessPages, ...await listServiceSitemapEntries()];
 }
+

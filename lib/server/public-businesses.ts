@@ -194,6 +194,7 @@ export async function getPublishedBusiness(slug: string): Promise<PublicBusiness
 
 export async function listPublishedBusinesses(options: {
   categorySlug?: string;
+  serviceName?: string;
   city?: string;
   area?: string;
   location?: string;
@@ -219,6 +220,12 @@ export async function listPublishedBusinesses(options: {
       binds.push(options.categorySlug);
     }
 
+    if (options.serviceName) {
+      where.push("EXISTS (SELECT 1 FROM business_services bss JOIN services ss ON ss.id = bss.service_id WHERE bss.business_id = b.id AND ss.name = ?)");
+      binds.push(options.serviceName);
+      where.push("length(trim(COALESCE(b.name,''))) >= 2 AND length(trim(COALESCE(b.description,''))) >= 20 AND length(trim(COALESCE(b.city,''))) >= 2 AND EXISTS (SELECT 1 FROM business_service_areas sa WHERE sa.business_id = b.id) AND EXISTS (SELECT 1 FROM business_categories bc WHERE bc.business_id = b.id)");
+    }
+
     if (options.city) {
       where.push("b.city LIKE ?");
       binds.push("%" + options.city + "%");
@@ -237,10 +244,10 @@ export async function listPublishedBusinesses(options: {
 
     if (options.query) {
       where.push(
-        "(b.name LIKE ? OR b.description LIKE ? OR EXISTS (SELECT 1 FROM business_services bs2 JOIN services s2 ON s2.id = bs2.service_id WHERE bs2.business_id = b.id AND s2.name LIKE ?) OR EXISTS (SELECT 1 FROM business_categories bcq JOIN categories cq ON cq.id = bcq.category_id WHERE bcq.business_id = b.id AND cq.name LIKE ?))"
+        "(b.name LIKE ? OR b.description LIKE ? OR EXISTS (SELECT 1 FROM business_services bs2 JOIN services s2 ON s2.id = bs2.service_id WHERE bs2.business_id = b.id AND REPLACE(REPLACE(s2.name, '‌', ''), ' ', '') LIKE ?) OR EXISTS (SELECT 1 FROM business_categories bcq JOIN categories cq ON cq.id = bcq.category_id WHERE bcq.business_id = b.id AND cq.name LIKE ?))"
       );
       const value = "%" + options.query + "%";
-      binds.push(value, value, value, value);
+      binds.push(value, value, "%" + options.query.replace(/[\s\u200c]+/g, "") + "%", value);
     }
 
     const limit = Math.max(1, Math.min(Number(options.limit || 50), 100));
@@ -276,3 +283,4 @@ export async function getBusinessSlugRedirect(oldSlug: string): Promise<string |
     return null;
   }
 }
+
