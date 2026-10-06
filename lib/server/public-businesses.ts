@@ -244,10 +244,10 @@ export async function listPublishedBusinesses(options: {
 
     if (options.query) {
       where.push(
-        "(b.name LIKE ? OR b.description LIKE ? OR EXISTS (SELECT 1 FROM business_services bs2 JOIN services s2 ON s2.id = bs2.service_id WHERE bs2.business_id = b.id AND s2.name LIKE ?) OR EXISTS (SELECT 1 FROM business_categories bcq JOIN categories cq ON cq.id = bcq.category_id WHERE bcq.business_id = b.id AND cq.name LIKE ?))"
+        "(b.name LIKE ? OR b.description LIKE ? OR EXISTS (SELECT 1 FROM business_services bs2 JOIN services s2 ON s2.id = bs2.service_id WHERE bs2.business_id = b.id AND REPLACE(REPLACE(s2.name, '‌', ''), ' ', '') LIKE ?) OR EXISTS (SELECT 1 FROM business_categories bcq JOIN categories cq ON cq.id = bcq.category_id WHERE bcq.business_id = b.id AND cq.name LIKE ?))"
       );
       const value = "%" + options.query + "%";
-      binds.push(value, value, value, value);
+      binds.push(value, value, "%" + options.query.replace(/[\s\u200c]+/g, "") + "%", value);
     }
 
     const limit = Math.max(1, Math.min(Number(options.limit || 50), 100));
