@@ -19,7 +19,7 @@ function add(raw, parent) {
   } catch {}
 }
 async function request(url, head=false) {
-  const args=['--http1.1','--silent','--show-error','--location','--max-time','25','--retry','1','--retry-delay','0','--write-out','\n__STATUS__%{http_code}__URL__%{url_effective}',...(head?['--head']:[]),url];
+  const args=['--http1.1','--compressed','--silent','--show-error','--location','--max-time','25','--retry','1','--retry-delay','0','--write-out','\n__STATUS__%{http_code}__URL__%{url_effective}',...(head?['--head']:[]),url];
   try {
     const {stdout}=await run('curl.exe',args,{maxBuffer:12*1024*1024});
     const match=stdout.match(/\n__STATUS__(\d+)__URL__(.*)$/);
@@ -36,7 +36,8 @@ while(queue.size) {
       if(url.endsWith('/sitemap.xml')) for(const m of row.html.matchAll(/<loc>(.*?)<\/loc>/g)) add(m[1],url);
     }
   }));
-  console.log(JSON.stringify({checked:results.size,pending:queue.size}));
+  mkdirSync('outputs',{recursive:true});writeFileSync('outputs/navigation-audit-progress.json',JSON.stringify({results:[...results.values()].map(({html,...r})=>r),pending:[...queue]}));
+  console.log(JSON.stringify({checked:results.size,pending:queue.size,errors:[...results.values()].filter(r=>r.error).length}));
 }
 const brokenAnchors=anchors.filter(a=>{const u=new URL(a.url),hash=decodeURIComponent(u.hash.slice(1));u.hash='';const html=results.get(u.href)?.html;return html && !html.includes(`id="${hash}"`) && !html.includes(`name="${hash}"`);});
 const externalResults=[];
