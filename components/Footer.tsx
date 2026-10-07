@@ -58,8 +58,13 @@ const preferredSourceUrl = "https://www.google.com/preferences/source?q=khonenam
 
 export default function Footer() {
   return (
-    <footer className="footer-wrap premium-footer-wrap">
-      <div className="shell footer glass-panel premium-footer">
+    <footer className="kh-studio-footer">
+      <div className="shell footer">
+        <div className="kh-footer-rail">
+          <strong>بازار تخصصی پرده و دکوراسیون</strong>
+          <nav aria-label="مسیرهای اصلی در فوتر"><a href="/search">غرفه‌ها</a><a href="/tools">ابزارها</a><a href="/magazine">راهنماها</a><a href="/about">خونه‌نما</a></nav>
+          <span>ایران · سراسر کشور</span>
+        </div>
         <div className="footer-main">
           <div className="footer-brand-block">
             <a className="brand footer-brand" href="/" aria-label="خونه نما"><img src="/khonenama-brand.webp" alt="خونه نما" width={660} height={203} style={{ width: "220px", maxWidth: "100%", height: "auto", display: "block" }} /></a>
@@ -96,8 +101,10 @@ export default function Footer() {
           ))}
         </div>
 
+        <a className="kh-footer-monogram" href="#top" aria-label="خونه‌نما؛ بازگشت به بالای صفحه"><span>خونه‌نما</span><span lang="en" dir="ltr">KHONENAMA</span></a>
         <div className="footer-bottom">
           <span>© ۲۰۲۶ خونه نما · همه حقوق محفوظ است.</span>
+          <a className="kh-footer-top" href="#top">بازگشت به بالا ↑</a>
           <div className="footer-credit">
             <a href="/admin/login" rel="nofollow" style={{ fontSize: "12px", fontWeight: 400 }}>ورود مدیریت</a>
             <span>طراحی و توسعه وب:</span>
