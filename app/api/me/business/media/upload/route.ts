@@ -66,7 +66,7 @@ export async function POST(request: Request) {
 
   const currentCount = Number(countRow?.count || 0);
   const slotLimit = kind === "image" ? galleryLimit : 1;
-  if (currentCount >= slotLimit) {
+  if (kind === "image" && currentCount >= slotLimit) {
     return Response.json(
       { ok: false, error: "GALLERY_LIMIT_REACHED", limit: galleryLimit },
       { status: 409 }
@@ -98,6 +98,21 @@ export async function POST(request: Request) {
     });
     uploadedFileId = verified.fileId;
     uploadedProvider = verified.provider;
+
+    // Keep the previous cover/profile until the replacement is stored successfully.
+    if (kind !== "image") {
+      const previous = await owned.db.prepare("SELECT id, provider, provider_file_id, storage_key FROM business_media WHERE business_id = ? AND kind = ? LIMIT 1").bind(owned.business.id, kind).first();
+      if (previous) {
+        const changed = await owned.db.prepare("UPDATE business_media SET storage_key = ?, provider = ?, provider_file_id = ?, file_url = ?, file_path = ?, thumbnail_url = ? WHERE id = ? AND business_id = ? AND kind = ? AND provider_file_id IS ? RETURNING id")
+          .bind(verified.fileId, uploadedProvider, verified.fileId, verified.url, verified.filePath, verified.thumbnailUrl || null, previous.id, owned.business.id, kind, previous.provider_file_id).first();
+        if (!changed) {
+          await deleteStoredBusinessImage(uploadedProvider, uploadedFileId);
+          return Response.json({ ok: false, error: "MEDIA_CHANGED_RETRY" }, { status: 409 });
+        }
+        await deleteStoredBusinessImage(String(previous.provider || "imagekit"), String(previous.provider_file_id || previous.storage_key)).catch(error => console.error("old profile media cleanup failed", error));
+        return Response.json({ ok: true, id: previous.id, media: { id: previous.id, kind, fileUrl: verified.url, thumbnailUrl: verified.thumbnailUrl } }, { status: 201, headers: { "Cache-Control": "no-store" } });
+      }
+    }
 
     const duplicate = await owned.db
       .prepare(

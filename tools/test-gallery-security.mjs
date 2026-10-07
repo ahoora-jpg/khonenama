@@ -24,9 +24,9 @@ function fixture(plan = 'pro') {
   return { db, sqlite, route, albums };
 }
 function request(body, method = 'POST') { return new Request('https://khonenama.ir/api/me/business/albums', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); }
-test('Free plan has ten portfolio images excluding cover and profile and cannot create a paid album', async () => {
+test('Free plan keeps ten photo slots while allowing album organization', async () => {
   const entitlements = load('lib/business-entitlements.ts'); assert.equal(entitlements.planPresentation.free.galleryLimit, 10);
-  const { route } = fixture('free'); assert.equal((await route.POST(request({ title: 'Project', description: '', mediaIds: [1] }))).status, 403);
+  const { route } = fixture('free'); assert.equal((await route.POST(request({ title: 'Project', description: '', mediaIds: [1] }))).status, 201);
 });
 test('Album rejects another business photo without creating data', async () => {
   const { route, sqlite } = fixture(); assert.equal((await route.POST(request({ title: 'Project', description: '', mediaIds: [2] }))).status, 400);
@@ -36,13 +36,19 @@ test('Paid album saves its description and only its own selected photos', async 
   const { route, albums, db } = fixture(); const response = await route.POST(request({ title: 'Project', description: 'Real project details', mediaIds: [1, 1] })); assert.equal(response.status, 201);
   const data = await albums.listBusinessAlbums(db, 1); assert.equal(data.length, 1); assert.equal(data[0].description, 'Real project details'); assert.equal(data[0].media.length, 1);
 });
-test('Album quota is enforced in SQL under competing requests', async () => {
+test('Album count is unlimited and album editing cannot borrow another business photo', async () => {
   const { route, sqlite, albums, db } = fixture(); await albums.ensureAlbumSchema(db);
   for (let i = 1; i <= 4; i++) sqlite.prepare('INSERT INTO business_albums(id,business_id,title) VALUES(?,1,?)').run(i, 'existing');
   // D1 batches execute sequentially; both callers may read the same pre-batch state.
   const a = await route.POST(request({ title: 'Fifth', description: '', mediaIds: [1] }));
   const b = await route.POST(request({ title: 'Sixth', description: '', mediaIds: [1] }));
-  assert.equal(a.status, 201); assert.equal(b.status, 409); assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM business_albums').get().n, 5);
+  assert.equal(a.status, 201); assert.equal(b.status, 201); assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM business_albums').get().n, 6);
+  const {id}=await a.json();
+  assert.equal((await route.PATCH(request({id,title:'Updated',description:'',mediaIds:[2]},'PATCH'))).status,400);
+  assert.equal((await route.PATCH(request({id,title:'Updated',description:'',mediaIds:[1]},'PATCH'))).status,200);
+  assert.equal(sqlite.prepare('SELECT title FROM business_albums WHERE id=?').get(id).title,'Updated');
+  sqlite.prepare('INSERT INTO business_albums(id,business_id,title) VALUES(999,2,?)').run('other');
+  assert.equal((await route.PATCH(request({id:999,title:'Updated',description:'',mediaIds:[1]},'PATCH'))).status,404);
 });
 test('Deleting another business album is denied; deleting own album preserves photos', async () => {
   const { route, sqlite, albums, db } = fixture(); await albums.ensureAlbumSchema(db);
@@ -89,8 +95,10 @@ test('Concurrent photo uploads cannot exceed ten portfolio photos and rejected u
   sqlite.exec("DELETE FROM business_media WHERE id IN (11,12)");
   assert.equal((await upload('cover')).status, 201);
   assert.equal((await upload('logo')).status, 201);
-  assert.equal((await upload('cover')).status, 409);
-  assert.equal((await upload('logo')).status, 409);
+  assert.equal((await upload('cover')).status, 201);
+  assert.equal((await upload('logo')).status, 201);
+  assert.equal(sqlite.prepare("SELECT COUNT(*) n FROM business_media WHERE business_id=1 AND kind='cover'").get().n, 1);
+  assert.equal(sqlite.prepare("SELECT COUNT(*) n FROM business_media WHERE business_id=1 AND kind='logo'").get().n, 1);
   assert.equal(sqlite.prepare("SELECT COUNT(*) n FROM business_media WHERE business_id=1 AND kind='image'").get().n, 10);
 });
 test('Concurrent verified-payment callbacks activate a subscription exactly once', async () => {

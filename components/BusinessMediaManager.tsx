@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import BusinessPhotoHeader from "@/components/BusinessPhotoHeader";
+import BusinessAlbumManager from "@/components/BusinessAlbumManager";
 import { prepareBusinessImage } from "@/lib/prepare-business-image";
 import {
   ArrowDown,
@@ -48,9 +50,16 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
   const limit = limits[plan] || limits.free;
   const remaining = Math.max(0, limit - media.filter(item => item.kind === "image").length);
 
-  const available = uploadKind === "image" ? remaining : media.some(item => item.kind === uploadKind) ? 0 : 1;
+  const available = uploadKind === "image" ? remaining : 1;
+  const cover = media.find(item => item.kind === "cover");
+  const logo = media.find(item => item.kind === "logo");
+  const [businessName, setBusinessName] = useState("غرفه شما");
+  const [mediaRevision, setMediaRevision] = useState(0);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const number = (value: number) => value.toLocaleString("fa-IR");
+  function pick(kind: "image" | "cover" | "logo") { setUploadKind(kind); setPickerOpen(true); }
   const sortedMedia = useMemo(
-    () => [...media].sort((a, b) => (a.kind === "cover" ? -1 : b.kind === "cover" ? 1 : a.sort_order - b.sort_order)),
+    () => media.filter(item => item.kind === "image").sort((a, b) => (a.kind === "cover" ? -1 : b.kind === "cover" ? 1 : a.sort_order - b.sort_order)),
     [media]
   );
 
@@ -61,6 +70,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       if (!response.ok || !result?.ok) throw new Error("LOAD_FAILED");
       setMedia(Array.isArray(result.media) ? result.media : []);
       setConfigured(Boolean(result.configured));
+      setMediaRevision(value => value + 1);
     } catch {
       setMessage("دریافت تصاویر انجام نشد. دوباره وارد پنل شوید.");
     } finally {
@@ -70,6 +80,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
 
   useEffect(() => {
     load();
+    fetch("/api/me/business", {cache:"no-store"}).then(r=>r.json()).then(data=>{if(data.business?.name)setBusinessName(data.business.name);}).catch(()=>{});
   }, []);
 
   async function uploadOne(file: File) {
@@ -120,23 +131,28 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       return;
     }
 
+    setPickerOpen(false);
     setUploading(true);
     setMessage("");
+    let savedCount = 0;
     try {
       for (let index = 0; index < selected.length; index += 1) {
         setProgress("در حال آماده‌سازی و آپلود تصویر " + (index + 1) + " از " + selected.length);
         await uploadOne(selected[index]);
+        savedCount += 1;
+        await load();
       }
       setProgress("");
-      setMessage("تصاویر با موفقیت به گالری اضافه شدند.");
+      setMessage(number(selected.length) + " تصویر با موفقیت ذخیره شد." + (files.length > selected.length ? " تعداد عکس‌های اضافی از ظرفیت پلن بیشتر بود و ارسال نشد." : ""));
       await load();
     } catch (error: any) {
       setProgress("");
       await load();
-      setMessage(error?.message || "آپلود تصاویر انجام نشد.");
+      setMessage(number(savedCount) + " عکس ذخیره شد؛ " + number(selected.length - savedCount) + " عکس ارسال نشده است. " + (error?.message || "آپلود تصاویر انجام نشد."));
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";
+      if (cameraRef.current) cameraRef.current.value = "";
     }
   }
 
@@ -192,54 +208,38 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       </div>
 
       <p>تصاویر باید متعلق به کسب‌وکار یا با اجازه صاحب اثر باشند. تصویر الهام‌بخش را نمونه‌کار اجراشده معرفی نکنید؛ چهره، نشانی دقیق، شماره تماس و مدارک مشتری را پیش از انتشار حذف یا محو کنید.</p>
-      <div className="business-media-toolbar">
-        <div>
-          <strong>{media.filter(item => item.kind === "image").length} از {limit} تصویر</strong>
-          <small>
-            {plan === "premium"
-              ? "پلن ویژه؛ ظرفیت گالری گسترده"
-              : plan === "pro"
-                ? "پلن حرفه‌ای؛ ظرفیت بیشتر گالری"
-                : "پایه؛ ۱۰ عکس نمونه‌کار، جدا از تصویر اصلی و پروفایل"}
-          </small>
-        </div>
-
-        <label>نوع عکس<select aria-label="نوع عکس" disabled={uploading} value={uploadKind} onChange={e => setUploadKind(e.target.value as "image" | "cover" | "logo")}><option value="image">نمونه‌کار</option><option value="cover">تصویر اصلی (یک عکس)</option><option value="logo">پروفایل (یک عکس)</option></select></label>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          multiple
-          hidden
-          onChange={(event) => chooseFiles(event.target.files)}
-        />
-        <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={(event) => chooseFiles(event.target.files)} />
-        <button className="pill-button" type="button" disabled={uploading || !configured || available === 0} onClick={() => cameraRef.current?.click()}><Camera size={15} /> عکس گرفتن</button>
-        <button
-          className="pill-button dark"
-          type="button"
-          disabled={uploading || !configured || available === 0}
-          onClick={() => fileRef.current?.click()}
-        >
-          {uploading ? <Loader2 className="spin" size={15} /> : <Upload size={15} />}
-          {uploading ? "در حال آپلود..." : "افزودن تصویر"}
-        </button>
+      <div className="media-capacity" aria-live="polite">
+        <div><strong>{number(media.filter(item => item.kind === "image").length)}</strong><span>عکس ذخیره‌شده</span></div>
+        <div><strong>{number(remaining)}</strong><span>جای خالی برای عکس</span></div>
+        <div><strong>{number(limit)}</strong><span>ظرفیت عکس‌های پلن</span></div>
       </div>
-
-      {plan === "free" && (
-        <p className="business-media-config-note">ثبت‌نام شما با سطح پایه رایگان است: ۱۰ عکس نمونه‌کار، تصویر اصلی و پروفایل جداگانه. برای ۳۰ عکس و دسته‌بندی آلبوم‌ها سطح حرفه‌ای، و برای ۶۰ عکس سطح ویژه را انتخاب کنید.</p>
-      )}
+      <p className="media-capacity-note">کاور و پروفایل جدا از این تعداد هستند. تعداد آلبوم‌ها محدود نیست.</p>
+      <div className="owner-booth-preview">
+        <span className="section-kicker">پیش‌نمایش ظاهر غرفه برای مشتری</span>
+        <BusinessPhotoHeader name={businessName} cover={cover?.file_url} logo={logo?.file_url} disabled={uploading || !configured} onEdit={pick} />
+        <div className="profile-main-card glass-panel"><h2>{businessName}</h2><p>برای تغییر تصویر پس‌زمینه یا پروفایل، روی خود تصویر بزنید.</p></div>
+      </div>
+      <input ref={fileRef} type="file" accept="image/*" multiple={uploadKind === "image"} hidden onChange={event => chooseFiles(event.target.files)} />
+      <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={event => chooseFiles(event.target.files)} />
+      {pickerOpen && <div className="media-source-picker" role="group" aria-label="انتخاب منبع عکس">
+        <strong>{uploadKind === "cover" ? "تصویر پس‌زمینه" : uploadKind === "logo" ? "عکس پروفایل" : "افزودن عکس به آلبوم"}</strong>
+        <button className="pill-button dark" type="button" onClick={()=>fileRef.current?.click()}><ImagePlus size={18}/> انتخاب از گالری</button>
+        <button className="pill-button" type="button" onClick={()=>cameraRef.current?.click()}><Camera size={18}/> عکس گرفتن</button>
+        <button className="pill-button" type="button" onClick={()=>setPickerOpen(false)}>انصراف</button>
+      </div>}
+      <div className="panel-heading"><h3>عکس‌های نمونه‌کار</h3><button className="pill-button dark" type="button" disabled={uploading || !configured || !remaining} onClick={()=>pick("image")}><ImagePlus size={18}/> افزودن عکس</button></div>
       {!configured && (
         <div className="business-media-config-note">
           اتصال فضای تصاویر موقتاً در دسترس نیست. دوباره وارد پنل شوید یا با پشتیبانی تماس بگیرید.
         </div>
       )}
 
-      {progress && <div className="business-media-message">{progress}</div>}
+      {progress && <div className="business-media-message" role="status">{progress}</div>}
       {message && <div className="business-media-message">{message}</div>}
 
       {sortedMedia.length ? (
         <div className="business-media-grid">
+          <button className="media-add-tile" type="button" disabled={uploading || !configured || !remaining} onClick={()=>pick("image")}><ImagePlus size={32}/><strong>افزودن عکس</strong><span>{number(remaining)} جای خالی</span></button>
           {sortedMedia.map((item) => (
             <article className={"business-media-item " + (item.kind === "cover" ? "is-cover" : "")} key={item.id}>
               {item.file_url ? (
@@ -308,9 +308,10 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
         <div className="dashboard-upload business-media-empty">
           <ImagePlus size={25} />
           <strong>هنوز تصویری ثبت نشده است</strong>
-          <small>نوع عکس را انتخاب کنید؛ برای تعویض تصویر اصلی یا پروفایل، عکس فعلی را حذف کنید.</small>
+          <button className="pill-button dark" type="button" disabled={uploading || !configured} onClick={()=>pick("image")}><ImagePlus size={18}/> افزودن اولین عکس</button>
         </div>
       )}
+      <BusinessAlbumManager mediaRevision={mediaRevision} onAddPhotos={()=>pick("image")} />
     </section>
   );
 }

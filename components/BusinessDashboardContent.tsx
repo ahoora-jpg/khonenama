@@ -4,7 +4,6 @@ import BusinessLogoutButton from "@/components/BusinessLogoutButton";
 import BusinessPublicationPanel from "@/components/BusinessPublicationPanel";
 import BusinessPublicLinkCard from "@/components/BusinessPublicLinkCard";
 import BusinessMediaManager from "@/components/BusinessMediaManager";
-import BusinessAlbumManager from "@/components/BusinessAlbumManager";
 import BusinessLeadInbox from "@/components/BusinessLeadInbox";
 import BusinessReviewPanel from "@/components/BusinessReviewPanel";
 import BusinessAnalyticsPanel from "@/components/BusinessAnalyticsPanel";
@@ -229,7 +228,7 @@ export default function BusinessDashboardContent() {
           </section>
 
           <BusinessMediaManager plan={profile.plan || "free"} />
-          <BusinessAlbumManager />
+
         </div>
 
         <div className="dashboard-grid">

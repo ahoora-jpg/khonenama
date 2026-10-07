@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { env } from "cloudflare:workers";
 import { safeWebsiteUrl, safeInstagramUrl } from "@/lib/public-links";
 import { listPublicBusinessAlbums } from "@/lib/server/business-albums";
+import BusinessPhotoHeader from "@/components/BusinessPhotoHeader";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import QuoteRequestForm from "@/components/QuoteRequestForm";
@@ -229,17 +230,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
       <section className="inner-page business-profile-page">
         <div className="shell">
           <div className="business-profile-hero">
-            <div className="profile-cover">
-              {business.media.find((item: any) => item.kind === "cover")?.url ? (
-                <img
-                  className="profile-cover-image"
-                  src={business.media.find((item: any) => item.kind === "cover")?.url}
-                  alt={business.media.find((item: any) => item.kind === "cover")?.altText || business.name}
-                />
-              ) : (
-                <div className="profile-cover-shape" />
-              )}
-            </div>
+            <BusinessPhotoHeader name={business.name} cover={business.media.find((item: any) => item.kind === "cover")?.url} logo={business.media.find((item: any) => item.kind === "logo")?.url} />
             <div className={"profile-main-card glass-panel plan-" + business.planCode}>
               <div className="profile-title-row">
                 <div>

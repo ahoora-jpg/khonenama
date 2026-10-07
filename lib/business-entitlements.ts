@@ -6,7 +6,7 @@ export const planPresentation: Record<BusinessPlanCode, {
   publicBadge: string | null;
   searchPriority: number;
   galleryLimit: number;
-  albumLimit: number;
+  albumLimit: number | null;
   analytics: boolean;
   reviewReply: boolean;
   promotedPlacement: boolean;
@@ -17,7 +17,7 @@ export const planPresentation: Record<BusinessPlanCode, {
     publicBadge: null,
     searchPriority: 0,
     galleryLimit: 10,
-    albumLimit: 0,
+    albumLimit: null,
     analytics: false,
     reviewReply: false,
     promotedPlacement: false,
@@ -28,7 +28,7 @@ export const planPresentation: Record<BusinessPlanCode, {
     publicBadge: "حرفه‌ای",
     searchPriority: 10,
     galleryLimit: 30,
-    albumLimit: 5,
+    albumLimit: null,
     analytics: true,
     reviewReply: true,
     promotedPlacement: false,
@@ -39,7 +39,7 @@ export const planPresentation: Record<BusinessPlanCode, {
     publicBadge: "ویژه",
     searchPriority: 20,
     galleryLimit: 60,
-    albumLimit: 10,
+    albumLimit: null,
     analytics: true,
     reviewReply: true,
     promotedPlacement: true,
