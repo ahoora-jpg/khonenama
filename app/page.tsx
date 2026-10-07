@@ -6,6 +6,7 @@ import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 export const dynamic = "force-dynamic";
 import Categories from "@/components/Categories";
 import HomeTools from "@/components/HomeTools";
+import HomeAppDownload from "@/components/HomeAppDownload";
 import InspirationGallery from "@/components/InspirationGallery";
 import LocalDiscovery from "@/components/LocalDiscovery";
 import GuidesHome from "@/components/GuidesHome";
@@ -13,12 +14,12 @@ import HowItWorks from "@/components/HowItWorks";
 import BusinessCTA from "@/components/BusinessCTA";
 import Footer from "@/components/Footer";
 
-const homeTitle = "خونه نما | دکوراسیون داخلی و فضای داخلی خانه";
+const homeTitle = "خونه نما | بازار تخصصی پرده و دکوراسیون";
 
 export const metadata = {
   title: { absolute: homeTitle },
   description:
-    "خونه نما (Khonenama) مرجع دکوراسیون و فضای داخلی خانه است؛ فروشگاه‌ها و متخصصان پرده، کفپوش، موکت، کاغذ دیواری، طراحی داخلی و خانه هوشمند را مقایسه کنید.",
+    "خونه نما، بازار تخصصی پرده و دکوراسیون؛ فروشگاه‌ها و متخصصان پرده، کفپوش، موکت، کاغذ دیواری، طراحی داخلی و خانه هوشمند را مقایسه کنید.",
   alternates: { canonical: "/" },
   openGraph: {
     title: homeTitle,
@@ -132,8 +133,9 @@ export default async function HomePage() {
       <Header />
       <Hero />
       <HomeBusinessShelf initialBusinesses={shelf} />
-      <Categories />
       <HomeTools />
+      <HomeAppDownload />
+      <Categories />
       <GuidesHome />
       <InspirationGallery />
       <LocalDiscovery />

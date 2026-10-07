@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import AdminContactFloat from "@/components/AdminContactFloat";
 import "./globals.css";
 import "./inner-pages.css";
+import "@/components/home-refresh.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://khonenama.ir"),
   title: {
-    default: "خونه نما | دکوراسیون داخلی و فضای داخلی خانه",
-    template: "%s | خونه نما",
+    default: "خونه نما | بازار تخصصی پرده و دکوراسیون",
+    template: "%s | خونه نما؛ بازار تخصصی پرده و دکوراسیون",
   },
   description:
     "فروشگاه‌ها، متخصصان و خدمات پرده، موکت، کفپوش، کاغذ دیواری، طراحی داخلی و خانه هوشمند را در خونه نما پیدا و مقایسه کنید.",
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "خونه نما | دکوراسیون داخلی و فضای داخلی خانه",
+    title: "خونه نما | بازار تخصصی پرده و دکوراسیون",
     description:
       "خونه نما مرجع پیدا کردن و مقایسه فروشگاه‌ها و متخصصان دکوراسیون و فضای داخلی خانه است.",
     siteName: "خونه نما",

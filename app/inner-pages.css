@@ -3677,7 +3677,7 @@ button.business-photo-avatar { cursor:pointer; }
 
 /* Homepage tools visibility */
 .home-tools-section {
-  padding:34px 0 10px;
+  padding:48px 0 28px;
 }
 .home-tools-heading {
   display:flex;
@@ -3719,20 +3719,32 @@ button.business-photo-avatar { cursor:pointer; }
 .home-tool-card {
   min-height:165px;
   padding:17px;
-  border-radius:20px;
+  border-radius:24px;
   display:grid;
   grid-template-columns:auto minmax(0,1fr) auto;
   gap:11px;
   align-items:start;
+  background:linear-gradient(145deg,#fff,var(--tool-tint,#fce5d8));
+  border:1px solid var(--tool-edge,#e9b39a);
+  border-bottom-width:5px;
+  box-shadow:0 12px 26px rgba(57,43,31,.09),inset 0 1px 0 #fff;
+  transition:transform .2s ease,box-shadow .2s ease;
 }
+.home-tool-card:nth-child(2) { --tool-tint:#d9ece3;--tool-edge:#99c7b0;--tool-accent:#286d50; }
+.home-tool-card:nth-child(3) { --tool-tint:#e6dff5;--tool-edge:#b8a2d6;--tool-accent:#70519c; }
+.home-tool-card:nth-child(4) { --tool-tint:#fff0cc;--tool-edge:#dcc177;--tool-accent:#967020; }
+.home-tool-card:nth-child(5) { --tool-tint:#dceaf7;--tool-edge:#9abbd8;--tool-accent:#326995; }
+.home-tool-card:hover { transform:translateY(-4px);box-shadow:0 16px 30px rgba(57,43,31,.14); }
+.home-tool-card:focus-visible { outline:3px solid var(--tool-accent,#a85532);outline-offset:4px; }
 .home-tool-icon {
   width:42px;
   height:42px;
   display:grid;
   place-items:center;
   border-radius:13px;
-  background:#efe4d8;
-  color:var(--terracotta);
+  background:#fff;
+  color:var(--tool-accent,var(--terracotta));
+  box-shadow:0 5px 0 var(--tool-edge,#e9b39a),0 9px 15px rgba(57,43,31,.1);
 }
 .home-tool-card h3 {
   margin:4px 0 5px;

@@ -29,6 +29,7 @@ export default function Header() {
       <div className="site-header shell glass-panel premium-header">
         <a className="brand" href="/" aria-label="خونه نما">
           <img src="/khonenama-brand.webp" alt="خونه نما" width={660} height={203} style={{ width: "clamp(136px, 16vw, 200px)", height: "auto", display: "block" }} />
+          <span className="brand-tagline">بازار تخصصی پرده و دکوراسیون</span>
         </a>
 
         <nav className="desktop-nav premium-nav" aria-label="منوی اصلی">
