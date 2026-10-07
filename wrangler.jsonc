@@ -21,10 +21,14 @@
     }
   ],
   "keep_vars": true,
+  "r2_buckets": [
+    { "binding": "BUSINESS_MEDIA", "bucket_name": "khonenama-business-media" }
+  ],
   "routes": [
     { "pattern": "www.khonenama.ir/*", "zone_name": "khonenama.ir" }
   ],
   "vars": {
-    "IMAGEKIT_URL_ENDPOINT": "https://ik.imagekit.io/khonenama"
+    "IMAGEKIT_URL_ENDPOINT": "https://ik.imagekit.io/khonenama",
+    "MEDIA_STORAGE_PROVIDER": "r2"
   }
 }
