@@ -10,7 +10,7 @@ import { notFound } from "next/navigation";
 const CURTAIN_INSTALLATION_SLUG = "curtain-installation-guide";
 const CURTAIN_INSTALLATION_MODIFIED_AT = "2026-09-23";
 const SHEET_WALLCOVERING_GUIDES = new Set([
-  "marble-sheet-wallpanel-guide", "thermowall-guide", "pvc-mdf-wallpanel-guide", "wall-mural-guide",
+  "marble-sheet-wallpanel-guide", "thermowall-guide", "pvc-mdf-wallpanel-guide", "wall-mural-guide", "wall-moulding-decor-guide",
 ]);
 
 const SEO_METADATA_OVERRIDES: Record<string, { title?: string; description?: string }> = {
@@ -239,7 +239,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   return (
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      {visibleFaqs.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <Header />
 
