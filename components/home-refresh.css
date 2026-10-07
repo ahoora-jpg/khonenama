@@ -1,10 +1,14 @@
-/* Existing coverflow restored, with a compact editorial search alongside it. */
-.market-hero { background:radial-gradient(ellipse at 20% 25%,#ecd6c2 0,transparent 55%),linear-gradient(135deg,#fffaf4,#edf2ec); }
-.market-hero-layout { grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:36px;align-items:center; }
-.market-hero-carousel { min-width:0; }
-.market-hero-carousel .kh-coverflow { min-height:440px; }
-.market-hero-carousel .kh-coverflow-card { width:76%; }
-.hero-image-note { margin:12px 0 0;text-align:center;font-size:13px;color:#66594d; }
+/* Full-width, viewport-sized coverflow; discovery form follows below it. */
+.market-hero { padding:118px 0 24px;background:radial-gradient(ellipse at 20% 25%,#ecd6c2 0,transparent 55%),linear-gradient(135deg,#fffaf4,#edf2ec); }
+.market-hero .market-hero-layout { display:flex;flex-direction:column;width:100%;max-width:none;padding:0;gap:0;align-items:center; }
+.market-hero-carousel { order:-1;width:100%;min-width:0; }
+.market-hero-carousel .kh-coverflow { height:calc(100svh - 118px);min-height:420px;border-radius:0;border-inline:0;box-shadow:none; }
+.market-hero-carousel .kh-coverflow-card { width:min(72%,1100px); }
+.market-hero-copy { width:min(1040px,calc(100% - 40px));padding:40px 0 20px;text-align:center; }
+.market-hero-copy > p { margin-inline:auto; }
+.market-hero-copy .market-search { text-align:right; }
+.market-hero-copy .market-hero-shortcuts { justify-content:center; }
+.hero-image-note { margin:0;padding:12px 20px;text-align:center;font-size:13px;color:#e8dfd4;background:#171814; }
 .brand { display:flex;flex-direction:column;gap:5px;align-items:center; }
 .brand-tagline { color:#6d412e;font-size:12px;font-weight:700;white-space:nowrap; }
 .header-actions .app-download-button { color:#fff;background:#a34a29;border:1px solid #873b20;border-bottom-width:4px;box-shadow:0 5px 12px #a855322b; }
@@ -22,6 +26,5 @@
 .home-app-phone span { font-size:11px; }
 .home-app-qr { display:flex;flex-direction:column;gap:8px;align-items:center;color:#fff;font-size:13px; }
 .home-app-qr img { background:#fff;border-radius:14px;padding:8px;box-sizing:content-box; }
-@media(max-width:1050px) { .market-hero-layout { grid-template-columns:1fr; } .market-hero-carousel .kh-coverflow { min-height:390px; } }
-@media(max-width:680px) { .brand-tagline { font-size:10px; }.market-hero-layout { gap:24px; }.market-hero-carousel .kh-coverflow { min-height:290px; }.market-hero-carousel .kh-coverflow-card { width:82%; }.home-app-card { grid-template-columns:1fr;padding:28px 22px;gap:28px; }.home-app-phone { min-height:230px;width:155px; }.home-app-visual { gap:18px; }.home-app-qr img { width:92px;height:92px; } }
+@media(max-width:680px) { .brand-tagline { font-size:10px; }.market-hero { padding-top:100px; }.market-hero-carousel .kh-coverflow { height:calc(100svh - 100px);min-height:360px; }.market-hero-carousel .kh-coverflow-card { width:82%; }.market-hero-copy { padding-top:28px; }.home-app-card { grid-template-columns:1fr;padding:28px 22px;gap:28px; }.home-app-phone { min-height:230px;width:155px; }.home-app-visual { gap:18px; }.home-app-qr img { width:92px;height:92px; } }
 @media(prefers-reduced-motion:reduce) { .home-tool-card { transition:none; }.home-tool-card:hover { transform:none; } }
