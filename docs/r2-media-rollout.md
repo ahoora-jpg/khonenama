@@ -42,7 +42,13 @@ limited to 8 MiB). Transfers from the transitional encoder are bounded to 8 MiB 
 cover oversized extra form fields and downloads, invalid request bodies, unknown
 storage providers, partial writes, preview privacy, and unchanged ImageKit mode.
 
-Account activation and R2 API permission are still outstanding: the current GitHub
-deployment token returns HTTP 403 / code 10000 for R2. After owner activates billing,
-create the bucket via dashboard or grant the deployment token the narrowly scoped
-Workers R2 Storage Write permission. Never paste credentials into chat.
+## Activation on 2026-10-07
+
+R2 permission was corrected. Prepare workflow 37590393812 created the private
+Standard bucket. Commit b7ece5f binds BUSINESS_MEDIA and sets the R2 provider.
+Production deployment 37591800729 passed the full workflow test suite, TypeScript
+check and deployment. Authenticated live test confirmed storage configured and
+the fictional fixture remains paused. End-to-end live multipart upload is still
+unverified: this workstation reset the outgoing connection (ECONNRESET) before
+an upload result was returned. Do not report live upload as passed until it is
+verified from a working client. Existing images have not been migrated.
