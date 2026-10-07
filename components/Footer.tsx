@@ -101,10 +101,10 @@ export default function Footer() {
           ))}
         </div>
 
-        <a className="kh-footer-monogram" href="#top" aria-label="خونه‌نما؛ بازگشت به بالای صفحه"><span>خونه‌نما</span><span lang="en" dir="ltr">KHONENAMA</span></a>
+        <a className="kh-footer-monogram" href="#" aria-label="خونه‌نما؛ بازگشت به بالای صفحه"><span>خونه‌نما</span><span lang="en" dir="ltr">KHONENAMA</span></a>
         <div className="footer-bottom">
           <span>© ۲۰۲۶ خونه نما · همه حقوق محفوظ است.</span>
-          <a className="kh-footer-top" href="#top">بازگشت به بالا ↑</a>
+          <a className="kh-footer-top" href="#">بازگشت به بالا ↑</a>
           <div className="footer-credit">
             <a href="/admin/login" rel="nofollow" style={{ fontSize: "12px", fontWeight: 400 }}>ورود مدیریت</a>
             <span>طراحی و توسعه وب:</span>
