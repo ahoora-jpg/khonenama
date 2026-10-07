@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 import Categories from "@/components/Categories";
 import HomeTools from "@/components/HomeTools";
 import HomeAppDownload from "@/components/HomeAppDownload";
+import HomeBoothInvitation from "@/components/HomeBoothInvitation";
 import InspirationGallery from "@/components/InspirationGallery";
 import LocalDiscovery from "@/components/LocalDiscovery";
 import GuidesHome from "@/components/GuidesHome";
@@ -134,7 +135,6 @@ export default async function HomePage() {
       <Hero />
       <HomeBusinessShelf initialBusinesses={shelf} />
       <HomeTools />
-      <HomeAppDownload />
       <Categories />
       <GuidesHome />
       <InspirationGallery />
@@ -152,6 +152,8 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+      <HomeBoothInvitation />
+      <HomeAppDownload />
       <BusinessCTA />
       <Footer />
     </main>
