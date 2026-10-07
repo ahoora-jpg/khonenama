@@ -174,7 +174,7 @@ export const seoBatch9Guides: Guide[] = [
       { question: "دمای سطح لمینت محدودیت دارد؟", answer: "بله، سازنده معمولاً حداکثر دمای تماس یا سطح را تعیین می‌کند و باید همان مقدار رعایت شود." }
     ],
     sources: [
-      { name: "Quick-Step — Laminate on Underfloor Heating", url: "https://cdn2.quick-step.com/-/media/imported%20assets/flooring/6/9/f/qsfloorheatinglmpenpdf2189.ashx" },
+      { name: "Quick-Step — Laminate on Underfloor Heating", url: "https://www.quick-step.co.uk/en-gb/underfloor-heating" },
       { name: "Quick-Step — Underlay for Underfloor Heating", url: "https://int.quick-step.com/en/frequently-asked-questions/laminate/general/which-underlay-do-i-need-when-using-quick-step-laminate-in-combination-with-underfloor-heating" },
       { name: "Pergo — Laminate and Floor Heating", url: "https://int.pergo.com/en/laminate" }
     ]
