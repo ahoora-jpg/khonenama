@@ -7,6 +7,7 @@ const results = new Map(), refs = new Map(), anchors = [];
 const external = new Set();
 function add(raw, parent) {
   try {
+    if (/[<>]/.test(raw)) return;
     const url = new URL(raw.replaceAll('&amp;', '&'), parent);
     if (!['http:', 'https:'].includes(url.protocol)) return;
     if (!['khonenama.ir','www.khonenama.ir'].includes(url.hostname)) { external.add(url.href); return; }
@@ -19,12 +20,12 @@ function add(raw, parent) {
   } catch {}
 }
 async function request(url, head=false) {
-  const args=['--http1.1','--compressed','--silent','--show-error','--location','--max-time','25','--retry','1','--retry-delay','0','--write-out','\n__STATUS__%{http_code}__URL__%{url_effective}',...(head?['--head']:[]),url];
-  try {
+  const args=['--http1.1','--compressed','--silent','--show-error','--location','--max-time','25','--write-out','\n__STATUS__%{http_code}__URL__%{url_effective}',...(head?['--head']:[]),url];
+  for(let attempt=0;attempt<2;attempt++) try {
     const {stdout}=await run('curl.exe',args,{maxBuffer:12*1024*1024});
     const match=stdout.match(/\n__STATUS__(\d+)__URL__(.*)$/);
     return {status:Number(match?.[1]),finalUrl:match?.[2],html:stdout.slice(0,match?.index)};
-  } catch(e) { return {error:e.stderr?.trim()||e.message}; }
+  } catch(e) { if(attempt===1) return {error:e.stderr?.trim()||e.message}; }
 }
 while(queue.size) {
   const batch=[...queue].slice(0,6); batch.forEach(u=>queue.delete(u));

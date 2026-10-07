@@ -86,7 +86,7 @@ export const seoBatch8Guides: Guide[] = [
     ],
     sources: [
       { name: "Blinds.com — Solar Shades Buying Guide", url: "https://www.blinds.com/buying-guides/solar-shades-buying-guide" },
-      { name: "Hunter Douglas — Designer Solar Shades", url: "https://www.hunterdouglas.com/window-treatments/shades/roller-shades/designer-screen-shades" }
+      { name: "Hunter Douglas — Designer Solar Shades", url: "https://www.hunterdouglas.com/window-treatments/shades/roller-shades/designer-screen" }
     ]
   },
   {
