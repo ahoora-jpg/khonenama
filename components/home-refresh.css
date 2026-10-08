@@ -85,6 +85,7 @@
 .home-compact .section-heading h2 { font-size:clamp(27px,3vw,38px);line-height:1.35;letter-spacing:-1px; }
 .home-compact .home-tools-section,.home-compact .brand-definition { padding:32px 0; }
 .home-compact .market-shelf { padding:24px 0 32px; }
+.home-compact .home-tool-card { min-height:140px;padding:14px; }
 .home-compact .home-app-section { padding:24px 0 32px; }
 .home-compact .home-app-card { padding:28px 32px;gap:24px; }
 .home-compact .business-cta { min-height:0;padding:32px; }
@@ -108,6 +109,12 @@
   .market-hero-shortcuts { font-size:12px;gap:8px 14px; }
   .home-compact .section { padding:28px 0; }
   .home-compact .home-tools-section,.home-compact .brand-definition { padding:24px 0; }
+  .home-compact .home-tools-grid { grid-template-columns:repeat(2,minmax(0,1fr));gap:10px; }
+  .home-compact .home-tool-card { grid-template-columns:1fr;gap:8px;min-height:0;padding:12px; }
+  .home-compact .home-tool-card h3 { font-size:14px; }
+  .home-compact .home-tool-card p { font-size:12px;line-height:1.6; }
+  .home-compact .bento-grid { grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto; }
+  .home-compact .category-card { grid-column:auto;grid-row:auto;min-height:160px; }
   .home-compact .home-app-card { padding:22px 18px;gap:18px; }
   .home-compact .business-cta { padding:24px 18px; }
 }
