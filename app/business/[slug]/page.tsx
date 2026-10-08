@@ -108,7 +108,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const description = business.description || ("پروفایل " + business.name + "؛ " + serviceLabel + (locationLabel ? " در " + locationLabel : "") + "، خدمات، تصاویر، اطلاعات تماس و راه‌های دریافت پیشنهاد قیمت در خونه نما.");
 
   return {
-    title,
+    title: { absolute: title },
     description,
     alternates: { canonical: "/business/" + slug },
     robots: isInternalTestBusinessSlug(slug) ? { index: false, follow: false } : undefined,

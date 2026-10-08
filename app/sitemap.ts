@@ -6,7 +6,7 @@ import { listPublishedBusinessSitemapEntries } from "@/lib/server/business-sitem
 const baseUrl = "https://khonenama.ir";
 const seoRefreshDate = "2026-09-25";
 const homepageBrandRefreshDate = "2026-09-29";
-const aboutBrandRefreshDate = "2026-10-05";
+const aboutBrandRefreshDate = "2026-10-08";
 const categoryRefreshDate = "2026-10-06";
 // Fixed date of published content/link changes, never the sitemap request date.
 const sixDomainSeoRefreshDate = "2026-10-04";
