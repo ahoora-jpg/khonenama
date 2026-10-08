@@ -113,7 +113,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         )
         .bind(row.id)
         .all(),
-      db.prepare("SELECT area FROM business_service_areas WHERE business_id = ? ORDER BY area").bind(row.id).all(),
+      db.prepare("SELECT city, area FROM business_service_areas WHERE business_id = ? ORDER BY area").bind(row.id).all(),
     ]);
 
     result.push({
@@ -139,7 +139,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         primary: Boolean(item.is_primary),
       })),
       services: (servicesResult?.results || []).map((item: any) => item.name),
-      serviceAreas: (areasResult?.results || []).map((item: any) => item.area),
+      serviceAreas: (areasResult?.results || []).map((item: any) => item.city && item.city !== row.city && !String(item.area || "").startsWith("تمام ") ? item.city + " / " + item.area : item.area),
       media: selectPublicMedia<PublicBusiness["media"][number]>((mediaResult?.results || []).map((item: any) => ({
         id: Number(item.id),
         kind: item.media_type === "video" ? "video" : item.kind || "image",
