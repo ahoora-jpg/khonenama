@@ -21,3 +21,13 @@ export async function POST(request: Request) {
   ).bind(owned.business.id, owned.session.user_id, token, platform).run();
   return Response.json({ ok: true }, { headers: { "Cache-Control": "no-store" } });
 }
+
+export async function DELETE(request: Request) {
+ const owned=await getOwnedBusiness(request);
+ if(!owned)return Response.json({ok:false,error:"UNAUTHENTICATED"},{status:401});
+ const body=await request.json().catch(()=>({}));const token=clean(body?.token,240);
+ if(!token)return Response.json({ok:false,error:"INVALID_PUSH_TOKEN"},{status:400});
+ await ensurePushSchema(owned.db);
+ await owned.db.prepare("UPDATE business_push_tokens SET active = 0, updated_at = CURRENT_TIMESTAMP WHERE expo_push_token = ? AND user_id = ? AND business_id = ?").bind(token,owned.session.user_id,owned.business.id).run();
+ return Response.json({ok:true},{headers:{"Cache-Control":"no-store"}});
+}
