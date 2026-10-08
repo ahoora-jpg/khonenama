@@ -38,7 +38,7 @@ export const planPresentation: Record<BusinessPlanCode, {
     shortLabel: "ویژه",
     publicBadge: "ویژه",
     searchPriority: 20,
-    galleryLimit: 60,
+    galleryLimit: 70,
     albumLimit: null,
     analytics: true,
     reviewReply: true,

@@ -19,11 +19,20 @@ function fixture(plan = 'pro') {
   sqlite.prepare("INSERT INTO subscriptions VALUES(1,1,?,'active',NULL)").run(plan === 'pro' ? 1 : 2);
   const db = { prepare(sql) { return { values: [], bind(...values) { this.values = values; return this; }, async first() { return sqlite.prepare(sql).get(...this.values) || null; }, async all() { return { results: sqlite.prepare(sql).all(...this.values) }; }, async run() { return { meta: { changes: sqlite.prepare(sql).run(...this.values).changes } }; } }; }, async batch(statements) { sqlite.exec('BEGIN'); try { const results = []; for (const s of statements) results.push(await s.run()); sqlite.exec('COMMIT'); return results; } catch (e) { sqlite.exec('ROLLBACK'); throw e; } } };
   const entitlements = load('lib/business-entitlements.ts');
-  const albums = load('lib/server/business-albums.ts', { '@/lib/business-entitlements': entitlements });
-  const route = load('app/api/me/business/albums/route.ts', { '@/lib/server/business-media': { getOwnedBusiness: async () => ({ db, business: { id: 1 } }) }, '@/lib/server/business-albums': albums });
+  const albums = load('lib/server/business-albums.ts', { '@/lib/business-entitlements': entitlements, '@/lib/server/business-media': {ensureBusinessMediaSchema:async()=>{if(!sqlite.prepare('PRAGMA table_info(business_media)').all().some(c=>c.name==='media_type')) sqlite.exec("ALTER TABLE business_media ADD COLUMN media_type TEXT NOT NULL DEFAULT 'image'");}} });
+  const route = load('app/api/me/business/albums/route.ts', { 'cloudflare:workers': {env:{}},
+    '@/lib/business-video': {VIDEO_LIMITS:{free:0,pro:2,premium:5}},
+    '@/lib/server/business-media': { getOwnedBusiness: async () => ({ db, business: { id: 1 } }) }, '@/lib/server/business-albums': albums });
   return { db, sqlite, route, albums };
 }
 function request(body, method = 'POST') { return new Request('https://khonenama.ir/api/me/business/albums', { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); }
+
+test('One album can contain all seventy premium photos and five videos',async()=>{
+  const {sqlite,route}=fixture('pro');
+  for(let id=3;id<=76;id++) sqlite.prepare("INSERT INTO business_media(id,business_id,file_url,sort_order) VALUES(?,1,?,?)").run(id,'https://example.test/'+id,id);
+  const mediaIds=[1,...Array.from({length:74},(_,index)=>index+3)];
+  const response=await route.POST(request({title:'آلبوم کامل',description:'نمونه‌کار',mediaIds}));assert.equal(response.status,201);assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM business_album_media').get().n,75);
+});
 test('Free plan keeps ten photo slots while allowing album organization', async () => {
   const entitlements = load('lib/business-entitlements.ts'); assert.equal(entitlements.planPresentation.free.galleryLimit, 10);
   const { route } = fixture('free'); assert.equal((await route.POST(request({ title: 'Project', description: '', mediaIds: [1] }))).status, 201);
@@ -83,9 +92,11 @@ test('Concurrent photo uploads cannot exceed ten portfolio photos and rejected u
   sqlite.exec("UPDATE business_media SET kind='image'; INSERT INTO business_media(id,business_id,kind,file_url,sort_order) VALUES(7,1,'image','e',6),(8,1,'image','f',7),(9,1,'image','g',8),(10,1,'image','h',9),(11,1,'cover','cover',10),(12,1,'logo','logo',11)");
   const removed = []; let sequence = 0;
   const route = load('app/api/me/business/media/upload/route.ts', {
+    'cloudflare:workers': {env:{}},
+    '@/lib/business-video': {VIDEO_LIMITS:{free:0,pro:2,premium:5}},
     '@/lib/business-entitlements': load('lib/business-entitlements.ts'),
     '@/lib/server/business-upload-form': load('lib/server/business-upload-form.ts'),
-    '@/lib/server/business-media': { getOwnedBusiness: async () => ({ db, business: { id: 1 } }), ensureBusinessMediaSchema: async () => {} },
+    '@/lib/server/business-media': { getOwnedBusiness: async () => ({ db, business: { id: 1 } }), ensureBusinessMediaSchema:async()=>{if(!sqlite.prepare('PRAGMA table_info(business_media)').all().some(c=>c.name==='media_type')) sqlite.exec("ALTER TABLE business_media ADD COLUMN media_type TEXT NOT NULL DEFAULT 'image'");} },
     '@/lib/server/business-media-storage': { mediaStorageConfigured: () => true, uploadStoredBusinessImage: async () => { const id = 'new' + (++sequence); return { provider: 'imagekit', fileId: id, filePath: '/khonenama/businesses/1/' + id, fileType: 'image', mime: 'image/jpeg', size: 4, url: 'https://example.test/' + id, thumbnailUrl: '' }; }, deleteStoredBusinessImage: async (_provider, id) => removed.push(id) },
   });
   const upload = (kind = "image") => { const form = new FormData(); form.set("kind", kind); form.set('file', new File(['test'], 'test.jpg', { type: 'image/jpeg' })); return route.POST(new Request('https://khonenama.ir/api/me/business/media/upload', { method: 'POST', body: form })); };

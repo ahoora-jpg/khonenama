@@ -179,7 +179,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
     name: business.name,
     description: business.description,
     url: "https://khonenama.ir/business/" + business.slug,
-    image: business.media.map((item: any) => item.url).filter(Boolean).slice(0, 8),
+    image: business.media.filter((item: any) => item.kind !== "video").map((item: any) => item.url).filter(Boolean).slice(0, 8),
     mainEntityOfPage: "https://khonenama.ir/business/" + business.slug,
     telephone: business.phone || undefined,
     sameAs: [business.website, business.instagram].filter(Boolean),
@@ -329,8 +329,8 @@ export default async function BusinessPage({ params, searchParams }: { params: P
             {albums.map(album => (
               <details key={album.id} className="glass-panel" style={{ padding: "1rem", marginBottom: "1rem" }}>
                 <summary style={{ cursor: "pointer", fontWeight: 700 }}>
-                  {album.media[0] && <img src={album.media[0].url} alt={album.title} width={96} height={72} loading="lazy" style={{ objectFit: "cover", borderRadius: 8, verticalAlign: "middle", marginInlineEnd: 12 }} />}
-                  {album.title} — {album.media.length.toLocaleString("fa-IR")} عکس
+                  {album.media[0] && album.media[0].kind !== "video" && <img src={album.media[0].url} alt={album.title} width={96} height={72} loading="lazy" style={{ objectFit: "cover", borderRadius: 8, verticalAlign: "middle", marginInlineEnd: 12 }} />}
+                  {album.title} — {album.media.length.toLocaleString("fa-IR")} عکس / ویدیو
                 </summary>
                 {album.project && <dl>
                   {album.project.service && <div><dt>خدمت انجام‌شده</dt><dd>{album.project.service}</dd></div>}
@@ -339,7 +339,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
                 </dl>}
                 {album.description && <p style={{ whiteSpace: "pre-wrap" }}>{album.description}</p>}
                 <div className="business-public-gallery">
-                  {album.media.map(item => <figure key={item.id}><img src={item.url} alt={item.altText || album.title} loading="lazy" />{item.altText && <figcaption>{item.altText}</figcaption>}</figure>)}
+                  {album.media.map(item => <figure key={item.id}>{item.kind === "video" ? <video src={item.url} controls playsInline preload="metadata" style={{width:"100%"}} /> : <img src={item.url} alt={item.altText || album.title} loading="lazy" />}{item.altText && <figcaption>{item.altText}</figcaption>}</figure>)}
                 </div>
               </details>
             ))}
@@ -347,7 +347,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
               <div className="business-public-gallery">
                 {business.media.map((item: any) => (
                   <figure className={item.kind === "cover" ? "is-cover" : ""} key={item.id}>
-                    <img src={item.url} alt={item.altText || business.name + " نمونه‌کار"} loading="lazy" />
+                    {item.kind === "video" ? <video src={item.url} controls playsInline preload="metadata" style={{width:"100%"}} /> : <img src={item.url} alt={item.altText || business.name + " نمونه‌کار"} loading="lazy" />}
                     {item.altText && <figcaption>{item.altText}</figcaption>}
                   </figure>
                 ))}

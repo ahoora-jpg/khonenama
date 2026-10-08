@@ -2,7 +2,7 @@ import { env } from "cloudflare:workers";
 import { deleteImageKitFile, getImageKitFileDetails, imageKitServerConfigured, uploadImageKitFile } from "@/lib/server/imagekit";
 
 const MAX_BYTES = 8 * 1024 * 1024;
-const KEY_PATTERN = /^businesses\/[1-9]\d*\/[a-f0-9-]{36}\.webp$/;
+const KEY_PATTERN = /^businesses\/[1-9]\d*\/[a-f0-9-]{36}\.(?:webp|mp4)$/;
 const ALLOWED_MIME = new Set(["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif"]);
 
 export function useR2Media() {
@@ -53,7 +53,7 @@ export async function deleteStoredBusinessImage(provider: string, fileId: string
   if (!KEY_PATTERN.test(fileId)) throw new Error("INVALID_MEDIA_KEY");
   const bucket = (env as any).BUSINESS_MEDIA;
   if (!bucket) throw new Error("MEDIA_STORAGE_NOT_CONFIGURED");
-  await bucket.delete([fileId, thumbnailKey(fileId)]);
+  await bucket.delete(fileId.endsWith(".mp4") ? [fileId] : [fileId, thumbnailKey(fileId)]);
 }
 
 export async function uploadStoredBusinessImage(file: File, options: { fileName: string; folder: string; tags?: string; businessId: number }) {

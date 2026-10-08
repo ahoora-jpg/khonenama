@@ -1,9 +1,11 @@
 import { normalizePlanCode, planPresentation } from "./business-entitlements";
 export function selectPublicMedia<T extends {id:number;kind:string}>(media:T[], code:unknown):T[] {
+  const videoLimits: Record<string, number> = {free:0, pro:2, premium:5};
+  const videoIds = new Set(media.filter(m=>m.kind === "video").sort((a,b)=>a.id-b.id).slice(0,videoLimits[normalizePlanCode(code)]).map(m=>m.id));
   const limit=planPresentation[normalizePlanCode(code)].galleryLimit;
-  const ids=new Set(media.filter(m=>m.kind!=="cover"&&m.kind!=="logo").sort((a,b)=>a.id-b.id).slice(0,limit).map(m=>m.id));
+  const ids=new Set(media.filter(m=>m.kind!=="cover"&&m.kind!=="logo"&&m.kind!=="video").sort((a,b)=>a.id-b.id).slice(0,limit).map(m=>m.id));
   const special=new Set<string>();
-  return media.filter(m=>{if(m.kind==="cover"||m.kind==="logo"){if(special.has(m.kind))return false;special.add(m.kind);return true;}return ids.has(m.id);});
+  return media.filter(m=>{if(m.kind==="cover"||m.kind==="logo"){if(special.has(m.kind))return false;special.add(m.kind);return true;}return m.kind === "video" ? videoIds.has(m.id) : ids.has(m.id);});
 }
 export function subscriptionNotice(row:{code:string;status:string;ends_at:string|null}|null,now=Date.now()) {
   const raw=row?.ends_at;const ends=raw?Date.parse(raw.includes("T")?raw:raw.replace(" ","T")+"Z"):NaN;

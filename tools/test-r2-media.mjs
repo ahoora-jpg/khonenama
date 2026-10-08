@@ -86,6 +86,8 @@ function servingFixture({ published = true, paused = false, owner = false, regis
   const object = () => { reads++; return { body: new Uint8Array([1, 2]), size: 2, httpEtag: '"test"' }; };
   const route = load('app/media/businesses/[businessId]/[fileName]/route.ts', {
     'cloudflare:workers': { env: { DB: db, BUSINESS_MEDIA: { get: async () => object(), head: async () => object() } } },
+    '@/lib/business-video': {VIDEO_LIMITS:{free:0,pro:2,premium:5}},
+    '@/lib/business-entitlements': {normalizePlanCode:value=>value==='pro'||value==='premium'?value:'free'},
     '@/lib/server/business-session': { getBusinessSession: async () => owner ? { user_id: 9 } : null },
   });
   const serve = (method = 'GET', headers = {}) => route[method](new Request('https://khonenama.ir/media/businesses/1/00000000-0000-4000-8000-000000000001.webp', { method, headers }), { params: Promise.resolve({ businessId: '1', fileName: '00000000-0000-4000-8000-000000000001.webp' }) });

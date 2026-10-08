@@ -25,6 +25,7 @@ export async function ensureBusinessMediaSchema(db: any) {
   const columns = new Set((info?.results || []).map((row: any) => String(row.name)));
 
   const statements = [];
+  if (!columns.has("media_type")) statements.push(db.prepare("ALTER TABLE business_media ADD COLUMN media_type TEXT NOT NULL DEFAULT 'image'"));
   if (!columns.has("provider")) {
     statements.push(db.prepare("ALTER TABLE business_media ADD COLUMN provider TEXT NOT NULL DEFAULT 'imagekit'"));
   }
@@ -41,5 +42,13 @@ export async function ensureBusinessMediaSchema(db: any) {
     statements.push(db.prepare("ALTER TABLE business_media ADD COLUMN thumbnail_url TEXT"));
   }
 
-  if (statements.length) await db.batch(statements);
+  if (statements.length) {
+    try { await db.batch(statements); }
+    catch (error) {
+      // Two panel requests may discover the same missing columns concurrently.
+      const latest=await db.prepare("PRAGMA table_info(business_media)").all();
+      const present=new Set((latest.results||[]).map((row:any)=>row.name));
+      if (!["media_type","provider","provider_file_id","file_url","file_path","thumbnail_url"].every(name=>present.has(name))) throw error;
+    }
+  }
 }

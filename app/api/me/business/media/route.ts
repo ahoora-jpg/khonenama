@@ -43,7 +43,7 @@ export async function GET(request: Request) {
 
   const rows = await owned.db
     .prepare(
-      "SELECT id, kind, storage_key, alt_text, sort_order, provider, provider_file_id, file_url, file_path, thumbnail_url, created_at " +
+      "SELECT id, kind, media_type, storage_key, alt_text, sort_order, provider, provider_file_id, file_url, file_path, thumbnail_url, created_at " +
       "FROM business_media WHERE business_id = ? ORDER BY CASE kind WHEN 'cover' THEN 0 WHEN 'logo' THEN 1 ELSE 2 END, sort_order, id"
     )
     .bind(owned.business.id)
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
   return Response.json({
     ok: true,
     configured: mediaStorageConfigured(),
-    media: rows?.results || [],
+    media: (rows?.results || []).map((row: any) => ({...row, kind: row.media_type === "video" ? "video" : row.kind})),
   });
 }
 
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
 
   const [countRow, galleryLimit] = await Promise.all([
     owned.db
-      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ? AND kind = 'image'")
+      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ? AND kind = 'image' AND media_type = 'image'")
       .bind(owned.business.id)
       .first(),
     getGalleryLimit(owned.db, Number(owned.business.id)),
@@ -138,7 +138,7 @@ export async function POST(request: Request) {
     .prepare(
       "INSERT INTO business_media " +
       "(business_id, kind, storage_key, alt_text, sort_order, provider, provider_file_id, file_url, file_path, thumbnail_url) " +
-      "SELECT ?, ?, ?, NULLIF(?, ''), ?, 'imagekit', ?, ?, ?, NULLIF(?, '') WHERE (SELECT COUNT(*) FROM business_media WHERE business_id = ? AND kind = 'image') < ? AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
+      "SELECT ?, ?, ?, NULLIF(?, ''), ?, 'imagekit', ?, ?, ?, NULLIF(?, '') WHERE (SELECT COUNT(*) FROM business_media WHERE business_id = ? AND kind = 'image' AND media_type = 'image') < ? AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
     )
     .bind(
       owned.business.id,
@@ -181,7 +181,7 @@ export async function PATCH(request: Request) {
   }
 
   const media = await owned.db
-    .prepare("SELECT id, kind, sort_order FROM business_media WHERE id = ? AND business_id = ? LIMIT 1")
+    .prepare("SELECT id, kind, media_type, sort_order FROM business_media WHERE id = ? AND business_id = ? LIMIT 1")
     .bind(mediaId, owned.business.id)
     .first();
 
@@ -190,6 +190,7 @@ export async function PATCH(request: Request) {
   }
 
   if (action === "logo" || action === "cover") {
+    if (media.media_type === "video") return Response.json({ok:false,error:"INVALID_MEDIA_KIND"},{status:400});
     if (media.kind !== "image" && media.kind !== action) return Response.json({ ok: false, error: "INVALID_ACTION" }, { status: 400 });
     await owned.db.batch([
       owned.db

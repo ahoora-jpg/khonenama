@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS business_media (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   business_id INTEGER NOT NULL,
   kind TEXT NOT NULL DEFAULT 'image' CHECK(kind IN ('image','logo','cover')),
+  media_type TEXT NOT NULL DEFAULT 'image' CHECK(media_type IN ('image','video')),
   storage_key TEXT NOT NULL,
   provider TEXT NOT NULL DEFAULT 'imagekit',
   provider_file_id TEXT,

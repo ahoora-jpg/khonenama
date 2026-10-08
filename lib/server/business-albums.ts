@@ -1,3 +1,4 @@
+import { ensureBusinessMediaSchema } from "@/lib/server/business-media";
 import { normalizePlanCode, planPresentation } from "@/lib/business-entitlements";
 
 export async function ensureAlbumSchema(db: any) {
@@ -15,12 +16,13 @@ export async function getAlbumLimit(db: any, businessId: number) {
 }
 
 export async function listBusinessAlbums(db: any, businessId: number) {
+  await ensureBusinessMediaSchema(db);
   await ensureAlbumSchema(db);
-  const rows = await db.prepare("SELECT a.id, a.title, a.description, d.service, d.materials, d.area, m.id AS media_id, m.file_url, m.alt_text FROM business_albums a LEFT JOIN album_project_details d ON d.album_id=a.id LEFT JOIN business_album_media am ON am.album_id = a.id LEFT JOIN business_media m ON m.id = am.media_id AND m.business_id = a.business_id WHERE a.business_id = ? ORDER BY a.id DESC, m.sort_order, m.id").bind(businessId).all();
-  const albums = new Map<number, { id: number; title: string; description: string; project: {service:string;materials:string;area:string}|null; media: { id: number; url: string; altText: string }[] }>();
+  const rows = await db.prepare("SELECT a.id, a.title, a.description, d.service, d.materials, d.area, m.id AS media_id, m.file_url, m.alt_text, m.media_type FROM business_albums a LEFT JOIN album_project_details d ON d.album_id=a.id LEFT JOIN business_album_media am ON am.album_id = a.id LEFT JOIN business_media m ON m.id = am.media_id AND m.business_id = a.business_id WHERE a.business_id = ? ORDER BY a.id DESC, m.sort_order, m.id").bind(businessId).all();
+  const albums = new Map<number, { id: number; title: string; description: string; project: {service:string;materials:string;area:string}|null; media: { id: number; url: string; altText: string; kind: string }[] }>();
   for (const row of rows.results || []) {
     if (!albums.has(row.id)) albums.set(row.id, { id: row.id, title: row.title, description: row.description, project: row.service!=null?{service:row.service,materials:row.materials,area:row.area}:null, media: [] });
-    if (row.media_id && row.file_url) albums.get(row.id)!.media.push({ id: row.media_id, url: row.file_url, altText: row.alt_text || "" });
+    if (row.media_id && row.file_url) albums.get(row.id)!.media.push({ id: row.media_id, url: row.file_url, kind: row.media_type === "video" ? "video" : "image", altText: row.alt_text || "" });
   }
   return [...albums.values()];
 }

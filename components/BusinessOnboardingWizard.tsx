@@ -1,4 +1,6 @@
 "use client";
+import ServiceGroupChoices from "@/components/ServiceGroupChoices";
+
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import BusinessMediaManager from "@/components/BusinessMediaManager";
@@ -604,30 +606,7 @@ export default function BusinessOnboardingWizard() {
               return (
                 <div className="choice-block service-category-block" key={slug}>
                   <strong>{category.label}</strong>
-                  <div className="choice-grid">
-                    {category.services.map((service) => (
-                      <button
-                        type="button"
-                        className={
-                          form.services.includes(service)
-                            ? "choice-chip is-selected"
-                            : "choice-chip"
-                        }
-                        key={service}
-                        onClick={() =>
-                          update(
-                            "services",
-                            toggleValue(form.services, service)
-                          )
-                        }
-                      >
-                        {form.services.includes(service) && (
-                          <Check size={13} />
-                        )}
-                        {service}
-                      </button>
-                    ))}
-                  </div>
+                  <ServiceGroupChoices services={category.services} selected={form.services} onToggle={(service) => update("services", toggleValue(form.services, service))} />
                 </div>
               );
             })}
@@ -646,6 +625,8 @@ export default function BusinessOnboardingWizard() {
 
             <div className="choice-block">
               <strong>محدوده‌های فعالیت</strong>
+              <p>برای پوشش همه محله‌های شهر، تمام شهر را انتخاب کنید. شهر دیگری را با «تمام تهران» یا محله را با «تهران / سعادت‌آباد» اضافه کنید.</p>
+              <button type="button" className="pill-button" onClick={() => addServiceArea("تمام " + form.city)}>+ تمام {form.city}</button>
 
               <div className="service-area-input-row">
                 <div className="autocomplete-field service-area-autocomplete">
@@ -660,7 +641,7 @@ export default function BusinessOnboardingWizard() {
                           addServiceArea(serviceAreaQuery);
                         }
                       }}
-                      placeholder="نام محله را تایپ کنید؛ مثلاً بر..."
+                      placeholder="تمام تهران، یا تهران / سعادت‌آباد"
                       autoComplete="off"
                     />
                   </div>
@@ -840,7 +821,7 @@ export default function BusinessOnboardingWizard() {
                 <div>
                 <strong>ثبت کسب‌وکار انجام شد؛ وضعیت انتشار و اقدام بعدی را در پنل ببینید.</strong>
                   <small>
-                    حساب شما از این پس با شماره همراه و رمز عبور قابل ورود است. اکنون ۱۰ عکس نمونه‌کار رایگان دارید؛ حرفه‌ای ۳۰ عکس با دسته‌بندی و ویژه ۶۰ عکس با دسته‌بندی دارد. تصویر اصلی و پروفایل جدا هستند. در پنل می‌توانید با دوربین گوشی عکس بگیرید یا از گالری انتخاب کنید.
+                    حساب شما از این پس با شماره همراه و رمز عبور قابل ورود است. اکنون ۱۰ عکس نمونه‌کار رایگان دارید؛ حرفه‌ای ۳۰ عکس و ۲ ویدیو، ویژه ۷۰ عکس و ۵ ویدیو با دسته‌بندی دارد. تصویر اصلی و پروفایل جدا هستند. در پنل می‌توانید با دوربین گوشی عکس بگیرید یا از گالری انتخاب کنید.
                   </small>
                   <a className="pill-button dark onboarding-dashboard-link" href="/dashboard#media">
                     رفتن به پنل و افزودن تصاویر

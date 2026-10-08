@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import BusinessPhotoHeader from "@/components/BusinessPhotoHeader";
 import BusinessAlbumManager from "@/components/BusinessAlbumManager";
+import { VIDEO_LIMITS } from "@/lib/business-video";
 import { prepareBusinessImage } from "@/lib/prepare-business-image";
 import {
   ArrowDown,
@@ -21,7 +22,7 @@ import {
 
 type MediaItem = {
   id: number;
-  kind: "image" | "logo" | "cover";
+  kind: "image" | "logo" | "cover" | "video";
   alt_text?: string | null;
   sort_order: number;
   file_url?: string | null;
@@ -31,7 +32,7 @@ type MediaItem = {
 const limits: Record<string, number> = {
   free: 10,
   pro: 30,
-  premium: 60,
+  premium: 70,
 };
 
 export default function BusinessMediaManager({ plan = "free" }: { plan?: string }) {
@@ -43,23 +44,25 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
   const [message, setMessage] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [altDraft, setAltDraft] = useState("");
-  const [uploadKind, setUploadKind] = useState<"image" | "cover" | "logo">("image");
+  const [uploadKind, setUploadKind] = useState<"image" | "cover" | "logo" | "video">("image");
   const fileRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
 
   const limit = limits[plan] || limits.free;
   const remaining = Math.max(0, limit - media.filter(item => item.kind === "image").length);
 
-  const available = uploadKind === "image" ? remaining : 1;
+  const videoLimit = VIDEO_LIMITS[plan] || 0;
+  const videoRemaining = Math.max(0, videoLimit - media.filter(item => item.kind === "video").length);
+  const available = uploadKind === "video" ? videoRemaining : uploadKind === "image" ? remaining : 1;
   const cover = media.find(item => item.kind === "cover");
   const logo = media.find(item => item.kind === "logo");
   const [businessName, setBusinessName] = useState("غرفه شما");
   const [mediaRevision, setMediaRevision] = useState(0);
   const [pickerOpen, setPickerOpen] = useState(false);
   const number = (value: number) => value.toLocaleString("fa-IR");
-  function pick(kind: "image" | "cover" | "logo") { setUploadKind(kind); setPickerOpen(true); }
+  function pick(kind: "image" | "cover" | "logo" | "video") { setUploadKind(kind); setPickerOpen(true); }
   const sortedMedia = useMemo(
-    () => media.filter(item => item.kind === "image").sort((a, b) => (a.kind === "cover" ? -1 : b.kind === "cover" ? 1 : a.sort_order - b.sort_order)),
+    () => media.filter(item => item.kind === "image" || item.kind === "video").sort((a, b) => (a.kind === "cover" ? -1 : b.kind === "cover" ? 1 : a.sort_order - b.sort_order)),
     [media]
   );
 
@@ -84,16 +87,18 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
   }, []);
 
   async function uploadOne(file: File) {
-    if (!file.type.startsWith("image/")) {
+    if (uploadKind === "video") {
+      if (file.type !== "video/mp4" || file.size > 15 * 1024 * 1024) throw new Error("ویدیو باید MP4 و حداکثر ۱۵ مگابایت باشد.");
+    } else if (!file.type.startsWith("image/")) {
       throw new Error("فقط فایل تصویری مجاز است.");
     }
-    if (file.size > 8 * 1024 * 1024) {
+    if (uploadKind !== "video" && file.size > 8 * 1024 * 1024) {
       throw new Error("حجم هر تصویر باید کمتر از ۸ مگابایت باشد.");
     }
 
     const form = new FormData();
     form.append("kind", uploadKind);
-    form.append("file", await prepareBusinessImage(file));
+    form.append("file", uploadKind === "video" ? file : await prepareBusinessImage(file));
 
     const response = await fetch("/api/me/business/media/upload", {
       method: "POST",
@@ -106,6 +111,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
         setConfigured(false);
         throw new Error("فضای تصاویر هنوز به سایت متصل نشده است.");
       }
+      if (["VIDEO_TOO_LONG", "INVALID_VIDEO", "VIDEO_PLAN_REQUIRED", "VIDEO_LIMIT_REACHED"].includes(result?.error)) throw new Error(result.error === "VIDEO_TOO_LONG" ? "ویدیو باید حداکثر ۲۰ ثانیه باشد." : result.error === "INVALID_VIDEO" ? "فایل ویدیو معتبر نیست." : "ظرفیت ویدیو یا اشتراک فعال را بررسی کنید.");
       if (result?.error === "GALLERY_LIMIT_REACHED") {
         throw new Error("ظرفیت تصاویر این پلن تکمیل شده است.");
       }
@@ -137,13 +143,13 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
     let savedCount = 0;
     try {
       for (let index = 0; index < selected.length; index += 1) {
-        setProgress("در حال آماده‌سازی و آپلود تصویر " + (index + 1) + " از " + selected.length);
+        setProgress("در حال آماده‌سازی و آپلود " + (uploadKind === "video" ? "ویدیو " : "تصویر ") + (index + 1) + " از " + selected.length);
         await uploadOne(selected[index]);
         savedCount += 1;
         await load();
       }
       setProgress("");
-      setMessage(number(selected.length) + " تصویر با موفقیت ذخیره شد." + (files.length > selected.length ? " تعداد عکس‌های اضافی از ظرفیت پلن بیشتر بود و ارسال نشد." : ""));
+      setMessage(number(selected.length) + (uploadKind === "video" ? " ویدیو با موفقیت ذخیره شد." : " تصویر با موفقیت ذخیره شد.") + (files.length > selected.length ? " تعداد عکس‌های اضافی از ظرفیت پلن بیشتر بود و ارسال نشد." : ""));
       await load();
     } catch (error: any) {
       setProgress("");
@@ -214,20 +220,22 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
         <div><strong>{number(limit)}</strong><span>ظرفیت عکس‌های پلن</span></div>
       </div>
       <p className="media-capacity-note">کاور و پروفایل جدا از این تعداد هستند. تعداد آلبوم‌ها محدود نیست.</p>
+      <p>ویدیو: {number(media.filter(item => item.kind === "video").length)} ذخیره‌شده از {number(videoLimit)}؛ {number(videoRemaining)} جای خالی. MP4، حداکثر ۲۰ ثانیه و ۱۵ مگابایت.</p>
+      {videoLimit > 0 && <button type="button" className="pill-button" disabled={uploading || !videoRemaining || !configured} onClick={() => pick("video")}>+ افزودن ویدیو</button>}
       <div className="owner-booth-preview">
         <span className="section-kicker">پیش‌نمایش ظاهر غرفه برای مشتری</span>
         <BusinessPhotoHeader name={businessName} cover={cover?.file_url} logo={logo?.file_url} disabled={uploading || !configured} onEdit={pick} />
         <div className="profile-main-card glass-panel"><h2>{businessName}</h2><p>برای تغییر تصویر پس‌زمینه یا پروفایل، روی خود تصویر بزنید.</p></div>
       </div>
-      <input ref={fileRef} type="file" accept="image/*" multiple={uploadKind === "image"} hidden onChange={event => chooseFiles(event.target.files)} />
+      <input ref={fileRef} type="file" accept={uploadKind === "video" ? "video/mp4" : "image/*"} multiple={uploadKind === "image" || uploadKind === "video"} hidden onChange={event => chooseFiles(event.target.files)} />
       <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={event => chooseFiles(event.target.files)} />
       {pickerOpen && <div className="media-source-picker" role="group" aria-label="انتخاب منبع عکس">
-        <strong>{uploadKind === "cover" ? "تصویر پس‌زمینه" : uploadKind === "logo" ? "عکس پروفایل" : "افزودن عکس به آلبوم"}</strong>
+        <strong>{uploadKind === "video" ? "افزودن ویدیو (MP4، تا ۲۰ ثانیه و ۱۵ مگابایت)" : uploadKind === "cover" ? "تصویر پس‌زمینه" : uploadKind === "logo" ? "عکس پروفایل" : "افزودن عکس به آلبوم"}</strong>
         <button className="pill-button dark" type="button" onClick={()=>fileRef.current?.click()}><ImagePlus size={18}/> انتخاب از گالری</button>
-        <button className="pill-button" type="button" onClick={()=>cameraRef.current?.click()}><Camera size={18}/> عکس گرفتن</button>
+        {uploadKind !== "video" && <button className="pill-button" type="button" onClick={()=>cameraRef.current?.click()}><Camera size={18}/> عکس گرفتن</button>}
         <button className="pill-button" type="button" onClick={()=>setPickerOpen(false)}>انصراف</button>
       </div>}
-      <div className="panel-heading"><h3>عکس‌های نمونه‌کار</h3><button className="pill-button dark" type="button" disabled={uploading || !configured || !remaining} onClick={()=>pick("image")}><ImagePlus size={18}/> افزودن عکس</button></div>
+      <div className="panel-heading"><h3>عکس‌ها و ویدیوهای نمونه‌کار</h3><button className="pill-button dark" type="button" disabled={uploading || !configured || !remaining} onClick={()=>pick("image")}><ImagePlus size={18}/> افزودن عکس</button></div>
       {!configured && (
         <div className="business-media-config-note">
           اتصال فضای تصاویر موقتاً در دسترس نیست. دوباره وارد پنل شوید یا با پشتیبانی تماس بگیرید.
@@ -243,7 +251,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
           {sortedMedia.map((item) => (
             <article className={"business-media-item " + (item.kind === "cover" ? "is-cover" : "")} key={item.id}>
               {item.file_url ? (
-                <img src={item.thumbnail_url || item.file_url} alt={item.alt_text || ""} loading="lazy" />
+                item.kind === "video" ? <video src={item.file_url} controls playsInline preload="metadata" style={{width:"100%"}} /> : <img src={item.thumbnail_url || item.file_url} alt={item.alt_text || ""} loading="lazy" />
               ) : (
                 <div className="business-media-missing"><ImagePlus size={22} /></div>
               )}

@@ -1,3 +1,5 @@
+import { env } from "cloudflare:workers";
+import { MAX_VIDEO_BYTES, VIDEO_LIMITS, mp4Duration } from "@/lib/business-video";
 import { normalizePlanCode, planPresentation } from "@/lib/business-entitlements";
 import { ensureBusinessMediaSchema, getOwnedBusiness } from "@/lib/server/business-media";
 import { readBusinessUploadForm } from "@/lib/server/business-upload-form";
@@ -50,15 +52,36 @@ export async function POST(request: Request) {
 
   let form: FormData;
   try {
-    form = await readBusinessUploadForm(request);
+    form = await readBusinessUploadForm(request, 16 * 1024 * 1024);
   } catch (error) {
     const tooLarge = error instanceof Error && error.message === "FILE_TOO_LARGE";
     return Response.json({ ok: false, error: tooLarge ? "FILE_TOO_LARGE" : "INVALID_FILE" }, { status: tooLarge ? 413 : 400 });
   }
+  if (form.get("kind") === "video") {
+    const file = form.get("file");
+    if (!(file instanceof File) || file.size < 1) return Response.json({ok:false,error:"INVALID_FILE"},{status:400});
+    if (file.size > MAX_VIDEO_BYTES) return Response.json({ok:false,error:"FILE_TOO_LARGE"},{status:413});
+    if (file.type !== "video/mp4") return Response.json({ok:false,error:"INVALID_FILE_TYPE"},{status:415});
+    const plan = await owned.db.prepare("SELECT p.code FROM subscriptions s JOIN plans p ON p.id=s.plan_id WHERE s.business_id=? AND s.status='active' AND (s.ends_at IS NULL OR julianday(s.ends_at)>julianday('now')) ORDER BY s.id DESC LIMIT 1").bind(owned.business.id).first();
+    const limit = VIDEO_LIMITS[normalizePlanCode(plan?.code)];
+    if (!limit) return Response.json({ok:false,error:"VIDEO_PLAN_REQUIRED"},{status:403});
+    const bucket = (env as any).BUSINESS_MEDIA;
+    if (!bucket?.put) return Response.json({ok:false,error:"MEDIA_STORAGE_NOT_CONFIGURED"},{status:503});
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    try { mp4Duration(bytes); } catch(error) { return Response.json({ok:false,error:error instanceof Error ? error.message : "INVALID_VIDEO"},{status:422}); }
+    const key = "businesses/" + owned.business.id + "/" + crypto.randomUUID() + ".mp4";
+    try {
+      await bucket.put(key,bytes,{httpMetadata:{contentType:"video/mp4"},customMetadata:{businessId:String(owned.business.id)}});
+      const url="https://khonenama.ir/media/"+key;
+      const inserted=await owned.db.prepare("INSERT INTO business_media (business_id,kind,media_type,storage_key,provider,provider_file_id,file_url,file_path,sort_order) SELECT ?,'image','video',?,'r2',?,?,?,0 WHERE (SELECT COUNT(*) FROM business_media WHERE business_id=? AND media_type='video') < ? RETURNING id").bind(owned.business.id,key,key,url,key,owned.business.id,limit).first();
+      if (!inserted?.id) {await bucket.delete(key); return Response.json({ok:false,error:"VIDEO_LIMIT_REACHED"},{status:409});}
+      return Response.json({ok:true,id:inserted.id,media:{id:inserted.id,kind:"video",fileUrl:url}},{status:201,headers:{"Cache-Control":"no-store"}});
+    } catch {await bucket.delete(key).catch(()=>{});return Response.json({ok:false,error:"MEDIA_UPLOAD_FAILED"},{status:500});}
+  }
   const kind = form.get("kind") === "cover" || form.get("kind") === "logo" ? String(form.get("kind")) : "image";
   const [countRow, galleryLimit] = await Promise.all([
     owned.db
-      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ? AND kind = ?")
+      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ? AND kind = ? AND media_type = 'image'")
       .bind(owned.business.id, kind)
       .first(),
     getGalleryLimit(owned.db, Number(owned.business.id)),
@@ -101,9 +124,9 @@ export async function POST(request: Request) {
 
     // Keep the previous cover/profile until the replacement is stored successfully.
     if (kind !== "image") {
-      const previous = await owned.db.prepare("SELECT id, provider, provider_file_id, storage_key FROM business_media WHERE business_id = ? AND kind = ? LIMIT 1").bind(owned.business.id, kind).first();
+      const previous = await owned.db.prepare("SELECT id, provider, provider_file_id, storage_key FROM business_media WHERE business_id = ? AND kind = ? AND media_type = 'image' LIMIT 1").bind(owned.business.id, kind).first();
       if (previous) {
-        const changed = await owned.db.prepare("UPDATE business_media SET storage_key = ?, provider = ?, provider_file_id = ?, file_url = ?, file_path = ?, thumbnail_url = ? WHERE id = ? AND business_id = ? AND kind = ? AND provider_file_id IS ? RETURNING id")
+        const changed = await owned.db.prepare("UPDATE business_media SET storage_key = ?, provider = ?, provider_file_id = ?, file_url = ?, file_path = ?, thumbnail_url = ? WHERE id = ? AND business_id = ? AND kind = ? AND media_type = 'image' AND provider_file_id IS ? RETURNING id")
           .bind(verified.fileId, uploadedProvider, verified.fileId, verified.url, verified.filePath, verified.thumbnailUrl || null, previous.id, owned.business.id, kind, previous.provider_file_id).first();
         if (!changed) {
           await deleteStoredBusinessImage(uploadedProvider, uploadedFileId);
@@ -131,7 +154,7 @@ export async function POST(request: Request) {
       .prepare(
         "INSERT INTO business_media " +
           "(business_id, kind, storage_key, alt_text, sort_order, provider, provider_file_id, file_url, file_path, thumbnail_url) " +
-          "SELECT ?, ?, ?, NULL, ?, ?, ?, ?, ?, NULLIF(?, '') WHERE (SELECT COUNT(*) FROM business_media WHERE business_id = ? AND kind = ?) < ? AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
+          "SELECT ?, ?, ?, NULL, ?, ?, ?, ?, ?, NULLIF(?, '') WHERE (SELECT COUNT(*) FROM business_media WHERE business_id = ? AND kind = ? AND media_type = 'image') < ? AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
       )
       .bind(
         owned.business.id,

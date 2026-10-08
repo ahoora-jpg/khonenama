@@ -1,3 +1,4 @@
+import { KARAJ_AREAS } from "@/lib/karaj-areas";
 import {selectPublicMedia} from "@/lib/subscription-lifecycle";
 import { env } from "cloudflare:workers";
 import { ensureBusinessMediaSchema } from "@/lib/server/business-media";
@@ -95,7 +96,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         .first(),
       db
         .prepare(
-          "SELECT id, kind, file_url, thumbnail_url, alt_text, sort_order FROM business_media WHERE business_id = ? AND file_url IS NOT NULL AND file_url <> '' ORDER BY CASE kind WHEN 'cover' THEN 0 WHEN 'logo' THEN 1 ELSE 2 END, sort_order, id"
+          "SELECT id, kind, media_type, file_url, thumbnail_url, alt_text, sort_order FROM business_media WHERE business_id = ? AND file_url IS NOT NULL AND file_url <> '' ORDER BY CASE kind WHEN 'cover' THEN 0 WHEN 'logo' THEN 1 ELSE 2 END, sort_order, id"
         )
         .bind(row.id)
         .all(),
@@ -141,7 +142,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
       serviceAreas: (areasResult?.results || []).map((item: any) => item.area),
       media: selectPublicMedia<PublicBusiness["media"][number]>((mediaResult?.results || []).map((item: any) => ({
         id: Number(item.id),
-        kind: item.kind || "image",
+        kind: item.media_type === "video" ? "video" : item.kind || "image",
         url: item.file_url || "",
         thumbnailUrl: item.thumbnail_url || "",
         altText: item.alt_text || "",
@@ -230,19 +231,25 @@ export async function listPublishedBusinesses(options: {
     }
 
     if (options.city) {
-      where.push("b.city LIKE ?");
-      binds.push("%" + options.city + "%");
+      where.push("(b.city LIKE ? OR EXISTS (SELECT 1 FROM business_service_areas sc WHERE sc.business_id=b.id AND sc.city LIKE ?))");
+      binds.push("%" + options.city + "%", "%" + options.city + "%");
     }
 
     if (options.area) {
-      where.push("(b.area LIKE ? OR EXISTS (SELECT 1 FROM business_service_areas bsa WHERE bsa.business_id = b.id AND bsa.area LIKE ?))");
-      binds.push("%" + options.area + "%", "%" + options.area + "%");
+      where.push("(b.area LIKE ? OR EXISTS (SELECT 1 FROM business_service_areas bsa WHERE bsa.business_id = b.id AND (bsa.area LIKE ? OR (bsa.area = 'تمام ' || bsa.city AND bsa.city = ?))))");
+      binds.push("%" + options.area + "%", "%" + options.area + "%", options.city || (KARAJ_AREAS.some(a=>a===options.area) ? "کرج" : ""));
     }
 
     if (options.location) {
-      where.push("(b.city LIKE ? OR b.area LIKE ? OR EXISTS (SELECT 1 FROM business_service_areas bsa2 WHERE bsa2.business_id = b.id AND bsa2.area LIKE ?))");
-      const locationValue = "%" + options.location + "%";
-      binds.push(locationValue, locationValue, locationValue);
+      const parts=options.location.split(" / ");
+      const value="%"+parts[parts.length-1]+"%";
+      if(parts.length>1){
+        where.push("((b.city = ? AND b.area LIKE ?) OR EXISTS (SELECT 1 FROM business_service_areas sl WHERE sl.business_id=b.id AND sl.city=? AND (sl.area LIKE ? OR sl.area='تمام ' || sl.city)))");
+        binds.push(parts[0],value,parts[0],value);
+      } else {
+        where.push("(b.city LIKE ? OR b.area LIKE ? OR EXISTS (SELECT 1 FROM business_service_areas bsa2 WHERE bsa2.business_id = b.id AND (bsa2.area LIKE ? OR bsa2.city LIKE ? OR (bsa2.area = 'تمام ' || bsa2.city AND bsa2.city = ?))))");
+        binds.push(value,value,value,value,KARAJ_AREAS.some(a=>a===options.location)?"کرج":"");
+      }
     }
 
     if (options.query) {

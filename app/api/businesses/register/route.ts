@@ -1,3 +1,4 @@
+import { parseServiceArea } from "@/lib/service-area";
 import { env } from "cloudflare:workers";
 import { recordConversion } from "@/lib/server/conversion-metrics";
 import { createBusinessSession, getBusinessSession } from "@/lib/server/business-session";
@@ -277,7 +278,7 @@ export async function POST(request: Request) {
           .prepare(
             "INSERT INTO business_service_areas (business_id, city, area, is_primary) VALUES (?, ?, ?, ?)"
           )
-          .bind(createdBusinessId, city, serviceArea, index === 0 ? 1 : 0)
+          .bind(createdBusinessId, parseServiceArea(serviceArea,city).city, parseServiceArea(serviceArea,city).area, index === 0 ? 1 : 0)
       ),
     ];
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { businessPlans } from "@/lib/business-plans";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BusinessOnboardingWizard from "@/components/BusinessOnboardingWizard";
@@ -43,6 +44,11 @@ export default function RegisterBusinessPage() {
             <summary>پیش از شروع ثبت‌نام چه اطلاعاتی آماده کنم؟</summary>
             <p>نام و توضیح واقعی کسب‌وکار، دسته و خدمات، شهر و محدوده فعالیت، راه تماس عمومی و تصاویر متعلق به خودتان را آماده کنید. مشخصات و عکس خصوصی مشتری را در غرفه عمومی وارد نکنید.</p>
             <a href="/for-business/online-discovery-guide#profile-checklist">چک‌لیست کامل آماده‌سازی غرفه در شش حوزه</a>
+          </details>
+          <details className="glass-panel" style={{padding:"1rem",marginBottom:"1rem"}} open>
+            <summary>مقایسه ظرفیت و هزینه اشتراک‌ها</summary>
+            <div style={{overflowX:"auto"}}><table style={{width:"100%",textAlign:"right",borderSpacing:"12px"}}><thead><tr><th>اشتراک</th><th>عکس آلبوم</th><th>ویدیو</th><th>هزینه</th></tr></thead><tbody>{businessPlans.map((plan,index)=><tr key={plan.code}><th>{plan.name}</th><td>{[10,30,70][index].toLocaleString("fa-IR")}</td><td>{[0,2,5][index].toLocaleString("fa-IR")}</td><td>{plan.priceLabel}</td></tr>)}</tbody></table></div>
+            <p>ثبت‌نام همیشه با پایه رایگان شروع می‌شود. کاور و پروفایل جدا از ظرفیت عکس‌اند؛ تعداد آلبوم‌ها محدود نیست. ویدیو MP4 حداکثر ۲۰ ثانیه و ۱۵ مگابایت است. ارتقا پس از ثبت‌نام و فعال‌شدن پرداخت امکان‌پذیر است.</p>
           </details>
           <BusinessOnboardingWizard />
         </div>

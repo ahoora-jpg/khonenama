@@ -2,10 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, Loader2, Save, Shapes } from "lucide-react";
+import ServiceGroupChoices from "@/components/ServiceGroupChoices";
 import { BUSINESS_CATEGORIES } from "@/lib/business-taxonomy";
 
 export default function BusinessTaxonomyEditor() {
   const [categories, setCategories] = useState<string[]>([]);
+  const [serviceAreas, setServiceAreas] = useState<string[]>([]);
+  const [newArea, setNewArea] = useState("");
   const [services, setServices] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -18,6 +21,7 @@ export default function BusinessTaxonomyEditor() {
       .then((result) => {
         if (!cancelled && result?.ok) {
           setCategories(Array.isArray(result.categories) ? result.categories : []);
+          setServiceAreas(Array.isArray(result.serviceAreas) ? result.serviceAreas : []);
           setServices(Array.isArray(result.services) ? result.services : []);
         }
       })
@@ -77,7 +81,7 @@ export default function BusinessTaxonomyEditor() {
       const response = await fetch("/api/me/business/taxonomy", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ categories, services }),
+        body: JSON.stringify({ categories, services, serviceAreas }),
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result?.ok) {
@@ -130,26 +134,13 @@ export default function BusinessTaxonomyEditor() {
               {visibleServices.map((group) => (
                 <div className="taxonomy-service-group" key={group.slug}>
                   <strong>{group.label}</strong>
-                  <div>
-                    {group.services.map((service) => {
-                      const active = services.includes(service);
-                      return (
-                        <button
-                          type="button"
-                          className={active ? "taxonomy-service is-active" : "taxonomy-service"}
-                          key={service}
-                          onClick={() => toggleService(service)}
-                        >
-                          {service}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <ServiceGroupChoices services={group.services} selected={services} onToggle={toggleService} />
                 </div>
               ))}
             </div>
           )}
 
+          <div className="choice-block"><strong>محدوده فعالیت</strong><p>تمام شهر: «تمام کرج»؛ محله در شهر دیگر: «تهران / سعادت‌آباد». انتخاب تمام شهر همه محله‌های آن را پوشش می‌دهد.</p><input aria-label="شهر یا محله تحت پوشش" value={newArea} onChange={e=>setNewArea(e.target.value)} maxLength={100}/><button type="button" className="pill-button" onClick={()=>{if(newArea.trim().length>=2){setServiceAreas([...new Set([...serviceAreas,newArea.trim()])]);setNewArea("");}}}>افزودن محدوده</button><div className="choice-grid">{serviceAreas.map(area=><button type="button" className="choice-chip is-selected" key={area} onClick={()=>setServiceAreas(serviceAreas.filter(v=>v!==area))}>{area} ×</button>)}</div></div>
           {message && (
             <div className={message.includes("ذخیره شدند") ? "profile-hours-message is-success" : "profile-hours-message"}>
               {message}

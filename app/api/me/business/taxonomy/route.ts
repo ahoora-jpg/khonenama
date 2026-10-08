@@ -1,3 +1,4 @@
+import { parseServiceArea } from "@/lib/service-area";
 import { getOwnedBusiness } from "@/lib/server/business-media";
 import {
   BUSINESS_CATEGORIES,
@@ -34,8 +35,10 @@ export async function GET(request: Request) {
       .all(),
   ]);
 
+  const areas = await owned.db.prepare("SELECT city, area FROM business_service_areas WHERE business_id=? ORDER BY is_primary DESC, id").bind(owned.business.id).all();
   return Response.json({
     ok: true,
+    serviceAreas: (areas.results || []).map((row:any)=>String(row.area || "").startsWith("تمام ") ? row.area : row.city + " / " + (row.area || "")),
     categories: (categoriesResult?.results || []).map((row: any) => row.slug),
     services: (servicesResult?.results || []).map((row: any) => row.name),
   }, { headers: { "Cache-Control": "no-store" } });
@@ -107,6 +110,13 @@ export async function PUT(request: Request) {
     );
   });
 
+  if (Array.isArray(body.serviceAreas)) {
+    const business=await owned.db.prepare("SELECT city FROM businesses WHERE id=?").bind(owned.business.id).first();
+    const areas=[...new Set<string>(body.serviceAreas.filter((v:unknown):v is string=>typeof v === "string" && v.trim().length >= 2 && v.length<=100))].slice(0,100);
+    if(!areas.length) return Response.json({ok:false,error:"SERVICE_AREAS_REQUIRED"},{status:400});
+    statements.push(owned.db.prepare("DELETE FROM business_service_areas WHERE business_id=?").bind(owned.business.id));
+    areas.forEach((value,index)=>{const area=parseServiceArea(value,business?.city || "");statements.push(owned.db.prepare("INSERT INTO business_service_areas (business_id,city,area,is_primary) VALUES (?,?,?,?)").bind(owned.business.id,area.city,area.area,index===0?1:0));});
+  }
   await owned.db.batch(statements);
 
   for (const service of services) {
