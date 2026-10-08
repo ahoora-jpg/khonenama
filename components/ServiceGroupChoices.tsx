@@ -24,14 +24,14 @@ export default function ServiceGroupChoices({ services, selected, onToggle }: Pr
       const primary = preferred && items.includes(preferred) ? [preferred] : items.slice(0, 5);
       const details = items.filter(item => !primary.includes(item));
       const choice = (service: string) => <button type="button" key={service} aria-pressed={selected.includes(service)} className={selected.includes(service) ? "choice-chip is-selected taxonomy-service is-active" : "choice-chip taxonomy-service"} onClick={() => onToggle(service)}>{service}</button>;
-      return <section key={label} className="glass-panel" style={{padding:"12px",marginBottom:"8px"}}>
-        <strong>{label}</strong>
+      return <details key={label} className="glass-panel" style={{padding:"12px",marginBottom:"8px"}}>
+        <summary style={{cursor:"pointer",fontSize:"17px",fontWeight:700}}>{label} · {items.filter(item=>selected.includes(item)).length.toLocaleString("fa-IR")} انتخاب</summary>
         <div className="choice-grid" style={{marginTop:"8px"}}>{primary.map(choice)}</div>
         {!!details.length && <details style={{marginTop:"8px"}}>
           <summary style={{cursor:"pointer"}}>مدل‌ها و جزئیات بیشتر (اختیاری) · {details.filter(item=>selected.includes(item)).length.toLocaleString("fa-IR")} انتخاب</summary>
           <div className="choice-grid" style={{marginTop:"12px"}}>{details.map(choice)}</div>
         </details>}
-      </section>;
+      </details>;
     })}
   </div>;
 }

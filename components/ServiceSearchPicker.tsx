@@ -1,0 +1,11 @@
+"use client";
+import {useId,useState} from "react";
+import {BUSINESS_CATEGORIES} from "@/lib/business-taxonomy";
+const normalize=(value:string)=>value.replace(/ي/g,"ی").replace(/ك/g,"ک").replace(/\u200c/g," ").trim().toLowerCase();
+export default function ServiceSearchPicker({services,value,onChange}:{services:string[];value:string;onChange:(value:string)=>void}){
+ const id=useId();const [open,setOpen]=useState(false),[expanded,setExpanded]=useState<string|null>(null);
+ const q=normalize(value);
+ const groups=BUSINESS_CATEGORIES.map(category=>({label:category.label,items:services.filter(service=>category.services.includes(service))})).filter(group=>group.items.length);
+ const assigned=new Set(groups.flatMap(group=>group.items));const other=services.filter(service=>!assigned.has(service));if(other.length)groups.push({label:"سایر خدمات غرفه",items:other});
+ return <div className="service-search-picker"><label htmlFor={id}>خدمت موردنیاز</label><input id={id} value={value} placeholder="بنویسید: پرده، مینیمال یا کفپوش…" autoComplete="off" role="combobox" aria-expanded={open} aria-controls={id+"-choices"} aria-autocomplete="list" onFocus={()=>setOpen(true)} onChange={e=>{onChange(e.target.value);setOpen(true);setExpanded(null);}} onKeyDown={e=>{if(e.key==="Escape")setOpen(false);}}/>{open&&<div id={id+"-choices"} className="service-search-results">{groups.filter(group=>normalize(group.label).includes(q)||group.items.some(item=>normalize(item).includes(q))).map(group=>{const show=expanded===group.label || (!!q&&!normalize(group.label).includes(q));const matches=group.items.filter(item=>!q||normalize(group.label).includes(q)||normalize(item).includes(q));return <div key={group.label}><button type="button" aria-expanded={show} onClick={()=>setExpanded(expanded===group.label?null:group.label)}>{group.label} · انتخاب زیرمجموعه</button>{show&&<div className="service-search-options">{matches.map(item=><button key={item} type="button" onClick={()=>{onChange(item);setOpen(false);}}>{item}</button>)}</div>}</div>;})}{!groups.some(group=>normalize(group.label).includes(q)||group.items.some(item=>normalize(item).includes(q)))&&<p>این خدمت در فهرست غرفه نیست؛ نیازتان را در توضیح درخواست بنویسید.</p>}<button type="button" onClick={()=>setOpen(false)}>بستن فهرست</button></div>}</div>;
+}

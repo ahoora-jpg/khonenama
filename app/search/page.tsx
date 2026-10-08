@@ -1,3 +1,4 @@
+import SearchInterestTracker from "@/components/SearchInterestTracker";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -141,6 +142,7 @@ export default async function SearchPage({
 
   return (
     <main>
+      <SearchInterestTracker query={query} hasResults={liveBusinesses.length>0}/>
       <Header />
       <section className="inner-page search-page">
         <div className="shell">

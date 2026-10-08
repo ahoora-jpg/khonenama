@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 type Suggestion = {id:number; kind:string; proposed_name:string; normalized_name:string|null; status:string; business_name:string; selected_categories:string};
 export default function AdminTaxonomySuggestions() {
+  const [interest,setInterest]=useState<{topic:string;searches:number;noResults:number;guideSlugs:string[]}[]>([]);
   const [items,setItems]=useState<Suggestion[]>([]);
   const [message,setMessage]=useState("");
   const [names,setNames]=useState<Record<number,string>>({});
@@ -12,7 +13,7 @@ export default function AdminTaxonomySuggestions() {
       const response=await fetch("/api/admin/taxonomy-suggestions",{cache:"no-store"});
       const data=await response.json();
       if(!response.ok||!data.ok)throw new Error();
-      setItems(data.suggestions);
+      setItems(data.suggestions); setInterest(data.searchInterest||[]);
     } catch {setMessage("دریافت پیشنهادها انجام نشد.");}
   }
   useEffect(()=>{void load();},[]);
@@ -26,7 +27,7 @@ export default function AdminTaxonomySuggestions() {
     } catch {setMessage("ثبت بررسی انجام نشد.");} finally {setBusy(null);}
   }
   return <section className="dashboard-panel glass-panel">
-    <h2>پیشنهاد دسته و خدمات کاربران</h2>
+    <h2>موضوع‌های جست‌وجوشده در ۳۰ روز اخیر</h2><p>فقط موضوع‌های عمومی شناخته‌شده شمرده می‌شوند؛ متن خام، شماره، نام و نشانی مشتری ذخیره نمی‌شود. این تعداد جست‌وجوی سایت است، نه آمار گوگل یا کل بازار. موضوع‌های بدون راهنما برای بررسی محتوا اولویت دارند؛ مقاله یا خدمت خودکار منتشر نمی‌شود.</p>{!interest.length&&<p>هنوز داده کافی ثبت نشده است.</p>}{interest.map(row=><article key={row.topic} className="category-seo-copy-card"><h3>{row.topic}</h3><p>{row.searches.toLocaleString("fa-IR")} جست‌وجو · {row.noResults.toLocaleString("fa-IR")} بار بدون غرفه واقعی مرتبط</p>{row.guideSlugs.length?row.guideSlugs.map(slug=><a key={slug} href={"/magazine/"+slug}>راهنمای موجود · </a>):<strong>نیازمند بررسی و تدوین راهنما</strong>}</article>)}<h2>پیشنهاد دسته و خدمات کاربران</h2>
     <p>نام، املا، دسته والد و هم‌پوشانی با خدمات موجود را بررسی کنید. بررسی‌شده به معنی افزوده‌شدن خودکار به فهرست عمومی نیست.</p>
     <button type="button" onClick={()=>void load()}>تازه‌سازی پیشنهادها</button>
     {message&&<p role="status">{message}</p>}

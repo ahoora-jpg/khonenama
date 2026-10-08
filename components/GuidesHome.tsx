@@ -2,7 +2,7 @@ import { ArrowUpLeft, BookOpen } from "lucide-react";
 import { guides } from "@/lib/guides";
 
 export default function GuidesHome() {
-  const preferredSlugs = [
+  const preferredSlugs = ["minimalist-curtain-guide", 
     "curtain-installation-guide",
     "shade-curtain-guide",
     "smart-curtain-daylight-guide",

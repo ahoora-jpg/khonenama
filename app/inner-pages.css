@@ -4112,3 +4112,25 @@ button.business-photo-avatar { cursor:pointer; }
   border-top: 1px solid var(--line);
 }
 .guide-detail-accordion-body ul { margin-bottom: 0; }
+
+/* Readable customer decision forms and fixed currency suffix. */
+.quote-form-grid label > span,.service-search-picker > label{font-size:15px;font-weight:700;line-height:1.8}
+.quote-form-grid input,.quote-form-grid textarea,.quote-form-grid select,.lead-quote-grid input,.lead-quote-grid textarea{font:inherit;font-size:17px;min-height:48px;line-height:1.8}
+.quote-form-heading p,.quote-privacy-note,.quote-form-grid label,.quote-form-error{font-size:14px;line-height:1.9}
+.money-input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:11px;background:#fffdfa;padding-inline-end:12px}
+.money-input input{border:0;background:transparent;min-width:0;flex:1;font-variant-numeric:tabular-nums}
+.money-input > span{font-size:14px;flex:none;color:var(--ink)}
+.service-search-picker{position:relative;display:grid;gap:6px}
+.service-search-results{max-height:320px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;display:grid;gap:8px}
+.service-search-results button{font:inherit;font-size:16px;text-align:right;border:1px solid var(--line);padding:10px 12px;min-height:44px;border-radius:10px;background:#f5f7f2;cursor:pointer;width:100%}
+.service-search-options{display:grid;gap:6px;padding:8px 12px}
+.service-search-options button{background:#fff;font-size:15px}
+.brand-definition-card h2{font-size:clamp(26px,3vw,36px)}
+.brand-definition-card p{font-family:inherit;font-size:clamp(17px,1.6vw,21px);line-height:2.1;max-width:75ch}
+.brand-definition-card > a{display:inline-block;margin:8px 0 0 20px;font-size:16px}
+.public-service-groups{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.public-service-groups details{padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:#f5f7f2}
+.public-service-groups summary{cursor:pointer;font-size:18px;font-weight:700}
+.public-service-groups .service-chips{margin-top:12px}
+.profile-main-card p,.profile-meta-grid small,.profile-side-card p,.profile-side-card a{font-size:16px;line-height:1.9}
+.brand-definition-card p{font-family:Tahoma,Arial,sans-serif!important}

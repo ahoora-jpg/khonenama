@@ -1,3 +1,6 @@
+import { ensureSearchInterestSchema } from "@/lib/server/search-interest";
+import { guides } from "@/lib/guides";
+import { normalizeTopic } from "@/lib/search-topics";
 import { env } from "cloudflare:workers";
 import { isAdminRequest } from "@/lib/server/admin-session";
 import { ensureTaxonomySuggestions } from "@/lib/server/taxonomy-suggestions";
@@ -8,7 +11,10 @@ export async function GET(request: Request) {
   const db = (env as any).DB;
   await ensureTaxonomySuggestions(db);
   const result = await db.prepare("SELECT t.*, b.name AS business_name FROM taxonomy_suggestions t JOIN businesses b ON b.id=t.business_id ORDER BY CASE t.status WHEN 'pending' THEN 0 ELSE 1 END, t.id DESC LIMIT 200").all();
-  return Response.json({ok:true,suggestions:result.results || []},{headers:{"Cache-Control":"no-store"}});
+  await ensureSearchInterestSchema(db);
+  const interest=await db.prepare("SELECT topic,SUM(searches) AS searches,SUM(no_results) AS noResults FROM marketplace_search_interest_daily WHERE event_date>=date('now','-29 days') GROUP BY topic ORDER BY searches DESC LIMIT 20").all();
+  const searchInterest=(interest.results||[]).map((row:any)=>({...row,guideSlugs:guides.filter(guide=>guide.keywords.some(word=>normalizeTopic(word)===normalizeTopic(row.topic))).slice(0,3).map(guide=>guide.slug)}));
+  return Response.json({ok:true,suggestions:result.results || [],searchInterest},{headers:{"Cache-Control":"no-store"}});
 }
 
 export async function PATCH(request: Request) {

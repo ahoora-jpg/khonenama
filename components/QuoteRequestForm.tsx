@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { CheckCircle2, LockKeyhole, MessageCircle, Send } from "lucide-react";
 
+import ServiceSearchPicker from "@/components/ServiceSearchPicker";
+import { formatMoneyInput, moneyDigits } from "@/lib/money-input";
+
 function track(slug: string, event: string) {
   fetch("/api/business/" + encodeURIComponent(slug) + "/analytics", {
     method: "POST",
@@ -77,8 +80,8 @@ export default function QuoteRequestForm({
           customerPhone,
           area,
           requestText: service ? "خدمت: " + service + "\n" + requestText : requestText,
-          budgetMin,
-          budgetMax,
+          budgetMin: moneyDigits(budgetMin),
+          budgetMax: moneyDigits(budgetMax),
           website,
         }),
       });
@@ -146,7 +149,7 @@ export default function QuoteRequestForm({
       </div>
 
       <div className="quote-form-grid">
-        {services.length > 0 && <label className="quote-wide"><span>خدمت موردنیاز</span><select value={service} onChange={e => setService(e.target.value)}><option value="">انتخاب خدمت (اختیاری)</option>{services.map(item => <option key={item} value={item}>{item}</option>)}</select></label>}
+        {services.length > 0 && <div className="quote-wide"><ServiceSearchPicker services={services} value={service} onChange={setService}/></div>}
         <label>
           <span>نام شما</span>
           <input autoComplete="name" maxLength={120} value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="مثلاً علی رضایی" />
@@ -174,11 +177,11 @@ export default function QuoteRequestForm({
         </label>
         <label>
           <span>حداقل بودجه اختیاری</span>
-          <input dir="ltr" inputMode="numeric" value={budgetMin} onChange={(e) => setBudgetMin(e.target.value)} placeholder="تومان" />
+          <div className="money-input"><input aria-label="حداقل بودجه به تومان" dir="ltr" inputMode="numeric" value={budgetMin} onChange={(e) => setBudgetMin(formatMoneyInput(e.target.value))} placeholder="0" /><span>تومان</span></div>
         </label>
         <label>
           <span>حداکثر بودجه اختیاری</span>
-          <input dir="ltr" inputMode="numeric" value={budgetMax} onChange={(e) => setBudgetMax(e.target.value)} placeholder="تومان" />
+          <div className="money-input"><input aria-label="حداکثر بودجه به تومان" dir="ltr" inputMode="numeric" value={budgetMax} onChange={(e) => setBudgetMax(formatMoneyInput(e.target.value))} placeholder="0" /><span>تومان</span></div>
         </label>
       </div>
 

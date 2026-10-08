@@ -1,3 +1,4 @@
+import { groupServices } from "@/lib/service-groups";
 import type { Metadata } from "next";
 import { env } from "cloudflare:workers";
 import { safeWebsiteUrl, safeInstagramUrl } from "@/lib/public-links";
@@ -288,7 +289,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
             <section className="profile-section">
               <span className="section-kicker">خدمات</span>
               <h2>خدمات و تخصص‌ها</h2>
-              <div className="service-chips">{business.services.map((service) => <span key={service}>{service}</span>)}</div>
+              <div className="public-service-groups">{groupServices(business.services).map(group=><details key={group.label}><summary>{group.label}</summary><div className="service-chips">{group.items.map(service=><a key={service} href={"?"+new URLSearchParams({service,location:context.location||""}).toString()+"#quote"}>{service}</a>)}</div></details>)}</div>
             </section>
 
             <aside className="profile-side-card glass-panel" id="contact">

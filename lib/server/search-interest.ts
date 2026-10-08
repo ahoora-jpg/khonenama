@@ -1,0 +1,1 @@
+export async function ensureSearchInterestSchema(db:any){await db.prepare("CREATE TABLE IF NOT EXISTS marketplace_search_interest_daily (topic TEXT NOT NULL,event_date TEXT NOT NULL,searches INTEGER NOT NULL DEFAULT 0,no_results INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(topic,event_date))").run();}
