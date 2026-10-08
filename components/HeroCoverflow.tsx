@@ -44,6 +44,38 @@ const slides = [
     description: "پرده برقی، روشنایی و سناریوهای هوشمند را بهتر بشناس.",
     href: "/category/smart-home",
   },
+  {
+    image: "/images/editorial/photo-1661820030641-35d02e9e9b37.webp",
+    alt: "پوشش کف و فرش در نشیمن روشن",
+    eyebrow: "موکت و پوشش کف",
+    title: "نرمی و آرامش زیر پا",
+    description: "فروشگاه‌ها و خدمات موکت را در بازار تخصصی ببین.",
+    href: "/category/carpet",
+  },
+  {
+    image: "/images/editorial/photo-1518002903142-1f4ef6851390.webp",
+    alt: "کرکره سفید کنار پنجره و گیاه سبز",
+    eyebrow: "پرده و کرکره",
+    title: "قاب تازه‌ای برای نور خانه",
+    description: "برای انتخاب پوشش پنجره، خدمات و فروشگاه‌ها را مقایسه کن.",
+    href: "/category/curtain",
+  },
+  {
+    image: "/images/editorial/photo-1624900044729-fe57757bbaaa.webp",
+    alt: "کف چوبی در کنار دیوار روشن",
+    eyebrow: "پارکت و لمینت",
+    title: "شروع طراحی از کف خانه",
+    description: "گزینه‌های پوشش کف و مجریان مرتبط را پیدا کن.",
+    href: "/category/flooring",
+  },
+  {
+    image: "/images/editorial/photo-1780672824152-e671d2470d78.webp",
+    alt: "کاغذ دیواری راه‌راه در فضای داخلی",
+    eyebrow: "کاغذ دیواری",
+    title: "طرحی که به خانه شخصیت می‌دهد",
+    description: "طرح‌ها و خدمات اجرای دیوارپوش را بررسی کن.",
+    href: "/category/wallpaper",
+  },
 ] as const;
 
 export default function HeroCoverflow() {
@@ -84,13 +116,13 @@ export default function HeroCoverflow() {
       <div className="kh-coverflow-stage">
         {slides.map((slide, index) => {
           const offset = (index - active + slides.length) % slides.length;
-          const position = offset === 0 ? "center" : offset === 1 ? "next" : offset === 2 ? "far-next" : offset === 4 ? "previous" : "far-previous";
+          const position = offset === 0 ? "center" : offset === 1 ? "next" : offset === 2 ? "far-next" : offset === slides.length - 1 ? "previous" : offset === slides.length - 2 ? "far-previous" : "hidden";
           const isActive = index === active;
 
           return (
             <article
               className={`kh-coverflow-card is-${position}`}
-              key={slide.href}
+              key={slide.image}
               aria-hidden={!isActive}
               onClick={() => !isActive && setActive(index)}
             >
@@ -133,7 +165,7 @@ export default function HeroCoverflow() {
             onClick={() => setActive(index)}
             aria-label={`نمایش ${slide.eyebrow}`}
             aria-current={index === active ? "true" : undefined}
-            key={slide.href}
+            key={slide.image}
           />
         ))}
       </div>
