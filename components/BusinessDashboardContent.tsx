@@ -49,10 +49,10 @@ type StoredProfile = {
 };
 
 const nav = [
+  ["نمای غرفه و تصاویر", "#media", ImagePlus],
   ["نمای کلی", "#overview", Store],
   ["اطلاعات پروفایل", "#profile", FileText],
   ["خدمات و محدوده", "#services", MapPin],
-  ["نمونه‌کارها", "#media", ImagePlus],
   ["درخواست‌های مشتری", "#leads", MessageCircle],
   ["نظرها", "#reviews", BadgeCheck],
   ["آمار", "#analytics", BarChart3],
@@ -177,6 +177,7 @@ export default function BusinessDashboardContent() {
       </aside>
 
       <div className="business-dashboard-main">
+        {source === "server" && <BusinessMediaManager plan={profile.plan || "free"} />}
         <section className="dashboard-panel glass-panel"><h2>سه سطح برای غرفه شما</h2><p>ثبت اولیه با پایه رایگان: ۱۰ عکس نمونه‌کار. حرفه‌ای: ۳۰ عکس و ۲ ویدیو. ویژه: ۷۰ عکس و ۵ ویدیو. دسته‌بندی آلبوم‌ها در همه سطح‌ها آزاد است. تصویر اصلی و پروفایل جدا از این ظرفیت هستند.</p><a href="/dashboard/billing">مشاهده امکانات ارتقا</a><p>از بخش گالری می‌توانید با دوربین گوشی عکس بگیرید یا از گالری گوشی انتخاب کنید.</p></section>
         <div className="dashboard-heading" id="overview">
           <div>
@@ -228,7 +229,7 @@ export default function BusinessDashboardContent() {
             <a className="pill-button dark" href="/dashboard/profile">ادامه تکمیل پروفایل</a>
           </section>
 
-          <BusinessMediaManager plan={profile.plan || "free"} />
+
 
         </div>
 

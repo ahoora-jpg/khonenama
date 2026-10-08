@@ -297,6 +297,7 @@ export default function BusinessOnboardingWizard() {
         localStorage.removeItem("khonenama-business-draft");
       } catch {}
       setSaved(true);
+      requestAnimationFrame(() => document.getElementById("media")?.scrollIntoView({behavior:"smooth",block:"start"}));
       update("password", "");
       update("confirmPassword", "");
     } catch (error) {
@@ -307,6 +308,12 @@ export default function BusinessOnboardingWizard() {
       setSaving(false);
     }
   }
+
+  if (saved) return <div className="onboarding-shell">
+    <p role="status">غرفه شما ذخیره شد؛ حالا ظاهر آن را برای مشتری آماده کنید.</p>
+    <BusinessMediaManager plan="free" />
+    <a className="pill-button dark" href="/dashboard#media">ادامه در پنل و بررسی وضعیت انتشار</a>
+  </div>;
 
   return (
     <div className="onboarding-shell" onFocusCapture={trackStart}>
@@ -829,7 +836,7 @@ export default function BusinessOnboardingWizard() {
                 </div>
               </div>
             )}
-            {saved && <BusinessMediaManager plan="free" />}
+
             {saveError && (
               <div className="onboarding-error">{saveError}</div>
             )}

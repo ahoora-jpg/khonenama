@@ -57,10 +57,14 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
   const cover = media.find(item => item.kind === "cover");
   const logo = media.find(item => item.kind === "logo");
   const [businessName, setBusinessName] = useState("غرفه شما");
+  const [businessDetails, setBusinessDetails] = useState({description:"",location:"",services:[] as string[]});
+  const [localPreview, setLocalPreview] = useState<{kind:string;url:string}|null>(null);
+  const previewUrl = useRef<string|null>(null);
+  useEffect(()=>()=>{if(previewUrl.current)URL.revokeObjectURL(previewUrl.current);},[]);
   const [mediaRevision, setMediaRevision] = useState(0);
   const [pickerOpen, setPickerOpen] = useState(false);
   const number = (value: number) => value.toLocaleString("fa-IR");
-  function pick(kind: "image" | "cover" | "logo" | "video") { setUploadKind(kind); setPickerOpen(true); }
+  function pick(kind: "image" | "cover" | "logo" | "video") { setUploadKind(kind); setPickerOpen(true); requestAnimationFrame(()=>document.getElementById("media-source-picker")?.scrollIntoView({behavior:"smooth",block:"nearest"})); }
   const sortedMedia = useMemo(
     () => media.filter(item => item.kind === "image" || item.kind === "video").sort((a, b) => (a.kind === "cover" ? -1 : b.kind === "cover" ? 1 : a.sort_order - b.sort_order)),
     [media]
@@ -83,7 +87,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
 
   useEffect(() => {
     load();
-    fetch("/api/me/business", {cache:"no-store"}).then(r=>r.json()).then(data=>{if(data.business?.name)setBusinessName(data.business.name);}).catch(()=>{});
+    fetch("/api/me/business", {cache:"no-store"}).then(r=>r.json()).then(data=>{if(data.business?.name){setBusinessName(data.business.name);setBusinessDetails({description:data.business.description || "",location:[data.business.city,data.business.area].filter(Boolean).join("، "),services:(data.business.services || []).map((item:any)=>item.name)});}}).catch(()=>{});
   }, []);
 
   async function uploadOne(file: File) {
@@ -96,6 +100,11 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       throw new Error("حجم هر تصویر باید کمتر از ۸ مگابایت باشد.");
     }
 
+    if(uploadKind === "cover" || uploadKind === "logo"){
+      if(previewUrl.current)URL.revokeObjectURL(previewUrl.current);
+      previewUrl.current=URL.createObjectURL(file);
+      setLocalPreview({kind:uploadKind,url:previewUrl.current});
+    }
     const form = new FormData();
     form.append("kind", uploadKind);
     form.append("file", uploadKind === "video" ? file : await prepareBusinessImage(file));
@@ -157,6 +166,8 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       setMessage(number(savedCount) + " عکس ذخیره شد؛ " + number(selected.length - savedCount) + " عکس ارسال نشده است. " + (error?.message || "آپلود تصاویر انجام نشد."));
     } finally {
       setUploading(false);
+      if(previewUrl.current){URL.revokeObjectURL(previewUrl.current);previewUrl.current=null;}
+      setLocalPreview(null);
       if (fileRef.current) fileRef.current.value = "";
       if (cameraRef.current) cameraRef.current.value = "";
     }
@@ -208,11 +219,23 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       <div className="panel-heading">
         <div>
           <span className="section-kicker">نمونه‌کار</span>
-          <h2>گالری کسب‌وکار</h2>
+          <h2>ظاهر غرفه و نمونه‌کارها</h2>
         </div>
         <Camera size={20} />
       </div>
 
+      <div className="owner-booth-preview business-profile-hero">
+        <span className="section-kicker">غرفه شما از نگاه مشتری</span>
+        <p>۱. روی پس‌زمینه بزنید و کاور را انتخاب کنید. ۲. روی پروفایل بزنید و عکس آن را بگذارید. ۳. نمونه‌کارها را اضافه کنید. هر عکس را می‌توانید دوباره عوض کنید.</p>
+      {pickerOpen && <div id="media-source-picker" className="media-source-picker" role="group" aria-label="انتخاب منبع عکس">
+        <strong>{uploadKind === "video" ? "افزودن ویدیو (MP4، تا ۲۰ ثانیه و ۱۵ مگابایت)" : uploadKind === "cover" ? "تصویر پس‌زمینه" : uploadKind === "logo" ? "عکس پروفایل" : "افزودن عکس به آلبوم"}</strong>
+        <button className="pill-button dark" type="button" onClick={()=>fileRef.current?.click()}><ImagePlus size={18}/> انتخاب از گالری</button>
+        {uploadKind !== "video" && <button className="pill-button" type="button" onClick={()=>cameraRef.current?.click()}><Camera size={18}/> عکس گرفتن</button>}
+        <button className="pill-button" type="button" onClick={()=>setPickerOpen(false)}>انصراف</button>
+      </div>}
+        <BusinessPhotoHeader name={businessName} cover={localPreview?.kind === "cover" ? localPreview.url : cover?.file_url} logo={localPreview?.kind === "logo" ? localPreview.url : logo?.file_url} disabled={uploading || !configured} onEdit={pick} />
+        <div className="profile-main-card glass-panel"><div className="profile-title-row"><div><h2>{businessName}</h2><p>{businessDetails.description}</p></div></div><div className="profile-meta-grid"><div><span><strong>موقعیت</strong><small>{businessDetails.location}</small></span></div></div><div className="service-chips">{businessDetails.services.map(service=><span key={service}>{service}</span>)}</div><p>{localPreview ? "پیش‌نمایش عکس انتخابی؛ در حال ذخیره…" : "این نمای کاور و پروفایل شماست؛ برای تغییر، روی خود عکس بزنید."}</p></div>
+      </div>
       <p>تصاویر باید متعلق به کسب‌وکار یا با اجازه صاحب اثر باشند. تصویر الهام‌بخش را نمونه‌کار اجراشده معرفی نکنید؛ چهره، نشانی دقیق، شماره تماس و مدارک مشتری را پیش از انتشار حذف یا محو کنید.</p>
       <div className="media-capacity" aria-live="polite">
         <div><strong>{number(media.filter(item => item.kind === "image").length)}</strong><span>عکس ذخیره‌شده</span></div>
@@ -222,19 +245,9 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       <p className="media-capacity-note">کاور و پروفایل جدا از این تعداد هستند. تعداد آلبوم‌ها محدود نیست.</p>
       <p>ویدیو: {number(media.filter(item => item.kind === "video").length)} ذخیره‌شده از {number(videoLimit)}؛ {number(videoRemaining)} جای خالی. MP4، حداکثر ۲۰ ثانیه و ۱۵ مگابایت.</p>
       {videoLimit > 0 && <button type="button" className="pill-button" disabled={uploading || !videoRemaining || !configured} onClick={() => pick("video")}>+ افزودن ویدیو</button>}
-      <div className="owner-booth-preview">
-        <span className="section-kicker">پیش‌نمایش ظاهر غرفه برای مشتری</span>
-        <BusinessPhotoHeader name={businessName} cover={cover?.file_url} logo={logo?.file_url} disabled={uploading || !configured} onEdit={pick} />
-        <div className="profile-main-card glass-panel"><h2>{businessName}</h2><p>برای تغییر تصویر پس‌زمینه یا پروفایل، روی خود تصویر بزنید.</p></div>
-      </div>
       <input ref={fileRef} type="file" accept={uploadKind === "video" ? "video/mp4" : "image/*"} multiple={uploadKind === "image" || uploadKind === "video"} hidden onChange={event => chooseFiles(event.target.files)} />
       <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={event => chooseFiles(event.target.files)} />
-      {pickerOpen && <div className="media-source-picker" role="group" aria-label="انتخاب منبع عکس">
-        <strong>{uploadKind === "video" ? "افزودن ویدیو (MP4، تا ۲۰ ثانیه و ۱۵ مگابایت)" : uploadKind === "cover" ? "تصویر پس‌زمینه" : uploadKind === "logo" ? "عکس پروفایل" : "افزودن عکس به آلبوم"}</strong>
-        <button className="pill-button dark" type="button" onClick={()=>fileRef.current?.click()}><ImagePlus size={18}/> انتخاب از گالری</button>
-        {uploadKind !== "video" && <button className="pill-button" type="button" onClick={()=>cameraRef.current?.click()}><Camera size={18}/> عکس گرفتن</button>}
-        <button className="pill-button" type="button" onClick={()=>setPickerOpen(false)}>انصراف</button>
-      </div>}
+
       <div className="panel-heading"><h3>عکس‌ها و ویدیوهای نمونه‌کار</h3><button className="pill-button dark" type="button" disabled={uploading || !configured || !remaining} onClick={()=>pick("image")}><ImagePlus size={18}/> افزودن عکس</button></div>
       {!configured && (
         <div className="business-media-config-note">
