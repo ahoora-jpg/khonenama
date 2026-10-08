@@ -67,8 +67,8 @@
 .site-header .brand img { width:clamp(120px,12vw,156px) !important; }
 .site-header .brand-tagline { font-size:10px; }
 .market-hero { padding:86px 0 16px; }
-.market-hero-carousel .kh-coverflow { height:clamp(180px,30svh,290px);min-height:0; }
-.market-hero-carousel .kh-coverflow-card { width:min(68%,560px);height:calc(100% - 46px);aspect-ratio:auto; }
+.market-hero-carousel .kh-coverflow { height:clamp(360px,60svh,580px);min-height:0; }
+.market-hero-carousel .kh-coverflow-card { width:min(72%,960px);height:calc(100% - 60px);aspect-ratio:auto; }
 .market-hero-carousel .kh-coverflow-content { padding:12px 18px 20px; }
 .market-hero-carousel .kh-coverflow-content h2 { font-size:clamp(20px,2vw,27px); }
 .market-hero-carousel .kh-coverflow-content p { margin-bottom:8px;font-size:12px; }
@@ -97,7 +97,7 @@
   .site-header { min-height:60px;gap:8px; }
   .site-header .brand img { width:120px !important; }
   .market-hero { padding-top:78px; }
-  .market-hero-carousel .kh-coverflow { height:clamp(160px,25svh,220px);min-height:0; }
+  .market-hero-carousel .kh-coverflow { height:clamp(320px,50svh,440px);min-height:0; }
   .market-hero-carousel .kh-coverflow-card { width:82%;height:calc(100% - 36px); }
   .market-hero-copy { padding-top:14px;width:calc(100% - 28px); }
   .market-hero-copy h1 { font-size:27px; }
