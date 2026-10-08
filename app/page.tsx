@@ -118,7 +118,7 @@ export default async function HomePage() {
   const businesses = await listPublishedBusinesses({ limit: 6 });
   const shelf = businesses.map(b => ({ slug: b.slug, name: b.name, city: b.city, area: b.area, category: b.category, categoryName: b.categoryName, coverUrl: b.media.find(m => m.kind === "cover")?.url || b.media.find(m => m.kind !== "logo")?.url || "", verified: ["verified", "professional"].includes(b.verificationStatus), rating: b.rating, reviewCount: b.reviewCount }));
   return (
-    <main>
+    <main className="home-compact">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
