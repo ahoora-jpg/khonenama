@@ -18,6 +18,17 @@ export default function BusinessPublicationPanel({
   const [verificationStatus, setVerificationStatus] = useState(initialVerificationStatus);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  async function publish() {
+    setLoading(true); setMessage("");
+    try {
+      const response = await fetch("/api/me/business", {method:"PATCH", headers:{"Content-Type":"application/json"}, body:JSON.stringify({action:"publish"})});
+      const result = await response.json();
+      if (!response.ok || !result.ok) { setMessage(result.missing?.length ? "برای انتشار تکمیل کنید: " + result.missing.join("، ") : "انتشار انجام نشد؛ وضعیت را از پشتیبانی پیگیری کنید."); return; }
+      setStatus("published"); setMessage("غرفه منتشر شد؛ اکنون از لینک عمومی قابل مشاهده است.");
+      window.dispatchEvent(new Event("khonenama-business-updated"));
+    } catch { setMessage("ارتباط برقرار نشد؛ اطلاعات شما حفظ شده است."); }
+    finally { setLoading(false); }
+  }
 
   useEffect(() => {
     if (initialStatus) setStatus(initialStatus);
@@ -65,6 +76,11 @@ export default function BusinessPublicationPanel({
         </div>
       </section>
     );
+  }
+
+  if (!status) return <section className="dashboard-panel glass-panel publication-panel"><p role="status">در حال دریافت وضعیت انتشار غرفه...</p></section>;
+  if (status !== "published") {
+    return <section className="dashboard-panel glass-panel publication-panel"><Clock3 size={22} /><div><span className="section-kicker">وضعیت انتشار غرفه</span><h2>{status === "pending" ? "در انتظار بررسی انتشار" : "غرفه هنوز منتشر نشده است"}</h2><p>{initialModerationReason || "دسته فعالیت، خدمات اصلی، محدوده فعالیت و معرفی کسب‌وکار را تکمیل کنید؛ پیشنهاد دسته جدید تا بررسی و انتخاب دسته موجود، پیش‌نویس می‌ماند."}</p><a className="pill-button" href="/dashboard/profile">تکمیل اطلاعات</a>{status === "draft" && <button type="button" className="pill-button dark" disabled={loading} onClick={publish}>{loading ? "در حال بررسی..." : "بررسی و انتشار غرفه"}</button>}<a href="/support"> پیگیری از پشتیبانی</a>{message && <p role="status">{message}</p>}</div></section>;
   }
 
   if (verificationStatus === "verified" || verificationStatus === "professional") {

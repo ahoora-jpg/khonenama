@@ -1,4 +1,5 @@
 import { env } from "cloudflare:workers";
+import { recordConversion } from "@/lib/server/conversion-metrics";
 import { getBusinessSession } from "@/lib/server/business-session";
 import { createUniqueBusinessSlug } from "@/lib/business-slug";
 
@@ -135,6 +136,15 @@ export async function PATCH(request: Request) {
   }
 
   const body = await request.json().catch(() => ({}));
+  if (body?.action === "publish") {
+    const row = await db.prepare("SELECT b.*, (SELECT COUNT(*) FROM business_services s WHERE s.business_id=b.id) AS service_count, (SELECT COUNT(*) FROM business_categories c WHERE c.business_id=b.id) AS category_count, (SELECT COUNT(*) FROM business_service_areas a WHERE a.business_id=b.id) AS area_count FROM businesses b WHERE b.id=?").bind(membership.id).first();
+    if (!row || !["draft","published"].includes(row.status)) return Response.json({ok:false,error:"PUBLICATION_RESTRICTED"}, {status:409});
+    const missing = [!row?.name && "نام کسب‌وکار", String(row?.description || "").trim().length < 20 && "معرفی کسب‌وکار", !row?.city && "شهر", !row?.category_count && "دسته فعالیت", !row?.service_count && "خدمات اصلی", !row?.area_count && "محدوده فعالیت"].filter(Boolean);
+    if (missing.length) return Response.json({ok:false,error:"PROFILE_INCOMPLETE",missing}, {status:409});
+    const updated = await db.prepare("UPDATE businesses SET status='published', updated_at=CURRENT_TIMESTAMP WHERE id=? AND status='draft' RETURNING id").bind(membership.id).first();
+    if (updated) await recordConversion(db,"booth_published");
+    return Response.json({ok:true,status:"published"});
+  }
   const name = cleanText(body?.name, 180);
   const description = cleanText(body?.description, 2000);
   const city = cleanText(body?.city, 100);

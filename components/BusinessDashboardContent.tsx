@@ -116,8 +116,10 @@ export default function BusinessDashboardContent() {
     }
 
     loadProfile();
+    window.addEventListener("khonenama-business-updated", loadProfile);
     return () => {
       cancelled = true;
+      window.removeEventListener("khonenama-business-updated", loadProfile);
     };
   }, []);
 
@@ -139,8 +141,8 @@ export default function BusinessDashboardContent() {
   const nextTasks = useMemo(() => {
     const tasks = [
       { label: "تأیید شماره همراه", done: Boolean(profile.phoneVerified) },
-      { label: "تکمیل آدرس و محدوده", done: Boolean(profile.city && profile.area) },
-      { label: "افزودن حداقل ۳ تصویر", done: Number(profile.mediaCount || 0) >= 3 },
+      { label: "ثبت شهر و محدوده فعالیت", done: Boolean(profile.city && profile.serviceAreas?.length) },
+      { label: "افزودن تصاویر نمونه‌کار (تکمیل اختیاری)", done: Number(profile.mediaCount || 0) >= 1 },
       { label: "ثبت خدمات اصلی", done: services.length > 0 },
     ];
     return tasks;

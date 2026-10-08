@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import BusinessMediaManager from "@/components/BusinessMediaManager";
 import {
   ArrowLeft,
@@ -101,6 +101,13 @@ export default function BusinessOnboardingWizard() {
   const [showPassword, setShowPassword] = useState(false);
   const [serviceAreaQuery, setServiceAreaQuery] = useState("");
   const [profileAreaOpen, setProfileAreaOpen] = useState(false);
+  const [draftReady, setDraftReady] = useState(false);
+  const registrationStarted = useRef(false);
+  function trackStart() {
+    if (registrationStarted.current) return;
+    registrationStarted.current = true;
+    fetch("/api/businesses/register", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({event:"registration_start"}), keepalive:true}).catch(() => {});
+  }
 
   useEffect(() => {
     try {
@@ -121,13 +128,14 @@ export default function BusinessOnboardingWizard() {
         password: "",
         confirmPassword: "",
       });
-    } catch {}
+    } catch {} finally { setDraftReady(true); }
   }, []);
 
   useEffect(() => {
+    if (!draftReady || saved) return;
     const { password, confirmPassword, ...safeDraft } = form;
-    localStorage.setItem("khonenama-business-draft", JSON.stringify(safeDraft));
-  }, [form]);
+    try { localStorage.setItem("khonenama-business-draft", JSON.stringify(safeDraft)); } catch {}
+  }, [form, draftReady, saved]);
 
   const progress = ((step + 1) / steps.length) * 100;
   const availableServices = useMemo(
@@ -149,7 +157,7 @@ export default function BusinessOnboardingWizard() {
     if (step === 0) {
       return (
         form.ownerName.trim().length > 1 &&
-        form.phone.trim().length >= 10 &&
+        /^09\d{9}$/.test(form.phone.replace(/[۰-۹]/g,c=>String("۰۱۲۳۴۵۶۷۸۹".indexOf(c))).replace(/[٠-٩]/g,c=>String("٠١٢٣٤٥٦٧٨٩".indexOf(c))).replace(/[\s-]/g,"")) &&
         form.password.length >= 8 &&
         form.password === form.confirmPassword
       );
@@ -282,11 +290,10 @@ export default function BusinessOnboardingWizard() {
         updatedAt: new Date().toISOString(),
       };
 
-      localStorage.setItem(
-        "khonenama-business-profile",
-        JSON.stringify(storedProfile)
-      );
-      localStorage.removeItem("khonenama-business-draft");
+      try {
+        localStorage.setItem("khonenama-business-profile", JSON.stringify(storedProfile));
+        localStorage.removeItem("khonenama-business-draft");
+      } catch {}
       setSaved(true);
       update("password", "");
       update("confirmPassword", "");
@@ -300,7 +307,7 @@ export default function BusinessOnboardingWizard() {
   }
 
   return (
-    <div className="onboarding-shell">
+    <div className="onboarding-shell" onFocusCapture={trackStart}>
       <div className="onboarding-progress-wrap">
         <div className="onboarding-progress-top">
           <strong>ساخت پروفایل کسب‌وکار</strong>
@@ -831,7 +838,7 @@ export default function BusinessOnboardingWizard() {
               <div className="onboarding-success">
                 <CheckCircle2 size={22} />
                 <div>
-                  <strong>پروفایل در دیتابیس خونه نما ذخیره شد.</strong>
+                <strong>ثبت کسب‌وکار انجام شد؛ وضعیت انتشار و اقدام بعدی را در پنل ببینید.</strong>
                   <small>
                     حساب شما از این پس با شماره همراه و رمز عبور قابل ورود است. اکنون ۱۰ عکس نمونه‌کار رایگان دارید؛ حرفه‌ای ۳۰ عکس با دسته‌بندی و ویژه ۶۰ عکس با دسته‌بندی دارد. تصویر اصلی و پروفایل جدا هستند. در پنل می‌توانید با دوربین گوشی عکس بگیرید یا از گالری انتخاب کنید.
                   </small>
@@ -885,6 +892,7 @@ export default function BusinessOnboardingWizard() {
             </button>
           )}
         </div>
+        {!canContinue && step < 4 && <p className="field-hint" role="status">{step === 0 ? "برای ادامه: نام، شماره همراه ۱۱ رقمی و دو رمز یکسان با حداقل ۸ کاراکتر را وارد کنید." : step === 1 ? "برای ادامه: نام کسب‌وکار، شهر و دسته فعالیت را مشخص کنید." : step === 2 ? "برای ادامه: حداقل یک خدمت و یک محدوده فعالیت انتخاب کنید." : "برای ادامه: معرفی کسب‌وکار را با حداقل ۲۰ کاراکتر تکمیل کنید؛ تصاویر را می‌توانید بعداً اضافه کنید."}</p>}
 
         {step === steps.length - 1 && saved && (
           <a className="onboarding-dashboard-link" href="/dashboard">

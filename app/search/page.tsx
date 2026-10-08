@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { businesses as demoBusinesses } from "@/lib/demo-data";
 import { listPublishedBusinesses } from "@/lib/server/public-businesses";
+import { BUSINESS_CATEGORIES } from "@/lib/business-taxonomy";
 import { BadgeCheck, BriefcaseBusiness, Crown, MapPin, Search, SlidersHorizontal, Star } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -82,9 +83,11 @@ export default async function SearchPage({
   const onlyVerified = params.verified === "1";
   const onlyMedia = params.media === "1";
   const onlyPremium = params.premium === "1";
+  const exactService = BUSINESS_CATEGORIES.flatMap(category => category.services).find(service => normalizeSearchText(service) === query);
 
   const liveBusinesses = await listPublishedBusinesses({
     query: query || undefined,
+    serviceName: exactService,
     location: location || undefined,
     limit: 50,
   });
@@ -93,7 +96,7 @@ export default async function SearchPage({
     const haystack = [business.name, business.description, ...business.services].join(" ").toLowerCase();
     const queryMatch = !query || haystack.includes(query.toLowerCase());
     const locationMatch = !location || business.city.includes(location) || business.area.includes(location);
-    return queryMatch && locationMatch;
+    return queryMatch && locationMatch && (!exactService || business.services.some(service => normalizeSearchText(service) === query));
   });
 
   const liveSlugs = new Set(liveBusinesses.map((business) => business.slug));
@@ -182,7 +185,7 @@ export default async function SearchPage({
 
             <div className="results-list">
               {results.length > 0 ? results.map((business) => (
-                <a className={"result-card plan-card-" + business.planCode} href={"/business/" + business.slug} key={business.slug}>
+                <a className={"result-card plan-card-" + business.planCode} href={"/business/" + business.slug + "?" + new URLSearchParams({q: params.q || "", service: exactService || "", location: params.location || ""}).toString()} key={business.slug}>
                   <div className="result-thumb">
                     {business.coverUrl && <img src={business.coverUrl} alt={business.name} loading="lazy" />}
                   </div>
@@ -215,6 +218,7 @@ export default async function SearchPage({
                 <div className="category-empty glass-panel">
                   <strong>نتیجه‌ای پیدا نشد.</strong>
                   <p>عبارت جستجو یا محدوده را کمی عمومی‌تر امتحان کنید.</p>
+                  <a className="pill-button" href="/search">حذف فیلترها و جستجوی دوباره</a>
                 </div>
               )}
             </div>

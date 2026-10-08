@@ -16,10 +16,11 @@ async function send(slug: string, event: string) {
 export default function BusinessAnalyticsTracker({ slug }: { slug: string }) {
   useEffect(() => {
     const key = "khonenama-view-" + slug;
-    const last = Number(sessionStorage.getItem(key) || "0");
+    let last = 0;
+    try { last = Number(sessionStorage.getItem(key) || "0"); } catch {}
     const now = Date.now();
     if (!last || now - last > 30 * 60 * 1000) {
-      sessionStorage.setItem(key, String(now));
+      try { sessionStorage.setItem(key, String(now)); } catch {}
       void send(slug, "view");
     }
 

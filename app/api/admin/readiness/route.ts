@@ -46,6 +46,7 @@ export async function GET(request: Request) {
         orderSettlement: "not_implemented",
         ga4ConversionTracking: "not_verified",
       },
+      conversionCounts: present.has("marketplace_conversion_daily") ? (await db.prepare("SELECT event,SUM(count) AS count FROM marketplace_conversion_daily WHERE event_date>=date('now','-29 days') GROUP BY event").all()).results : [],
     }, { headers });
   } catch {
     console.error("commercial readiness database check failed");

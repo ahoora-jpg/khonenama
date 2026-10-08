@@ -47,6 +47,7 @@ async function resolveBusiness(slug: string) {
       verified: demo.verified,
       featured: demo.featured,
       services: demo.services,
+      serviceAreas: [demo.city, demo.area].filter(Boolean),
       category: demo.category,
       rating: demo.rating,
       reviewCount: demo.reviewCount,
@@ -84,6 +85,7 @@ async function resolveBusiness(slug: string) {
     verified: live.verificationStatus === "verified" || live.verificationStatus === "professional",
     featured: live.featured,
     services: live.services,
+    serviceAreas: live.serviceAreas,
     category: live.category,
     rating: live.rating,
     reviewCount: live.reviewCount,
@@ -121,8 +123,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-export default async function BusinessPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function BusinessPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ location?: string }> }) {
   const { slug } = await params;
+  const context = await searchParams;
   const business = await resolveBusiness(slug);
   if (!business) {
     const redirectSlug = await getBusinessSlugRedirect(slug);
@@ -237,12 +240,12 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                   <div className="profile-name-line">
                     <h1>{business.name}</h1>{business.source !== "demo" && <><SavedBusinessButton slug={business.slug}/><SupportForm businessSlug={business.slug}/></>}
                     {business.source === "demo" && <span className="demo-profile-pill">نمونه نمایشی</span>}
-                    {business.verified && <BadgeCheck size={22} className="verified-icon" />}
+                    {business.verified && <span title="تأیید کسب‌وکار؛ مستقل از اشتراک و امتیاز مشتری" aria-label="کسب‌وکار تأییدشده"><BadgeCheck size={22} className="verified-icon" /></span>}
                     {business.planCode === "pro" && (
-                      <span className="plan-public-badge is-pro"><BriefcaseBusiness size={14} /> حرفه‌ای</span>
+                      <span className="plan-public-badge is-pro"><BriefcaseBusiness size={14} /> اشتراک حرفه‌ای</span>
                     )}
                     {business.planCode === "premium" && (
-                      <span className="plan-public-badge is-premium"><Crown size={14} /> ویژه</span>
+                      <span className="plan-public-badge is-premium"><Crown size={14} /> اشتراک ویژه</span>
                     )}
                   </div>
                   <p>{business.description}</p>
@@ -272,9 +275,12 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
                     <MessageCircle size={17} /> واتساپ
                   </a>
                 )}
-                <a className="pill-button profile-secondary" data-analytics-event="quote_start" href="#quote"><MessageCircle size={17} /> درخواست قیمت</a>
+                {business.source !== "demo" && <a className="pill-button profile-secondary" href="#quote"><MessageCircle size={17} /> درخواست قیمت</a>}
                 {business.source !== "demo" && <a className="pill-button profile-secondary" href="#reviews"><Star size={17} /> ثبت نظر و امتیاز</a>}
               </div>
+              <div className="service-chips">{business.services.slice(0, 6).map(service => <a key={service} href={"?" + new URLSearchParams({service, location: context.location || ""}).toString() + "#quote"}>{service}</a>)}</div>
+              <p className="profile-service-area">محدوده فعالیت: {business.serviceAreas.length ? business.serviceAreas.join("، ") : "برای محدوده ارائه خدمت با کسب‌وکار هماهنگ کنید."}</p>
+              {business.source !== "demo" && <small>تأیید کسب‌وکار، امتیاز مشتریان و اشتراک سه موضوع جدا هستند؛ اشتراک تضمین کیفیت خدمت نیست.</small>}
             </div>
           </div>
 
@@ -367,7 +373,7 @@ export default async function BusinessPage({ params }: { params: Promise<{ slug:
             <span className="section-kicker">استعلام</span>
             <h2>درخواست قیمت</h2>
             {business.source === "d1" ? (
-              <QuoteRequestForm businessSlug={business.slug} businessName={business.name} />
+              <QuoteRequestForm businessSlug={business.slug} businessName={business.name} services={business.services} />
             ) : (
               <div className="demo-quote-note glass-panel">
                 این یک پروفایل نمونه برای نمایش تجربه خونه نماست. درخواست قیمت واقعی فقط برای کسب‌وکارهای ثبت‌شده فعال می‌شود.

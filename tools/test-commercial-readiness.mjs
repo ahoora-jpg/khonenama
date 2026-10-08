@@ -35,6 +35,7 @@ for (const status of ['draft', 'pending', 'suspended', 'published']) {
       'cloudflare:workers': { env: { DB: db } },
       '@/lib/server/business-session': { getBusinessSession: async () => ({ user_id: 'owner' }) },
       '@/lib/business-slug': { createUniqueBusinessSlug: async () => 'real-vendor' },
+      '@/lib/server/conversion-metrics': { recordConversion: async () => {} },
     });
     const response = await route.GET(new Request('https://khonenama.ir/api/me/business'));
     assert.equal(response.status, 200);

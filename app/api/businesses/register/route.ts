@@ -1,4 +1,5 @@
 import { env } from "cloudflare:workers";
+import { recordConversion } from "@/lib/server/conversion-metrics";
 import { createBusinessSession, getBusinessSession } from "@/lib/server/business-session";
 import {
   BUSINESS_CATEGORIES,
@@ -45,6 +46,12 @@ export async function POST(request: Request) {
   try {
     stage = "parse-request";
     const body = await request.json();
+    if (body?.event === "registration_start") {
+      const db = (env as any).DB;
+      if (!db) return Response.json({ok:false}, {status:503});
+      await recordConversion(db, "registration_start");
+      return Response.json({ok:true});
+    }
 
     const ownerName = cleanText(body?.ownerName, 120);
     const phone = normalizeIranPhone(cleanText(body?.phone, 32));
@@ -315,6 +322,8 @@ export async function POST(request: Request) {
     stage = "session-create";
     // All new businesses start on the free plan; upgrades happen after registration.
     const session = await createBusinessSession(userId, request);
+    await recordConversion(db, "business_registered");
+    if (publicationStatus === "published") await recordConversion(db, "booth_published");
 
     return Response.json(
       {

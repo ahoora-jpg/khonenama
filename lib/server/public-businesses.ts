@@ -22,6 +22,7 @@ export type PublicBusiness = {
   categoryName: string;
   categories: { slug: string; name: string; primary: boolean }[];
   services: string[];
+  serviceAreas: string[];
   media: { id: number; kind: string; url: string; thumbnailUrl: string; altText: string; sortOrder: number }[];
   hours: { weekday: number; opensAt: string; closesAt: string; isClosed: boolean }[];
   planCode: "free" | "pro" | "premium";
@@ -61,7 +62,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
 
   const result: PublicBusiness[] = [];
   for (const row of rows) {
-    const [servicesResult, categoriesResult, reviewResult, planResult, promotionResult, mediaResult, hoursResult, reviewsResult] = await Promise.all([
+    const [servicesResult, categoriesResult, reviewResult, planResult, promotionResult, mediaResult, hoursResult, reviewsResult, areasResult] = await Promise.all([
       db
         .prepare(
           "SELECT s.name FROM business_services bs JOIN services s ON s.id = bs.service_id WHERE bs.business_id = ? ORDER BY s.id"
@@ -111,6 +112,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         )
         .bind(row.id)
         .all(),
+      db.prepare("SELECT area FROM business_service_areas WHERE business_id = ? ORDER BY area").bind(row.id).all(),
     ]);
 
     result.push({
@@ -136,6 +138,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         primary: Boolean(item.is_primary),
       })),
       services: (servicesResult?.results || []).map((item: any) => item.name),
+      serviceAreas: (areasResult?.results || []).map((item: any) => item.area),
       media: selectPublicMedia<PublicBusiness["media"][number]>((mediaResult?.results || []).map((item: any) => ({
         id: Number(item.id),
         kind: item.kind || "image",
