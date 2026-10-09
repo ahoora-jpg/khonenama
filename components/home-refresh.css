@@ -131,3 +131,30 @@
 .profile-integrated-contact{display:flex;flex-wrap:wrap;gap:16px 24px;padding:20px 0;font-size:16px}.profile-integrated-contact>a,.profile-integrated-contact>p{display:flex;align-items:center;gap:8px;margin:0;overflow-wrap:anywhere}.profile-integrated-contact .public-hours{width:100%}.profile-integrated-services h2{font-size:20px}.profile-album-link{display:block;padding:18px;margin-top:20px;border-radius:18px;background:#e4eee7;color:#174b37;font-size:18px;font-weight:700}#gallery,#quote,#reviews{scroll-margin-top:24px}#reviews p,#reviews label,#reviews input,#reviews textarea,#reviews select,#reviews button{font-size:16px;line-height:1.7}#reviews input,#reviews textarea,#reviews select{font-size:17px;min-height:46px}#reviews small{font-size:14px}#reviews button{min-height:44px}#reviews h3{font-size:21px}
 
 .quote-honeypot,.review-honeypot{left:0!important;inset-inline-start:0!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%);white-space:nowrap;}
+/* Interior customer and registration pages: tactile tiles without changing home. */
+:is(.onboarding-page,.search-page,.business-profile-page){background:radial-gradient(ellipse at 95% 8%,#f3ddc9 0,transparent 38%),radial-gradient(ellipse at 3% 45%,#dcece6 0,transparent 36%),#f8f6f1;}
+:is(.onboarding-page,.search-page) .section-kicker,.business-profile-page .section-kicker{color:#87462c;}
+.onboarding-page .onboarding-card,.onboarding-page .onboarding-progress-wrap,.search-page .filters-panel,.business-profile-page .profile-main-card{background:linear-gradient(145deg,#fffdf9,#f7f2e9);border:1px solid #e0d0bd;box-shadow:0 7px 0 #e8dfd2,0 18px 35px -22px #785c43,inset 0 1px 0 white;}
+.onboarding-page .onboarding-progress-wrap{background:linear-gradient(145deg,#eef6f1,#dcece3);border-color:#b6d1c2;box-shadow:0 6px 0 #cedfd5,0 16px 30px -22px #315c46;}
+.onboarding-page .onboarding-steps button.is-active{background:#176b4d;color:white;box-shadow:0 4px 0 #105039;}
+.onboarding-page .onboarding-steps button.is-active>span{background:#f8dfac;color:#3b372b;}
+.onboarding-page .onboarding-trust-strip span{background:#e3efe8;color:#24553f;border:1px solid #c3d8cb;box-shadow:0 3px 0 #cfdfd5;}
+.onboarding-page .choice-chip{background:#fffaf1;border-color:#dcccaf;box-shadow:0 3px 0 #e5dac7;}
+.onboarding-page .choice-chip.is-selected{background:#deeee4;color:#174b37;border-color:#82b79c;box-shadow:0 3px 0 #bed8c9;}
+.onboarding-page>.shell>details{background:linear-gradient(135deg,#fffaf0,#f1e5d2);border-color:#dcc7a9;box-shadow:0 4px 0 #e5d7c3;}
+.onboarding-page .form-input,.onboarding-page textarea,.search-page input,.search-page select{background:#fff!important;border-color:#cbbb9f;}
+.search-page .results-search{background:linear-gradient(120deg,#e4efe8,#f5e7cf);padding:18px;border:1px solid #c9d7c5;border-radius:22px;box-shadow:0 5px 0 #d7e1d2;}
+.search-page .result-card{background:linear-gradient(130deg,#fffdf9,#f2eee5);border-color:#d8cbb9;box-shadow:0 5px 0 #e3d8c8,0 17px 30px -23px #69543f;}
+.search-page .result-card:nth-child(3n+2){background:linear-gradient(130deg,#fffdf9,#e9f1eb);border-color:#c6d8ca;box-shadow:0 5px 0 #d2dfd5,0 17px 30px -23px #426950;}
+.search-page .result-card:nth-child(3n){background:linear-gradient(130deg,#fffdf9,#eeeaf4);border-color:#d2c9de;box-shadow:0 5px 0 #ddd5e5,0 17px 30px -23px #665477;}
+.search-page .result-tags span{background:#e8efe5;color:#34573a;border:1px solid #ccdbc7;}
+.business-profile-page .profile-meta-grid>a,.business-profile-page .profile-meta-grid>div{background:#eaf1e9;border:1px solid #cbdac5;border-radius:16px;padding:14px;box-shadow:0 3px 0 #d6e1d1;}
+.business-profile-page .profile-album-link{background:linear-gradient(130deg,#e1eee3,#cce3d5);border:1px solid #aacbb8;box-shadow:0 5px 0 #bcd6c5,0 12px 22px -17px #315c46;}
+.business-profile-page .public-service-groups details{background:#f4ebdb;border:1px solid #d9c8ac;border-radius:14px;padding:12px;margin-bottom:10px;box-shadow:0 3px 0 #e6d8c2;}
+.business-profile-page .public-service-groups details:nth-child(even){background:#e8f0ea;border-color:#c2d6c8;box-shadow:0 3px 0 #d3e1d6;}
+.business-profile-page #gallery>details{background:linear-gradient(135deg,#fffdf8,#f1e9dd);border:1px solid #dacbb6;box-shadow:0 5px 0 #e3d6c4;}
+.business-profile-page .quote-request-form{background:linear-gradient(145deg,#f2f8f3,#e2eee5);border:1px solid #b9d3c0;box-shadow:0 6px 0 #cbded1,0 18px 30px -24px #2c5940;}
+.business-profile-page .review-submit-card{background:linear-gradient(145deg,#fffbf4,#f4e8d7);border:1px solid #dfc5a5;box-shadow:0 6px 0 #e9d9c3,0 18px 30px -24px #755536;}
+.business-profile-page :is(.quote-request-form,.review-submit-card) :is(input,textarea,select){background:white;}
+:is(.onboarding-page,.search-page,.business-profile-page) :is(input,textarea,select,button,a):focus-visible{outline:3px solid #176b4d;outline-offset:3px;}
+@media(max-width:640px){.search-page .results-search{padding:14px}.business-profile-page .profile-meta-grid>a,.business-profile-page .profile-meta-grid>div{padding:10px;}}
