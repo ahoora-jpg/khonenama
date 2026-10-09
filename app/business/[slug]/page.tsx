@@ -279,21 +279,8 @@ export default async function BusinessPage({ params, searchParams }: { params: P
                 {business.source !== "demo" && <a className="pill-button profile-secondary" href="#quote"><MessageCircle size={17} /> درخواست قیمت</a>}
                 {business.source !== "demo" && <a className="pill-button profile-secondary" href="#reviews"><Star size={17} /> ثبت نظر و امتیاز</a>}
               </div>
-              <div className="service-chips">{business.services.slice(0, 6).map(service => <a key={service} href={"?" + new URLSearchParams({service, location: context.location || ""}).toString() + "#quote"}>{service}</a>)}</div>
-              <p className="profile-service-area">محدوده فعالیت: {business.serviceAreas.length ? business.serviceAreas.join("، ") : "برای محدوده ارائه خدمت با کسب‌وکار هماهنگ کنید."}</p>
-              {business.source !== "demo" && <small>تأیید کسب‌وکار، امتیاز مشتریان و اشتراک سه موضوع جدا هستند؛ اشتراک تضمین کیفیت خدمت نیست.</small>}
-            </div>
-          </div>
-
-          <div className="profile-content-grid">
-            <section className="profile-section">
-              <span className="section-kicker">خدمات</span>
-              <h2>خدمات و تخصص‌ها</h2>
-              <div className="public-service-groups">{groupServices(business.services).map(group=><details key={group.label}><summary>{group.label}</summary><div className="service-chips">{group.items.map(service=><a key={service} href={"?"+new URLSearchParams({service,location:context.location||""}).toString()+"#quote"}>{service}</a>)}</div></details>)}</div>
-            </section>
-
-            <aside className="profile-side-card glass-panel" id="contact">
-              <h3>اطلاعات کسب‌وکار</h3>
+              <a className="profile-album-link" href="#gallery">آلبوم عکس‌ها و فیلم‌ها — مشاهده نمونه‌کارها ↓</a>
+              <div className="profile-integrated-contact" id="contact">
               {business.address && <p><MapPin size={14} /> {business.address}</p>}
               {business.phone && <a data-analytics-event="phone" href={"tel:" + business.phone}><Phone size={14} /> {business.phone}</a>}
               {business.whatsapp && (
@@ -321,7 +308,13 @@ export default async function BusinessPage({ params, searchParams }: { params: P
               {!business.address && !business.phone && !business.website && !business.instagram && (
                 <p>اطلاعات تماس پس از تکمیل و تأیید صاحب کسب‌وکار در این بخش نمایش داده می‌شود.</p>
               )}
-            </aside>
+              </div>
+              <div className="profile-integrated-services"><h2>خدمات و تخصص‌ها</h2>
+              <div className="public-service-groups">{groupServices(business.services).map(group=><details key={group.label}><summary>{group.label}</summary><div className="service-chips">{group.items.map(service=><a key={service} href={"?"+new URLSearchParams({service,location:context.location||""}).toString()+"#quote"}>{service}</a>)}</div></details>)}</div>
+              </div>
+              <p className="profile-service-area">محدوده فعالیت: {business.serviceAreas.length ? business.serviceAreas.join("، ") : "برای محدوده ارائه خدمت با کسب‌وکار هماهنگ کنید."}</p>
+              {business.source !== "demo" && <small>تأیید کسب‌وکار، امتیاز مشتریان و اشتراک سه موضوع جدا هستند؛ اشتراک تضمین کیفیت خدمت نیست.</small>}
+            </div>
           </div>
 
           <section className="profile-section" id="gallery">
@@ -361,27 +354,6 @@ export default async function BusinessPage({ params, searchParams }: { params: P
           </section>
 
           {business.source !== "demo" && <PublicCampaigns slug={business.slug}/>}
-          <BusinessReviews
-            businessSlug={business.slug}
-            businessName={business.name}
-            reviews={business.reviews}
-            rating={business.rating}
-            reviewCount={business.reviewCount}
-            demo={business.source === "demo"}
-          />
-
-          <section className="profile-section quote-section" id="quote">
-            <span className="section-kicker">استعلام</span>
-            <h2>درخواست قیمت</h2>
-            {business.source === "d1" ? (
-              <QuoteRequestForm businessSlug={business.slug} businessName={business.name} services={business.services} />
-            ) : (
-              <div className="demo-quote-note glass-panel">
-                این یک پروفایل نمونه برای نمایش تجربه خونه نماست. درخواست قیمت واقعی فقط برای کسب‌وکارهای ثبت‌شده فعال می‌شود.
-              </div>
-            )}
-          </section>
-
           {relatedBusinesses.length > 0 && (
             <section className="profile-section related-businesses-section">
               <div className="section-heading compact-heading">
@@ -407,6 +379,27 @@ export default async function BusinessPage({ params, searchParams }: { params: P
               </div>
             </section>
           )}
+          <section className="profile-section quote-section" id="quote">
+            <span className="section-kicker">استعلام</span>
+            <h2>درخواست قیمت</h2>
+            {business.source === "d1" ? (
+              <QuoteRequestForm businessSlug={business.slug} businessName={business.name} services={business.services} />
+            ) : (
+              <div className="demo-quote-note glass-panel">
+                این یک پروفایل نمونه برای نمایش تجربه خونه نماست. درخواست قیمت واقعی فقط برای کسب‌وکارهای ثبت‌شده فعال می‌شود.
+              </div>
+            )}
+          </section>
+
+          <BusinessReviews
+            businessSlug={business.slug}
+            businessName={business.name}
+            reviews={business.reviews}
+            rating={business.rating}
+            reviewCount={business.reviewCount}
+            demo={business.source === "demo"}
+          />
+
         </div>
       </section>
       <Footer />
