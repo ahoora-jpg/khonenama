@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import AdminContactFloat from "@/components/AdminContactFloat";
 import "./globals.css";
 import "./inner-pages.css";
 import "@/components/home-refresh.css";
@@ -42,7 +41,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="fa" dir="rtl">
       <head><link rel="icon" href="/favicon.ico?v=2" sizes="any"/><link rel="icon" type="image/png" href="/khonenama-icon.png?v=2"/><link rel="apple-touch-icon" href="/khonenama-icon.png?v=2"/></head>
-      <body>{children}<AdminContactFloat /></body>
+      <body>{children}</body>
     </html>
   );
 }

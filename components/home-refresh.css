@@ -158,3 +158,5 @@
 .business-profile-page :is(.quote-request-form,.review-submit-card) :is(input,textarea,select){background:white;}
 :is(.onboarding-page,.search-page,.business-profile-page) :is(input,textarea,select,button,a):focus-visible{outline:3px solid #176b4d;outline-offset:3px;}
 @media(max-width:640px){.search-page .results-search{padding:14px}.business-profile-page .profile-meta-grid>a,.business-profile-page .profile-meta-grid>div{padding:10px;}}
+
+.kh-studio-footer .footer-trust-links .footer-admin-contact{display:inline-flex;align-items:center;gap:8px;padding:11px 14px;border-radius:12px;background:#f6dfaf;color:#263f33;border:1px solid #ffedc7;font-size:15px;font-weight:700;overflow-wrap:anywhere}.kh-studio-footer .footer-credit{padding:14px 18px;border:1px solid #ecd1aa;border-radius:16px;background:#f2e4cf;color:#344936;gap:12px}.kh-studio-footer .footer-credit a{color:#254733;font-size:15px}.kh-studio-footer .footer-credit a:hover{color:#854426}.kh-studio-footer .footer-admin-contact:hover{background:#fff0d0}.kh-studio-footer .footer-admin-contact:focus-visible,.kh-studio-footer .footer-credit a:focus-visible{outline:3px solid #fff;outline-offset:3px}

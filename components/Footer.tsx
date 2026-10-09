@@ -1,4 +1,4 @@
-import { CircleHelp, ExternalLink, Instagram, MapPin, MessageCircle, Sparkles } from "lucide-react";
+import { Mail, CircleHelp, ExternalLink, Instagram, MapPin, MessageCircle, Sparkles } from "lucide-react";
 
 const groups = [
   {
@@ -77,13 +77,14 @@ export default function Footer() {
             </div>
 
             <div className="footer-trust-links">
+              <a className="footer-admin-contact" href="mailto:info@khonehnama.ir"><Mail size={17}/><span dir="ltr">info@khonehnama.ir</span></a>
               <a href="/privacy">حریم خصوصی</a>
               <a href="/terms">قوانین استفاده</a>
               <a href="/editorial-policy">سیاست تحریریه</a>
               <a href={preferredSourceUrl} target="_blank" rel="noopener noreferrer">
                 <Sparkles size={13} /> افزودن به منابع ترجیحی گوگل
               </a>
-              <a
+              <a className="footer-admin-contact"
                 href="https://wa.me/989122606778?text=%D8%B3%D9%84%D8%A7%D9%85%D8%8C%20%D8%A7%D8%B2%20%D8%B3%D8%A7%DB%8C%D8%AA%20%D8%AE%D9%88%D9%86%D9%87%20%D9%86%D9%85%D8%A7%20%D9%BE%DB%8C%D8%A7%D9%85%20%D9%85%DB%8C%E2%80%8C%D8%AF%D9%87%D9%85."
                 target="_blank"
                 rel="noopener noreferrer"
@@ -106,7 +107,7 @@ export default function Footer() {
           <span>© ۲۰۲۶ خونه نما · همه حقوق محفوظ است.</span>
           <a className="kh-footer-top" href="#">بازگشت به بالا ↑</a>
           <div className="footer-credit">
-            <a href="/admin/login" rel="nofollow" style={{ fontSize: "12px", fontWeight: 400 }}>ورود مدیریت</a>
+            <a href="/admin/login" rel="nofollow" style={{ fontSize: "14px", fontWeight: 400 }}>ورود مدیریت</a>
             <span>طراحی وب‌سایت توسط</span>
             <a href="https://ahoora-studio.ir/" target="_blank" rel="noopener">
               اهورا استودیو <ExternalLink size={12} />
@@ -116,7 +117,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <MessageCircle size={12} /> واتساپ
+              <MessageCircle size={16} /> ارتباط با اهورا استودیو
             </a>
           </div>
         </div>
