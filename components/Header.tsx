@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown, Download, Menu, Search, Store, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const categories = [
   ["پرده و متعلقات", "/category/curtain"],
@@ -23,16 +23,9 @@ const androidDownloadUrl = "/download-app";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const updateScroll = () => setScrolled(window.scrollY > 0);
-    updateScroll();
-    window.addEventListener("scroll", updateScroll, { passive: true });
-    return () => window.removeEventListener("scroll", updateScroll);
-  }, []);
 
   return (
-    <header className={`site-header-wrap${scrolled && !open ? " is-scrolled" : ""}`}>
+    <header className="site-header-wrap">
       <div className="site-header shell glass-panel premium-header">
         <a className="brand" href="/" aria-label="خونه نما">
           <img src="/khonenama-brand.webp" alt="خونه نما" width={660} height={203} style={{ width: "clamp(136px, 16vw, 200px)", height: "auto", display: "block" }} />

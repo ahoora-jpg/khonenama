@@ -5,6 +5,7 @@ import BusinessPublicationPanel from "@/components/BusinessPublicationPanel";
 import BusinessPublicLinkCard from "@/components/BusinessPublicLinkCard";
 import BusinessMediaManager from "@/components/BusinessMediaManager";
 import BusinessLeadInbox from "@/components/BusinessLeadInbox";
+import BusinessBrowserNotifications from "@/components/BusinessBrowserNotifications";
 import BusinessReviewPanel from "@/components/BusinessReviewPanel";
 import BusinessAnalyticsPanel from "@/components/BusinessAnalyticsPanel";
 import BusinessVisibilitySettings from "@/components/BusinessVisibilitySettings";
@@ -246,6 +247,7 @@ export default function BusinessDashboardContent() {
           </section>
 
           <p><a href="/dashboard/campaigns">مدیریت کمپین و جشنواره</a> · <a href="/support">پشتیبانی و گزارش مشکل</a></p>
+          <BusinessBrowserNotifications />
           <BusinessLeadInbox />
         </div>
 

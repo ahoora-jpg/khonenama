@@ -82,7 +82,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 
 /* Header */
-.site-header-wrap { position: fixed; z-index: 50; top: 14px; inset-inline: 0; }
+.site-header-wrap { position: absolute; z-index: 50; top: 14px; inset-inline: 0; }
+.site-header-wrap .site-header { background: #fafaf7; backdrop-filter: none; -webkit-backdrop-filter: none; }
 .site-header {
   min-height: 68px;
   border-radius: 22px;

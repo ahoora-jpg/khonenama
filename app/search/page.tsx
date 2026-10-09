@@ -1,4 +1,7 @@
 import SearchInterestTracker from "@/components/SearchInterestTracker";
+import ServiceSearchSuggestions from "@/components/ServiceSearchSuggestions";
+import {serviceCatalog,servicePath} from "@/lib/service-catalog";
+import {guides} from "@/lib/guides";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -85,6 +88,8 @@ export default async function SearchPage({
   const onlyMedia = params.media === "1";
   const onlyPremium = params.premium === "1";
   const exactService = BUSINESS_CATEGORIES.flatMap(category => category.services).find(service => normalizeSearchText(service) === query);
+  const matchingServices=query?serviceCatalog.filter(service=>normalizeSearchText(service.name).includes(query)).filter((service,index,all)=>all.findIndex(item=>item.name===service.name)===index).slice(0,12):[];
+  const matchingGuides=query?guides.filter(guide=>normalizeSearchText([guide.title,...guide.keywords].join(" ")).includes(query)).slice(0,6):[];
 
   const liveBusinesses = await listPublishedBusinesses({
     query: query || undefined,
@@ -155,10 +160,12 @@ export default async function SearchPage({
           </div>
 
           <form className="results-search">
-            <label><Search size={18} /><input name="q" defaultValue={query} placeholder="مثلاً پرده زبرا" /></label>
+            <label><Search size={18} /><input name="q" list="khonenama-service-search" defaultValue={query} placeholder="مثلاً پرده مینیمال" /></label>
             <label><MapPin size={18} /><input name="location" defaultValue={location} /></label>
             <button>جستجو</button>
           </form>
+          <ServiceSearchSuggestions />
+          {(matchingServices.length>0||matchingGuides.length>0)&&<section className="search-related-content"><h2>خدمات و راهنماهای مرتبط</h2><div>{matchingServices.map(service=><a key={service.name} href={servicePath(service)}>{service.name}</a>)}{matchingGuides.map(guide=><a key={guide.slug} href={"/magazine/"+guide.slug}>راهنما: {guide.title}</a>)}</div></section>}
 
           <div className="results-layout">
             <form className="filters-panel glass-panel" method="get">

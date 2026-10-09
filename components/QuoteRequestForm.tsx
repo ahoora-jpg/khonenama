@@ -44,7 +44,7 @@ export default function QuoteRequestForm({
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const chosen = params.get("service") || params.get("q") || "";
-    if (services.includes(chosen)) setService(chosen);
+    if (chosen) setService(chosen.slice(0, 120));
     setArea((params.get("location") || "").slice(0, 100));
   }, [services.join("|")]);
   function start() {
