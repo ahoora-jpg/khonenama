@@ -41,6 +41,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fa" dir="rtl">
+      <head><link rel="icon" href="/favicon.ico?v=2" sizes="any"/><link rel="icon" type="image/png" href="/khonenama-icon.png?v=2"/><link rel="apple-touch-icon" href="/khonenama-icon.png?v=2"/></head>
       <body>{children}<AdminContactFloat /></body>
     </html>
   );

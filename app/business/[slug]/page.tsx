@@ -48,6 +48,7 @@ async function resolveBusiness(slug: string) {
       verified: demo.verified,
       featured: demo.featured,
       services: demo.services,
+      coverageNote: "",
       serviceAreas: [demo.city, demo.area].filter(Boolean),
       category: demo.category,
       rating: demo.rating,
@@ -87,6 +88,7 @@ async function resolveBusiness(slug: string) {
     featured: live.featured,
     services: live.services,
     serviceAreas: live.serviceAreas,
+    coverageNote: live.coverageNote,
     category: live.category,
     rating: live.rating,
     reviewCount: live.reviewCount,
@@ -313,6 +315,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
               <div className="public-service-groups">{groupServices(business.services).map(group=><details key={group.label}><summary>{group.label}</summary><div className="service-chips">{group.items.map(service=><a key={service} href={"?"+new URLSearchParams({service,location:context.location||""}).toString()+"#quote"}>{service}</a>)}</div></details>)}</div>
               </div>
               <p className="profile-service-area">محدوده فعالیت: {business.serviceAreas.length ? business.serviceAreas.join("، ") : "برای محدوده ارائه خدمت با کسب‌وکار هماهنگ کنید."}</p>
+              {business.coverageNote && <p className="profile-coverage-note" style={{whiteSpace:"pre-wrap"}}>{business.coverageNote}</p>}
               {business.source !== "demo" && <small>تأیید کسب‌وکار، امتیاز مشتریان و اشتراک سه موضوع جدا هستند؛ اشتراک تضمین کیفیت خدمت نیست.</small>}
             </div>
           </div>

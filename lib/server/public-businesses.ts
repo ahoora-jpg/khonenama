@@ -1,3 +1,5 @@
+import { normalizeServiceAreas } from "@/lib/service-area";
+import { ensureBusinessCoverage } from "@/lib/server/business-coverage";
 import { KARAJ_AREAS } from "@/lib/karaj-areas";
 import {selectPublicMedia} from "@/lib/subscription-lifecycle";
 import { env } from "cloudflare:workers";
@@ -24,6 +26,7 @@ export type PublicBusiness = {
   categories: { slug: string; name: string; primary: boolean }[];
   services: string[];
   serviceAreas: string[];
+  coverageNote: string;
   media: { id: number; kind: string; url: string; thumbnailUrl: string; altText: string; sortOrder: number }[];
   hours: { weekday: number; opensAt: string; closesAt: string; isClosed: boolean }[];
   planCode: "free" | "pro" | "premium";
@@ -60,6 +63,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
 
   await ensureBusinessMediaSchema(db);
   await ensureReviewReplies(db);
+  await ensureBusinessCoverage(db);
 
   const result: PublicBusiness[] = [];
   for (const row of rows) {
@@ -116,6 +120,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
       db.prepare("SELECT city, area FROM business_service_areas WHERE business_id = ? ORDER BY area").bind(row.id).all(),
     ]);
 
+    const coverage=await db.prepare("SELECT note FROM business_coverage_notes WHERE business_id=?").bind(row.id).first();
     result.push({
       id: Number(row.id),
       slug: row.slug,
@@ -139,7 +144,8 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         primary: Boolean(item.is_primary),
       })),
       services: (servicesResult?.results || []).map((item: any) => item.name),
-      serviceAreas: (areasResult?.results || []).map((item: any) => item.city && item.city !== row.city && !String(item.area || "").startsWith("تمام ") ? item.city + " / " + item.area : item.area),
+      coverageNote: coverage?.note || "",
+      serviceAreas: normalizeServiceAreas((areasResult?.results || []).map((item:any)=>item.city+" / "+item.area),row.city || ""),
       media: selectPublicMedia<PublicBusiness["media"][number]>((mediaResult?.results || []).map((item: any) => ({
         id: Number(item.id),
         kind: item.media_type === "video" ? "video" : item.kind || "image",

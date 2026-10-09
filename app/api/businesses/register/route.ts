@@ -1,3 +1,4 @@
+import { ensureBusinessCoverage } from "@/lib/server/business-coverage";
 import { parseServiceArea } from "@/lib/service-area";
 import { env } from "cloudflare:workers";
 import { recordConversion } from "@/lib/server/conversion-metrics";
@@ -282,6 +283,8 @@ export async function POST(request: Request) {
       ),
     ];
 
+    await ensureBusinessCoverage(db);
+    relationStatements.push(db.prepare("INSERT INTO business_coverage_notes(business_id,note) VALUES (?,?)").bind(createdBusinessId,typeof body.coverageNote === "string" ? body.coverageNote.trim().slice(0,500) : ""));
     await db.batch(relationStatements);
 
     stage = "services-save";

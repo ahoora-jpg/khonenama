@@ -1,0 +1,1 @@
+export async function ensureBusinessCoverage(db:any){await db.prepare("CREATE TABLE IF NOT EXISTS business_coverage_notes (business_id INTEGER PRIMARY KEY REFERENCES businesses(id) ON DELETE CASCADE, note TEXT NOT NULL DEFAULT '')").run();}

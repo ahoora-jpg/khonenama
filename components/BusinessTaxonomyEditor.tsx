@@ -5,9 +5,13 @@ import { CheckCircle2, Loader2, Save, Shapes } from "lucide-react";
 import ServiceGroupChoices from "@/components/ServiceGroupChoices";
 import { BUSINESS_CATEGORIES } from "@/lib/business-taxonomy";
 
+import { normalizeServiceAreas } from "@/lib/service-area";
+
 export default function BusinessTaxonomyEditor() {
   const [categories, setCategories] = useState<string[]>([]);
   const [serviceAreas, setServiceAreas] = useState<string[]>([]);
+  const [city,setCity]=useState("");
+  const [coverageNote,setCoverageNote]=useState("");
   const [newArea, setNewArea] = useState("");
   const [services, setServices] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,6 +26,8 @@ export default function BusinessTaxonomyEditor() {
         if (!cancelled && result?.ok) {
           setCategories(Array.isArray(result.categories) ? result.categories : []);
           setServiceAreas(Array.isArray(result.serviceAreas) ? result.serviceAreas : []);
+          setCity(result.city || "");
+          setCoverageNote(result.coverageNote || "");
           setServices(Array.isArray(result.services) ? result.services : []);
         }
       })
@@ -81,7 +87,7 @@ export default function BusinessTaxonomyEditor() {
       const response = await fetch("/api/me/business/taxonomy", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ categories, services, serviceAreas }),
+        body: JSON.stringify({ categories, services, serviceAreas, coverageNote }),
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result?.ok) {
@@ -140,7 +146,8 @@ export default function BusinessTaxonomyEditor() {
             </div>
           )}
 
-          <div className="choice-block"><strong>محدوده فعالیت</strong><p>تمام شهر: «تمام کرج»؛ محله در شهر دیگر: «تهران / سعادت‌آباد». انتخاب تمام شهر همه محله‌های آن را پوشش می‌دهد.</p><input aria-label="شهر یا محله تحت پوشش" value={newArea} onChange={e=>setNewArea(e.target.value)} maxLength={100}/><button type="button" className="pill-button" onClick={()=>{if(newArea.trim().length>=2){setServiceAreas([...new Set([...serviceAreas,newArea.trim()])]);setNewArea("");}}}>افزودن محدوده</button><div className="choice-grid">{serviceAreas.map(area=><button type="button" className="choice-chip is-selected" key={area} onClick={()=>setServiceAreas(serviceAreas.filter(v=>v!==area))}>{area} ×</button>)}</div></div>
+          <label className="form-field">توضیح محدوده خدمات (اختیاری)<textarea value={coverageNote} onChange={e=>setCoverageNote(e.target.value)} maxLength={500} placeholder="مثلاً خدمات در سراسر ایران و عمان، با هماهنگی قبلی"/><small>این توضیح در غرفه نمایش داده می‌شود؛ شهرها و محله‌های قابل جست‌وجو را جدا انتخاب کنید.</small></label>
+          <div className="choice-block"><strong>محدوده فعالیت</strong><p>تمام شهر: «تمام کرج»؛ محله در شهر دیگر: «تهران / سعادت‌آباد». انتخاب تمام شهر همه محله‌های آن را پوشش می‌دهد.</p><input aria-label="شهر یا محله تحت پوشش" value={newArea} onChange={e=>setNewArea(e.target.value)} maxLength={100}/><button type="button" className="pill-button" onClick={()=>{if(newArea.trim().length>=2){setServiceAreas(normalizeServiceAreas([...serviceAreas,newArea.trim()],city));setNewArea("");}}}>افزودن محدوده</button><div className="choice-grid">{normalizeServiceAreas(serviceAreas,city).map(area=><button type="button" className="choice-chip is-selected" key={area} onClick={()=>setServiceAreas(serviceAreas.filter(v=>v!==area))}>{area} ×</button>)}</div></div>
           {message && (
             <div className={message.includes("ذخیره شدند") ? "profile-hours-message is-success" : "profile-hours-message"}>
               {message}

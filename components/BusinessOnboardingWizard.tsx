@@ -1,4 +1,5 @@
 "use client";
+import { normalizeServiceAreas } from "@/lib/service-area";
 import ServiceGroupChoices from "@/components/ServiceGroupChoices";
 
 
@@ -50,6 +51,7 @@ type FormState = {
   website: string;
   services: string[];
   serviceAreas: string[];
+  coverageNote: string;
   description: string;
   plan: "free" | "pro" | "premium";
 };
@@ -72,6 +74,7 @@ const initialState: FormState = {
   website: "",
   services: [],
   serviceAreas: [],
+  coverageNote: "",
   description: "",
   plan: "free",
 };
@@ -199,7 +202,7 @@ export default function BusinessOnboardingWizard() {
     if (!area) return;
     setForm((current) => ({
       ...current,
-      serviceAreas: unique([...current.serviceAreas, area]),
+      serviceAreas: normalizeServiceAreas([...current.serviceAreas, area],current.city),
     }));
     setServiceAreaQuery("");
   }
@@ -280,7 +283,8 @@ export default function BusinessOnboardingWizard() {
         instagram: form.instagram,
         website: form.website,
         services: form.services,
-        serviceAreas: form.serviceAreas,
+        serviceAreas: normalizeServiceAreas(form.serviceAreas,form.city),
+        coverageNote: form.coverageNote,
         description: form.description,
         plan: form.plan,
         businessId: result.business.id,
@@ -692,7 +696,7 @@ export default function BusinessOnboardingWizard() {
                     onClick={() =>
                       update(
                         "serviceAreas",
-                        toggleValue(form.serviceAreas, area)
+                        normalizeServiceAreas(toggleValue(form.serviceAreas, area),form.city)
                       )
                     }
                   >
@@ -702,9 +706,10 @@ export default function BusinessOnboardingWizard() {
                 ))}
               </div>
 
+              <label className="form-field">توضیح محدوده خدمات (اختیاری)<textarea value={form.coverageNote} onChange={e=>update("coverageNote",e.target.value)} maxLength={500} placeholder="مثلاً خدمات در سراسر ایران و عمان، با هماهنگی قبلی"/></label>
               {form.serviceAreas.length > 0 && (
                 <div className="selected-area-list">
-                  {form.serviceAreas.map((area) => (
+                  {normalizeServiceAreas(form.serviceAreas,form.city).map((area) => (
                     <button
                       type="button"
                       key={area}
