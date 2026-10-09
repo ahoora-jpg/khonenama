@@ -129,3 +129,5 @@
 }
 
 .profile-integrated-contact{display:flex;flex-wrap:wrap;gap:16px 24px;padding:20px 0;font-size:16px}.profile-integrated-contact>a,.profile-integrated-contact>p{display:flex;align-items:center;gap:8px;margin:0;overflow-wrap:anywhere}.profile-integrated-contact .public-hours{width:100%}.profile-integrated-services h2{font-size:20px}.profile-album-link{display:block;padding:18px;margin-top:20px;border-radius:18px;background:#e4eee7;color:#174b37;font-size:18px;font-weight:700}#gallery,#quote,#reviews{scroll-margin-top:24px}#reviews p,#reviews label,#reviews input,#reviews textarea,#reviews select,#reviews button{font-size:16px;line-height:1.7}#reviews input,#reviews textarea,#reviews select{font-size:17px;min-height:46px}#reviews small{font-size:14px}#reviews button{min-height:44px}#reviews h3{font-size:21px}
+
+.quote-honeypot,.review-honeypot{left:0!important;inset-inline-start:0!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%);white-space:nowrap;}
