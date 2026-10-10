@@ -47,7 +47,8 @@ export default function RegisterBusinessPage() {
           </details>
           <details className="glass-panel" style={{padding:"1rem",marginBottom:"1rem"}} open>
             <summary>مقایسه ظرفیت و هزینه اشتراک‌ها</summary>
-            <div style={{overflowX:"auto"}}><table style={{width:"100%",textAlign:"right",borderSpacing:"12px"}}><thead><tr><th>اشتراک</th><th>عکس آلبوم</th><th>ویدیو</th><th>هزینه</th></tr></thead><tbody>{businessPlans.map((plan,index)=><tr key={plan.code}><th>{plan.name}</th><td>{[10,30,70][index].toLocaleString("fa-IR")}</td><td>{[0,2,5][index].toLocaleString("fa-IR")}</td><td>{plan.priceLabel}</td></tr>)}</tbody></table></div>
+            <div className="registration-plan-images">{businessPlans.map((plan,index)=><article key={plan.code}><img src={`/images/plans/${plan.code}.webp`} width={1000} height={1000} alt={`پلن ${plan.name}: ${[10,30,70][index]} عکس و ${[0,2,5][index]} ویدیو؛ ${plan.priceLabel}${index ? `؛ سالانه ${index===1?'۲ میلیون و ۵۰۰ هزار':'۳ میلیون و ۵۰۰ هزار'} تومان` : ''}`} loading="lazy" /><h2>{plan.name}</h2><p>{plan.priceLabel}</p>{index>0&&<p>سالانه: {index===1?'۲٬۵۰۰٬۰۰۰':'۳٬۵۰۰٬۰۰۰'} تومان · ۳۶۵ روز</p>}</article>)}</div>
+            <p>اشتراک سالانه با قیمت ۱۰ دوره ۳۰روزه عرضه می‌شود: حرفه‌ای ۵۰۰ هزار تومان و ویژه ۷۰۰ هزار تومان کمتر از خرید ۱۲ دوره جداگانه. تمدید خودکار و برداشت خودکار نداریم.</p>
             <p>ثبت‌نام همیشه با پایه رایگان شروع می‌شود. کاور و پروفایل جدا از ظرفیت عکس‌اند؛ تعداد آلبوم‌ها محدود نیست. ویدیو MP4 حداکثر ۲۰ ثانیه و ۱۵ مگابایت است. ارتقا پس از ثبت‌نام و فعال‌شدن پرداخت امکان‌پذیر است.</p>
           </details>
           <BusinessOnboardingWizard />

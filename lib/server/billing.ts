@@ -10,10 +10,13 @@ export class BillingError extends Error {
 export async function billingCatalog(db: any, provider: PaymentProvider | null) {
   await ensureBilling(db);
   const rows = (await db.prepare("SELECT * FROM billing_prices").all()).results || [];
+  const annualRows = (await db.prepare("SELECT * FROM billing_annual_prices").all()).results || [];
   return businessPlans.map(plan => {
     const price = rows.find((r: any) => r.plan_code === plan.code);
     const amountToman = plan.code === "free" ? 0 : price?.enabled === 1 ? Number(price.amount_toman) || null : null;
-    return { ...plan, amountToman, durationDays: plan.code === "free" ? null : Number(price?.duration_days || 30), purchasable: plan.code !== "free" && !!amountToman && !!provider };
+    const annualPrice = annualRows.find((r: any) => r.plan_code === plan.code);
+    const annualAmount = annualPrice?.enabled === 1 ? Number(annualPrice.amount_toman) : null;
+    return { ...plan, amountToman, durationDays: plan.code === "free" ? null : Number(price?.duration_days || 30), purchasable: plan.code !== "free" && !!amountToman && !!provider, annual: annualPrice ? { amountToman: annualAmount, durationDays: 365, purchasable: !!annualAmount && !!provider } : null };
   });
 }
 async function hash(value: string) {
@@ -23,8 +26,10 @@ async function hash(value: string) {
 export async function createCheckout(owner: any, body: any, provider: PaymentProvider | null) {
   const { db, business, session } = owner;
   const plans = await billingCatalog(db, provider);
-  const plan = plans.find(p => p.code === body?.planCode);
-  if (!plan) throw new BillingError("PLAN_NOT_FOUND", 404);
+  const offer = plans.find(p => p.code === body?.planCode);
+  if (!offer) throw new BillingError("PLAN_NOT_FOUND", 404);
+  if (body?.billingPeriod !== undefined && !["monthly", "annual"].includes(body.billingPeriod)) throw new BillingError("INVALID_BILLING_PERIOD", 400);
+  const plan = body?.billingPeriod === "annual" && offer.annual ? { ...offer, ...offer.annual } : offer;
   if (plan.code === "free") throw new BillingError("FREE_PLAN_DOES_NOT_REQUIRE_PAYMENT");
   if (!provider) throw new BillingError("PAYMENT_PROVIDER_NOT_CONFIGURED", 503);
   if (!plan.amountToman) throw new BillingError("PLAN_PRICING_NOT_ACTIVE");
@@ -32,7 +37,7 @@ export async function createCheckout(owner: any, body: any, provider: PaymentPro
   if (body.expectedAmountToman !== plan.amountToman || body.expectedDurationDays !== plan.durationDays) throw new BillingError("QUOTE_CHANGED");
   const prior = await db.prepare("SELECT c.*,p.status,p.provider,p.provider_authority,i.expires_at FROM billing_checkouts c JOIN payments p ON p.id=c.payment_id JOIN invoices i ON i.id=p.invoice_id WHERE c.business_id=? AND c.request_key=?").bind(business.id, body.requestKey).first();
   if (prior) {
-    if (prior.plan_code !== plan.code) throw new BillingError("REQUEST_KEY_REUSED");
+    if (prior.plan_code !== plan.code || prior.amount_toman !== plan.amountToman || prior.duration_days !== plan.durationDays) throw new BillingError("REQUEST_KEY_REUSED");
     if (prior.status === "redirected" && prior.provider === provider.code && Date.parse(prior.expires_at + "Z") > Date.now()) return { id: prior.id, redirectUrl: gatewayUrl(prior.provider, prior.provider_authority) };
     throw new BillingError(prior.status === "verified" ? "ALREADY_PAID" : "CHECKOUT_ALREADY_CREATED");
   }

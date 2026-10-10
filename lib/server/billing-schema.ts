@@ -1,4 +1,5 @@
 export const billingSchema = [
+  "CREATE TABLE IF NOT EXISTS billing_annual_prices (plan_code TEXT PRIMARY KEY CHECK(plan_code IN ('pro','premium')), amount_toman INTEGER NOT NULL CHECK(amount_toman BETWEEN 1000 AND 100000000), duration_days INTEGER NOT NULL DEFAULT 365 CHECK(duration_days=365), enabled INTEGER NOT NULL DEFAULT 1 CHECK(enabled IN (0,1)))",
   "CREATE TABLE IF NOT EXISTS billing_configuration_versions (id TEXT PRIMARY KEY, applied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)",
   "CREATE TABLE IF NOT EXISTS billing_prices (plan_code TEXT PRIMARY KEY CHECK(plan_code IN ('pro','premium')), amount_toman INTEGER CHECK(amount_toman IS NULL OR amount_toman BETWEEN 1000 AND 100000000), duration_days INTEGER NOT NULL DEFAULT 30 CHECK(duration_days BETWEEN 1 AND 366), enabled INTEGER NOT NULL DEFAULT 0 CHECK(enabled IN (0,1)), updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)",
   "CREATE TABLE IF NOT EXISTS billing_price_audit (id INTEGER PRIMARY KEY, plan_code TEXT NOT NULL, amount_toman INTEGER, duration_days INTEGER NOT NULL, enabled INTEGER NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)",
@@ -16,4 +17,8 @@ export async function ensureBilling(db: any) {
   await db.batch(billingSchema.map(sql => db.prepare(sql)));
   await db.batch([db.prepare("INSERT OR IGNORE INTO billing_prices(plan_code) VALUES('pro')"), db.prepare("INSERT OR IGNORE INTO billing_prices(plan_code) VALUES('premium')")]);
   await db.batch(approvedBillingPrices.map(sql => db.prepare(sql)));
+  await db.batch([
+    db.prepare("INSERT OR IGNORE INTO billing_annual_prices(plan_code,amount_toman) VALUES('pro',2500000)"),
+    db.prepare("INSERT OR IGNORE INTO billing_annual_prices(plan_code,amount_toman) VALUES('premium',3500000)"),
+  ]);
 }
