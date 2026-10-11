@@ -41,18 +41,29 @@ export default function QuoteRequestForm({
   const [requestCode, setRequestCode] = useState("");
   const [service, setService] = useState("");
   const started = useRef(false);
+  const [draftLoadedFor,setDraftLoadedFor]=useState("");
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const chosen = params.get("service") || params.get("q") || "";
-    if (chosen) setService(chosen.slice(0, 120));
-    setArea((params.get("location") || "").slice(0, 100));
-  }, [services.join("|")]);
+    let draft:Record<string,unknown>={};
+    try{const raw=sessionStorage.getItem("khonenama-quote-draft-"+businessSlug);if(raw&&raw.length<12000){const stored=JSON.parse(raw);if(typeof stored.savedAt==="number"&&Date.now()-stored.savedAt<2*60*60*1000&&stored.values&&typeof stored.values==="object")draft=stored.values;}}catch{}
+    const text=(key:string,max:number)=>typeof draft[key]==="string"?(draft[key] as string).slice(0,max):"";
+    setCustomerName(text("customerName",120));setCustomerPhone(text("customerPhone",30));setRequestText(text("requestText",5000));setBudgetMin(text("budgetMin",30));setBudgetMax(text("budgetMax",30));
+    setService(chosen.slice(0,120)||text("service",120));
+    setArea((params.get("location")||text("area",100)).slice(0,100));
+    setDraftLoadedFor(businessSlug);
+  }, [businessSlug]);
+  useEffect(()=>{
+    if(draftLoadedFor!==businessSlug)return;
+    try{const key="khonenama-quote-draft-"+businessSlug;if(requestCode){sessionStorage.removeItem(key);return;}sessionStorage.setItem(key,JSON.stringify({savedAt:Date.now(),values:{customerName,customerPhone,area,requestText,budgetMin,budgetMax,service}}));}catch{}
+  },[draftLoadedFor,businessSlug,customerName,customerPhone,area,requestText,budgetMin,budgetMax,service,requestCode]);
   function start() {
     if (!started.current) { started.current = true; track(businessSlug, "quote_start"); }
   }
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
+    if(loading)return;
     setMessage("");
     setRequestCode("");
 

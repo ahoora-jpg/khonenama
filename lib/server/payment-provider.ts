@@ -9,9 +9,13 @@ export function paymentProvider(settings: Record<string, unknown>, send: typeof 
   const merchant = String(settings.ZARINPAL_MERCHANT_ID || "");
   if (settings.PAYMENTS_ENABLED !== "true" || settings.PAYMENT_PROVIDER !== "zarinpal" || !/^[a-f\d-]{36}$/i.test(merchant)) return null;
   async function call(action: string, data: Record<string, unknown>) {
-    const response = await send(`https://api.zarinpal.com/pg/v4/payment/${action}.json`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ merchant_id: merchant, ...data }), signal: AbortSignal.timeout(8000), redirect: "error",
+    const relay=settings.PAYMENT_RELAY_URL;
+    if(relay&&relay!=="https://payment.khonenama.ir")throw Error("PAYMENT_RELAY_INVALID");
+    const relaySecret=String(settings.PAYMENT_RELAY_SECRET||"");
+    if(relay&&relaySecret.length<32)throw Error("PAYMENT_RELAY_NOT_CONFIGURED");
+    const response = await send(relay?`${relay}/${action}`:`https://api.zarinpal.com/pg/v4/payment/${action}.json`, {
+      method: "POST", headers: { "Content-Type": "application/json",...(relay?{Authorization:"Bearer "+relaySecret}:{}) },
+      body: JSON.stringify(relay?data:{ merchant_id: merchant, ...data }), signal: AbortSignal.timeout(8000), redirect: "error",
     });
     if (!response.ok) throw new Error("PAYMENT_NETWORK_ERROR");
     const result = await response.json() as any;

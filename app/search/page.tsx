@@ -5,7 +5,7 @@ import {guides} from "@/lib/guides";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { businesses as demoBusinesses } from "@/lib/demo-data";
+
 import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 import { BUSINESS_CATEGORIES } from "@/lib/business-taxonomy";
 import { BadgeCheck, BriefcaseBusiness, Crown, MapPin, Search, SlidersHorizontal, Star } from "lucide-react";
@@ -98,14 +98,6 @@ export default async function SearchPage({
     limit: 50,
   });
 
-  const filteredDemo = demoBusinesses.filter((business) => {
-    const haystack = [business.name, business.description, ...business.services].join(" ").toLowerCase();
-    const queryMatch = !query || haystack.includes(query.toLowerCase());
-    const locationMatch = !location || business.city.includes(location) || business.area.includes(location);
-    return queryMatch && locationMatch && (!exactService || business.services.some(service => normalizeSearchText(service) === query));
-  });
-
-  const liveSlugs = new Set(liveBusinesses.map((business) => business.slug));
   const combinedResults = [
     ...liveBusinesses.map((business) => ({
       slug: business.slug,
@@ -124,16 +116,6 @@ export default async function SearchPage({
       coverUrl: business.media.find((item) => item.kind === "cover")?.url || business.media[0]?.url || "",
       source: "live" as const,
     })),
-    ...filteredDemo
-      .filter((business) => !liveSlugs.has(business.slug))
-      .map((business) => ({
-        ...business,
-        categoryName: "",
-        planCode: business.featured ? "premium" as const : "free" as const,
-        promoted: Boolean(business.featured),
-        coverUrl: business.media?.find((item) => item.cover)?.url || business.media?.[0]?.url || "",
-        source: "demo" as const,
-      })),
   ];
 
   const results = combinedResults
@@ -202,9 +184,6 @@ export default async function SearchPage({
                     <div className="result-title-row">
                       <h2>{business.name}</h2>
                       {business.verified && <BadgeCheck size={18} className="verified-icon" />}
-                      {business.source === "demo" && (
-                        <span className="demo-result-badge">نمونه نمایشی</span>
-                      )}
                       {business.planCode === "pro" && (
                         <span className="plan-listing-badge is-pro"><BriefcaseBusiness size={13} /> حرفه‌ای</span>
                       )}

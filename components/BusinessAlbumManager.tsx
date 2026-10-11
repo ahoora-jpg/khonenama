@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function BusinessAlbumManager({ mediaRevision = 0, onAddPhotos }: { mediaRevision?: number; onAddPhotos?: () => void }) {
   const [albums, setAlbums] = useState<{ id: number; title: string; description: string; media: {id:number;url:string;kind?:string}[]; project: {service:string;materials:string;area:string}|null }[]>([]);
@@ -9,13 +9,20 @@ export default function BusinessAlbumManager({ mediaRevision = 0, onAddPhotos }:
   const [description, setDescription] = useState("");
   const [project, setProject] = useState({service:'',materials:'',area:''});
   const [selected, setSelected] = useState<number[]>([]);
+  const [mediaSearch,setMediaSearch]=useState("");
+  const addingToAlbum=useRef(false);
+  const knownMedia=useRef<Set<number>>(new Set());
+  const filteredMedia=media.filter(item=>(item.alt_text||"").includes(mediaSearch.trim()));
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   async function load() {
     const [a, m] = await Promise.all([fetch("/api/me/business/albums", { cache: "no-store" }), fetch("/api/me/business/media", { cache: "no-store" })]);
     if (!a.ok || !m.ok) throw new Error("LOAD_FAILED");
     const data = await a.json(); const images = await m.json();
-    setAlbums(data.albums); setMedia(images.media.filter((item: any) => item.file_url && (item.kind === "image" || item.kind === "video")));
+    const nextMedia=images.media.filter((item: any) => item.file_url && (item.kind === "image" || item.kind === "video"));
+    if(addingToAlbum.current){const added=nextMedia.filter((item:any)=>!knownMedia.current.has(item.id)).map((item:any)=>item.id);if(added.length){setSelected(previous=>Array.from(new Set([...previous,...added])));addingToAlbum.current=false;}}
+    knownMedia.current=new Set(nextMedia.map((item:any)=>item.id));
+    setAlbums(data.albums); setMedia(nextMedia);
   }
   useEffect(() => { load().catch(() => setMessage("دریافت آلبوم‌ها انجام نشد؛ صفحه را دوباره باز کنید.")); }, [mediaRevision]);
   async function create(event: React.FormEvent) {
@@ -39,7 +46,7 @@ export default function BusinessAlbumManager({ mediaRevision = 0, onAddPhotos }:
     <h2>آلبوم‌های نمونه‌کار</h2>
     <p>عکس‌های گالری را بر اساس پروژه یا نوع خدمت دسته‌بندی کنید و برای هر آلبوم توضیح کامل بنویسید. مشتری با کیوآرکد وارد گالری شما می‌شود و آلبوم دلخواه را باز می‌کند.</p>
     <p>هر تعداد آلبوم که می‌خواهید بسازید؛ ظرفیت مجموع عکس‌ها به پلن شما بستگی دارد.</p>
-    {albums.map(album => <article className="owner-album-card" key={album.id}><h3>{album.title} · {album.media.length.toLocaleString("fa-IR")} عکس / ویدیو</h3><p>{album.description}</p><div className="owner-album-images">{album.media.map(photo=>photo.kind === "video" ? <video key={photo.id} src={photo.url} controls playsInline preload="metadata" /> : <img key={photo.id} src={photo.url} alt={album.title} loading="lazy" />)}</div><button type="button" className="pill-button" disabled={busy} onClick={()=>{setEditingAlbum(album.id);setTitle(album.title);setDescription(album.description);setSelected(album.media.map(photo=>photo.id));setProject(album.project||{service:'',materials:'',area:''});}}>+ افزودن عکس / ویرایش آلبوم</button><button type="button" className="pill-button" disabled={busy} onClick={() => remove(album.id)}>حذف آلبوم</button></article>)}
+    {albums.map(album => <article className="owner-album-card" key={album.id}><h3>{album.title} · {album.media.length.toLocaleString("fa-IR")} عکس / ویدیو</h3><p>{album.description}</p><div className="owner-album-images">{album.media.map(photo=>photo.kind === "video" ? <video key={photo.id} src={photo.url} controls playsInline preload="metadata" /> : <img key={photo.id} src={photo.url} alt={album.title} loading="lazy" />)}</div><button type="button" className="pill-button" disabled={busy} onClick={()=>{addingToAlbum.current=false;setEditingAlbum(album.id);setTitle(album.title);setDescription(album.description);setSelected(album.media.map(photo=>photo.id));setProject(album.project||{service:'',materials:'',area:''});}}>+ افزودن عکس / ویرایش آلبوم</button><button type="button" className="pill-button" disabled={busy} onClick={() => remove(album.id)}>حذف آلبوم</button></article>)}
     {<form onSubmit={create}>
       <p>{albums.length.toLocaleString("fa-IR")} آلبوم ساخته‌اید؛ تعداد آلبوم‌ها محدود نیست.</p>
       <label>نام آلبوم<input required maxLength={100} value={title} onChange={e => setTitle(e.target.value)} /></label>
@@ -47,11 +54,16 @@ export default function BusinessAlbumManager({ mediaRevision = 0, onAddPhotos }:
       {(['service','materials','area'] as const).map(key=><label key={key}>{{service:'خدمت انجام‌شده',materials:'متریال استفاده‌شده',area:'شهر یا محدوده؛ بدون آدرس خصوصی'}[key]}<input maxLength={300} value={project[key]} onChange={e=>setProject({...project,[key]:e.target.value})}/></label>)}
       <p>برای تصاویر قبل و بعد، عنوان هر عکس را در بخش گالری با «قبل از اجرا» یا «بعد از اجرا» مشخص کنید. تصاویر باید متعلق به شما یا با اجازه صاحب اثر باشند. عکس مشتری را فقط با اجازه او منتشر کنید. تصویر الهام‌بخش را نمونه‌کار اجراشده معرفی نکنید؛ چهره، نشانی دقیق، شماره و مدارک مشتری را پیش از انتشار حذف یا محو کنید.</p>
       <p>عکس‌های این آلبوم را انتخاب کنید؛ یک یا چند عکس به دلخواه شما.</p>
-      {onAddPhotos && <button type="button" className="pill-button" onClick={onAddPhotos}>+ افزودن عکس جدید</button>}
+      <p role="status">{media.length.toLocaleString("fa-IR")} عکس / ویدیو موجود · {selected.length.toLocaleString("fa-IR")} انتخاب‌شده برای این آلبوم</p>
+      <label>جست‌وجو در عنوان عکس‌ها<input type="search" value={mediaSearch} onChange={e=>setMediaSearch(e.target.value)}/></label>
+      <button type="button" className="pill-button" disabled={busy||!filteredMedia.length} onClick={()=>setSelected(previous=>Array.from(new Set([...previous,...filteredMedia.map(item=>item.id)])))}>انتخاب همه نتایج</button>
+      <button type="button" className="pill-button" disabled={busy||!selected.length} onClick={()=>setSelected([])}>پاک‌کردن انتخاب‌ها</button>
+      {!filteredMedia.length&&<p>عکسی با این عنوان پیدا نشد.</p>}
+      {onAddPhotos && <button type="button" className="pill-button" disabled={busy} onClick={()=>{addingToAlbum.current=true;onAddPhotos();}}>+ افزودن عکس جدید به این آلبوم</button>}
       <button type="button" className="pill-button" onClick={() => load().catch(() => setMessage("دریافت عکس‌ها انجام نشد."))}>به‌روزرسانی عکس‌ها</button>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>{media.map(item => <label key={item.id}><input type="checkbox" checked={selected.includes(item.id)} onChange={e => setSelected(e.target.checked ? [...selected, item.id] : selected.filter(id => id !== item.id))} />{item.kind === "video" ? <video src={item.file_url} width={80} height={80} preload="metadata" muted playsInline /> : <img src={item.file_url} alt={item.alt_text || "انتخاب عکس نمونه‌کار"} width={80} height={80} loading="lazy" style={{ objectFit: "cover" }} />}</label>)}</div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>{filteredMedia.map(item => <label key={item.id}><input type="checkbox" disabled={busy} aria-label={item.alt_text||`انتخاب ${item.kind==='video'?'ویدیو':'عکس'} ${item.id}`} checked={selected.includes(item.id)} onChange={e => setSelected(previous=>e.target.checked ? Array.from(new Set([...previous, item.id])) : previous.filter(id => id !== item.id))} />{item.kind === "video" ? <video src={item.file_url} width={80} height={80} preload="metadata" muted playsInline /> : <img src={item.file_url} alt={item.alt_text || "انتخاب عکس نمونه‌کار"} width={80} height={80} loading="lazy" style={{ objectFit: "cover" }} />}</label>)}</div>
       <button type="submit" className="pill-button dark" disabled={busy || !selected.length}>{busy ? "در حال ذخیره…" : editingAlbum ? "ذخیره تغییرات آلبوم" : "+ ساخت آلبوم"}</button>
-      {editingAlbum && <button type="button" className="pill-button" onClick={()=>{setEditingAlbum(null);setTitle("");setDescription("");setSelected([]);setProject({service:'',materials:'',area:''});}}>انصراف از ویرایش</button>}
+      {editingAlbum && <button type="button" className="pill-button" onClick={()=>{addingToAlbum.current=false;setEditingAlbum(null);setTitle("");setDescription("");setSelected([]);setProject({service:'',materials:'',area:''});}}>انصراف از ویرایش</button>}
     </form>}
     {message && <p role="status">{message}</p>}
   </section>;

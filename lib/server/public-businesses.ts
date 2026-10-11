@@ -1,4 +1,5 @@
 import { normalizeServiceAreas } from "@/lib/service-area";
+import { matchingServiceNames, literalLike, normalizeServiceQuery } from "@/lib/service-search";
 import { ensureBusinessCoverage } from "@/lib/server/business-coverage";
 import { KARAJ_AREAS } from "@/lib/karaj-areas";
 import {selectPublicMedia} from "@/lib/subscription-lifecycle";
@@ -258,19 +259,34 @@ export async function listPublishedBusinesses(options: {
       }
     }
 
-    if (options.query) {
+    const resolvedServices = !options.serviceName && options.query ? matchingServiceNames(options.query) : [];
+    if (resolvedServices.length) {
+      if(resolvedServices.length===1){
+        where.push("EXISTS (SELECT 1 FROM business_services bsm JOIN services sm ON sm.id=bsm.service_id WHERE bsm.business_id=b.id AND sm.name=?)");
+        binds.push(resolvedServices[0]);
+      }else{
+        where.push("EXISTS (SELECT 1 FROM business_services bsm JOIN services sm ON sm.id=bsm.service_id WHERE bsm.business_id=b.id AND REPLACE(REPLACE(REPLACE(REPLACE(sm.name,'ي','ی'),'ك','ک'),'‌',''),' ','') LIKE ? ESCAPE '\\')");
+        binds.push("%"+literalLike(normalizeServiceQuery(options.query||""))+"%");
+      }
+    }
+    if (options.query && !resolvedServices.length && !options.serviceName) {
       where.push(
-        "(b.name LIKE ? OR b.description LIKE ? OR EXISTS (SELECT 1 FROM business_services bs2 JOIN services s2 ON s2.id = bs2.service_id WHERE bs2.business_id = b.id AND REPLACE(REPLACE(s2.name, '‌', ''), ' ', '') LIKE ?) OR EXISTS (SELECT 1 FROM business_categories bcq JOIN categories cq ON cq.id = bcq.category_id WHERE bcq.business_id = b.id AND cq.name LIKE ?))"
+        "(b.name LIKE ? ESCAPE '\\' OR b.description LIKE ? ESCAPE '\\' OR EXISTS (SELECT 1 FROM business_services bs2 JOIN services s2 ON s2.id = bs2.service_id WHERE bs2.business_id = b.id AND REPLACE(REPLACE(s2.name, '‌', ''), ' ', '') LIKE ? ESCAPE '\\') OR EXISTS (SELECT 1 FROM business_categories bcq JOIN categories cq ON cq.id = bcq.category_id WHERE bcq.business_id = b.id AND cq.name LIKE ? ESCAPE '\\'))"
       );
-      const value = "%" + options.query + "%";
-      binds.push(value, value, "%" + options.query.replace(/[\s\u200c]+/g, "") + "%", value);
+      const value = "%" + literalLike(options.query) + "%";
+      binds.push(value, value, "%" + literalLike(normalizeServiceQuery(options.query)) + "%", value);
     }
 
     const limit = Math.max(1, Math.min(Number(options.limit || 50), 100));
+    let relevanceOrder = "";
+    if(options.query){
+      relevanceOrder="CASE WHEN b.name = ? THEN 3 WHEN b.name LIKE ? ESCAPE '\\' THEN 2 WHEN EXISTS (SELECT 1 FROM business_services br JOIN services sr ON sr.id=br.service_id WHERE br.business_id=b.id AND sr.name=?) THEN 1 ELSE 0 END DESC, ";
+      binds.push(options.query,literalLike(options.query)+"%",options.query);
+    }
     const sql =
       "SELECT DISTINCT b.*, c.slug AS category_slug, c.name AS category_name FROM businesses b LEFT JOIN business_categories bc ON bc.business_id = b.id AND bc.is_primary = 1 LEFT JOIN categories c ON c.id = bc.category_id WHERE " +
       where.join(" AND ") +
-      " ORDER BY (SELECT (COALESCE(SUM(r.rating),0) + 15.0) / (COUNT(*) + 5.0) FROM reviews r WHERE r.business_id = b.id AND r.status = 'published') DESC, b.id DESC LIMIT " +
+      " ORDER BY " + relevanceOrder + "(SELECT (COALESCE(SUM(r.rating),0) + 15.0) / (COUNT(*) + 5.0) FROM reviews r WHERE r.business_id = b.id AND r.status = 'published') DESC, b.id DESC LIMIT " +
       limit;
 
     const rows = await db.prepare(sql).bind(...binds).all();

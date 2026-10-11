@@ -40,6 +40,9 @@ export async function POST(
   if (!EVENTS.has(event)) {
     return Response.json({ ok: false, error: "INVALID_EVENT" }, { status: 400 });
   }
+  // Successful submissions are measured when the server saves the request.
+  // Older clients may still send this event; acknowledge without counting twice.
+  if(event==="quote_sent")return Response.json({ok:true,ignored:true},{headers:{"Cache-Control":"no-store"}});
 
   const db = (env as any).DB;
   if (!db) return Response.json({ ok: false, error: "DB_UNAVAILABLE" }, { status: 503 });

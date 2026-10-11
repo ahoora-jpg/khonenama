@@ -1,5 +1,6 @@
 import { createLeadAccessCode } from "@/lib/server/lead-access";
 import { env } from "cloudflare:workers";
+import { recordSavedQuote } from "@/lib/server/quote-metrics";
 import { sendBusinessLeadPush } from "@/lib/server/business-push";
 import { sendBusinessWebPush } from "@/lib/server/business-web-push";
 
@@ -121,6 +122,7 @@ export async function POST(
     .bind(leadId, business.id)
     .run();
 
+  await recordSavedQuote(db,Number(business.id),leadId).catch(()=>console.warn("Request metric unavailable"));
   await Promise.all([sendBusinessLeadPush(db, Number(business.id), leadId), sendBusinessWebPush(db, Number(business.id), leadId)]);
 
   return Response.json(
