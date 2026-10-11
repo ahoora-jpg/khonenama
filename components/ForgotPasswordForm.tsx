@@ -1,58 +1,8 @@
 "use client";
-
-import { useState } from "react";
-import { ArrowRight, Mail, Phone, RotateCcw } from "lucide-react";
-
-export default function ForgotPasswordForm() {
-  const [method, setMethod] = useState<"email" | "sms">("email");
-  const [value, setValue] = useState("");
-  const [message, setMessage] = useState("");
-
-  function submit() {
-    setMessage(
-      method === "email"
-        ? "ارسال لینک بازیابی ایمیلی هنوز فعال نیست. از راهنمای پشتیبانی برای بازیابی حساب استفاده کنید."
-        : "ارسال کد پیامکی هنوز فعال نیست. از راهنمای پشتیبانی برای بازیابی حساب استفاده کنید."
-    );
-  }
-
-  return (
-    <div className="business-login-card glass-panel">
-      <span className="business-login-icon"><RotateCcw size={22} /></span>
-      <span className="section-kicker">بازیابی رمز</span>
-      <h1>انتخاب روش بازیابی</h1>
-      <p>بازیابی خودکار هنوز فعال نشده است. برای حساب‌های Pilot می‌توانید از پشتیبانی خونه نما برای بازیابی امن حساب کمک بگیرید.</p>
-
-      <div className="recovery-methods">
-        <button type="button" className={method === "email" ? "is-active" : ""} onClick={() => setMethod("email")}>
-          <Mail size={16} /> ایمیل
-        </button>
-        <button type="button" className={method === "sms" ? "is-active" : ""} onClick={() => setMethod("sms")}>
-          <Phone size={16} /> پیامک
-        </button>
-      </div>
-
-      <label>
-        <span>{method === "email" ? "ایمیل حساب" : "شماره همراه"}</span>
-        <div className="form-input">
-          {method === "email" ? <Mail size={17} /> : <Phone size={17} />}
-          <input
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            type={method === "email" ? "email" : "text"}
-            inputMode={method === "sms" ? "tel" : "email"}
-            placeholder={method === "email" ? "name@example.com" : "09..."}
-          />
-        </div>
-      </label>
-
-      <button className="register-submit" type="button" onClick={submit} disabled={!value.trim()}>
-        ادامه بازیابی
-      </button>
-
-      {message && <div className="business-login-message">{message}</div>}
-
-      <a className="admin-login-entry" href="/help">راهنما و پشتیبانی</a>\n      <a className="admin-login-entry" href="/business/login"><ArrowRight size={14} /> بازگشت به ورود</a>
-    </div>
-  );
+import {useEffect,useState} from "react";
+export default function ForgotPasswordForm(){
+ const [email,E]=useState("");const [phone,P]=useState("");const [token,T]=useState("");const [password,W]=useState("");const [confirm,C]=useState("");const [ready,R]=useState(false);const [busy,B]=useState(false);const [done,D]=useState(false);const [message,M]=useState("در حال بررسی سرویس…");
+ useEffect(()=>{const t=new URLSearchParams(location.hash.slice(1)).get("reset");if(t){T(t);history.replaceState(null,"",location.pathname);M("");return;}fetch("/api/auth/business/recovery",{cache:"no-store"}).then(r=>r.json()).then(d=>{R(d.available===true);M(d.available?"":"ارسال ایمیل فعلاً در دسترس نیست؛ از پشتیبانی کمک بگیرید.");}).catch(()=>M("ارتباط برقرار نشد؛ صفحه را دوباره باز کنید."));},[]);
+ async function submit(e:React.FormEvent){e.preventDefault();if(token&&password!==confirm){M("تکرار رمز یکسان نیست.");return;}B(true);try{const r=await fetch("/api/auth/business/recovery",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(token?{action:"reset",token,password}:{email,phone}),signal:AbortSignal.timeout(15000)});const d=await r.json();if(!r.ok||!d.ok){const errors:Record<string,string>={TOO_MANY_ATTEMPTS:"یک ساعت دیگر دوباره امتحان کنید.",RESET_EXPIRED:"لینک منقضی یا استفاده شده؛ لینک جدید درخواست کنید.",INVALID_RESET:"رمز باید بین ۸ تا ۱۲۸ نویسه باشد.",INVALID_REQUEST:"ایمیل و شماره همراه ثبت‌شده را درست وارد کنید.",EMAIL_SEND_FAILED:"ارسال ایمیل انجام نشد؛ دوباره امتحان کنید.",EMAIL_NOT_CONFIGURED:"ارسال ایمیل فعلاً در دسترس نیست."};M(errors[d.error]||"بازیابی انجام نشد؛ دوباره امتحان کنید.");return;}if(token){D(true);W("");C("");M("رمز جدید ذخیره شد؛ اکنون وارد شوید.");}else M("اگر ایمیل و شماره با حساب مطابقت داشته باشد، لینک بازیابی ارسال می‌شود. پوشه اسپم را هم ببینید؛ لینک ۱۵ دقیقه معتبر است.");}catch{M("ارتباط برقرار نشد؛ اطلاعات شما حفظ شده، دوباره امتحان کنید.");}finally{B(false);}}
+ return <form className="business-login-card glass-panel" onSubmit={submit}><span className="section-kicker">بازیابی رمز</span><h1>{token?"انتخاب رمز جدید":"بازیابی از طریق ایمیل"}</h1><p>ایمیل حساب را دقیق وارد کنید. لینک انتخاب رمز جدید ایمیل می‌شود؛ رمز قبلی ارسال نمی‌شود.</p>{token?<><label><span>رمز جدید</span><div className="form-input"><input type="password" autoComplete="new-password" required minLength={8} maxLength={128} value={password} onChange={e=>W(e.target.value)} disabled={done}/></div></label><label><span>تکرار رمز جدید</span><div className="form-input"><input type="password" autoComplete="new-password" required minLength={8} maxLength={128} value={confirm} onChange={e=>C(e.target.value)} disabled={done}/></div></label></>:<><label><span>ایمیل ثبت‌شده</span><div className="form-input"><input type="email" autoComplete="email" required maxLength={160} dir="ltr" value={email} onChange={e=>E(e.target.value)}/></div></label><label><span>شماره همراه ثبت‌شده</span><div className="form-input"><input type="tel" autoComplete="tel" required dir="ltr" value={phone} onChange={e=>P(e.target.value)}/></div></label></>}<button type="submit" className="register-submit" disabled={busy||done||(!token&&!ready)}>{busy?"در حال انجام…":token?"ذخیره رمز جدید":"ارسال لینک بازیابی"}</button><div className="business-login-message" role="status" aria-live="polite">{message}</div>{token&&!done&&<a href="/business/forgot-password">درخواست لینک جدید</a>}<a className="admin-login-entry" href="/help">راهنما و پشتیبانی</a><a className="admin-login-entry" href="/business/login">بازگشت به ورود</a></form>;
 }

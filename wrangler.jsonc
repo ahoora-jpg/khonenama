@@ -29,6 +29,7 @@
     { "pattern": "www.khonenama.ir/*", "zone_name": "khonenama.ir" }
   ],
   "vars": {
+    "RECOVERY_EMAIL_FROM": "noreply@khonenama.ir",
     "IMAGEKIT_URL_ENDPOINT": "https://ik.imagekit.io/khonenama",
     "MEDIA_STORAGE_PROVIDER": "r2"
   }
