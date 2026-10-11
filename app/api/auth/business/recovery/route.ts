@@ -11,7 +11,7 @@ export async function POST(request: Request) {
       await resetPassword((env as any).DB,body.token,body.password);
     } else {
       const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
-      const phone = typeof body.phone === "string" ? body.phone.replace(/[۰-۹]/g,c=>String("۰۱۲۳۴۵۶۷۸۹".indexOf(c))).replace(/[٠-٩]/g,c=>String("٠١٢٣٤٥٦٧٨٩".indexOf(c))).replace(/[\s-]/g,"") : "";
+      const phone = typeof body.phone === "string" ? body.phone.replace(/[۰-۹]/g,(c: string)=>String("۰۱۲۳۴۵۶۷۸۹".indexOf(c))).replace(/[٠-٩]/g,(c: string)=>String("٠١٢٣٤٥٦٧٨٩".indexOf(c))).replace(/[\s-]/g,"") : "";
       if (email.length>160 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^09\d{9}$/.test(phone)) throw Error("INVALID_REQUEST");
       await requestRecovery((env as any).DB,env,email,phone,request.headers.get("cf-connecting-ip")||"unknown");
     }
@@ -22,3 +22,4 @@ export async function POST(request: Request) {
     return Response.json({ok:false,error:allowed.includes(code)?code:"UNAVAILABLE"},{status:code==="TOO_MANY_ATTEMPTS"?429:code.startsWith("EMAIL_")||!allowed.includes(code)?503:400,headers});
   }
 }
+
