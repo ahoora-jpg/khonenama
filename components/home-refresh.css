@@ -3,8 +3,8 @@
 .quote-request-form select { width:100%;min-height:44px;border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;background:var(--cream,#fffaf4); }
 .profile-service-area { font-size:14px; }
 @media(max-width:680px) {
-  .business-profile-page { padding-bottom:90px; }
-  .business-profile-page .profile-actions { position:fixed;inset:auto 12px max(12px,env(safe-area-inset-bottom));z-index:45;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:8px;border-radius:18px;background:#fffaf4;box-shadow:0 4px 24px #0002; }
+  .business-profile-page { padding-bottom:36px; }
+  .business-profile-page .profile-actions { position:static;inset:auto;z-index:auto;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:flex-start;gap:6px;padding:0;border-radius:0;background:transparent;box-shadow:none; }
   .business-profile-page .profile-actions .pill-button { min-height:44px;font-size:14px;padding:8px 12px; }
 }
 .market-hero { padding:118px 0 24px;background:radial-gradient(ellipse at 20% 25%,#ecd6c2 0,transparent 55%),linear-gradient(135deg,#fffaf4,#edf2ec); }

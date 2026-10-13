@@ -1,4 +1,4 @@
-import { validateQuoteTerms } from '@/lib/quote-terms';
+import { validateQuoteTerms, quickEstimateTerms } from '@/lib/quote-terms';
 import { ensureQuoteDetails, parseQuoteJson } from '@/lib/server/quote-details';
 import { getOwnedBusiness } from "@/lib/server/business-media";
 
@@ -109,7 +109,12 @@ export async function PATCH(request: Request) {
     const amount = amountValue(body?.amount);
     const message = clean(body?.message, 1200);
 
-    const terms = validateQuoteTerms(body?.terms);
+    let terms = validateQuoteTerms(body?.terms);
+    if(body?.quickEstimate === true){
+      if(body?.terms?.kind === 'final') return Response.json({ok:false,error:'INVALID_QUOTE_DETAILS'},{status:400});
+      const lead=await owned.db.prepare("SELECT request_text FROM leads WHERE id=?").bind(leadId).first();
+      terms=quickEstimateTerms(String(lead?.request_text || ''),message);
+    }
     if (amount === null || !terms) return Response.json({ok:false,error:'INVALID_QUOTE_DETAILS'},{status:400});
     const current = await owned.db.prepare("SELECT q.id,d.revision FROM lead_quotes q LEFT JOIN lead_quote_details d ON d.quote_id=q.id WHERE q.lead_id=? AND q.business_id=?").bind(leadId,owned.business.id).first();
     if (current?.revision && body.expectedRevision !== current.revision) return Response.json({ok:false,error:'STALE_QUOTE'},{status:409});

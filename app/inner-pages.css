@@ -4159,3 +4159,27 @@ button.business-photo-avatar { cursor:pointer; }
 .business-dashboard-main .dashboard-heading{margin-bottom:18px}
 
 .gallery-model-choice{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px}.gallery-model-choice>span{font-weight:700}.quote-selected-model{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.quote-selected-model img{object-fit:cover;border-radius:12px}.quote-extra-fields{margin:16px 0}.quote-extra-fields summary{cursor:pointer}.quote-extra-fields .quote-form-grid{margin-top:16px}
+
+/* Compact, contained mobile business pages. */
+.business-dashboard-page .shell,.business-profile-page .shell{min-width:0}
+.business-dashboard-shell,.business-dashboard-nav,.business-dashboard-main,.business-profile-hero,.profile-main-card,.profile-section{max-width:100%;min-width:0}
+.business-dashboard-page :is(.dashboard-heading,.dashboard-heading-actions,.panel-heading,.business-public-link-box){flex-wrap:wrap;min-width:0}
+.business-dashboard-page :is(.dashboard-business-mini div,.dashboard-heading>div,.dashboard-plan-badge){min-width:0;overflow-wrap:anywhere}
+.business-dashboard-page :is(input,textarea,select,fieldset){max-width:100%;min-width:0}
+.business-public-link-box code{overflow-wrap:anywhere;white-space:normal;max-width:100%}
+.business-slug-editor{max-width:100%;min-width:0;flex-wrap:wrap}.business-slug-editor input{min-width:0}
+.business-profile-page :is(.profile-title-row,.profile-meta-grid,.profile-integrated-contact){min-width:0;overflow-wrap:anywhere}
+@media(max-width:700px){
+ .business-dashboard-page .dashboard-heading{display:flex;flex-direction:column;align-items:stretch}
+ .business-dashboard-page .dashboard-heading-actions{flex-wrap:wrap}
+ .business-dashboard-page .dashboard-grid{grid-template-columns:minmax(0,1fr)}
+ .business-dashboard-page .owner-album-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .business-dashboard-page .owner-album-tile{min-width:0;overflow-wrap:anywhere}
+ .public-service-groups{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+ .public-service-groups details{min-width:0;padding:10px 8px;border-radius:13px;background:#edf3e7}
+ .public-service-groups details:nth-child(3n+2){background:#f5e7da}.public-service-groups details:nth-child(3n){background:#e5eef3}
+ .public-service-groups summary{font-size:15px;line-height:1.7;overflow-wrap:anywhere}
+ .public-service-groups details[open]{grid-column:1/-1}
+ .public-service-groups .service-chips a{max-width:100%;overflow-wrap:anywhere;font-size:15px}
+ .business-profile-page .profile-actions{position:static;inset:auto;flex-direction:row;flex-wrap:wrap;box-shadow:none}
+}

@@ -13,6 +13,13 @@ export const handoverExamples = 'پرده: اندازه، حرکت و عملکر
 export function emptyQuoteTerms(): QuoteTerms {
   return Object.fromEntries([['kind','estimate'], ...quoteFields.map(([key])=>[key,''])]) as QuoteTerms;
 }
+export function quickEstimateTerms(requestText: string, note: string): QuoteTerms {
+  const terms=emptyQuoteTerms();
+  for(const [key] of quoteFields) terms[key]="هنوز توافق نشده";
+  terms.service=requestText.slice(0,500) || "طبق درخواست مشتری؛ جزئیات هنوز توافق نشده";
+  terms.included=note.trim().slice(0,500) || "مبلغ اولیه است؛ اقلام داخل قیمت هنوز توافق نشده";
+  return terms;
+}
 export function validateQuoteTerms(value: unknown): QuoteTerms | null {
   if (!value || typeof value !== 'object') return null;
   const input = value as Record<string, unknown>;

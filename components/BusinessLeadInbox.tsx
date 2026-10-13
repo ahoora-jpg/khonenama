@@ -5,6 +5,7 @@ import { CheckCircle2, Clock3, LockKeyhole, MessageCircle, Phone, RefreshCw, Sen
 
 import QuoteTermsEditor from '@/components/QuoteTermsEditor';
 import { emptyQuoteTerms, type QuoteTerms } from '@/lib/quote-terms';
+import { formatMoneyInput, moneyDigits } from '@/lib/money-input';
 type LeadRow = { revision?:string;terms?:QuoteTerms;recipient_status?:string;agreed?:{amount:number};
   id: number;
   customer_name: string;
@@ -36,6 +37,7 @@ function statusLabel(status: LeadRow["status"]) {
 export default function BusinessLeadInbox() {
   const [leads, setLeads] = useState<LeadRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [detailed, setDetailed] = useState<Record<number,boolean>>({});
   const [message, setMessage] = useState("");
   const [drafts, setDrafts] = useState<Record<number, { amount: string; message: string; terms: QuoteTerms }>>({});
 
@@ -100,14 +102,15 @@ export default function BusinessLeadInbox() {
       body: JSON.stringify({
         leadId,
         action: "quote",
-        amount: draft.amount,
-        message: draft.message, terms: draft.terms,
+        amount: moneyDigits(draft.amount),
+        quickEstimate: !detailed[leadId],
+        message: draft.message, terms: detailed[leadId] ? draft.terms : {kind:'estimate'},
         expectedRevision: leads.find(row=>row.id===leadId)?.revision,
       }),
     });
     const result = await response.json().catch(() => ({}));
     if (!response.ok || !result?.ok) {
-      setMessage(result.error==='STALE_QUOTE'?'پیشنهاد تغییر کرده؛ صفحه را تازه کنید.':'ثبت نشد؛ اقلام قیمت و همه شرایط را کامل کنید.');
+      setMessage(result.error==='STALE_QUOTE'?'پیشنهاد تغییر کرده؛ صفحه را تازه کنید.':detailed[leadId]?'ثبت نشد؛ مبلغ و شرایط را کامل کنید.':'مبلغ معتبر به تومان وارد کنید.');
       return;
     }
     setMessage("پیشنهاد قیمت به‌صورت خصوصی در پرونده درخواست ذخیره شد.");
@@ -180,7 +183,9 @@ export default function BusinessLeadInbox() {
                     <small>این مبلغ در صفحه عمومی نمایش داده نمی‌شود.</small>
                   </div>
                   {lead.agreed && <p>مبلغ انتخاب‌شده قبلی: {money(lead.agreed.amount)}؛ تغییر تازه تنها پس از تأیید مشتری جایگزین می‌شود.</p>}
-                  <QuoteTermsEditor value={draft.terms} onChange={terms=>setDrafts(current=>({...current,[lead.id]:{...draft,terms}}))}/>
+                  <p>مبلغ اولیه را بنویسید؛ قیمت قطعی پس از بررسی مدل و اندازه اعلام می‌شود.</p>
+                  <label><input type="checkbox" checked={Boolean(detailed[lead.id])} onChange={e=>setDetailed(current=>({...current,[lead.id]:e.target.checked}))}/> پیشنهاد کامل و شرایط قیمت قطعی</label>
+                  {detailed[lead.id] && <QuoteTermsEditor value={draft.terms} onChange={terms=>setDrafts(current=>({...current,[lead.id]:{...draft,terms}}))}/>}
                   <div className="lead-quote-grid">
                     <input
                       dir="ltr"
@@ -190,13 +195,13 @@ export default function BusinessLeadInbox() {
                       onChange={(event) =>
                         setDrafts((current) => ({
                           ...current,
-                          [lead.id]: { ...draft, amount: event.target.value },
+                          [lead.id]: { ...draft, amount: formatMoneyInput(event.target.value) },
                         }))
                       }
                     />
                     <textarea
-                      rows={3}
-                      placeholder="توضیح پیشنهاد، شرایط اجرا، زمان‌بندی یا موارد شامل قیمت"
+                      rows={2}
+                      placeholder="توضیح کوتاه (اختیاری)"
                       value={draft.message}
                       onChange={(event) =>
                         setDrafts((current) => ({
@@ -206,7 +211,7 @@ export default function BusinessLeadInbox() {
                       }
                     />
                     <button className="pill-button dark" type="button" onClick={() => sendQuote(lead.id)}>
-                      <Send size={14} /> ذخیره پیشنهاد
+                      <Send size={14} /> {detailed[lead.id] ? "ارسال پیشنهاد کامل" : "ارسال قیمت اولیه"}
                     </button>
                   </div>
                   {lead.quote_status === "sent" && (
