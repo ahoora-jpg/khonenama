@@ -10,7 +10,7 @@ import HomeAppDownload from "@/components/HomeAppDownload";
 import HomeBoothInvitation from "@/components/HomeBoothInvitation";
 import InspirationGallery from "@/components/InspirationGallery";
 import LocalDiscovery from "@/components/LocalDiscovery";
-import GuidesHome from "@/components/GuidesHome";
+import MagazineHomeEntry from "@/components/MagazineHomeEntry";
 import HowItWorks from "@/components/HowItWorks";
 import BusinessCTA from "@/components/BusinessCTA";
 import Footer from "@/components/Footer";
@@ -136,7 +136,7 @@ export default async function HomePage() {
       <HomeBusinessShelf initialBusinesses={shelf} />
       <HomeTools />
       <Categories />
-      <GuidesHome />
+      <MagazineHomeEntry />
       <InspirationGallery />
       <LocalDiscovery />
       <HowItWorks />

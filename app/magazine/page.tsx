@@ -65,6 +65,7 @@ export default function MagazinePage() {
       <Header />
       <section className="inner-page">
         <div className="shell">
+          <img className="magazine-editorial-cover" src="/images/magazine/khonenama-magazine-landscape.webp" alt="مجله خونه‌نما؛ نور و زندگی در خانه" width={1440} height={810} decoding="async" />
           <div className="category-hero glass-panel magazine-hero">
             <span className="section-kicker">مجله خونه نما</span>
             <h1>راهنمای انتخاب برای خانه</h1>
