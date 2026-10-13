@@ -4144,3 +4144,16 @@ button.business-photo-avatar { cursor:pointer; }
 .billing-period-picker button{font:inherit;font-size:16px;padding:12px 18px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer}
 .billing-period-picker button[aria-pressed="true"]{background:#315b41;color:#fff;border-color:#315b41}
 @media(max-width:700px){.registration-plan-images{grid-template-columns:1fr;max-width:440px;margin-inline:auto}.billing-plan-grid{grid-template-columns:1fr}.billing-plan-image{max-width:440px;margin-inline:auto}}
+
+/* Owner workspace: clear photo editing and compact album access. */
+.owner-booth-preview .profile-main-card{margin:16px auto 0;width:100%;position:relative;z-index:auto}
+.owner-booth-preview .business-photo-avatar{z-index:5}
+.owner-booth-preview .photo-edit-label{top:16px;bottom:auto;left:16px}
+.business-media-manager .media-capacity{grid-template-columns:repeat(2,minmax(0,1fr))}
+.owner-album-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:16px 0}
+.owner-album-tile{border:1px solid var(--line);border-radius:18px;background:var(--surface-soft);padding:16px;display:flex;flex-direction:column;gap:10px;align-items:center;cursor:pointer;color:var(--ink);font:inherit;min-height:130px}
+.owner-album-tile img{width:100%;height:100px;object-fit:cover;border-radius:12px}
+.owner-album-tile span{font-size:15px}
+.owner-album-create{border-style:dashed;color:var(--sage)}
+.owner-album-tile:focus-visible{outline:3px solid var(--sage);outline-offset:3px}
+.business-dashboard-main .dashboard-heading{margin-bottom:18px}

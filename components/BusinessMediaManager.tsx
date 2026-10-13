@@ -36,6 +36,7 @@ const limits: Record<string, number> = {
 };
 
 export default function BusinessMediaManager({ plan = "free" }: { plan?: string }) {
+  const [libraryOpen, setLibraryOpen] = useState(false);
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [configured, setConfigured] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -64,7 +65,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
   const [mediaRevision, setMediaRevision] = useState(0);
   const [pickerOpen, setPickerOpen] = useState(false);
   const number = (value: number) => value.toLocaleString("fa-IR");
-  function pick(kind: "image" | "cover" | "logo" | "video") { setUploadKind(kind); setPickerOpen(true); requestAnimationFrame(()=>document.getElementById("media-source-picker")?.scrollIntoView({behavior:"smooth",block:"nearest"})); }
+  function pick(kind: "image" | "cover" | "logo" | "video") { if(kind === "image" || kind === "video") setLibraryOpen(true); setUploadKind(kind); setPickerOpen(true); requestAnimationFrame(()=>document.getElementById("media-source-picker")?.scrollIntoView({behavior:"smooth",block:"nearest"})); }
   const sortedMedia = useMemo(
     () => media.filter(item => item.kind === "image" || item.kind === "video").sort((a, b) => (a.kind === "cover" ? -1 : b.kind === "cover" ? 1 : a.sort_order - b.sort_order)),
     [media]
@@ -240,7 +241,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       <div className="media-capacity" aria-live="polite">
         <div><strong>{number(media.filter(item => item.kind === "image").length)}</strong><span>عکس ذخیره‌شده</span></div>
         <div><strong>{number(remaining)}</strong><span>جای خالی برای عکس</span></div>
-        <div><strong>{number(limit)}</strong><span>ظرفیت عکس‌های پلن</span></div>
+
       </div>
       <p className="media-capacity-note">کاور و پروفایل جدا از این تعداد هستند. تعداد آلبوم‌ها محدود نیست.</p>
       <p>ویدیو: {number(media.filter(item => item.kind === "video").length)} ذخیره‌شده از {number(videoLimit)}؛ {number(videoRemaining)} جای خالی. MP4، حداکثر ۲۰ ثانیه و ۱۵ مگابایت.</p>
@@ -248,6 +249,9 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       <input ref={fileRef} type="file" accept={uploadKind === "video" ? "video/mp4" : "image/*"} multiple={uploadKind === "image" || uploadKind === "video"} hidden onChange={event => chooseFiles(event.target.files)} />
       <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={event => chooseFiles(event.target.files)} />
 
+      <BusinessAlbumManager mediaRevision={mediaRevision} onAddPhotos={()=>pick("image")} />
+      <button className="pill-button" type="button" aria-expanded={libraryOpen} onClick={()=>setLibraryOpen(value=>!value)}>{libraryOpen ? "بستن همه عکس‌ها و ویدیوها" : "مدیریت همه عکس‌ها و ویدیوها"}</button>
+      <div style={{display:libraryOpen ? undefined : "none"}}>
       <div className="panel-heading"><h3>عکس‌ها و ویدیوهای نمونه‌کار</h3><button className="pill-button dark" type="button" disabled={uploading || !configured || !remaining} onClick={()=>pick("image")}><ImagePlus size={18}/> افزودن عکس</button></div>
       {!configured && (
         <div className="business-media-config-note">
@@ -332,7 +336,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
           <button className="pill-button dark" type="button" disabled={uploading || !configured} onClick={()=>pick("image")}><ImagePlus size={18}/> افزودن اولین عکس</button>
         </div>
       )}
-      <BusinessAlbumManager mediaRevision={mediaRevision} onAddPhotos={()=>pick("image")} />
+      </div>
     </section>
   );
 }

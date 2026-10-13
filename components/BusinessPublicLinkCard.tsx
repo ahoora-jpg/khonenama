@@ -13,6 +13,8 @@ export default function BusinessPublicLinkCard({
   onSlugChange?: (slug: string) => void;
 }) {
   const [currentSlug, setCurrentSlug] = useState(slug || "");
+  const [remaining, setRemaining] = useState<number | null>(null);
+  useEffect(()=>{fetch("/api/me/business/public-link",{cache:"no-store"}).then(r=>r.json()).then(data=>{if(data.ok)setRemaining(data.remaining);}).catch(()=>{});},[]);
   const [copied, setCopied] = useState(false);
   const [editing, setEditing] = useState(false);
   const [draftSlug, setDraftSlug] = useState(slug || "");
@@ -68,6 +70,7 @@ export default function BusinessPublicLinkCard({
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result?.ok) {
         const messages: Record<string, string> = {
+          SLUG_CHANGE_LIMIT_OR_CONFLICT: "تعداد تغییرهای مجاز تمام شده یا آدرس هم‌زمان تغییر کرده است؛ صفحه را دوباره باز کنید.",
           SLUG_TOO_SHORT: "آدرس انتخابی خیلی کوتاه است.",
           SLUG_RESERVED: "این آدرس رزرو شده و قابل انتخاب نیست.",
           SLUG_INVALID: "فقط حروف انگلیسی، عدد و خط تیره مجاز است.",
@@ -78,6 +81,7 @@ export default function BusinessPublicLinkCard({
         return;
       }
 
+      setRemaining(result.remaining);
       setCurrentSlug(result.slug);
       setDraftSlug(result.slug);
       setEditing(false);
@@ -114,6 +118,7 @@ export default function BusinessPublicLinkCard({
         </div>
       )}
       <div className="business-public-link-box">
+        <p>آدرس غرفه حداکثر دو بار قابل تغییر است.{remaining !== null ? ` ${remaining.toLocaleString("fa-IR")} تغییر باقی مانده.` : ""} لینک‌های قبلی همچنان معتبر می‌مانند.</p>
         {editing ? (
           <>
             <div className="business-slug-editor">
@@ -157,7 +162,7 @@ export default function BusinessPublicLinkCard({
                 setMessage("");
               }}
             >
-              <Pencil size={15} /> ویرایش آدرس
+              <Pencil size={15} /> {remaining === 0 ? "تغییرهای مجاز تمام شده" : "ویرایش آدرس"}
             </button>
           </>
         )}

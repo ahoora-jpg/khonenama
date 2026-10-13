@@ -62,6 +62,13 @@ const nav = [
 ] as const;
 
 export default function BusinessDashboardContent() {
+  const [activeSection, setActiveSection] = useState("media");
+  useEffect(() => {
+    const sync = () => { const hash = window.location.hash.slice(1); setActiveSection(["media","overview","profile","services","leads","reviews","analytics","settings","public-link"].includes(hash) ? hash : "media"); };
+    sync(); window.addEventListener("hashchange", sync);
+    return () => window.removeEventListener("hashchange", sync);
+  }, []);
+  const sectionStyle = (key: string) => ({ display: activeSection === key ? undefined : "none" });
   const [profile, setProfile] = useState<StoredProfile>({});
   const [source, setSource] = useState<"server" | "browser" | "loading">("loading");
 
@@ -157,13 +164,13 @@ export default function BusinessDashboardContent() {
           <div>
             <strong>{displayName}</strong>
             <small>{location}</small>
-            <span className={"dashboard-plan-badge plan-" + (profile.plan || "free")}>{planLabel}</span>
+            <a href="/dashboard/billing" className={"dashboard-plan-badge plan-" + (profile.plan || "free")}>پلن {planLabel}</a>
           </div>
         </div>
 
         <nav>
           {nav.map(([label, href, Icon], index) => (
-            <a className={index === 0 ? "is-active" : ""} href={href} key={label}>
+            <a className={href === "#" + activeSection ? "is-active" : ""} aria-current={href === "#" + activeSection ? "page" : undefined} href={href} key={label}>
               <Icon size={17} /><span>{label}</span>
             </a>
           ))}
@@ -178,29 +185,33 @@ export default function BusinessDashboardContent() {
       </aside>
 
       <div className="business-dashboard-main">
-        {source === "server" && <BusinessMediaManager plan={profile.plan || "free"} />}
-        <section className="dashboard-panel glass-panel"><h2>سه سطح برای غرفه شما</h2><p>ثبت اولیه با پایه رایگان: ۱۰ عکس نمونه‌کار. حرفه‌ای: ۳۰ عکس و ۲ ویدیو. ویژه: ۷۰ عکس و ۵ ویدیو. دسته‌بندی آلبوم‌ها در همه سطح‌ها آزاد است. تصویر اصلی و پروفایل جدا از این ظرفیت هستند.</p><a href="/dashboard/billing">مشاهده امکانات ارتقا</a><p>از بخش گالری می‌توانید با دوربین گوشی عکس بگیرید یا از گالری گوشی انتخاب کنید.</p></section>
         <div className="dashboard-heading" id="overview">
           <div>
             <span className="section-kicker">پنل کسب‌وکار</span>
             <h1>{displayName}</h1>
             <p>اطلاعات، نمونه‌کارها، درخواست‌ها و وضعیت اشتراک را از همین‌جا مدیریت کن.</p>
-            <span className={"dashboard-current-plan plan-" + (profile.plan || "free")}>پلن فعلی: {planLabel}</span>
+            <a href="/dashboard/billing" className={"dashboard-current-plan plan-" + (profile.plan || "free")}>پلن فعلی: {planLabel} · مشاهده پلن‌ها</a>
           </div>
           <div className="dashboard-heading-actions">
+            {profile.businessSlug && <a className="pill-button" href={"/business/"+profile.businessSlug} target="_blank" rel="noreferrer"><Eye size={17}/> نمایش غرفه</a>}
             {profile.businessSlug && <a className="pill-button" href="#public-link">کیوآرکد گالری</a>}
-            <button className="icon-button" type="button" aria-label="اعلان‌ها"><Bell size={18} /></button>
+            <a className="pill-button" href="#leads"><Bell size={18} /> درخواست‌ها ({profile.leadCount || 0})</a>
             <a className="pill-button dark" href="/dashboard/profile"><Store size={17} /> ویرایش پروفایل</a>
           </div>
         </div>
 
+        <div style={sectionStyle("media")}>
+          {source === "server" && <BusinessMediaManager plan={profile.plan || "free"} />}
+        </div>
+        <div style={sectionStyle("public-link")}>
         <BusinessPublicLinkCard
           slug={profile.businessSlug}
           status={profile.status}
           onSlugChange={(businessSlug) => setProfile((current) => ({ ...current, businessSlug }))}
         />
 
-        <div className="dashboard-stats">
+        </div>
+        <div style={sectionStyle("overview")} className="dashboard-stats">
           {stats.map(({ label, value, icon: Icon }) => (
             <div className="dashboard-stat glass-panel" key={label}>
               <Icon size={20} />
@@ -209,8 +220,8 @@ export default function BusinessDashboardContent() {
           ))}
         </div>
 
-        <div className="dashboard-grid">
-          <section className="dashboard-panel glass-panel" id="profile">
+        <div style={sectionStyle("profile")} className="dashboard-grid">
+          <section style={sectionStyle("profile")} className="dashboard-panel glass-panel" id="profile">
             <div className="panel-heading">
               <div><span className="section-kicker">آمادگی انتشار</span><h2>تکمیل پروفایل</h2></div>
               <span className="status-pill">{profile.status === "published" ? "منتشرشده" : "پیش‌نویس"}</span>
@@ -234,8 +245,8 @@ export default function BusinessDashboardContent() {
 
         </div>
 
-        <div className="dashboard-grid">
-          <section className="dashboard-panel glass-panel" id="services">
+        <div style={{display:["services","leads","settings"].includes(activeSection) ? "block" : "none"}} className="dashboard-grid">
+          <section style={sectionStyle("services")} className="dashboard-panel glass-panel" id="services">
             <div className="panel-heading">
               <div><span className="section-kicker">خدمات و محدوده</span><h2>پوشش کسب‌وکار</h2></div>
               <MapPin size={20} />
@@ -246,24 +257,24 @@ export default function BusinessDashboardContent() {
             <p>موقعیت فعلی: {location || "ثبت نشده"}</p>
           </section>
 
-          <p><a href="/dashboard/campaigns">مدیریت کمپین و جشنواره</a> · <a href="/support">پشتیبانی و گزارش مشکل</a></p>
-          <BusinessBrowserNotifications />
-          <BusinessLeadInbox />
+          <p style={sectionStyle("settings")}><a href="/dashboard/campaigns">مدیریت کمپین و جشنواره</a> · <a href="/support">پشتیبانی و گزارش مشکل</a></p>
+          <div style={sectionStyle("leads")}><BusinessBrowserNotifications /><BusinessLeadInbox /></div>
         </div>
 
-        <BusinessAnalyticsPanel plan={profile.plan || "free"} />
+        <div style={sectionStyle("analytics")}><BusinessAnalyticsPanel plan={profile.plan || "free"} /></div>
 
-        <BusinessReviewPanel />
+        <div style={sectionStyle("reviews")}><BusinessReviewPanel /></div>
 
-        <BusinessVisibilitySettings />
+        <div style={sectionStyle("settings")}><BusinessVisibilitySettings /></div>
 
-        <BusinessPublicationPanel
+        <div style={sectionStyle("profile")}><BusinessPublicationPanel
           initialStatus={(profile.status || "") as any}
           initialVerificationStatus={profile.verificationStatus || ""}
           initialModerationReason={profile.moderationReason || ""}
         />
 
-        <section className="dashboard-panel glass-panel dashboard-verification-panel">
+        </div>
+        <section style={sectionStyle("profile")} className="dashboard-panel glass-panel dashboard-verification-panel">
           <div>
             <span className="section-kicker">اعتماد و اعتبار</span>
             <h2>تأیید کسب‌وکار</h2>
