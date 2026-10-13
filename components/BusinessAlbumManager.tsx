@@ -1,4 +1,5 @@
 "use client";
+import { modelCode } from "@/lib/model-quote";
 import { useEffect, useRef, useState } from "react";
 
 export default function BusinessAlbumManager({ mediaRevision = 0, onAddPhotos }: { mediaRevision?: number; onAddPhotos?: () => void }) {
@@ -67,7 +68,7 @@ export default function BusinessAlbumManager({ mediaRevision = 0, onAddPhotos }:
       {!filteredMedia.length&&<p>عکسی با این عنوان پیدا نشد.</p>}
       {onAddPhotos && <button type="button" className="pill-button" disabled={busy} onClick={()=>{addingToAlbum.current=true;onAddPhotos();}}>+ افزودن عکس جدید به این آلبوم</button>}
       <button type="button" className="pill-button" onClick={() => load().catch(() => setMessage("دریافت عکس‌ها انجام نشد."))}>به‌روزرسانی عکس‌ها</button>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>{filteredMedia.map(item => <label key={item.id}><input type="checkbox" disabled={busy} aria-label={item.alt_text||`انتخاب ${item.kind==='video'?'ویدیو':'عکس'} ${item.id}`} checked={selected.includes(item.id)} onChange={e => setSelected(previous=>e.target.checked ? Array.from(new Set([...previous, item.id])) : previous.filter(id => id !== item.id))} />{item.kind === "video" ? <video src={item.file_url} width={80} height={80} preload="metadata" muted playsInline /> : <img src={item.file_url} alt={item.alt_text || "انتخاب عکس نمونه‌کار"} width={80} height={80} loading="lazy" style={{ objectFit: "cover" }} />}</label>)}</div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>{filteredMedia.map(item => <label key={item.id}><input type="checkbox" disabled={busy} aria-label={item.alt_text||`انتخاب ${item.kind==='video'?'ویدیو':'عکس'} ${item.id}`} checked={selected.includes(item.id)} onChange={e => setSelected(previous=>e.target.checked ? Array.from(new Set([...previous, item.id])) : previous.filter(id => id !== item.id))} />{item.kind === "video" ? <video src={item.file_url} width={80} height={80} preload="metadata" muted playsInline /> : <img src={item.file_url} alt={item.alt_text || "انتخاب عکس نمونه‌کار"} width={80} height={80} loading="lazy" style={{ objectFit: "cover" }} />}{item.kind === "image" && <span dir="ltr">{modelCode(item.id)}</span>}</label>)}</div>
       <button type="submit" className="pill-button dark" disabled={busy || !selected.length}>{busy ? "در حال ذخیره…" : editingAlbum ? "ذخیره تغییرات آلبوم" : "+ ساخت آلبوم"}</button>
       <button type="button" className="pill-button" disabled={busy} onClick={()=>{addingToAlbum.current=false;setEditorOpen(false);setEditingAlbum(null);setMessage("");}}>بستن / انصراف</button>
       {editingAlbum && <button type="button" className="pill-button" disabled={busy} onClick={()=>void remove(editingAlbum).then(ok=>{if(ok){setEditorOpen(false);setEditingAlbum(null);}})}>حذف آلبوم</button>}

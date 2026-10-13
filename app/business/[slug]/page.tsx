@@ -1,3 +1,5 @@
+import { businessModelNames } from "@/lib/server/business-models";
+import GalleryModelChoice from "@/components/GalleryModelChoice";
 import { groupServices } from "@/lib/service-groups";
 import type { Metadata } from "next";
 import { env } from "cloudflare:workers";
@@ -138,6 +140,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
     notFound();
   }
 
+  const modelNames = business.source === "d1" ? await businessModelNames((env as any).DB,business.id) : [];
   const albums = business.source === "d1" ? await listPublicBusinessAlbums((env as any).DB, business.id, business.planCode, business.media.map((m:any)=>m.id)) : [];
   const liveRelated = business.category
     ? await listPublishedBusinesses({ categorySlug: business.category, city: business.city, limit: 6 })
@@ -336,7 +339,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
                 </dl>}
                 {album.description && <p style={{ whiteSpace: "pre-wrap" }}>{album.description}</p>}
                 <div className="business-public-gallery">
-                  {album.media.map(item => <figure key={item.id}>{item.kind === "video" ? <video src={item.url} controls playsInline preload="metadata" style={{width:"100%"}} /> : <img src={item.url} alt={item.altText || album.title} loading="lazy" />}{item.altText && <figcaption>{item.altText}</figcaption>}</figure>)}
+                  {album.media.map(item => <figure key={item.id}>{item.kind === "video" ? <video src={item.url} controls playsInline preload="metadata" style={{width:"100%"}} /> : <img src={item.url} alt={item.altText || album.title} loading="lazy" />}{item.altText && <figcaption>{item.altText}</figcaption>}{business.source === "d1" && item.kind === "image" && <GalleryModelChoice businessSlug={business.slug} mediaId={item.id} />}</figure>)}
                 </div>
               </details>
             ))}
@@ -346,6 +349,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
                   <figure className={item.kind === "cover" ? "is-cover" : ""} key={item.id}>
                     {item.kind === "video" ? <video src={item.url} controls playsInline preload="metadata" style={{width:"100%"}} /> : <img src={item.url} alt={item.altText || business.name + " نمونه‌کار"} loading="lazy" />}
                     {item.altText && <figcaption>{item.altText}</figcaption>}
+                    {business.source === "d1" && item.kind === "image" && <GalleryModelChoice businessSlug={business.slug} mediaId={item.id} />}
                   </figure>
                 ))}
               </div>
@@ -386,7 +390,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
             <span className="section-kicker">استعلام</span>
             <h2>درخواست قیمت</h2>
             {business.source === "d1" ? (
-              <QuoteRequestForm businessSlug={business.slug} businessName={business.name} services={business.services} />
+              <QuoteRequestForm businessSlug={business.slug} businessName={business.name} services={business.services} modelNames={modelNames} models={business.media.filter((item:any)=>item.kind === "image").map((item:any)=>({id:item.id,url:item.url,altText:item.altText}))} />
             ) : (
               <div className="demo-quote-note glass-panel">
                 این یک پروفایل نمونه برای نمایش تجربه خونه نماست. درخواست قیمت واقعی فقط برای کسب‌وکارهای ثبت‌شده فعال می‌شود.

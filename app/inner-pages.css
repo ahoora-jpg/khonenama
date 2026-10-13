@@ -4157,3 +4157,5 @@ button.business-photo-avatar { cursor:pointer; }
 .owner-album-create{border-style:dashed;color:var(--sage)}
 .owner-album-tile:focus-visible{outline:3px solid var(--sage);outline-offset:3px}
 .business-dashboard-main .dashboard-heading{margin-bottom:18px}
+
+.gallery-model-choice{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px}.gallery-model-choice>span{font-weight:700}.quote-selected-model{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.quote-selected-model img{object-fit:cover;border-radius:12px}.quote-extra-fields{margin:16px 0}.quote-extra-fields summary{cursor:pointer}.quote-extra-fields .quote-form-grid{margin-top:16px}

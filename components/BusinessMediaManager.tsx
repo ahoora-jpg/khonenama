@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { modelCode } from "@/lib/model-quote";
 import BusinessPhotoHeader from "@/components/BusinessPhotoHeader";
+import BusinessModelNames from "@/components/BusinessModelNames";
 import BusinessAlbumManager from "@/components/BusinessAlbumManager";
 import { VIDEO_LIMITS } from "@/lib/business-video";
 import { prepareBusinessImage } from "@/lib/prepare-business-image";
@@ -249,6 +251,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       <input ref={fileRef} type="file" accept={uploadKind === "video" ? "video/mp4" : "image/*"} multiple={uploadKind === "image" || uploadKind === "video"} hidden onChange={event => chooseFiles(event.target.files)} />
       <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={event => chooseFiles(event.target.files)} />
 
+      <BusinessModelNames />
       <BusinessAlbumManager mediaRevision={mediaRevision} onAddPhotos={()=>pick("image")} />
       <button className="pill-button" type="button" aria-expanded={libraryOpen} onClick={()=>setLibraryOpen(value=>!value)}>{libraryOpen ? "بستن همه عکس‌ها و ویدیوها" : "مدیریت همه عکس‌ها و ویدیوها"}</button>
       <div style={{display:libraryOpen ? undefined : "none"}}>
@@ -277,6 +280,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
                 <span className="business-media-cover-badge"><Crown size={12} /> تصویر اصلی</span>
               )}
 
+              {item.kind === "image" && <strong dir="ltr">{modelCode(item.id)}</strong>}
               <div className="business-media-actions">
                 {item.kind === "image" && (
                   <button type="button" title="انتخاب به‌عنوان تصویر اصلی" onClick={() => patch(item.id, "cover")}>

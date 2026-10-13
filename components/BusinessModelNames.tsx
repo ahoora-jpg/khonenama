@@ -1,0 +1,7 @@
+"use client";
+import { useEffect, useState } from "react";
+export default function BusinessModelNames(){
+  const [text,setText]=useState("");const [message,setMessage]=useState("");const [busy,setBusy]=useState(false);const [loaded,setLoaded]=useState(false);
+  useEffect(()=>{fetch("/api/me/business/models",{cache:"no-store"}).then(r=>r.json()).then(d=>{if(!d.ok)throw new Error();setText(d.names.join("\n"));setLoaded(true);}).catch(()=>setMessage("دریافت مدل‌ها انجام نشد؛ صفحه را دوباره باز کنید."));},[]);
+  return <details className="dashboard-panel glass-panel"><summary>مدل‌های قابل سفارش · با عکس یا بدون عکس</summary><p>نام هر مدل را در یک خط بنویسید؛ مشتری می‌تواند از این فهرست انتخاب کند. عکس الزامی نیست.</p><textarea aria-label="نام مدل‌های قابل سفارش" rows={4} value={text} disabled={!loaded||busy} onChange={e=>setText(e.target.value)} placeholder={"پرده مینیمال\nپرده زبرا"}/><button type="button" className="pill-button dark" disabled={!loaded||busy} onClick={async()=>{setBusy(true);setMessage("");try{const r=await fetch("/api/me/business/models",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({names:text.split("\n").map(n=>n.trim()).filter(Boolean)})});if(!r.ok)throw new Error();setMessage("مدل‌ها ذخیره شدند.");}catch{setMessage("ذخیره نشد؛ حداکثر ۱۰۰ مدل، هر نام تا ۱۰۰ حرف. دوباره تلاش کنید.");}finally{setBusy(false);}}}>{busy?"در حال ذخیره…":"ذخیره مدل‌ها"}</button>{message&&<p role="status">{message}</p>}</details>;
+}

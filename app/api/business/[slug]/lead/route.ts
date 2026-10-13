@@ -1,3 +1,5 @@
+import { getPublishedBusiness } from "@/lib/server/public-businesses";
+import { measurement, modelRequestText } from "@/lib/model-quote";
 import { createLeadAccessCode } from "@/lib/server/lead-access";
 import { env } from "cloudflare:workers";
 import { recordSavedQuote } from "@/lib/server/quote-metrics";
@@ -49,7 +51,9 @@ export async function POST(
 
   const customerName = clean(body?.customerName, 120);
   const customerPhone = normalizeIranPhone(clean(body?.customerPhone, 40));
-  const requestText = clean(body?.requestText, 1600);
+  let requestText = clean(body?.requestText, 1600);
+  const hasPhoto = body?.selectedMediaId !== undefined;
+  const modelName = clean(body?.modelName,100);
   const area = clean(body?.area, 100);
   const budgetMin = money(body?.budgetMin);
   const budgetMax = money(body?.budgetMax);
@@ -60,7 +64,7 @@ export async function POST(
   if (!/^09\d{9}$/.test(customerPhone)) {
     return Response.json({ ok: false, error: "INVALID_PHONE" }, { status: 400 });
   }
-  if (requestText.length < 10) {
+  if (!hasPhoto && !modelName && requestText.length < 10) {
     return Response.json({ ok: false, error: "REQUEST_TOO_SHORT" }, { status: 400 });
   }
   if (budgetMin !== null && budgetMax !== null && budgetMax < budgetMin) {
@@ -80,6 +84,21 @@ export async function POST(
 
   if (!business?.id) {
     return Response.json({ ok: false, error: "BUSINESS_NOT_FOUND" }, { status: 404 });
+  }
+
+  if(hasPhoto || modelName){
+    const width=measurement(body?.widthMeters);
+    const height=body?.heightMeters === undefined || body.heightMeters === "" ? null : measurement(body.heightMeters);
+    if(width===null || (body?.heightMeters !== undefined && body.heightMeters !== "" && height===null)) return Response.json({ok:false,error:"INVALID_MEASUREMENT"},{status:400});
+    if(hasPhoto){
+      if(!Number.isSafeInteger(body.selectedMediaId))return Response.json({ok:false,error:"INVALID_MODEL"},{status:400});
+      const publicBusiness=await getPublishedBusiness(slug);
+      const model=publicBusiness?.media.find(item=>item.id===body.selectedMediaId && item.kind==="image");
+      if(!model)return Response.json({ok:false,error:"INVALID_MODEL"},{status:400});
+      requestText=modelRequestText(model,width,height,requestText);
+    }else{
+      requestText=["مدل درخواستی مشتری: "+modelName,"عرض: "+width+" متر",height!==null?"ارتفاع: "+height+" متر":"",requestText.slice(0,800)].filter(Boolean).join("\n");
+    }
   }
 
   const duplicate = await db
