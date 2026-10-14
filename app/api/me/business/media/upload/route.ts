@@ -197,10 +197,11 @@ export async function POST(request: Request) {
       await deleteStoredBusinessImage(uploadedProvider, uploadedFileId).catch(() => {});
     }
 
-    const message = error instanceof Error ? error.message : "";
+    const detail = error && typeof error === "object" ? error as {message?:unknown;stack?:unknown;name?:unknown} : null;
+    const message = typeof detail?.message === "string" ? detail.message : typeof error === "string" ? error : "";
     const text = message.toLowerCase();
     const category = text.includes("header") ? "invalid_header" : text.includes("btoa") || text.includes("character") ? "invalid_character" : text.includes("fetch") || text.includes("network") ? "network_fetch" : text.includes("r2") ? "r2_storage" : text.includes("d1") || text.includes("sql") ? "database" : text.includes("file") || text.includes("formdata") || text.includes("blob") ? "multipart_runtime" : "unknown";
-    const frame = (error instanceof Error ? error.stack || "" : "").match(/uploadImageKitFile|getImageKitFileDetails|downloadProcessedImage|uploadStoredBusinessImage|readBusinessUploadForm/)?.[0] || "unknown";
+    const frame = (typeof detail?.stack === "string" ? detail.stack : "").match(/uploadImageKitFile|getImageKitFileDetails|downloadProcessedImage|uploadStoredBusinessImage|readBusinessUploadForm/)?.[0] || "unknown";
     console.warn("MEDIA_PROVIDER_FAILURE", category, frame, error instanceof Error ? error.name : "unknown");
     console.error("server media upload failed", error);
 
