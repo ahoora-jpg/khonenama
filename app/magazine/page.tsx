@@ -3,13 +3,14 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PreferredSourceCTA from "@/components/PreferredSourceCTA";
 import { guides } from "@/lib/guides";
+import { contentPaths } from "@/lib/content-paths";
 import { getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, BookOpen, Clock3 } from "lucide-react";
 
 const magazineUrl = "https://khonenama.ir/magazine";
 const magazineTitle = "مجله خونه نما | راهنمای دکوراسیون و خانه هوشمند";
 const magazineDescription =
-  "راهنماهای کاربردی خونه نما درباره پرده، پارکت، کفپوش، دیوارپوش، طراحی داخلی، نورپردازی و خانه هوشمند.";
+  "پاسخ سؤال‌های خرید، اندازه‌گیری، نصب و نگهداری پرده، کفپوش، موکت، دیوارپوش، طراحی داخلی و خانه هوشمند؛ راهنما، محاسبه‌گر و کسب‌وکار مرتبط را پیدا کنید.";
 
 export const metadata: Metadata = {
   title: { absolute: magazineTitle },
@@ -75,6 +76,34 @@ export default function MagazinePage() {
           </div>
 
           <PreferredSourceCTA />
+
+          <section aria-labelledby="content-paths-title">
+            <h2 id="content-paths-title">از سؤال شما تا انتخاب محصول و مجری</h2>
+            <p>موضوع خود را انتخاب کنید، پاسخ اولیه و راهنماهای مرتبط را بخوانید و بعد مشخصات پروژه را با فروشنده یا مجری در میان بگذارید. نتیجه محاسبه‌گر برآورد اولیه است؛ قیمت نهایی و شرایط اجرا را از کسب‌وکار واقعی بگیرید.</p>
+            <nav aria-label="موضوع‌های راهنمای دکوراسیون">
+              <ul>{contentPaths.map((path) => <li key={path.id}><a href={"#guide-path-" + path.id}>{path.name}</a></li>)}</ul>
+            </nav>
+            <div className="magazine-grid">
+              {contentPaths.map((path) => (
+                <article className="magazine-card" id={"guide-path-" + path.id} key={path.id}>
+                  <span className="magazine-category">{path.name}</span>
+                  <h3>{path.question}</h3>
+                  <p>{path.answer}</p>
+                  <h4>پیش از خرید یا سفارش</h4>
+                  <ul>{path.checklist.map((item) => <li key={item}>{item}</li>)}</ul>
+                  <h4>راهنماهای مکمل</h4>
+                  <ul>{path.guideSlugs.map((slug) => {
+                    const guide = guides.find((item) => item.slug === slug);
+                    return guide ? <li key={slug}><a href={"/magazine/" + slug}>{guide.title}</a></li> : null;
+                  })}</ul>
+                  {path.tool ? <p><a href={path.tool.href}>{path.tool.label}</a></p> : null}
+                  <p><a href={path.category}>فروشگاه‌ها و خدمات {path.name}</a></p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <h2>همه راهنماهای خونه‌نما</h2>
 
           <div className="magazine-grid">
             {guides.map((guide) => {

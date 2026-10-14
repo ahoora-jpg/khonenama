@@ -34,7 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/category/wallpaper", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/category/interior-design", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/category/smart-home", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.86 },
-    { url: baseUrl + "/magazine", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.86 },
+    { url: baseUrl + "/magazine", lastModified: "2026-10-14", changeFrequency: "weekly", priority: 0.86 },
     { url: baseUrl + "/tools", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/tools/wallpaper-calculator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/curtain-fabric-calculator", lastModified: "2026-09-22", changeFrequency: "monthly", priority: 0.84 },
