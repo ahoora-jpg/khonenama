@@ -21,12 +21,12 @@ async function downloadProcessedImage(url: string): Promise<Uint8Array> {
   const parsed = new URL(url);
   const endpoint = new URL(String((env as any).IMAGEKIT_URL_ENDPOINT));
   if (parsed.protocol !== "https:" || parsed.origin !== endpoint.origin) throw new Error("INVALID_MEDIA");
-  let response = await fetch(parsed, { redirect: "manual", signal: AbortSignal.timeout(60_000) });
+  let response = await fetch(parsed, { headers: { Accept: "image/webp" }, redirect: "manual", signal: AbortSignal.timeout(60_000) });
   for (let hop = 0; hop < 2 && [301,302,303,307,308].includes(response.status); hop++) {
     const target = new URL(response.headers.get("location") || "", parsed);
     if (target.protocol !== "https:" || target.origin !== endpoint.origin) throw new Error("INVALID_MEDIA");
     await response.body?.cancel();
-    response = await fetch(target, { redirect:"manual",signal:AbortSignal.timeout(60_000) });
+    response = await fetch(target, { headers: { Accept: "image/webp" }, redirect:"manual",signal:AbortSignal.timeout(60_000) });
   }
   if (!response.ok || !response.body || response.headers.get("content-type")?.split(";")[0] !== "image/webp") {
     console.warn("MEDIA_TRANSFORM_FAILURE","download",response.status,response.headers.get("content-type")?.split(";")[0] === "image/webp" ? "webp" : "other");
@@ -82,7 +82,9 @@ export async function uploadStoredBusinessImage(file: File, options: { fileName:
     const bucket = (env as any).BUSINESS_MEDIA;
     if (!bucket) throw new Error("MEDIA_STORAGE_NOT_CONFIGURED");
     r2Key = "businesses/" + options.businessId + "/" + crypto.randomUUID() + ".webp";
-    const master = await downloadProcessedImage(verified.url);
+    const masterUrl = new URL(verified.url);
+    masterUrl.searchParams.set("tr", "w-2560,h-2560,c-at_max,f-webp,q-90");
+    const master = await downloadProcessedImage(masterUrl.toString());
     const thumbUrl = new URL(verified.url);
     thumbUrl.searchParams.set("tr", "w-480,h-480,c-at_max,f-webp,q-85");
     const thumbnail = await downloadProcessedImage(thumbUrl.toString());
