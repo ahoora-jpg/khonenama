@@ -4183,3 +4183,32 @@ button.business-photo-avatar { cursor:pointer; }
  .public-service-groups .service-chips a{max-width:100%;overflow-wrap:anywhere;font-size:15px}
  .business-profile-page .profile-actions{position:static;inset:auto;flex-direction:row;flex-wrap:wrap;box-shadow:none}
 }
+
+/* Independent receipt/ticket UI: no animation dependency or copied provider code. */
+.payment-receipt { width:min(100%,390px); margin:24px auto; color:#203e32; }
+.receipt-machine { position:relative; padding:22px 24px 30px; border:1px solid #486253; border-radius:22px; color:#fff9ed; background:linear-gradient(145deg,#426354,#243b30); box-shadow:0 12px 24px #203b3024,inset 0 1px #ffffff40; }
+.receipt-machine strong { font-size:22px; }
+.receipt-machine p { margin:12px 0 4px; padding:12px; border-radius:10px; background:#12261e; font-size:16px; }
+.receipt-slot { position:absolute; inset-inline:22px; bottom:12px; height:6px; border-radius:3px; background:#0c1812; box-shadow:0 1px #ffffff40; }
+.receipt-feed { overflow:hidden; margin:-13px 24px 0; position:relative; padding-bottom:12px; }
+.receipt-paper { padding:24px 18px; background:#fffdf6; box-shadow:0 7px 18px #203b3020; border-bottom:3px dashed #d9d2bc; overflow-wrap:anywhere; }
+.payment-receipt[data-stage="printing"] .receipt-paper { animation:receipt-paper-feed 1.5s ease-out both; }
+.receipt-paper h3 { font-size:20px; margin:0 0 14px; }
+.receipt-paper p { font-size:16px; line-height:1.8; }
+.receipt-paper dl { margin:20px 0; }
+.receipt-paper dl div { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:10px 0; border-bottom:1px dashed #d9d2bc; font-size:15px; }
+.receipt-paper dd { margin:0; }
+.subscription-ticket { margin:16px 0; padding:22px; border:1px dashed #b39d62; border-radius:18px; background:linear-gradient(125deg,#f8edcc,#fffaf0); box-shadow:0 8px 16px #735a1720; transition:transform .18s; overflow-wrap:anywhere; }
+.subscription-ticket strong { display:block; margin-top:10px; font-size:20px; }
+.subscription-ticket p,.subscription-ticket small { font-size:15px; line-height:1.8; }
+@media(hover:hover) { .subscription-ticket:hover { transform:perspective(800px) rotateY(-3deg) rotateX(2deg); } }
+@keyframes receipt-paper-feed { from { transform:translateY(-100%); } to { transform:translateY(0); } }
+@media(prefers-reduced-motion:reduce) { .payment-receipt[data-stage="printing"] .receipt-paper { animation:none; } .subscription-ticket { transition:none; transform:none!important; } }
+@media print {
+  body:has(.payment-receipt) * { visibility:hidden!important; }
+  body:has(.payment-receipt) .receipt-paper,body:has(.payment-receipt) .receipt-paper * { visibility:visible!important; }
+  body:has(.payment-receipt) .payment-receipt { position:absolute; inset:0 auto auto 0; width:100%; margin:0; }
+  body:has(.payment-receipt) .receipt-machine,body:has(.payment-receipt) .subscription-ticket,body:has(.payment-receipt) .receipt-print { display:none!important; }
+  body:has(.payment-receipt) .receipt-feed { overflow:visible; margin:0; }
+  body:has(.payment-receipt) .receipt-paper { animation:none!important; transform:none!important; box-shadow:none; border:0; color:#000; }
+}

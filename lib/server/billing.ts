@@ -103,5 +103,5 @@ export async function verifyCheckout(db: any, id: string, provider: PaymentProvi
 }
 export async function billingHistory(db: any, businessId: number) {
   await ensureBilling(db);
-  return (await db.prepare("SELECT c.id,c.plan_code,c.duration_days,c.activation_ends_at,i.invoice_number,i.total_amount,i.currency,i.status,i.created_at,p.provider_reference,p.status payment_status FROM billing_checkouts c JOIN payments p ON p.id=c.payment_id JOIN invoices i ON i.id=p.invoice_id WHERE c.business_id=? ORDER BY i.id DESC LIMIT 30").bind(businessId).all()).results || [];
+  return (await db.prepare("SELECT c.id,c.plan_code,c.duration_days,c.activation_ends_at,i.invoice_number,i.total_amount,i.currency,i.status,i.created_at,p.provider_reference,p.verified_at,p.status payment_status FROM billing_checkouts c JOIN payments p ON p.id=c.payment_id JOIN invoices i ON i.id=p.invoice_id WHERE c.business_id=? ORDER BY i.id DESC LIMIT 30").bind(businessId).all()).results || [];
 }
