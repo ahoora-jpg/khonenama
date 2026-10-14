@@ -5,10 +5,10 @@ import { CheckCircle2, Download, ShieldCheck, Smartphone } from "lucide-react";
 
 const pageUrl = "https://khonenama.ir/download-app";
 const apkUrl =
-  "https://github.com/ahoora-jpg/khonenama-mobile/releases/download/mobile-15/khonenama-production.apk";
+  "https://expo.dev/artifacts/eas/SRwC7ylzpaf2QyxWcS1DnlGFz9rJLg-jEsEbWtO4gn0.apk";
 
 export const metadata: Metadata = {
-  title: { absolute: "دانلود اپ اندروید خونه نما | نسخه ۱.۲.۶" },
+  title: { absolute: "دانلود اپ اندروید خونه نما | نسخه ۱.۲.۱۰" },
   description: "دانلود مستقیم اپلیکیشن اندروید خونه نما و راهنمای نصب امن نسخه رسمی صاحبان کسب‌وکار.",
   alternates: { canonical: pageUrl },
   robots: { index: true, follow: true },
@@ -16,9 +16,9 @@ export const metadata: Metadata = {
 
 const installSteps = [
   ["۱", "دانلود فایل", "روی دکمه دانلود مستقیم بزنید و اجازه دهید فایل APK کامل دریافت شود."],
-  ["۲", "بازکردن فایل", "پس از پایان دانلود، فایل khonenama-production.apk را از اعلان دانلود یا پوشه Downloads باز کنید."],
+  ["۲", "بازکردن فایل", "پس از پایان دانلود، فایل APK دانلودشده را از اعلان دانلود یا پوشه Downloads باز کنید."],
   ["۳", "اجازه نصب", "اگر اندروید پیام نصب از این منبع را نشان داد، فقط برای همان مرورگر یا فایل‌منیجر گزینه اجازه نصب را فعال کنید."],
-  ["۴", "نصب یا به‌روزرسانی", "گزینه Install یا Update را بزنید. نسخه ۱.۲.۶ بدون حذف نسخه قبلی نصب می‌شود."],
+  ["۴", "نصب یا به‌روزرسانی", "گزینه Install یا Update را بزنید. اگر نسخه قبلی با همین امضا نصب شده باشد، گزینه Update نمایش داده می‌شود."],
 ] as const;
 
 export default function DownloadAppPage() {
@@ -35,12 +35,12 @@ export default function DownloadAppPage() {
               نسخه جدید اپ خونه نما برای ثبت کسب‌وکار، عکاسی و آپلود نمونه‌کار، مدیریت گالری و آلبوم، نمایش کیوآرکد و پاسخ‌گویی به درخواست مشتری است.
             </p>
             <a className="pill-button dark app-download-primary" href={apkUrl}>
-              <Download size={20} /> دانلود مستقیم نسخه ۱.۲.۶
+              <Download size={20} /> دانلود مستقیم نسخه ۱.۲.۱۰
             </a>
             <div className="app-download-facts">
-              <span><CheckCircle2 size={16} /> نسخه ۱.۲.۶</span>
-              <span><CheckCircle2 size={16} /> به‌روزرسانی بدون حذف نسخه قبل</span>
-              <span><ShieldCheck size={16} /> امضاشده با کلید دائمی خونه نما</span>
+              <span><CheckCircle2 size={16} /> نسخه ۱.۲.۱۰</span>
+              <span><CheckCircle2 size={16} /> نسخه آزمایشی آماده نصب</span>
+              <span><ShieldCheck size={16} /> فایل نصب رسمی از Expo</span>
             </div>
           </article>
 
@@ -74,8 +74,8 @@ export default function DownloadAppPage() {
           </section>
 
           <p className="app-download-security">
-            فایل رسمی فقط از همین صفحه یا مخزن رسمی GitHub خونه نما دریافت شود. اثرانگشت SHA-256 نسخه ۱.۲.۶:
-            <code>6bd56219bf57654d126329f06e160737dd33720ae8e1933ab3cc4d228798f2ae</code>
+            لینک نصب نسخه ۱.۲.۱۰ از Expo تا ۲۷ اکتبر ۲۰۲۶ معتبر است. دریافت اعلان و عملکرد کامل اپ باید پس از نصب روی گوشی بررسی شود.
+            
           </p>
         </div>
       </section>
