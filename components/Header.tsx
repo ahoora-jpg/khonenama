@@ -4,6 +4,7 @@ import { ChevronDown, Download, Menu, Search, Store, X } from "lucide-react";
 import { useState } from "react";
 
 const categories = [
+  ["نورپردازی داخلی", "/category/lighting"],
   ["پرده و متعلقات", "/category/curtain"],
   ["کفپوش و پارکت", "/category/flooring"],
   ["موکت", "/category/carpet"],

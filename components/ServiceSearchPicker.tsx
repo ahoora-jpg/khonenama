@@ -2,7 +2,7 @@
 import {useEffect,useId,useRef,useState} from "react";
 import {BUSINESS_CATEGORIES} from "@/lib/business-taxonomy";
 import {serviceCatalog} from "@/lib/service-catalog";
-const normalize=(value:string)=>value.replace(/ي/g,"ی").replace(/ك/g,"ک").replace(/\u200c/g," ").replace(/\s+/g," ").trim().toLowerCase();
+import {normalizeServiceQuery as normalize} from "@/lib/service-search";
 export default function ServiceSearchPicker({services,value,onChange}:{services:string[];value:string;onChange:(value:string)=>void}){
  const id=useId(),root=useRef<HTMLDivElement>(null);
  const [open,setOpen]=useState(false),[expanded,setExpanded]=useState<string|null>(null);

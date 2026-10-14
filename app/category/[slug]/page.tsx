@@ -16,6 +16,7 @@ import { notFound } from "next/navigation";
 export const dynamic = "force-dynamic";
 
 const categoryPillars = [
+  {slug:"lighting",label:"نورپردازی داخلی"},
   { slug: "curtain", label: "پرده و متعلقات" },
   { slug: "flooring", label: "کفپوش و پارکت" },
   { slug: "carpet", label: "موکت" },

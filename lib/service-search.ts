@@ -1,7 +1,9 @@
 import { BUSINESS_CATEGORIES } from "./business-taxonomy";
 
 export function normalizeServiceQuery(value: string) {
-  return value.trim().toLocaleLowerCase("fa").replace(/ي/g,"ی").replace(/ك/g,"ک").replace(/[\s\u200c]+/g,"");
+  const normalized=value.trim().toLocaleLowerCase("fa").replace(/ي/g,"ی").replace(/ك/g,"ک").replace(/[\s\u200c\u200f\u200e\u0640-]+/g,"");
+  const aliases:Record<string,string>={minimal:"مینیمال",minimalist:"مینیمال",minimalcurtain:"پردهمینیمال",minimalistcurtain:"پردهمینیمال",wave:"موجدار",ripplefold:"ریپلفولد",verticalblind:"لوردراپه",louverdrape:"لوردراپه","لووردراپه":"لوردراپه","لوردراپه":"لوردراپه"};
+  return aliases[normalized]||normalized;
 }
 export function matchingServiceNames(query: string): string[] {
   const q=normalizeServiceQuery(query);

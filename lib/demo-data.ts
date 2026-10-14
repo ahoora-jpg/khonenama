@@ -14,6 +14,7 @@ export type Business = {
 };
 
 export const categories = [
+  {slug:"lighting",name:"نورپردازی داخلی منزل"},
   { slug: "curtain", name: "پرده و متعلقات" },
   { slug: "flooring", name: "کفپوش و پارکت" },
   { slug: "carpet", name: "موکت" },

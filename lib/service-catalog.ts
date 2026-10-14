@@ -6,7 +6,7 @@ export const serviceCatalog: ServiceEntry[] = [{"category":"curtain","name":"پ�
 for (const category of BUSINESS_CATEGORIES) {
  for (const name of category.services) {
   if (!serviceCatalog.some(item => item.category === category.slug && item.name === name)) {
-   serviceCatalog.push({category:category.slug,name,group:category.label,guide:name.includes("مینیمال")?"minimalist-curtain-guide":"",description:`برای ${name}، شرایط محل، ابعاد و نتیجه موردنیاز را مشخص کنید. خدمات اعلام‌شده و محدوده فعالیت غرفه را بررسی کنید و پیش از توافق، اقلام شامل قیمت و زمان اجرا را بپرسید.`});
+   serviceCatalog.push({category:category.slug,name,group:category.label,guide:name.includes("مینیمال")?"minimalist-curtain-guide":category.slug==="lighting"?"interior-lighting-guide":"",description:`برای ${name}، شرایط محل، ابعاد و نتیجه موردنیاز را مشخص کنید. خدمات اعلام‌شده و محدوده فعالیت غرفه را بررسی کنید و پیش از توافق، اقلام شامل قیمت و زمان اجرا را بپرسید.`});
   }
  }
 }

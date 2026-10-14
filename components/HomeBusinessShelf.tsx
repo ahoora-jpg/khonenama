@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { ArrowUpLeft, BadgeCheck, MapPin, Star, Store } from "lucide-react";
 
 export type ShelfBusiness = { slug: string; name: string; city: string; area: string; category: string; categoryName: string; coverUrl: string; verified: boolean; rating: number; reviewCount: number };
-const categories = [["", "همه غرفه‌ها"], ["curtain", "پرده"], ["flooring", "کفپوش و پارکت"], ["carpet", "موکت"], ["wallpaper", "کاغذ دیواری"], ["interior-design", "طراحی داخلی"], ["smart-home", "خانه هوشمند"]] as const;
+const categories = [["", "همه غرفه‌ها"], ["curtain", "پرده"], ["flooring", "کفپوش و پارکت"], ["carpet", "موکت"], ["wallpaper", "کاغذ دیواری"], ["interior-design", "طراحی داخلی"], ["lighting", "نورپردازی داخلی"], ["smart-home", "خانه هوشمند"]] as const;
 
 export default function HomeBusinessShelf({ initialBusinesses }: { initialBusinesses: ShelfBusiness[] }) {
   const [items, setItems] = useState(initialBusinesses);

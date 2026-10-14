@@ -76,6 +76,12 @@ export default function MagazinePage() {
           </div>
 
           <PreferredSourceCTA />
+          <section className="glass-panel" style={{padding:24,marginBlock:24}} aria-labelledby="minimal-featured">
+            <span className="section-kicker">پیشنهاد مطالعه</span>
+            <h2 id="minimal-featured"><a href="/magazine/minimalist-curtain-guide">پرده مینیمال؛ آیا میل‌پرده قبلی مناسب است؟</a></h2>
+            <p>تفاوت ریل موج‌دار، لغزنده و نوار دوخت با میل‌پرده معمولی؛ چه زمانی باید یراق عوض شود و کیفیت آن چه اثری روی حرکت پرده دارد؟</p>
+            <a href="/magazine/minimalist-curtain-guide">خواندن راهنمای کامل پرده مینیمال</a>
+          </section>
 
           <section aria-labelledby="content-paths-title">
             <h2 id="content-paths-title">از سؤال شما تا انتخاب محصول و مجری</h2>

@@ -1,4 +1,5 @@
 import { minimalistCurtainGuide } from "./guide-minimalist-curtain";
+import { interiorLightingGuide } from "./guide-interior-lighting";
 import { seoBatchGuides } from "@/lib/guides-seo-batch";
 import { seoBatch2Guides } from "@/lib/guides-seo-batch-2";
 import { seoBatch3Guides } from "@/lib/guides-seo-batch-3";
@@ -35,6 +36,7 @@ export type Guide = {
 
 export const guides: Guide[] = [
   minimalistCurtainGuide,
+  interiorLightingGuide,
   ...seoBatch12Guides,
   ...seoBatch11Guides,
   ...seoBatch10Guides,

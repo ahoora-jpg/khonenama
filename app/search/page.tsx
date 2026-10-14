@@ -1,3 +1,4 @@
+import { normalizeServiceQuery } from "@/lib/service-search";
 import SearchInterestTracker from "@/components/SearchInterestTracker";
 import ServiceSearchSuggestions from "@/components/ServiceSearchSuggestions";
 import {serviceCatalog,servicePath} from "@/lib/service-catalog";
@@ -88,7 +89,7 @@ export default async function SearchPage({
   const onlyMedia = params.media === "1";
   const onlyPremium = params.premium === "1";
   const exactService = BUSINESS_CATEGORIES.flatMap(category => category.services).find(service => normalizeSearchText(service) === query);
-  const matchingServices=query?serviceCatalog.filter(service=>normalizeSearchText(service.name).includes(query)).filter((service,index,all)=>all.findIndex(item=>item.name===service.name)===index).slice(0,12):[];
+  const matchingServices=query?serviceCatalog.filter(service=>normalizeServiceQuery(service.name).includes(normalizeServiceQuery(query))).filter((service,index,all)=>all.findIndex(item=>item.name===service.name)===index).sort((a,b)=>Number(normalizeServiceQuery(b.name)===normalizeServiceQuery(query))-Number(normalizeServiceQuery(a.name)===normalizeServiceQuery(query))).slice(0,12):[];
   const matchingGuides=query?guides.filter(guide=>normalizeSearchText([guide.title,...guide.keywords].join(" ")).includes(query)).slice(0,6):[];
 
   const liveBusinesses = await listPublishedBusinesses({

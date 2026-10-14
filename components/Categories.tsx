@@ -1,6 +1,7 @@
 import { ArrowUpLeft, Layers3, PaintRoller, PanelsTopLeft, Ruler, Sofa, Wifi } from "lucide-react";
 
 const categories = [
+  {title:"نورپردازی داخلی",description:"طراحی نور، چراغ خطی، ریلی و مگنتی و اجرا",className:"category-card category-design",icon:Sofa,href:"/category/lighting",number:"07",photo:"photo-1618221195710-dd6b41faaea6"},
   { title: "پرده و متعلقات", description: "پارچه، زبرا، شید، پانچ، دوخت و نصب", className: "category-card category-large category-curtain", icon: PanelsTopLeft, href: "/category/curtain", number: "01", photo: "photo-1598242822528-182185460969" },
   { title: "کفپوش و پارکت", description: "لمینت، PVC و اجرای تخصصی", className: "category-card category-floor", icon: Layers3, href: "/category/flooring", number: "02", photo: "photo-1780817612741-f8f3785d9908" },
   { title: "موکت", description: "خانگی، اداری و تایلی", className: "category-card category-dark", icon: Ruler, href: "/category/carpet", number: "03", photo: "photo-1628745750110-c8ddcdad2c15" },
