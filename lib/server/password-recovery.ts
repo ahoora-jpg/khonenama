@@ -29,7 +29,12 @@ export async function requestRecovery(db: any, settings: any, email: string, pho
   const url = "https://khonenama.ir/business/forgot-password#reset=" + token;
   try {
     const response = await send("https://api.resend.com/emails", {method:"POST",headers:{Authorization:"Bearer " + settings.RESEND_API_KEY,"Content-Type":"application/json","Idempotency-Key":"recovery-"+tokenHash},body:JSON.stringify({from:settings.RECOVERY_EMAIL_FROM,to:[email],subject:"بازیابی رمز خونه‌نما",text:`برای انتخاب رمز جدید، این لینک را باز کنید:\n${url}\nاین لینک فقط یک‌بار و تا ۱۵ دقیقه معتبر است. اگر درخواست بازیابی نداده‌اید، این ایمیل را نادیده بگیرید. رمز عبور شما در ایمیل ارسال نمی‌شود.`}),signal:AbortSignal.timeout(8000),redirect:"error"});
-    if (!response.ok) throw Error("EMAIL_SEND_FAILED");
+    if (!response.ok) {
+      const detail = await response.json().catch(() => null) as { name?: unknown } | null;
+      const code = typeof detail?.name === "string" && /^[a-z_]{1,40}$/.test(detail.name) ? detail.name : "unknown";
+      console.warn("RECOVERY_PROVIDER_REJECTED", response.status, code);
+      throw Error("EMAIL_SEND_FAILED");
+    }
   } catch {
     await db.prepare("DELETE FROM password_reset_tokens WHERE token_hash=?").bind(tokenHash).run();
     throw Error("EMAIL_SEND_FAILED");

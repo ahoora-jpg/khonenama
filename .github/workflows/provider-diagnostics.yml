@@ -1,0 +1,20 @@
+name: Private provider diagnostics
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Listen for sanitized provider failures
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: 9bbb17f959c166a9e2b73c9a087c0beb
+        run: timeout 90 node node_modules/wrangler/bin/wrangler.js tail khonenama --format=json | node tools/filter-provider-tail.mjs

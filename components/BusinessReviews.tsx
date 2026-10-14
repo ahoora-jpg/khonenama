@@ -173,7 +173,7 @@ export default function BusinessReviews({
             <ShieldCheck size={21} />
           </div>
 
-          <p>نظر مثبت و منفی با قواعد یکسان بررسی می‌شوند؛ انتقاد معتبر حذف نمی‌شود. توهین، افشای اطلاعات، نظر ساختگی و تبلیغ نامرتبط پذیرفته نیست. صاحب غرفه فقط حق پاسخ دارد. پاداش مشروط به نظر مثبت و فشار برای پنج ستاره مجاز نیست. نشان درخواست ثبت‌شده فقط تطبیق کد خصوصی، شماره درخواست و غرفه است؛ تحویل یا کیفیت را تأیید نمی‌کند.</p>
+          <p>تجربه واقعی‌تان را بنویسید؛ نظر مثبت و منفی پیش از انتشار بررسی می‌شوند.</p>
           <div className="review-form-grid"><label>خدمت تجربه‌شده<input required minLength={2} maxLength={150} value={service} onChange={e=>setService(e.target.value)}/></label><label>تاریخ تجربه<input type="date" required max={new Date().toISOString().slice(0,10)} value={experienceDate} onChange={e=>setExperienceDate(e.target.value)}/></label>
             <label>
               <span>نام نمایشی</span>
@@ -201,13 +201,14 @@ export default function BusinessReviews({
             <label className="review-wide">
               <span>نظر شما</span>
               <textarea
-                rows={4}
+                rows={2}
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
                 placeholder="کیفیت کار، خوش‌قولی، ارتباط و تجربه واقعی خودت را بنویس."
               />
             </label>
 
+            <details className="review-wide"><summary>تأیید درخواست و قواعد ثبت نظر (اختیاری)</summary>
             <label>
               <span>کد درخواست خونه نما ـ اختیاری</span>
               <input dir="ltr" value={requestCode} onChange={(e) => setRequestCode(e.target.value)} placeholder="کد کامل درخواست را وارد کنید" />
@@ -219,6 +220,8 @@ export default function BusinessReviews({
               <input dir="ltr" inputMode="tel" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} placeholder="09..." />
               <small>شماره روی نظر یا صفحه عمومی نمایش داده نمی‌شود.</small>
             </label>
+            <p>انتقاد معتبر حذف نمی‌شود. نظر ساختگی، توهین و افشای اطلاعات پذیرفته نیست. کد درخواست فقط ارتباط با این غرفه را تأیید می‌کند، نه تحویل یا کیفیت کار.</p>
+            </details>
 
             <label className="review-honeypot" aria-hidden="true">
               <span>وب‌سایت</span>

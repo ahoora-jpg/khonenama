@@ -56,6 +56,7 @@ export async function listPublishedBusinessSitemapEntries(): Promise<BusinessSit
         "ORDER BY s.id DESC LIMIT 1), 'free') AS plan_code " +
         "FROM businesses b " +
         "WHERE b.status = 'published' " +
+        "AND b.slug NOT GLOB 'ghrfh-azmayshy-tbdyl-[0-9]*-thran' " +
         "AND length(trim(COALESCE(b.slug, ''))) > 2 " +
         "AND length(trim(COALESCE(b.name, ''))) >= 2 " +
         "AND length(trim(COALESCE(b.description, ''))) >= 20 " +

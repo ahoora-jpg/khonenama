@@ -1,26 +1,29 @@
-import { ArrowUpLeft, Calculator, Grid3X3, HousePlug, Scissors } from "lucide-react";
+import { ArrowUpLeft, Calculator, Grid3X3, HousePlug, Layers3, Scissors } from "lucide-react";
 
 const toolsList = [
   {
     eyebrow: "کاغذ دیواری",
-    title: "محاسبه تعداد رول",
+    title: "اندازه‌گیری و محاسبه کاغذ دیواری",
     text: "عرض و ارتفاع دیوار، ابعاد رول، Pattern Repeat و پرت را حساب کنید.",
     href: "/tools/wallpaper-calculator",
     icon: Calculator,
   },
   {
     eyebrow: "پرده",
-    title: "محاسبه متراژ پارچه",
+    title: "اندازه‌گیری و محاسبه پارچه پرده",
     text: "عرض ریل، Fullness، قد پرده و تکرار طرح را وارد کنید.",
     href: "/tools/curtain-fabric-calculator",
     icon: Scissors,
   },
   {
     eyebrow: "موکت",
-    title: "برآورد موکت رول و تایلی",
+    title: "اندازه‌گیری موکت رول و تایلی",
     text: "متراژ طولی رول یا تعداد تایل و بسته موردنیاز را محاسبه کنید.",
     href: "/tools/carpet-estimator",
     icon: Grid3X3,
+  },
+  {
+    eyebrow: "کفپوش، پارکت و لمینت", title: "محاسبه متراژ و تعداد بسته کفپوش", text: "مساحت اتاق، درصد پرت و پوشش هر بسته را برای برآورد خرید وارد کنید.", href: "/tools/flooring-estimator", icon: Layers3,
   },
   {
     eyebrow: "خانه هوشمند",

@@ -5,7 +5,7 @@ import WallpaperCalculator from "@/components/WallpaperCalculator";
 import { ArrowUpLeft, BookOpen, Ruler } from "lucide-react";
 
 const url = "https://khonenama.ir/tools/wallpaper-calculator";
-const title = "محاسبه تعداد رول کاغذ دیواری | ابزار آنلاین";
+const title = "اندازه‌گیری کاغذ دیواری و محاسبه تعداد رول | خونه‌نما";
 const description =
   "تعداد رول کاغذ دیواری را با درنظرگرفتن عرض و طول رول، ارتفاع و عرض دیوار، Pattern Repeat، تلرانس برش و پرت محاسبه کنید.";
 

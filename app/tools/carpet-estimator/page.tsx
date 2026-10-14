@@ -5,7 +5,7 @@ import CarpetEstimator from "@/components/CarpetEstimator";
 import { ArrowUpLeft, Grid3X3, Ruler } from "lucide-react";
 
 const url = "https://khonenama.ir/tools/carpet-estimator";
-const title = "هر رول موکت چند متر است؟ | محاسبه متراژ موکت رول و تایلی";
+const title = "اندازه‌گیری موکت و محاسبه متراژ رول و تایلی | خونه‌نما";
 const description =
   "هر رول موکت چند متر است و برای اتاق چند متر موکت لازم دارید؟ متراژ موکت رول یا تعداد موکت تایلی را با ابعاد فضا، عرض رول، پرت و تعداد تایل محاسبه کنید.";
 

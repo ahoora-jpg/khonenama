@@ -41,7 +41,7 @@ export type PublicBusiness = {
 const INTERNAL_TEST_BUSINESS_SLUGS = new Set(["alayy-dkvr-krj"]);
 
 export function isInternalTestBusinessSlug(slug: string) {
-  return INTERNAL_TEST_BUSINESS_SLUGS.has(slug);
+  return INTERNAL_TEST_BUSINESS_SLUGS.has(slug) || /^ghrfh-azmayshy-tbdyl-\d+-thran$/.test(slug);
 }
 
 function getDb() {
@@ -219,6 +219,7 @@ export async function listPublishedBusinesses(options: {
     await ensureVisibilitySchema(db);
     const where = [
       "b.status = 'published'",
+      "b.slug NOT GLOB 'ghrfh-azmayshy-tbdyl-[0-9]*-thran'",
       "NOT EXISTS (SELECT 1 FROM business_visibility_controls bvc WHERE bvc.business_id = b.id AND bvc.owner_paused = 1)",
       "b.slug NOT IN (" + Array.from(INTERNAL_TEST_BUSINESS_SLUGS).map(() => "?").join(",") + ")",
     ];
@@ -315,4 +316,3 @@ export async function getBusinessSlugRedirect(oldSlug: string): Promise<string |
     return null;
   }
 }
-
