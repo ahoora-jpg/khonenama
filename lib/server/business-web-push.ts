@@ -34,7 +34,7 @@ export async function drainBusinessWebPush(db:any){
    if(!validPushEndpoint(row.endpoint))status=410;
    else{
     const payload=await buildPushPayload({data:JSON.stringify({title:"درخواست جدید خونه‌نما",body:"یک درخواست مشتری در صندوق غرفه شما ثبت شد.",url:"/dashboard#leads",tag:`request-${row.lead_id}`}),options:{ttl:3600}},JSON.parse(row.subscription),{subject:"https://khonenama.ir/support",publicKey:keys.public_key,privateKey:keys.private_key});
-    const response=await fetch(row.endpoint,{...payload,redirect:"error",signal:AbortSignal.timeout(8000)});status=response.status;
+    const response=await fetch(row.endpoint,{...payload,redirect:"manual",signal:AbortSignal.timeout(8000)});status=response.status;
    }
   }catch{/* Keep transient failures for the scheduled retry. */}
   if(status===404||status===410)await db.prepare("UPDATE business_web_push SET active=0 WHERE id=?").bind(row.subscription_id).run();

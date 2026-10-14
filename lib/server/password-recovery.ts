@@ -28,7 +28,7 @@ export async function requestRecovery(db: any, settings: any, email: string, pho
   await db.prepare("INSERT INTO password_reset_tokens(token_hash,user_id,channel,destination,expires_at) VALUES(?,?,'email',?,datetime('now','+15 minutes'))").bind(tokenHash,user.id,email).run();
   const url = "https://khonenama.ir/business/forgot-password#reset=" + token;
   try {
-    const response = await send("https://api.resend.com/emails", {method:"POST",headers:{Authorization:"Bearer " + settings.RESEND_API_KEY,"Content-Type":"application/json","Idempotency-Key":"recovery-"+tokenHash},body:JSON.stringify({from:settings.RECOVERY_EMAIL_FROM,to:[email],subject:"بازیابی رمز خونه‌نما",text:`برای انتخاب رمز جدید، این لینک را باز کنید:\n${url}\nاین لینک فقط یک‌بار و تا ۱۵ دقیقه معتبر است. اگر درخواست بازیابی نداده‌اید، این ایمیل را نادیده بگیرید. رمز عبور شما در ایمیل ارسال نمی‌شود.`}),signal:AbortSignal.timeout(8000),redirect:"error"});
+    const response = await send("https://api.resend.com/emails", {method:"POST",headers:{Authorization:"Bearer " + settings.RESEND_API_KEY,"Content-Type":"application/json","Idempotency-Key":"recovery-"+tokenHash},body:JSON.stringify({from:settings.RECOVERY_EMAIL_FROM,to:[email],subject:"بازیابی رمز خونه‌نما",text:`برای انتخاب رمز جدید، این لینک را باز کنید:\n${url}\nاین لینک فقط یک‌بار و تا ۱۵ دقیقه معتبر است. اگر درخواست بازیابی نداده‌اید، این ایمیل را نادیده بگیرید. رمز عبور شما در ایمیل ارسال نمی‌شود.`}),signal:AbortSignal.timeout(8000),redirect:"manual"});
     if (!response.ok) {
       const detail = await response.json().catch(() => null) as { name?: unknown } | null;
       const code = typeof detail?.name === "string" && /^[a-z_]{1,40}$/.test(detail.name) ? detail.name : "unknown";

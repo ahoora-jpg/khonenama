@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   if (!await getOwnedBusiness(request)) return Response.json({ok:false},{status:401});
   async function probe(url: string, authorization: string) {
     try {
-      const response=await fetch(url,{headers:{Authorization:authorization},signal:AbortSignal.timeout(8000),redirect:"error"});
+      const response=await fetch(url,{headers:{Authorization:authorization},signal:AbortSignal.timeout(8000),redirect:"manual"});
       const data=await response.json().catch(()=>null) as {name?:unknown} | null;
       return {status:response.status,code:typeof data?.name==="string"&&/^[a-z_]{1,40}$/.test(data.name)?data.name:null};
     } catch(error) {

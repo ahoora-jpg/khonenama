@@ -21,7 +21,7 @@ async function downloadProcessedImage(url: string): Promise<Uint8Array> {
   const parsed = new URL(url);
   const endpoint = new URL(String((env as any).IMAGEKIT_URL_ENDPOINT));
   if (parsed.protocol !== "https:" || parsed.origin !== endpoint.origin) throw new Error("INVALID_MEDIA");
-  const response = await fetch(parsed, { redirect: "error", signal: AbortSignal.timeout(60_000) });
+  const response = await fetch(parsed, { redirect: "manual", signal: AbortSignal.timeout(60_000) });
   if (!response.ok || !response.body || response.headers.get("content-type")?.split(";")[0] !== "image/webp") throw new Error("MEDIA_PROCESSING_FAILED");
   const reader = response.body.getReader();
   const chunks: Uint8Array[] = [];

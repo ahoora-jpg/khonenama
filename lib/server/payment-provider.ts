@@ -15,7 +15,7 @@ export function paymentProvider(settings: Record<string, unknown>, send: typeof 
     if(relay&&relaySecret.length<32)throw Error("PAYMENT_RELAY_NOT_CONFIGURED");
     const response = await send(relay?`${relay}/${action}`:`https://api.zarinpal.com/pg/v4/payment/${action}.json`, {
       method: "POST", headers: { "Content-Type": "application/json",...(relay?{Authorization:"Bearer "+relaySecret}:{}) },
-      body: JSON.stringify(relay?data:{ merchant_id: merchant, ...data }), signal: AbortSignal.timeout(8000), redirect: "error",
+      body: JSON.stringify(relay?data:{ merchant_id: merchant, ...data }), signal: AbortSignal.timeout(8000), redirect: "manual",
     });
     if (!response.ok) throw new Error("PAYMENT_NETWORK_ERROR");
     const result = await response.json() as any;
