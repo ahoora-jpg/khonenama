@@ -63,6 +63,7 @@ test('A complete free booth becomes discoverable only after publication; pause a
 test('Incomplete and internal test booths stay out of the sitemap',async()=>{
   const {sql,add,list}=fixture();
   for(let id=1;id<=9;id++) add(id);
+  add(10,'published','ghrfh-azmayshy-tbdyl-123456789-thran');
   sql.exec(`
     UPDATE businesses SET name='' WHERE id=1;
     UPDATE businesses SET description='short' WHERE id=2;

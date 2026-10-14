@@ -198,6 +198,10 @@ export async function POST(request: Request) {
     }
 
     const message = error instanceof Error ? error.message : "";
+    const text = message.toLowerCase();
+    const category = text.includes("header") ? "invalid_header" : text.includes("btoa") || text.includes("character") ? "invalid_character" : text.includes("fetch") || text.includes("network") ? "network_fetch" : text.includes("r2") ? "r2_storage" : text.includes("d1") || text.includes("sql") ? "database" : text.includes("file") || text.includes("formdata") || text.includes("blob") ? "multipart_runtime" : "unknown";
+    const frame = (error instanceof Error ? error.stack || "" : "").match(/uploadImageKitFile|getImageKitFileDetails|downloadProcessedImage|uploadStoredBusinessImage|readBusinessUploadForm/)?.[0] || "unknown";
+    console.warn("MEDIA_PROVIDER_FAILURE", category, frame, error instanceof Error ? error.name : "unknown");
     console.error("server media upload failed", error);
 
     if (message.startsWith("IMAGEKIT_UPLOAD_FAILED:")) {

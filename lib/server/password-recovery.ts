@@ -35,7 +35,10 @@ export async function requestRecovery(db: any, settings: any, email: string, pho
       console.warn("RECOVERY_PROVIDER_REJECTED", response.status, code);
       throw Error("EMAIL_SEND_FAILED");
     }
-  } catch {
+  } catch (error) {
+    const text = error instanceof Error ? error.message.toLowerCase() : "";
+    const category = text.includes("header") ? "invalid_header" : text.includes("fetch") || text.includes("network") ? "network_fetch" : text.includes("timeout") || text.includes("abort") ? "timeout" : "provider_failure";
+    console.warn("RECOVERY_PROVIDER_FAILURE", category);
     await db.prepare("DELETE FROM password_reset_tokens WHERE token_hash=?").bind(tokenHash).run();
     throw Error("EMAIL_SEND_FAILED");
   }
