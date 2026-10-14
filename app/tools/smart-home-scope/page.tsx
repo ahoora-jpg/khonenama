@@ -1,3 +1,4 @@
+import ToolReadingPath from "@/components/ToolReadingPath";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -127,6 +128,7 @@ export default function SmartHomeScopePage() {
         </div>
       </section>
 
+      <ToolReadingPath category="smart-home" />
       <Footer />
     </main>
   );
