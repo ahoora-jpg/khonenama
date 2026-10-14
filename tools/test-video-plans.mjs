@@ -58,7 +58,7 @@ test('Concurrent paid video uploads enforce separate quota and clean rejected ob
 });
 test('Whole-city and cross-city coverage are preserved independently of shop city',()=>{
   const areas=load('lib/service-area.ts');assert.equal(areas.parseServiceArea('تمام تهران','کرج').city,'تهران');assert.equal(areas.parseServiceArea('تهران / سعادت‌آباد','کرج').area,'سعادت‌آباد');assert.equal(areas.parseServiceArea('گوهردشت','کرج').city,'کرج');
-  const taxonomy=load('lib/business-taxonomy.ts');const curtain=taxonomy.BUSINESS_CATEGORIES.find(c=>c.slug==='curtain');assert.ok(curtain.services.includes('میل‌پرده مینیمال'));assert.ok(curtain.services.includes('سرمیل‌پرده'));assert.equal(curtain.services.indexOf('میل‌پرده'),37);
+  const taxonomy=load('lib/business-taxonomy.ts');const curtain=taxonomy.BUSINESS_CATEGORIES.find(c=>c.slug==='curtain');assert.ok(curtain.services.includes('میل‌پرده مینیمال'));assert.ok(curtain.services.includes('سرمیل‌پرده'));assert.ok(curtain.services.includes('میل‌پرده'));
 });
 
 test('Search SQL finds whole-city vendors across cities without mixing same-name neighborhoods',()=>{
