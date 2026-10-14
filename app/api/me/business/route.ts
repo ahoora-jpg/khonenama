@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import { recordConversion } from "@/lib/server/conversion-metrics";
 import { getBusinessSession } from "@/lib/server/business-session";
 import { createUniqueBusinessSlug } from "@/lib/business-slug";
+import { welcomeTrial } from "@/lib/server/welcome-trial";
 
 function cleanText(value: unknown, max = 500) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
@@ -47,6 +48,7 @@ export async function GET(request: Request) {
   await db.prepare("CREATE TABLE IF NOT EXISTS business_admin_actions(id INTEGER PRIMARY KEY AUTOINCREMENT,business_id INTEGER,business_name TEXT,business_slug TEXT,action TEXT NOT NULL,previous_status TEXT,reason TEXT,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
   const moderation = await db.prepare("SELECT reason,created_at FROM business_admin_actions WHERE business_id=? AND action='remove' ORDER BY id DESC LIMIT 1").bind(business.id).first();
   const reviewNote = await db.prepare("SELECT reviewer_note,status FROM verification_requests WHERE business_id=? AND kind='business' ORDER BY id DESC LIMIT 1").bind(business.id).first();
+  await welcomeTrial(db, business.id, session.user_id);
   const [servicesResult, areasResult, planResult, leadCount, mediaCount] = await Promise.all([
     db
       .prepare(

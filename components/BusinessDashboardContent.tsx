@@ -1,6 +1,7 @@
 "use client";
 
 import BusinessLogoutButton from "@/components/BusinessLogoutButton";
+import BusinessWelcomeTrial from "@/components/BusinessWelcomeTrial";
 import BusinessPublicationPanel from "@/components/BusinessPublicationPanel";
 import BusinessPublicLinkCard from "@/components/BusinessPublicLinkCard";
 import BusinessMediaManager from "@/components/BusinessMediaManager";
@@ -158,6 +159,7 @@ export default function BusinessDashboardContent() {
 
   return (
     <div className="business-dashboard-shell">
+      <BusinessWelcomeTrial />
       <aside className="business-dashboard-nav glass-panel">
         <div className="dashboard-business-mini">
           <span className="dashboard-business-avatar"><Store size={20} /></span>
