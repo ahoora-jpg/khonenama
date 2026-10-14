@@ -172,3 +172,11 @@
 .magazine-editorial-cover { display:block; width:100%; height:auto; border-radius:20px; margin-bottom:24px; }
 @media(max-width:600px) { .magazine-entry-layout { grid-template-columns:1fr; text-align:center; padding-block:12px; } .magazine-entry-copy p { margin-inline:auto; } .magazine-entry-book { width:220px; } }
 @media(prefers-reduced-motion:reduce) { .magazine-entry-book { transition:none; } }
+
+/* Fit header actions on narrow phones without clipping the menu button. */
+@media(max-width:360px) {
+  .header-actions .app-download-button span { display:none; }
+  .header-actions .app-download-button { width:44px;min-width:44px;min-height:44px;padding:0;justify-content:center; }
+  .site-header .brand { min-width:0; }
+}
+.market-search input { font-size:16px; }
