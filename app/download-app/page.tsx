@@ -5,7 +5,7 @@ import { CheckCircle2, Download, ShieldCheck, Smartphone } from "lucide-react";
 
 const pageUrl = "https://khonenama.ir/download-app";
 const apkUrl =
-  "https://expo.dev/artifacts/eas/SRwC7ylzpaf2QyxWcS1DnlGFz9rJLg-jEsEbWtO4gn0.apk";
+  "https://github.com/ahoora-jpg/khonenama-mobile/releases/download/android-1.2.10/khonenama-1.2.10.apk";
 
 export const metadata: Metadata = {
   title: { absolute: "دانلود اپ اندروید خونه نما | نسخه ۱.۲.۱۰" },
@@ -40,7 +40,7 @@ export default function DownloadAppPage() {
             <div className="app-download-facts">
               <span><CheckCircle2 size={16} /> نسخه ۱.۲.۱۰</span>
               <span><CheckCircle2 size={16} /> نسخه آزمایشی آماده نصب</span>
-              <span><ShieldCheck size={16} /> فایل نصب رسمی از Expo</span>
+              <span><ShieldCheck size={16} /> فایل نصب رسمی خونه‌نما</span>
             </div>
           </article>
 
@@ -74,7 +74,7 @@ export default function DownloadAppPage() {
           </section>
 
           <p className="app-download-security">
-            لینک نصب نسخه ۱.۲.۱۰ از Expo تا ۲۷ اکتبر ۲۰۲۶ معتبر است. دریافت اعلان و عملکرد کامل اپ باید پس از نصب روی گوشی بررسی شود.
+            لینک دانلود نسخه ۱.۲.۱۰ در مخزن رسمی خونه‌نما نگهداری می‌شود و تاریخ انقضای لینک Expo را ندارد. دریافت اعلان و عملکرد کامل اپ باید پس از نصب روی گوشی بررسی شود. اثرانگشت SHA-256 فایل: <code>76151557dafbf5956e68b10fd9712230df960f56b8749f0aed8492dd998decec</code>
             
           </p>
         </div>
