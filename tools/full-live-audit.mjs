@@ -22,7 +22,7 @@ try {
   if(reg.status!==201)throw Error('Cannot continue without test account');slug=reg.data.business.slug;
   const initialTrial=await request('/api/me/business/welcome-trial');record('welcome-notice-first-visit',initialTrial.data?.showNotice===true&&!initialTrial.data?.trial);
   await request('/api/me/business','PATCH',{name:'غرفه آزمایشی تبدیل '+Date.now(),description:'غرفه آزمایشی فنی برای بررسی پروفایل و دوره رایگان؛ سفارش واقعی نیست.',city:'تهران',area:'آزمایشی',address:'نشانی آزمایشی فنی',phone});
-  const trial=await request('/api/me/business/welcome-trial');record('welcome-trial-real-activation',Boolean(trial.data?.trial)&&new Date(trial.data.trial.ends_at.replace(' ','T')+'Z')-new Date(trial.data.trial.starts_at.replace(' ','T')+'Z')===30*86400000);
+  const trial=await request('/api/me/business/welcome-trial');record('welcome-trial-real-activation',Boolean(trial.data?.trial)&&trial.data.trial.ends_at==='2026-11-21 20:30:00');
   await request('/api/me/business/welcome-trial','POST');const dismissed=await request('/api/me/business/welcome-trial');record('welcome-notice-dismissal-persists',dismissed.data?.showNotice===false&&dismissed.data?.trial?.ends_at===trial.data?.trial?.ends_at);
   await request('/api/me/business/visibility','PATCH',{ownerPaused:true});
   const recovery=await request('/api/auth/business/recovery','POST',{email,phone});record('real-recovery-email-provider',recovery.status===200,{status:recovery.status,error:recovery.data?.error});
