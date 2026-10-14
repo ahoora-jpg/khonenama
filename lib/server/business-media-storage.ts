@@ -21,8 +21,17 @@ async function downloadProcessedImage(url: string): Promise<Uint8Array> {
   const parsed = new URL(url);
   const endpoint = new URL(String((env as any).IMAGEKIT_URL_ENDPOINT));
   if (parsed.protocol !== "https:" || parsed.origin !== endpoint.origin) throw new Error("INVALID_MEDIA");
-  const response = await fetch(parsed, { redirect: "manual", signal: AbortSignal.timeout(60_000) });
-  if (!response.ok || !response.body || response.headers.get("content-type")?.split(";")[0] !== "image/webp") throw new Error("MEDIA_PROCESSING_FAILED");
+  let response = await fetch(parsed, { redirect: "manual", signal: AbortSignal.timeout(60_000) });
+  for (let hop = 0; hop < 2 && [301,302,303,307,308].includes(response.status); hop++) {
+    const target = new URL(response.headers.get("location") || "", parsed);
+    if (target.protocol !== "https:" || target.origin !== endpoint.origin) throw new Error("INVALID_MEDIA");
+    await response.body?.cancel();
+    response = await fetch(target, { redirect:"manual",signal:AbortSignal.timeout(60_000) });
+  }
+  if (!response.ok || !response.body || response.headers.get("content-type")?.split(";")[0] !== "image/webp") {
+    console.warn("MEDIA_TRANSFORM_FAILURE","download",response.status,response.headers.get("content-type")?.split(";")[0] === "image/webp" ? "webp" : "other");
+    throw new Error("MEDIA_PROCESSING_FAILED");
+  }
   const reader = response.body.getReader();
   const chunks: Uint8Array[] = [];
   let size = 0;
@@ -66,7 +75,10 @@ export async function uploadStoredBusinessImage(file: File, options: { fileName:
 
     // ImageKit is the transitional encoder; only processed copies persist in R2.
     // Existing ImageKit gallery records remain untouched.
-    if (verified.mime !== "image/webp" || !Number.isFinite(verified.width) || !Number.isFinite(verified.height) || verified.width < 1 || verified.height < 1 || verified.width > 2560 || verified.height > 2560) throw new Error("MEDIA_PROCESSING_FAILED");
+    if (verified.mime !== "image/webp" || !Number.isFinite(verified.width) || !Number.isFinite(verified.height) || verified.width < 1 || verified.height < 1 || verified.width > 2560 || verified.height > 2560) {
+      console.warn("MEDIA_TRANSFORM_FAILURE","metadata",verified.mime === "image/webp",Number.isFinite(verified.width)&&verified.width>=1&&verified.width<=2560,Number.isFinite(verified.height)&&verified.height>=1&&verified.height<=2560);
+      throw new Error("MEDIA_PROCESSING_FAILED");
+    }
     const bucket = (env as any).BUSINESS_MEDIA;
     if (!bucket) throw new Error("MEDIA_STORAGE_NOT_CONFIGURED");
     r2Key = "businesses/" + options.businessId + "/" + crypto.randomUUID() + ".webp";
