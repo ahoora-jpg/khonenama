@@ -38,6 +38,6 @@ Additive migration: `db/migrations/0008_billing_checkout.sql`. The billing servi
 ## VPS relay (prepared, disabled)
 The private service is installed on 185.126.5.141 at /opt/khonenama-payment/relay.py and listens on 127.0.0.1:8081 only. Systemd service: khonenama-payment. /health reports paymentsEnabled=false. A request without the relay secret returns 401.
 
-Pending: configure the payment.khonenama.ir public DNS record, install an HTTPS reverse proxy and trusted certificate, enter the approved merchant in /etc/khonenama-payment.env, copy the relay secret securely into the Worker PAYMENT_RELAY_SECRET, then set PAYMENT_RELAY_URL=https://payment.khonenama.ir. Keep PAYMENTS_ENABLED=false on both sides until merchant approval and controlled live payment testing. The relay secret was generated on the VPS and is not committed or printed.
+Completed on 2026-10-14: owner configured the DNS-only A record, Nginx HTTPS and a trusted auto-renewing certificate were installed, merchant configuration was prepared privately on the VPS, and the relay URL and secret were installed as Worker secrets. Public HTTPS health returns 200 with paymentsEnabled=false. Keep PAYMENTS_ENABLED=false on both sides until merchant approval and controlled live payment testing. The relay secret was generated on the VPS and is not committed or printed.
 
 This is preparation, not a working live payment gateway. No existing service was replaced and no VPS restart was performed.
