@@ -1,0 +1,8 @@
+import {mkdirSync,writeFileSync} from 'node:fs';
+const base='https://khonenama.ir',queue=['/','/magazine','/sitemap.xml','/tools','/register-business','/download-app','/business/prdh-sray-zryn-taj-krj'],seen=new Set(),results=[];
+const allowed=new Set(['khonenama.ir','www.khonenama.ir']);
+function enqueue(href){try{const u=new URL(href.replaceAll('&amp;','&'),base);if(u.protocol==='https:'&&allowed.has(u.hostname)&&!u.pathname.startsWith('/api/')&&!u.search&&!u.hash)queue.push(u.pathname);}catch{}}
+async function check(path){seen.add(path);try{const response=await fetch(base+path,{signal:AbortSignal.timeout(18000)});const type=response.headers.get('content-type')||'';results.push({path,status:response.status});if(type.includes('text/html')||type.includes('xml')){const text=await response.text();if(type.includes('xml'))for(const m of text.matchAll(/<loc>([^<]+)<\/loc>/g))enqueue(m[1]);if(type.includes('text/html')){for(const m of text.matchAll(/href="([^"\s]+)"/g))enqueue(m[1]);for(const m of text.matchAll(/src="([^"\s]+)"/g))enqueue(m[1]);}}else await response.body?.cancel();}catch(error){results.push({path,error:error.name});}}
+while(queue.length&&seen.size<1000){const batch=[];while(queue.length&&batch.length<4){const path=queue.shift();if(!seen.has(path)&&!batch.includes(path)){seen.add(path);batch.push(path);}}await Promise.all(batch.map(check));}
+mkdirSync('outputs',{recursive:true});writeFileSync('outputs/public-link-audit.json',JSON.stringify(results,null,2));
+const failures=results.filter(r=>r.status>=400||r.error);console.log(JSON.stringify({checked:results.length,failures,remaining:queue.length}));if(failures.length)process.exitCode=1;

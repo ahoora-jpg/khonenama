@@ -1,0 +1,21 @@
+name: Audit public links and uploaded assets
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node tools/audit-public-links.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-link-audit
+          path: outputs/public-link-audit.json
+          retention-days: 7
