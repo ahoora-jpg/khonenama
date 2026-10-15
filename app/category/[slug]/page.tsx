@@ -7,6 +7,7 @@ import { serviceCatalog, servicePath } from "@/lib/service-catalog";
 import { BUSINESS_CATEGORIES } from "@/lib/business-taxonomy";
 import { getAiSearchContent } from "@/lib/ai-search-content";
 import { guides } from "@/lib/guides";
+import { contentPaths } from "@/lib/content-paths";
 import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 import { getCategoryVisual, getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, BadgeCheck, BookOpen, BriefcaseBusiness, Calculator, Crown, MapPin, Star } from "lucide-react";
@@ -76,7 +77,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     promoted: business.promoted,
     coverUrl: business.media.find((item) => item.kind === "cover")?.url || business.media[0]?.url || "",
   }));
-  const relatedGuides = seo.guides
+  const contentPath = contentPaths.find((item) => item.id === slug);
+  const guideSlugs = [...new Set([...(contentPath?.guideSlugs || []), ...seo.guides])];
+  const relatedGuides = guideSlugs
     .map((guideSlug) => guides.find((guide) => guide.slug === guideSlug))
     .filter((guide): guide is (typeof guides)[number] => Boolean(guide));
   const aiAnswers = getAiSearchContent(slug);
@@ -171,6 +174,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             <img src={visual.src} alt={visual.alt} width={visual.width} height={visual.height} loading="eager" fetchPriority="high" decoding="async" />
           </div>
 
+          <nav className="guide-breadcrumb" aria-label="مسیر انتخاب در این دسته">
+            <a href="#businesses">فروشگاه‌ها و متخصصان {seo.h1}</a>
+            <span> / </span><a href="#category-services">محصولات و خدمات</a>
+            <span> / </span><a href="#category-guides">راهنمای انتخاب و مقایسه</a>
+            {contentPath?.tool && <><span> / </span><a href={contentPath.tool.href}>{contentPath.tool.label}</a></>}
+          </nav>
+
           {aiAnswers.length > 0 && (
             <section className="category-results" aria-labelledby="decision-answers-heading">
               <div className="section-heading compact-heading">
@@ -199,7 +209,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             ))}
           </section>
 
-          <section className="category-results" aria-label="محصولات و خدمات این دسته">
+          <section id="category-services" className="category-results" aria-label="محصولات و خدمات این دسته">
             <h2>محصولات و خدمات این دسته</h2>
             <p>این فهرست محدوده فعالیت‌های قابل ثبت است؛ ارائه هر مورد به خدمات درج‌شده در غرفه واقعی کسب‌وکار بستگی دارد.</p>
             {[...new Set(serviceCatalog.filter(item => item.category === slug).map(item => item.group))].map(group => <details key={group}><summary>{group}</summary><ul>{serviceCatalog.filter(item => item.category === slug && item.group === group).map(item => <li key={item.name}><a href={servicePath(item)}>{item.name}</a></li>)}</ul></details>)}
@@ -282,7 +292,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           )}
 
           {relatedGuides.length > 0 && (
-            <section className="category-results">
+            <section id="category-guides" className="category-results">
               <div className="section-heading compact-heading">
                 <div>
                   <span className="section-kicker">قبل از خرید بخوانید</span>
