@@ -31,9 +31,10 @@ export async function createCheckout(owner: any, body: any, provider: PaymentPro
   if (body?.billingPeriod !== undefined && !["monthly", "annual"].includes(body.billingPeriod)) throw new BillingError("INVALID_BILLING_PERIOD", 400);
   let plan = body?.billingPeriod === "annual" && offer.annual ? { ...offer, ...offer.annual } : offer;
   const packs=body?.customPacks??0;
-  if(!Number.isSafeInteger(packs)||packs<0||packs>Math.floor((100000000-(plan.amountToman||0))/15000))throw new BillingError("INVALID_CUSTOM_PACKS",400);
-  if(packs && (plan.code!=="premium" || body?.billingPeriod==="annual"))throw new BillingError("CUSTOM_PREMIUM_MONTHLY_ONLY",400);
-  if(packs && plan.amountToman)plan={...plan,amountToman:plan.amountToman+packs*15000};
+  const customUnit=body?.billingPeriod==="annual"?180000:15000;
+  if(!Number.isSafeInteger(packs)||packs<0||packs>Math.floor((100000000-(plan.amountToman||0))/customUnit))throw new BillingError("INVALID_CUSTOM_PACKS",400);
+  if(packs && plan.code!=="premium")throw new BillingError("CUSTOM_PREMIUM_ONLY",400);
+  if(packs && plan.amountToman)plan={...plan,amountToman:plan.amountToman+packs*customUnit};
   if (plan.code === "free") throw new BillingError("FREE_PLAN_DOES_NOT_REQUIRE_PAYMENT");
   if (!provider) throw new BillingError("PAYMENT_PROVIDER_NOT_CONFIGURED", 503);
   if (!plan.amountToman) throw new BillingError("PLAN_PRICING_NOT_ACTIVE");
