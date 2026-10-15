@@ -11,7 +11,7 @@ const description =
   "متراژ پارچه پرده را با عرض ریل، قد پرده، Fullness، عرض پارچه، اضافه دوخت و Pattern Repeat محاسبه کنید.";
 
 export const metadata: Metadata = {
-  title,
+  title: { absolute: title.includes("خونه") ? title : title + " | خونه‌نما" },
   description,
   keywords: [
     "محاسبه متراژ پارچه پرده",
