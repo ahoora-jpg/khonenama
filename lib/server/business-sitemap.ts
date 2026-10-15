@@ -10,6 +10,25 @@ const INTERNAL_TEST_BUSINESS_SLUGS = ["alayy-dkvr-krj"];
 const BATCH_SIZE = 500;
 const MAX_BUSINESS_URLS = 49000;
 
+function sitemapLastModified(value: unknown): string {
+  if (typeof value !== "string") return "";
+  const timestamp = value.trim();
+  const date = timestamp.slice(0, 10);
+  const calendarDate = new Date(date + "T00:00:00Z");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+      !Number.isFinite(calendarDate.getTime()) ||
+      calendarDate.toISOString().slice(0, 10) !== date) return "";
+  if (timestamp === date) return date;
+
+  // SQLite CURRENT_TIMESTAMP is UTC but uses a space and omits the zone.
+  const normalized = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(\.\d+)?$/.test(timestamp)
+    ? timestamp.replace(" ", "T") + "Z"
+    : timestamp;
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/.test(normalized)) return "";
+  const parsed = new Date(normalized);
+  return Number.isFinite(parsed.getTime()) ? parsed.toISOString() : "";
+}
+
 function getDb() {
   return (env as any).DB;
 }
@@ -84,7 +103,7 @@ export async function listPublishedBusinessSitemapEntries(): Promise<BusinessSit
       for (const row of rows) {
         entries.push({
           slug: String(row.slug),
-          updatedAt: row.updated_at ? String(row.updated_at) : "",
+          updatedAt: sitemapLastModified(row.updated_at),
           planCode:
             row.plan_code === "premium"
               ? "premium"

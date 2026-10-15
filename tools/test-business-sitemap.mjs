@@ -49,7 +49,7 @@ test('A complete free booth becomes discoverable only after publication; pause a
   assert.equal(entries.length,1);
   assert.equal(entries[0].slug,'fixture-1');
   assert.equal(entries[0].planCode,'free');
-  assert.equal(entries[0].updatedAt,'2026-10-05 00:00:00');
+  assert.equal(entries[0].updatedAt,'2026-10-05T00:00:00.000Z');
   assert.deepEqual(Object.keys(entries[0]).sort(),['planCode','slug','updatedAt']);
   sql.exec('INSERT INTO business_visibility_controls VALUES(1,1,NULL)');
   assert.equal((await list()).length,0);
@@ -57,6 +57,27 @@ test('A complete free booth becomes discoverable only after publication; pause a
   assert.equal((await list()).length,1);
   sql.exec("UPDATE businesses SET status='suspended' WHERE id=1");
   assert.equal((await list()).length,0);
+  sql.close();
+});
+
+test('Sitemap dates preserve real UTC instants and omit invalid or ambiguous timestamps',async()=>{
+  const {sql,add,list}=fixture();
+  const values = [
+    ['2026-10-15 12:36:56','2026-10-15T12:36:56.000Z'],
+    ['2026-10-15T16:06:56+03:30','2026-10-15T12:36:56.000Z'],
+    ['2026-10-15','2026-10-15'],
+    ['2026-02-30 12:00:00',''],
+    ['not-a-date',''],
+    ['2026-10-15T12:36:56',''],
+  ];
+  for(let index=0;index<values.length;index++) {
+    add(index+1);
+    sql.prepare('UPDATE businesses SET updated_at=? WHERE id=?').run(values[index][0],index+1);
+  }
+  const entries=await list();
+  for(let index=0;index<values.length;index++) {
+    assert.equal(entries.find(entry=>entry.slug==='fixture-'+(index+1)).updatedAt,values[index][1]);
+  }
   sql.close();
 });
 
