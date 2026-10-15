@@ -4,7 +4,7 @@ export const contentPaths = [
     question: "برای انتخاب پرده، پارچه و متعلقات از کجا شروع کنیم؟",
     answer: "اول نیاز به نور و حریم خصوصی را مشخص کنید؛ سپس نوع بازشو، محل ریل، جنس پارچه و دوخت را انتخاب کنید. عرض پنجره، طول ریل و مقدار پارچه یک عدد نیستند. برای مقایسه قیمت، دوخت، میل‌پرده، پایه، گیره، حمل و نصب را در کنار پارچه بنویسید؛ ظاهر ساده به‌تنهایی نشانه ارزانی نیست.",
     checklist: ["نیاز روز و شب و میزان تاریکی را جدا مشخص کنید.", "ارتفاع و طول ریل، نوع چین، تکرار طرح و فضای جمع‌شدن پرده را با مجری تأیید کنید.", "خرید آماده، دوخت سفارشی، نصب و تعمیر را بر اساس خدمت واقعی غرفه انتخاب کنید."],
-    guideSlugs: ["curtain-buying-guide", "punch-curtain-guide", "curtain-track-vs-rod-guide", "bamboo-woven-curtain-guide", "vertical-curtain-guide", "curtain-installation-guide", "curtain-cleaning-guide"],
+    guideSlugs: ["specialty-curtain-selection-guide", "curtain-buying-guide", "punch-curtain-guide", "curtain-track-vs-rod-guide", "bamboo-woven-curtain-guide", "vertical-curtain-guide", "curtain-installation-guide", "curtain-cleaning-guide"],
     tool: {href: "/tools/curtain-fabric-calculator", label: "محاسبه متراژ پارچه پرده"},
   },
   {
@@ -12,7 +12,7 @@ export const contentPaths = [
     question: "چند بسته کفپوش بخریم و چه چیزهایی در هزینه اجرا حساب می‌شوند؟",
     answer: "مساحت کف به‌تنهایی تعداد بسته‌ها را تعیین نمی‌کند؛ پوشش هر بسته، پرت برش، جهت چیدمان و شکل فضا مهم‌اند. تعداد بسته برابر مساحت خرید تقسیم بر پوشش بسته، با گردکردن رو به بالا است. برای مثال، ۲۰ مترمربع با ۱۰ درصد پرت، ۲۲ مترمربع خرید می‌خواهد؛ اگر پوشش فرضی هر بسته ۲٫۲ مترمربع باشد، ۱۰ بسته لازم است. درصد پرت و پوشش را برای محصول واقعی تأیید کنید.",
     checklist: ["جنس چوبی، لمینت، SPC، PVC یا وینیل را بر اساس کاربرد و شرایط رطوبت مقایسه کنید.", "زیرسازی، فوم یا زیرلایه، قرنیز، پروفیل، حمل و نصب را جدا در پیشنهاد بیاورید.", "دستور نصب محصول، درز انبساط و سازگاری با گرمایش کف را بررسی کنید."],
-    guideSlugs: ["flooring-types-guide", "parquet-vs-laminate", "spc-vs-pvc-flooring", "laminate-underlay-guide", "skirting-floor-profiles-guide", "laminate-installation-guide", "waterproof-vs-water-resistant-laminate"],
+    guideSlugs: ["specialty-flooring-selection-guide", "flooring-types-guide", "parquet-vs-laminate", "spc-vs-pvc-flooring", "laminate-underlay-guide", "skirting-floor-profiles-guide", "laminate-installation-guide", "waterproof-vs-water-resistant-laminate"],
     tool: {href: "/tools/flooring-estimator", label: "محاسبه متراژ و تعداد بسته کفپوش"},
   },
   {
@@ -20,7 +20,7 @@ export const contentPaths = [
     question: "هر رول یا توپ موکت چند متر است؟",
     answer: "عرض و طول رول برای همه محصولات یکسان نیست؛ مشخصات همان محصول تعیین‌کننده است. مساحت رول از عرض ضرب در طول به دست می‌آید، اما مقدار خرید برای اتاق به چیدمان برش‌ها هم بستگی دارد. مثلاً یک برش ۴ متری از رول با عرض ۳٫۶۶ متر، ۱۴٫۶۴ مترمربع است؛ برای اتاق ۳ در ۴ متر، سطح کف ۱۲ مترمربع است. تلرانس، جهت خواب و طرح ممکن است خرید نهایی را تغییر دهند.",
     checklist: ["رول و تایل را از نظر چیدمان، درز، تعویض موضعی و نظافت مقایسه کنید.", "عرض واقعی رول، اندازه تایل و تعداد داخل بسته را از فروشنده بگیرید.", "اندازه‌گیری، زیرسازی، برش، نصب و زیگزاگ یا دوردوزی پادری را جدا مشخص کنید."],
-    guideSlugs: ["carpet-buying-guide", "roll-carpet-vs-carpet-tile", "carpet-bedroom-guide", "nylon-vs-polyester-vs-polypropylene-carpet", "carpet-cushion-underlay-guide", "carpet-binding-doormat-guide"],
+    guideSlugs: ["carpet-construction-fiber-selection-guide", "carpet-buying-guide", "roll-carpet-vs-carpet-tile", "carpet-bedroom-guide", "nylon-vs-polyester-vs-polypropylene-carpet", "carpet-cushion-underlay-guide", "carpet-binding-doormat-guide"],
     tool: {href: "/tools/carpet-estimator", label: "برآورد موکت رول، تایل و تعداد بسته"},
   },
   {
@@ -28,7 +28,7 @@ export const contentPaths = [
     question: "تعداد رول کاغذ دیواری با تعداد پنل دیوارپوش چه تفاوتی دارد؟",
     answer: "کاغذ دیواری را با ارتفاع قواره، طول و عرض رول و تکرار طرح محاسبه کنید؛ تقسیم ساده مساحت دیوار بر مساحت رول ممکن است کمبود ایجاد کند. برای ترمووال، ماربل‌شیت، دیوارپوش چسبی، پنل چوبی یا فومی، پوشش مؤثر هر پنل و جهت نصب ملاک است. ابزار تعداد رول را برای پنل، ورق یا پوستر سفارشی به‌کار نبرید.",
     checklist: ["عرض و ارتفاع دیوار، بازشوها و تکرار طرح را پیش از سفارش ثبت کنید.", "رطوبت، رنگ پوسته‌شده و نیاز به آماده‌سازی سطح را با مجری بررسی کنید.", "جنس، چسب مناسب، روش نظافت، گوشه‌ها و اتصالات را طبق مشخصات محصول انتخاب کنید."],
-    guideSlugs: ["wallpaper-guide", "wallpaper-vs-wallpanel", "wallpaper-primer-sizing-guide", "peel-and-stick-vs-traditional-wallpaper", "thermowall-guide", "marble-sheet-wallpanel-guide", "pvc-mdf-wallpanel-guide", "wall-mural-guide"],
+    guideSlugs: ["specialty-wallcovering-selection-guide", "wallpaper-guide", "wallpaper-vs-wallpanel", "wallpaper-primer-sizing-guide", "peel-and-stick-vs-traditional-wallpaper", "thermowall-guide", "marble-sheet-wallpanel-guide", "pvc-mdf-wallpanel-guide", "wall-mural-guide"],
     tool: {href: "/tools/wallpaper-calculator", label: "محاسبه تعداد رول کاغذ دیواری"},
   },
   {
@@ -46,5 +46,13 @@ export const contentPaths = [
     checklist: ["روشنایی، پرده، قفل، حسگرها و سناریوهای موردنیاز را فهرست کنید.", "وابستگی هر تجهیز به شبکه، هاب، حساب ابری و منبع تغذیه را از مجری بپرسید.", "روش استفاده دستی و نتیجه آزمون تحویل را ثبت کنید؛ تجهیزات ایمنی را برای آزمایش خودسرانه خاموش نکنید."],
     guideSlugs: ["smart-home-guide", "smart-home-without-internet-guide", "matter-thread-zigbee-wifi-guide-2026", "smart-lighting-guide", "smart-curtain-guide", "smart-lock-buying-security-guide", "water-leak-sensor-guide"],
     tool: {href: "/tools/smart-home-scope", label: "ابزار تنظیم نیازهای اولیه خانه هوشمند"},
+  },
+  {
+    id: "lighting", name: "نورپردازی داخلی منزل", category: "/category/lighting",
+    question: "برای انتخاب چراغ، ریل و دیمر چه اطلاعاتی لازم است؟",
+    answer: "از فعالیت هر فضا شروع کنید: نور عمومی، نور کار و نور تأکیدی را جدا طراحی کنید. ارتفاع سقف، محل نشستن، نور روز و خیرگی روی انتخاب چراغ اثر دارند. برای ریل، چراغ و دیمر، مدل و سازگاری دقیق تجهیزات را پیش از خرید از مجری بخواهید؛ ظاهر مشابه به معنی اتصال یا کنترل یکسان نیست.",
+    checklist: ["محل فعالیت و نیاز هر اتاق را مشخص کنید.", "مشخصات چراغ، ریل، درایور و کنترل را با هم تأیید کنید.", "تأمین کالا، سیم‌کشی، نصب و تنظیم را در پیشنهاد جدا بیاورید."],
+    guideSlugs: ["interior-lighting-guide", "living-room-zoning-lighting-guide", "smart-lighting-guide", "smart-lighting-scenes-guide-2026"],
+    tool: null,
   },
 ] as const;

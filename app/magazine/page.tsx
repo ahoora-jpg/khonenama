@@ -10,7 +10,7 @@ import { ArrowUpLeft, BookOpen, Clock3 } from "lucide-react";
 const magazineUrl = "https://khonenama.ir/magazine";
 const magazineTitle = "مجله خونه نما | راهنمای دکوراسیون و خانه هوشمند";
 const magazineDescription =
-  "پاسخ سؤال‌های خرید، اندازه‌گیری، نصب و نگهداری پرده، کفپوش، موکت، دیوارپوش، طراحی داخلی و خانه هوشمند؛ راهنما، محاسبه‌گر و کسب‌وکار مرتبط را پیدا کنید.";
+  "پاسخ سؤال‌های خرید، اندازه‌گیری و نصب پرده، کفپوش، موکت، دیوارپوش، طراحی داخلی، نورپردازی و خانه هوشمند؛ راهنما، ابزار و کسب‌وکار مرتبط را پیدا کنید.";
 
 export const metadata: Metadata = {
   title: { absolute: magazineTitle },
@@ -44,6 +44,7 @@ const collectionJsonLd = {
     { "@type": "Thing", name: "کاغذ دیواری و دیوارپوش" },
     { "@type": "Thing", name: "طراحی داخلی" },
     { "@type": "Thing", name: "خانه هوشمند" },
+    { "@type": "Thing", name: "نورپردازی داخلی" },
   ],
   mainEntity: {
     "@type": "ItemList",

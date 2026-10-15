@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PreferredSourceCTA from "@/components/PreferredSourceCTA";
 import { getGuide, guides, type Guide } from "@/lib/guides";
+import { serviceCatalog, servicePath } from "@/lib/service-catalog";
 import { getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, Calculator, Clock3, Link2 } from "lucide-react";
 import { notFound } from "next/navigation";
@@ -10,7 +11,7 @@ import { notFound } from "next/navigation";
 const CURTAIN_INSTALLATION_SLUG = "curtain-installation-guide";
 const CURTAIN_INSTALLATION_MODIFIED_AT = "2026-09-23";
 const SHEET_WALLCOVERING_GUIDES = new Set([
-  "marble-sheet-wallpanel-guide", "thermowall-guide", "pvc-mdf-wallpanel-guide", "wall-mural-guide", "wall-moulding-decor-guide",
+  "marble-sheet-wallpanel-guide", "thermowall-guide", "pvc-mdf-wallpanel-guide", "wall-mural-guide", "wall-moulding-decor-guide", "specialty-wallcovering-selection-guide",
 ]);
 
 const SEO_METADATA_OVERRIDES: Record<string, { title?: string; description?: string }> = {
@@ -184,6 +185,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     ? "برای نصب پرده دیواری، پایه‌ها روی دیوار بالای قاب یا در محل مناسب اطراف پنجره بسته می‌شوند؛ برای نصب سقفی، پایه به سقف متصل می‌شود. انتخاب بین این دو به جنس سطح، فضای بازشو، عرض پوشش موردنیاز و مسیر تأسیسات بستگی دارد. قبل از سفارش زبرا یا شید، محل نصب را مشخص و عرض و ارتفاع را بر همان مبنا اندازه‌گیری کنید."
     : guide.quickAnswer || fallbackQuickAnswer || guide.excerpt;
   const relatedGuides = getRelatedGuides(guide);
+  const relatedServices = [...new Map(serviceCatalog.filter(item=>item.guide===guide.slug).map(item=>[servicePath(item),item])).values()].slice(0,8);
   const visibleFaqs = isCurtainInstallation
     ? [...guide.faqs, ...curtainInstallationExtraFaqs]
     : guide.faqs;
@@ -381,7 +383,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                 </div>
               )}
 
-              {guide.category === "پرده" && (
+              {guide.category === "پرده" && ["curtain-buying-guide","curtain-fullness-guide","punch-curtain-guide","ripple-fold-vs-pinch-pleat-vs-grommet","linen-vs-polyester-curtain-fabric","minimalist-curtain-guide","sheer-vs-blackout-curtain","best-curtain-living-room"].includes(guide.slug) && (
                 <div className="guide-side-card guide-tool-link glass-panel">
                   <Calculator size={18} />
                   <h3>متراژ پارچه پرده را حساب کن</h3>
@@ -437,6 +439,8 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               </div>
 
               <PreferredSourceCTA compact />
+
+              {relatedServices.length > 0 && <div className="guide-side-card glass-panel"><h3>خدمات مرتبط با این راهنما</h3><p>انتخاب یک خدمت در غرفه، اعلام زمینه فعالیت است؛ موجودی و شرایط اجرا را با کسب‌وکار تأیید کنید.</p><ul>{relatedServices.map(item=><li key={servicePath(item)}><a href={servicePath(item)}>{item.name}</a></li>)}</ul></div>}
 
               <div className="guide-side-card glass-panel">
                 <span className="section-kicker">شفافیت تحریریه</span>
