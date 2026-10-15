@@ -1,3 +1,4 @@
+import ToolReadingPath from "@/components/ToolReadingPath";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -10,7 +11,7 @@ const description =
   "هر رول موکت چند متر است و برای اتاق چند متر موکت لازم دارید؟ متراژ موکت رول یا تعداد موکت تایلی را با ابعاد فضا، عرض رول، پرت و تعداد تایل محاسبه کنید.";
 
 export const metadata: Metadata = {
-  title,
+  title: { absolute: title.includes("خونه") ? title : title + " | خونه‌نما" },
   description,
   keywords: [
     "هر رول موکت چند متر است",
@@ -144,6 +145,7 @@ export default function CarpetEstimatorPage() {
         </div>
       </section>
 
+      <ToolReadingPath category="carpet" />
       <Footer />
     </main>
   );

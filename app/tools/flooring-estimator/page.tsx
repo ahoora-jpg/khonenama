@@ -1,3 +1,4 @@
+import ToolReadingPath from "@/components/ToolReadingPath";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -10,7 +11,7 @@ const description =
   "متراژ پارکت، لمینت و کفپوش PVC را با ابعاد فضا، پوشش هر بسته، عرض رول و درصد پرت برآورد کنید و مقدار خرید اولیه را به دست آورید.";
 
 export const metadata: Metadata = {
-  title,
+  title: { absolute: title.includes("خونه") ? title : title + " | خونه‌نما" },
   description,
   keywords: [
     "محاسبه متراژ پارکت",
@@ -162,6 +163,7 @@ export default function FlooringEstimatorPage() {
         </div>
       </section>
 
+      <ToolReadingPath category="flooring" />
       <Footer />
     </main>
   );

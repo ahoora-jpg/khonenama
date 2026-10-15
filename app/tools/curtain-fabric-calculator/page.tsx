@@ -1,3 +1,4 @@
+import ToolReadingPath from "@/components/ToolReadingPath";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -10,7 +11,7 @@ const description =
   "متراژ پارچه پرده را با عرض ریل، قد پرده، Fullness، عرض پارچه، اضافه دوخت و Pattern Repeat محاسبه کنید.";
 
 export const metadata: Metadata = {
-  title,
+  title: { absolute: title.includes("خونه") ? title : title + " | خونه‌نما" },
   description,
   keywords: [
     "محاسبه متراژ پارچه پرده",
@@ -172,6 +173,7 @@ export default function CurtainFabricCalculatorPage() {
         </div>
       </section>
 
+      <ToolReadingPath category="curtain" />
       <Footer />
     </main>
   );

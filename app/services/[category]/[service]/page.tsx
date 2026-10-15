@@ -5,18 +5,22 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { serviceCatalog, servicePath, findService, MIN_SERVICE_BUSINESSES } from "@/lib/service-catalog";
 import { listPublishedBusinesses } from "@/lib/server/public-businesses";
+import { contentPaths } from "@/lib/content-paths";
+import { getGuide } from "@/lib/guides";
 export const dynamic = "force-dynamic";
 type Params = Promise<{category: string; service: string}>;
 const getBusinesses = cache((category: string, serviceName: string) => listPublishedBusinesses({serviceName, limit: 50}));
 export async function generateMetadata({params}: {params: Params}): Promise<Metadata> {
  const p=await params; const item=findService(p.category,p.service); if(!item) return {};
  const businesses=await getBusinesses(item.category,item.name);
- return {title: item.name + " | مقایسه کسب‌وکارها و استعلام | خونه نما", description: "برای " + item.name + " مشخصات، شرایط خرید یا اجرا و غرفه‌های مرتبط را بررسی کنید. " + item.description, alternates: {canonical: servicePath(item)}, robots: {index: businesses.length >= MIN_SERVICE_BUSINESSES, follow: true}};
+ return {title: {absolute: item.name + " | مقایسه کسب‌وکارها و استعلام | خونه نما"}, description: "برای " + item.name + " مشخصات، شرایط خرید یا اجرا و غرفه‌های مرتبط را بررسی کنید. " + item.description, alternates: {canonical: servicePath(item)}, robots: {index: businesses.length >= MIN_SERVICE_BUSINESSES, follow: true}};
 }
 export default async function ServicePage({params}: {params: Params}) {
  const p=await params; const item=findService(p.category,p.service); if(!item) notFound();
  const primary=serviceCatalog.find(entry=>entry.name===item.name)!; if(primary.category!==p.category) permanentRedirect(servicePath(primary));
  const businesses=await getBusinesses(item.category,item.name);
  const siblings=serviceCatalog.filter(x=>x.category===item.category&&x.group===item.group&&x.name!==item.name).slice(0,8);
- return <><Header/><main className="page-shell" dir="rtl"><section className="category-results"><a href={"/category/"+item.category}>راهنما و خدمات این حوزه</a><h1>{item.name}؛ انتخاب کسب‌وکار و استعلام</h1><p>{item.description}</p><p>انتخاب این مورد توسط صاحب غرفه، معرفی زمینه فعالیت اوست؛ موجودی، قیمت، زمان تحویل و محدوده خدمات را مستقیماً تأیید کنید.</p><a href={item.guide?"/magazine/"+item.guide:"/magazine"}>راهنمای انتخاب و بررسی مشخصات {item.name}</a></section><section className="category-results" id="businesses"><h2>غرفه‌های مرتبط با {item.name}</h2>{businesses.length ? <div className="local-intent-grid">{businesses.map(b=><article className="local-intent-card" key={b.id}><h3><a href={"/business/"+b.slug}>{b.name}</a></h3><p>{b.city}{b.area?"، "+b.area:""}</p><p>{b.description.slice(0,240)}</p><a href={"/business/"+b.slug}>مشاهده غرفه و راه تماس</a></article>)}</div>:<p>هنوز غرفه منتشرشده‌ای با این خدمت در این فهرست نداریم. راهنمای مرتبط را بخوانید یا دیگر خدمات این حوزه را بررسی کنید.</p>}</section><section className="category-results"><h2>موارد مرتبط</h2><ul>{siblings.map(x=><li key={x.name}><a href={servicePath(x)}>{x.name}</a></li>)}</ul><a href="/help">راهنمای مقایسه پیشنهادها و بررسی تحویل</a></section></main><Footer/></>;
+ const readingPath=contentPaths.find(path=>path.id===item.category);
+ const supportingArticle=getGuide(item.guide);
+ return <><Header/><main className="page-shell" dir="rtl"><section className="category-results"><a href={"/category/"+item.category}>راهنما و خدمات این حوزه</a><h1>{item.name}؛ انتخاب کسب‌وکار و استعلام</h1><p>{item.description}</p><p>انتخاب این مورد توسط صاحب غرفه، معرفی زمینه فعالیت اوست؛ موجودی، قیمت، زمان تحویل و محدوده خدمات را مستقیماً تأیید کنید.</p><a href={item.guide?"/magazine/"+item.guide:"/magazine"}>{supportingArticle?.title || "راهنمای انتخاب و بررسی مشخصات " + item.name}</a></section>{readingPath && <section className="category-results"><h2>پیش از استعلام چه چیزی آماده کنیم؟</h2><ul>{readingPath.checklist.map(text=><li key={text}>{text}</li>)}</ul><a href={"/magazine#guide-path-"+readingPath.id}>مسیر آموزش، اندازه‌گیری و انتخاب {readingPath.name}</a></section>}<section className="category-results" id="businesses"><h2>غرفه‌های مرتبط با {item.name}</h2>{businesses.length ? <div className="local-intent-grid">{businesses.map(b=><article className="local-intent-card" key={b.id}><h3><a href={"/business/"+b.slug}>{b.name}</a></h3><p>{b.city}{b.area?"، "+b.area:""}</p><p>{b.description.slice(0,240)}</p><a href={"/business/"+b.slug}>مشاهده غرفه و راه تماس</a></article>)}</div>:<p>هنوز غرفه منتشرشده‌ای با این خدمت در این فهرست نداریم. راهنمای مرتبط را بخوانید یا دیگر خدمات این حوزه را بررسی کنید.</p>}</section><section className="category-results"><h2>موارد مرتبط</h2><ul>{siblings.map(x=><li key={x.name}><a href={servicePath(x)}>{x.name}</a></li>)}</ul><a href="/help">راهنمای مقایسه پیشنهادها و بررسی تحویل</a></section></main><Footer/></>;
 }
