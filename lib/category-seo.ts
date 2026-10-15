@@ -44,7 +44,7 @@ export const categorySeo: Record<string, CategorySeo> = {
   },
   flooring: {
     slug: "flooring",
-    metaTitle: "کفپوش، پارکت و لمینت | مقایسه جنس، قیمت و نصب",
+    metaTitle: "کفپوش، پارکت و لمینت | خرید، قیمت و نصب | خونه نما",
     metaDescription:
       "پارکت، لمینت، PVC، SPC و وینیل را مقایسه کنید؛ متراژ و تعداد بسته را حساب کنید و عوامل قیمت، زیرسازی، قرنیز و نصب را پیش از استعلام بررسی کنید.",
     h1: "کفپوش و پارکت",
@@ -66,7 +66,7 @@ export const categorySeo: Record<string, CategorySeo> = {
   },
   carpet: {
     slug: "carpet",
-    metaTitle: "موکت رول و تایلی | راهنمای خرید، قیمت، متراژ و نصب",
+    metaTitle: "موکت رول و تایلی | خرید، متراژ و نصب | خونه نما",
     metaDescription:
       "انواع موکت خانگی و اداری، نکات انتخاب، دوام، نظافت و کاربرد هر مدل را بشناسید و فروشگاه‌ها و خدمات مرتبط را پیدا کنید.",
     h1: "موکت",
@@ -89,7 +89,7 @@ export const categorySeo: Record<string, CategorySeo> = {
   },
   wallpaper: {
     slug: "wallpaper",
-    metaTitle: "کاغذ دیواری و دیوارپوش | راهنمای انتخاب و فروشگاه‌ها",
+    metaTitle: "کاغذ دیواری و دیوارپوش | انتخاب و استعلام | خونه نما",
     metaDescription:
       "کاغذ دیواری، پوستر و دیوارپوش را بر اساس جنس، طرح، فضا و نصب مقایسه کنید و فروشگاه‌ها و مجریان مرتبط را پیدا کنید.",
     h1: "کاغذ دیواری و دیوارپوش",
@@ -113,7 +113,7 @@ export const categorySeo: Record<string, CategorySeo> = {
   },
   "interior-design": {
     slug: "interior-design",
-    metaTitle: "طراحی داخلی و دکوراسیون | چیدمان، رنگ، نور و انتخاب طراح",
+    metaTitle: "طراحی و اجرای دکوراسیون داخلی | انتخاب مجری | خونه نما",
     metaDescription:
       "راهنمای طراحی داخلی و دکوراسیون؛ چیدمان، رنگ، نور، خانه کوچک، ترندهای ۲۰۲۶ و معیارهای انتخاب طراح و مجری را در خونه نما بررسی کنید.",
     h1: "طراحی داخلی",
@@ -141,7 +141,7 @@ export const categorySeo: Record<string, CategorySeo> = {
   },
   "smart-home": {
     slug: "smart-home",
-    metaTitle: "خانه هوشمند | Matter، روشنایی، پرده برقی، امنیت و اتوماسیون",
+    metaTitle: "خانه هوشمند | تجهیزات، هزینه و اجرای هوشمندسازی | خونه نما",
     metaDescription:
       "خانه هوشمند را از Matter، Thread و Zigbee تا روشنایی، پرده برقی، امنیت، کنترل محلی و سناریوهای اتوماسیون بشناسید و متخصصان مرتبط را پیدا کنید.",
     h1: "خانه هوشمند",
