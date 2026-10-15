@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { MAX_VIDEO_BYTES, VIDEO_LIMITS, mp4Duration } from "@/lib/business-video";
-import { normalizePlanCode, planPresentation } from "@/lib/business-entitlements";
+import { normalizePlanCode, planPresentation, customPacksForSubscription } from "@/lib/business-entitlements";
 import { ensureBusinessMediaSchema, getOwnedBusiness } from "@/lib/server/business-media";
 import { readBusinessUploadForm } from "@/lib/server/business-upload-form";
 import {
@@ -26,7 +26,7 @@ function safeFileName(value: string) {
 async function getGalleryLimit(db: any, businessId: number) {
   const planRow = await db
     .prepare(
-      "SELECT p.code FROM subscriptions s JOIN plans p ON p.id = s.plan_id " +
+      "SELECT p.code, s.id FROM subscriptions s JOIN plans p ON p.id = s.plan_id " +
         "WHERE s.business_id = ? AND s.status = 'active' " +
         "AND (s.ends_at IS NULL OR julianday(s.ends_at) > julianday('now')) " +
         "ORDER BY s.id DESC LIMIT 1"
@@ -35,7 +35,7 @@ async function getGalleryLimit(db: any, businessId: number) {
     .first();
 
   const planCode = normalizePlanCode(planRow?.code);
-  return planPresentation[planCode].galleryLimit;
+  return planPresentation[planCode].galleryLimit + 20*await customPacksForSubscription(db,planRow);
 }
 
 export async function POST(request: Request) {
@@ -62,8 +62,8 @@ export async function POST(request: Request) {
     if (!(file instanceof File) || file.size < 1) return Response.json({ok:false,error:"INVALID_FILE"},{status:400});
     if (file.size > MAX_VIDEO_BYTES) return Response.json({ok:false,error:"FILE_TOO_LARGE"},{status:413});
     if (file.type !== "video/mp4") return Response.json({ok:false,error:"INVALID_FILE_TYPE"},{status:415});
-    const plan = await owned.db.prepare("SELECT p.code FROM subscriptions s JOIN plans p ON p.id=s.plan_id WHERE s.business_id=? AND s.status='active' AND (s.ends_at IS NULL OR julianday(s.ends_at)>julianday('now')) ORDER BY s.id DESC LIMIT 1").bind(owned.business.id).first();
-    const limit = VIDEO_LIMITS[normalizePlanCode(plan?.code)];
+    const plan = await owned.db.prepare("SELECT p.code, s.id FROM subscriptions s JOIN plans p ON p.id=s.plan_id WHERE s.business_id=? AND s.status='active' AND (s.ends_at IS NULL OR julianday(s.ends_at)>julianday('now')) ORDER BY s.id DESC LIMIT 1").bind(owned.business.id).first();
+    const limit = VIDEO_LIMITS[normalizePlanCode(plan?.code)] + await customPacksForSubscription(owned.db,plan);
     if (!limit) return Response.json({ok:false,error:"VIDEO_PLAN_REQUIRED"},{status:403});
     const bucket = (env as any).BUSINESS_MEDIA;
     if (!bucket?.put) return Response.json({ok:false,error:"MEDIA_STORAGE_NOT_CONFIGURED"},{status:503});

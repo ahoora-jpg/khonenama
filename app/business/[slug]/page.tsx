@@ -254,7 +254,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
                       <span className="plan-public-badge is-premium"><Crown size={14} /> اشتراک ویژه</span>
                     )}
                   </div>
-                  <p>{business.description}</p>
+                  <div style={{marginTop:12}}><strong style={{fontSize:16}}>معرفی و شرایط همکاری</strong><p style={{whiteSpace:"pre-wrap",fontSize:17,lineHeight:1.9,overflowWrap:"anywhere"}}>{business.description}</p></div>
                 </div>
                 {business.planCode === "premium" && <span className="featured-tag profile-featured">جایگاه ویژه</span>}
               </div>

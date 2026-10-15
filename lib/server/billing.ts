@@ -29,15 +29,19 @@ export async function createCheckout(owner: any, body: any, provider: PaymentPro
   const offer = plans.find(p => p.code === body?.planCode);
   if (!offer) throw new BillingError("PLAN_NOT_FOUND", 404);
   if (body?.billingPeriod !== undefined && !["monthly", "annual"].includes(body.billingPeriod)) throw new BillingError("INVALID_BILLING_PERIOD", 400);
-  const plan = body?.billingPeriod === "annual" && offer.annual ? { ...offer, ...offer.annual } : offer;
+  let plan = body?.billingPeriod === "annual" && offer.annual ? { ...offer, ...offer.annual } : offer;
+  const packs=body?.customPacks??0;
+  if(!Number.isSafeInteger(packs)||packs<0||packs>Math.floor((100000000-(plan.amountToman||0))/15000))throw new BillingError("INVALID_CUSTOM_PACKS",400);
+  if(packs && (plan.code!=="premium" || body?.billingPeriod==="annual"))throw new BillingError("CUSTOM_PREMIUM_MONTHLY_ONLY",400);
+  if(packs && plan.amountToman)plan={...plan,amountToman:plan.amountToman+packs*15000};
   if (plan.code === "free") throw new BillingError("FREE_PLAN_DOES_NOT_REQUIRE_PAYMENT");
   if (!provider) throw new BillingError("PAYMENT_PROVIDER_NOT_CONFIGURED", 503);
   if (!plan.amountToman) throw new BillingError("PLAN_PRICING_NOT_ACTIVE");
   if (!/^[a-zA-Z0-9-]{16,80}$/.test(body?.requestKey || "")) throw new BillingError("INVALID_REQUEST_KEY", 400);
   if (body.expectedAmountToman !== plan.amountToman || body.expectedDurationDays !== plan.durationDays) throw new BillingError("QUOTE_CHANGED");
-  const prior = await db.prepare("SELECT c.*,p.status,p.provider,p.provider_authority,i.expires_at FROM billing_checkouts c JOIN payments p ON p.id=c.payment_id JOIN invoices i ON i.id=p.invoice_id WHERE c.business_id=? AND c.request_key=?").bind(business.id, body.requestKey).first();
+  const prior = await db.prepare("SELECT c.*,COALESCE((SELECT packs FROM checkout_custom_capacity WHERE checkout_id=c.id),0) custom_packs,p.status,p.provider,p.provider_authority,i.expires_at FROM billing_checkouts c JOIN payments p ON p.id=c.payment_id JOIN invoices i ON i.id=p.invoice_id WHERE c.business_id=? AND c.request_key=?").bind(business.id, body.requestKey).first();
   if (prior) {
-    if (prior.plan_code !== plan.code || prior.amount_toman !== plan.amountToman || prior.duration_days !== plan.durationDays) throw new BillingError("REQUEST_KEY_REUSED");
+    if (prior.custom_packs !== packs || prior.plan_code !== plan.code || prior.amount_toman !== plan.amountToman || prior.duration_days !== plan.durationDays) throw new BillingError("REQUEST_KEY_REUSED");
     if (prior.status === "redirected" && prior.provider === provider.code && Date.parse(prior.expires_at + "Z") > Date.now()) return { id: prior.id, redirectUrl: gatewayUrl(prior.provider, prior.provider_authority) };
     throw new BillingError(prior.status === "verified" ? "ALREADY_PAID" : "CHECKOUT_ALREADY_CREATED");
   }
@@ -50,9 +54,10 @@ export async function createCheckout(owner: any, body: any, provider: PaymentPro
   const id = crypto.randomUUID(), secret = crypto.randomUUID().replaceAll("-", "") + crypto.randomUUID().replaceAll("-", "");
   const callbackHash = await hash(secret), invoiceNumber = "KH-" + id;
   await db.batch([
-    db.prepare("INSERT INTO invoices(invoice_number,business_id,user_id,plan_id,subtotal_amount,total_amount,currency,status,description,expires_at) VALUES(?,?,?,?,?,?,'IRT','pending',?,datetime('now','+30 minutes'))").bind(invoiceNumber, business.id, session.user_id, planRow.id, plan.amountToman, plan.amountToman, `اشتراک ${plan.name} برای ${plan.durationDays} روز`),
+    db.prepare("INSERT INTO invoices(invoice_number,business_id,user_id,plan_id,subtotal_amount,total_amount,currency,status,description,expires_at) VALUES(?,?,?,?,?,?,'IRT','pending',?,datetime('now','+30 minutes'))").bind(invoiceNumber, business.id, session.user_id, planRow.id, plan.amountToman, plan.amountToman, `اشتراک ${plan.name} برای ${plan.durationDays} روز${packs ? `؛ ${packs} بسته ظرفیت اضافه (هر بسته ۲۰ عکس و ۱ ویدیو)` : ""}`),
     db.prepare("INSERT INTO payments(invoice_id,provider,amount,currency,idempotency_key) SELECT id,?,?,'IRT',? FROM invoices WHERE invoice_number=?").bind(provider.code, plan.amountToman, id, invoiceNumber),
     db.prepare("INSERT INTO billing_checkouts(id,payment_id,business_id,plan_code,amount_toman,duration_days,request_key,callback_hash,source) SELECT ?,id,?,?,?,?,?,?,? FROM payments WHERE idempotency_key=?").bind(id, business.id, plan.code, plan.amountToman, plan.durationDays, body.requestKey, callbackHash, body.source === "app" ? "app" : "web", id),
+    db.prepare("INSERT INTO checkout_custom_capacity(checkout_id,packs,unit_toman) VALUES(?,?,15000)").bind(id,packs),
   ]);
   try {
     const callbackUrl = `https://www.khonenama.ir/api/billing/callback?checkout=${id}&token=${secret}`;

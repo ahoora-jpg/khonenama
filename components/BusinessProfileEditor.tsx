@@ -188,9 +188,9 @@ export default function BusinessProfileEditor() {
         </label>
 
         <label className="form-row">
-          <span>معرفی کسب‌وکار</span>
+          <span>معرفی کسب‌وکار و شرایط همکاری</span>
           <textarea rows={7} value={form.description} onChange={(e) => update("description", e.target.value)} />
-          <small className="field-hint">حداقل ۲۰ کاراکتر؛ اطلاعات واقعی و قابل‌اعتماد بنویسید.</small>
+          <small className="field-hint">حداقل ۲۰ کاراکتر؛ تخصص، خدمات و شرایط همکاری مثل فروش اقساطی یا نحوه محاسبه دستمزد را بنویسید. این متن در بالای غرفه به مشتری نمایش داده می‌شود.</small>
         </label>
 
         <div className="profile-editor-actions">

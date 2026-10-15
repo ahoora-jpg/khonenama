@@ -1,5 +1,5 @@
 import { VIDEO_LIMITS } from "@/lib/business-video";
-import { normalizePlanCode } from "@/lib/business-entitlements";
+import { normalizePlanCode,customPacksForSubscription,planPresentation } from "@/lib/business-entitlements";
 import { env } from "cloudflare:workers";
 import { getBusinessSession } from "@/lib/server/business-session";
 
@@ -13,13 +13,19 @@ async function serve(request: Request, context: { params: Promise<{ businessId: 
   const masterKey = "businesses/" + businessId + "/" + masterName;
   const db = (env as any).DB;
   const media = await db.prepare(
-    "SELECT b.status, COALESCE(v.owner_paused, 0) AS owner_paused FROM business_media m JOIN businesses b ON b.id = m.business_id LEFT JOIN business_visibility_controls v ON v.business_id = b.id WHERE m.business_id = ? AND m.provider = 'r2' AND m.storage_key = ? LIMIT 1"
+    "SELECT m.kind, b.status, COALESCE(v.owner_paused, 0) AS owner_paused FROM business_media m JOIN businesses b ON b.id = m.business_id LEFT JOIN business_visibility_controls v ON v.business_id = b.id WHERE m.business_id = ? AND m.provider = 'r2' AND m.storage_key = ? LIMIT 1"
   ).bind(Number(businessId), masterKey).first();
   if (!media) return missing();
   let isPublic = media.status === "published" && !Number(media.owner_paused);
   if (isPublic && fileName.endsWith(".mp4")) {
-    const plan=await db.prepare("SELECT p.code FROM subscriptions s JOIN plans p ON p.id=s.plan_id WHERE s.business_id=? AND s.status='active' AND (s.ends_at IS NULL OR julianday(s.ends_at)>julianday('now')) ORDER BY s.id DESC LIMIT 1").bind(Number(businessId)).first();
-    const allowed=await db.prepare("SELECT storage_key FROM business_media WHERE business_id=? AND media_type='video' ORDER BY id LIMIT ?").bind(Number(businessId),VIDEO_LIMITS[normalizePlanCode(plan?.code)]).all();
+    const plan=await db.prepare("SELECT p.code, s.id FROM subscriptions s JOIN plans p ON p.id=s.plan_id WHERE s.business_id=? AND s.status='active' AND (s.ends_at IS NULL OR julianday(s.ends_at)>julianday('now')) ORDER BY s.id DESC LIMIT 1").bind(Number(businessId)).first();
+    const allowed=await db.prepare("SELECT storage_key FROM business_media WHERE business_id=? AND media_type='video' ORDER BY id LIMIT ?").bind(Number(businessId),VIDEO_LIMITS[normalizePlanCode(plan?.code)]+await customPacksForSubscription(db,plan)).all();
+    isPublic=(allowed.results||[]).some((row:any)=>row.storage_key===masterKey);
+  }
+  if(isPublic && !fileName.endsWith('.mp4') && media.kind==='image'){
+    const plan=await db.prepare("SELECT p.code,s.id FROM subscriptions s JOIN plans p ON p.id=s.plan_id WHERE s.business_id=? AND s.status='active' AND (s.ends_at IS NULL OR julianday(s.ends_at)>julianday('now')) ORDER BY s.id DESC LIMIT 1").bind(Number(businessId)).first();
+    const limit=planPresentation[normalizePlanCode(plan?.code)].galleryLimit+20*await customPacksForSubscription(db,plan);
+    const allowed=await db.prepare("SELECT storage_key FROM business_media WHERE business_id=? AND kind='image' AND media_type='image' ORDER BY id LIMIT ?").bind(Number(businessId),limit).all();
     isPublic=(allowed.results||[]).some((row:any)=>row.storage_key===masterKey);
   }
   if (!isPublic) {

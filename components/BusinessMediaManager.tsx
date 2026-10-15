@@ -51,10 +51,11 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
   const fileRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
 
-  const limit = limits[plan] || limits.free;
+  const [capacity,setCapacity]=useState<{photos:number;videos:number}|null>(null);
+  const limit = capacity?.photos ?? (limits[plan] || limits.free);
   const remaining = Math.max(0, limit - media.filter(item => item.kind === "image").length);
 
-  const videoLimit = VIDEO_LIMITS[plan] || 0;
+  const videoLimit = capacity?.videos ?? (VIDEO_LIMITS[plan] || 0);
   const videoRemaining = Math.max(0, videoLimit - media.filter(item => item.kind === "video").length);
   const available = uploadKind === "video" ? videoRemaining : uploadKind === "image" ? remaining : 1;
   const cover = media.find(item => item.kind === "cover");
@@ -79,6 +80,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result?.ok) throw new Error("LOAD_FAILED");
       setMedia(Array.isArray(result.media) ? result.media : []);
+      if(result.capacity)setCapacity(result.capacity);
       setConfigured(Boolean(result.configured));
       setMediaRevision(value => value + 1);
     } catch {

@@ -1,8 +1,8 @@
 import { normalizePlanCode, planPresentation } from "./business-entitlements";
-export function selectPublicMedia<T extends {id:number;kind:string}>(media:T[], code:unknown):T[] {
+export function selectPublicMedia<T extends {id:number;kind:string}>(media:T[], code:unknown,packs=0):T[] {
   const videoLimits: Record<string, number> = {free:0, pro:2, premium:5};
-  const videoIds = new Set(media.filter(m=>m.kind === "video").sort((a,b)=>a.id-b.id).slice(0,videoLimits[normalizePlanCode(code)]).map(m=>m.id));
-  const limit=planPresentation[normalizePlanCode(code)].galleryLimit;
+  const videoIds = new Set(media.filter(m=>m.kind === "video").sort((a,b)=>a.id-b.id).slice(0,videoLimits[normalizePlanCode(code)]+(normalizePlanCode(code)==="premium"?packs:0)).map(m=>m.id));
+  const limit=planPresentation[normalizePlanCode(code)].galleryLimit+(normalizePlanCode(code)==="premium"?20*packs:0);
   const ids=new Set(media.filter(m=>m.kind!=="cover"&&m.kind!=="logo"&&m.kind!=="video").sort((a,b)=>a.id-b.id).slice(0,limit).map(m=>m.id));
   const special=new Set<string>();
   return media.filter(m=>{if(m.kind==="cover"||m.kind==="logo"){if(special.has(m.kind))return false;special.add(m.kind);return true;}return m.kind === "video" ? videoIds.has(m.id) : ids.has(m.id);});

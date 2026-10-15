@@ -1,4 +1,8 @@
 export async function activateSubscriptionFromVerifiedPayment(db: any, paymentId: number) {
+  await db.batch([
+    db.prepare("CREATE TABLE IF NOT EXISTS checkout_custom_capacity(checkout_id TEXT PRIMARY KEY,packs INTEGER NOT NULL CHECK(packs>=0),unit_toman INTEGER NOT NULL)"),
+    db.prepare("CREATE TABLE IF NOT EXISTS subscription_custom_capacity(subscription_id INTEGER PRIMARY KEY,packs INTEGER NOT NULL CHECK(packs>=0))"),
+  ]);
   const payment = await db.prepare(
     "SELECT pay.id,pay.status,pay.provider_reference,i.id invoice_id,i.business_id,i.plan_id,p.code plan_code,p.name plan_name,c.duration_days " +
     "FROM payments pay JOIN invoices i ON i.id=pay.invoice_id JOIN plans p ON p.id=i.plan_id " +
@@ -15,6 +19,7 @@ export async function activateSubscriptionFromVerifiedPayment(db: any, paymentId
     db.prepare("UPDATE billing_checkouts SET activation_ends_at=CASE WHEN EXISTS(SELECT 1 FROM subscriptions WHERE business_id=? AND plan_id=? AND status='active' AND ends_at IS NULL) THEN NULL ELSE datetime(COALESCE((SELECT MAX(datetime(s.ends_at)) FROM subscriptions s WHERE s.business_id=? AND s.plan_id=? AND s.status='active' AND julianday(s.ends_at)>julianday('now')),CURRENT_TIMESTAMP),'+' || duration_days || ' days') END WHERE payment_id=? AND " + guard).bind(payment.business_id, payment.plan_id, payment.business_id, payment.plan_id, paymentId, paymentId, payload),
     db.prepare("UPDATE subscriptions SET status='expired' WHERE business_id=? AND status='active' AND " + guard).bind(payment.business_id, paymentId, payload),
     db.prepare("INSERT INTO subscriptions(business_id,plan_id,status,starts_at,ends_at,is_test) SELECT ?,?,'active',CURRENT_TIMESTAMP,activation_ends_at,0 FROM billing_checkouts WHERE payment_id=? AND " + guard).bind(payment.business_id, payment.plan_id, paymentId, paymentId, payload),
+    db.prepare("INSERT OR IGNORE INTO subscription_custom_capacity(subscription_id,packs) SELECT (SELECT MAX(id) FROM subscriptions WHERE business_id=?),x.packs FROM checkout_custom_capacity x JOIN billing_checkouts c ON c.id=x.checkout_id WHERE c.payment_id=? AND " + guard).bind(payment.business_id,paymentId,paymentId,payload),
     db.prepare("UPDATE invoices SET status='paid',paid_at=COALESCE(paid_at,CURRENT_TIMESTAMP),updated_at=CURRENT_TIMESTAMP WHERE id=? AND " + guard).bind(payment.invoice_id, paymentId, payload),
   ]);
   if (!result[0]?.meta?.changes && !await db.prepare("SELECT id FROM payment_events WHERE payment_id=? AND event_type='subscription_activated'").bind(paymentId).first()) throw new Error("PAID_PLAN_CONFLICT");

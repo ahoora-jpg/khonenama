@@ -42,12 +42,13 @@ export default function RegisterBusinessPage() {
 
           <details className="glass-panel" style={{ padding: "1rem", marginBottom: "1rem" }}>
             <summary>پیش از شروع ثبت‌نام چه اطلاعاتی آماده کنم؟</summary>
-            <p>نام و توضیح واقعی کسب‌وکار، دسته و خدمات، شهر و محدوده فعالیت، راه تماس عمومی و تصاویر متعلق به خودتان را آماده کنید. مشخصات و عکس خصوصی مشتری را در غرفه عمومی وارد نکنید.</p>
+            <p>فروشگاه، نصاب، مجری و متخصص نورپردازی و دیگر خدمات مرتبط می‌توانند غرفه بسازند. نام و توضیح واقعی کسب‌وکار، دسته و خدمات، شهر و محدوده فعالیت، راه تماس عمومی و تصاویر متعلق به خودتان را آماده کنید. مشخصات و عکس خصوصی مشتری را در غرفه عمومی وارد نکنید.</p>
             <a href="/for-business/online-discovery-guide#profile-checklist">چک‌لیست کامل آماده‌سازی غرفه در شش حوزه</a>
           </details>
           <details className="glass-panel" style={{padding:"1rem",marginBottom:"1rem"}} open>
             <summary>مقایسه ظرفیت و هزینه اشتراک‌ها</summary>
-            <div className="registration-plan-images">{businessPlans.map((plan,index)=><article key={plan.code}><img src={`/images/plans/${plan.code}.webp`} width={1000} height={1000} alt={`پلن ${plan.name}: ${[10,30,70][index]} عکس و ${[0,2,5][index]} ویدیو؛ ${plan.priceLabel}${index ? `؛ سالانه ${index===1?'۲ میلیون و ۵۰۰ هزار':'۳ میلیون و ۵۰۰ هزار'} تومان` : ''}`} loading="lazy" /></article>)}</div>
+            <div className="registration-plan-images">{businessPlans.map((plan,index)=><article key={plan.code}><img src={`/images/plans/${plan.code}-20261015.webp`} width={1000} height={1000} alt={`پلن ${plan.name}: ${[10,30,70][index]} عکس و ${[0,2,5][index]} ویدیو؛ ${plan.priceLabel}${index ? `؛ سالانه ${index===1?'۲ میلیون و ۵۰۰ هزار':'۳ میلیون و ۵۰۰ هزار'} تومان` : ''}`} loading="lazy" /></article>)}</div>
+            <img src="/images/plans/custom-20261015.webp" width={1000} height={1000} alt="افزونه ویژه؛ هر بسته ۲۰ عکس و ۱ ویدیو، ۱۵ هزار تومان؛ فقط برای پلن ویژه" loading="lazy" style={{width:"100%",maxWidth:360,height:"auto",display:"block",margin:"16px auto"}}/><p>هر بسته افزونه ویژه، ۲۰ عکس و ۱ ویدیو با هزینه ۱۵ هزار تومان برای ۳۰ روز اضافه می‌کند؛ تعداد بسته را خودتان انتخاب می‌کنید. پلن حرفه‌ای افزونه ندارد.</p><p>فایل‌های خارج از ظرفیت رایگان تا ۳۰ روز پس از پایان اشتراک نگهداری می‌شوند؛ پس از آن حذف دائمی می‌شوند. ۱۰ عکس اول، کاور و پروفایل باقی می‌مانند.</p>
             <p>ثبت‌نام همیشه با پایه رایگان شروع می‌شود. کاور و پروفایل جدا از ظرفیت عکس‌اند؛ تعداد آلبوم‌ها محدود نیست. ویدیو MP4 حداکثر ۲۰ ثانیه و ۱۵ مگابایت است. ارتقا پس از ثبت‌نام و فعال‌شدن پرداخت امکان‌پذیر است.</p>
           </details>
           <BusinessOnboardingWizard />

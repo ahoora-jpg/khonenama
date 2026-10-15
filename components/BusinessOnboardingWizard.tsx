@@ -413,8 +413,8 @@ export default function BusinessOnboardingWizard() {
                   }
                 >
                   <option value="store">فروشگاه</option>
-                  <option value="company">شرکت</option>
-                  <option value="individual">متخصص / شخص حقیقی</option>
+                  <option value="company">شرکت طراحی، اجرا یا خدمات</option>
+                  <option value="individual">نصاب / مجری / متخصص مستقل</option>
                 </select>
               </label>
             </div>
@@ -744,7 +744,7 @@ export default function BusinessOnboardingWizard() {
                 rows={5}
                 value={form.description}
                 onChange={(e) => update("description", e.target.value)}
-                placeholder="تخصص، سابقه، نوع پروژه‌ها و مزیت اصلی کسب‌وکارتان را در چند جمله بنویسید."
+                placeholder="تخصص، نوع خدمات و شرایط همکاری مثل فروش اقساطی، بازدید یا نحوه محاسبه دستمزد را روشن بنویسید."
               />
               <small className="field-hint">
                 حداقل ۲۰ کاراکتر؛ از تکرار کلمات تبلیغاتی بدون توضیح واقعی خودداری کنید.

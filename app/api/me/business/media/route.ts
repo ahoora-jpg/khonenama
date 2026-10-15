@@ -1,4 +1,4 @@
-import { normalizePlanCode, planPresentation } from "@/lib/business-entitlements";
+import { normalizePlanCode, planPresentation, customPacksForSubscription } from "@/lib/business-entitlements";
 import { getOwnedBusiness, ensureBusinessMediaSchema } from "@/lib/server/business-media";
 import {
   getImageKitFileDetails,
@@ -21,7 +21,7 @@ function cleanText(value: unknown, max = 500) {
 async function getGalleryLimit(db: any, businessId: number) {
   const planRow = await db
     .prepare(
-      "SELECT p.code FROM subscriptions s JOIN plans p ON p.id = s.plan_id " +
+      "SELECT p.code, s.id FROM subscriptions s JOIN plans p ON p.id = s.plan_id " +
         "WHERE s.business_id = ? AND s.status = 'active' " +
         "AND (s.ends_at IS NULL OR julianday(s.ends_at) > julianday('now')) " +
         "ORDER BY s.id DESC LIMIT 1"
@@ -30,7 +30,7 @@ async function getGalleryLimit(db: any, businessId: number) {
     .first();
 
   const planCode = normalizePlanCode(planRow?.code);
-  return planPresentation[planCode].galleryLimit;
+  return planPresentation[planCode].galleryLimit + 20*await customPacksForSubscription(db,planRow);
 }
 
 export async function GET(request: Request) {
@@ -49,8 +49,11 @@ export async function GET(request: Request) {
     .bind(owned.business.id)
     .all();
 
+  const capacityPlan=await owned.db.prepare("SELECT p.code,s.id FROM subscriptions s JOIN plans p ON p.id=s.plan_id WHERE s.business_id=? AND s.status='active' AND (s.ends_at IS NULL OR julianday(s.ends_at)>julianday('now')) ORDER BY s.id DESC LIMIT 1").bind(owned.business.id).first();
+  const packs=await customPacksForSubscription(owned.db,capacityPlan);
   return Response.json({
     ok: true,
+    capacity:{photos:planPresentation[normalizePlanCode(capacityPlan?.code)].galleryLimit+20*packs,videos:capacityPlan?.code==='premium'?5+packs:capacityPlan?.code==='pro'?2:0},
     configured: mediaStorageConfigured(),
     media: (rows?.results || []).map((row: any) => ({...row, kind: row.media_type === "video" ? "video" : row.kind})),
   });

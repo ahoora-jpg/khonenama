@@ -1,3 +1,4 @@
+import { customPacksForSubscription } from "@/lib/business-entitlements";
 import { normalizeServiceAreas } from "@/lib/service-area";
 import { matchingServiceNames, literalLike, normalizeServiceQuery } from "@/lib/service-search";
 import { ensureBusinessCoverage } from "@/lib/server/business-coverage";
@@ -89,7 +90,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         .first(),
       db
         .prepare(
-          "SELECT p.code, p.name FROM subscriptions s JOIN plans p ON p.id = s.plan_id WHERE s.business_id = ? AND s.status = 'active' AND (s.ends_at IS NULL OR julianday(s.ends_at) > julianday('now')) ORDER BY s.id DESC LIMIT 1"
+          "SELECT p.code, p.name, s.id FROM subscriptions s JOIN plans p ON p.id = s.plan_id WHERE s.business_id = ? AND s.status = 'active' AND (s.ends_at IS NULL OR julianday(s.ends_at) > julianday('now')) ORDER BY s.id DESC LIMIT 1"
         )
         .bind(row.id)
         .first(),
@@ -154,7 +155,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         thumbnailUrl: item.thumbnail_url || "",
         altText: item.alt_text || "",
         sortOrder: Number(item.sort_order || 0),
-      })), planResult?.code),
+      })), planResult?.code, await customPacksForSubscription(db,planResult)),
       hours: (hoursResult?.results || []).map((item: any) => ({
         weekday: Number(item.weekday),
         opensAt: item.opens_at || "",

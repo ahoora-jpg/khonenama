@@ -49,3 +49,10 @@ export const planPresentation: Record<BusinessPlanCode, {
 export function normalizePlanCode(value: unknown): BusinessPlanCode {
   return value === "premium" || value === "pro" ? value : "free";
 }
+export const CUSTOM_PACK_PRICE = 15000;
+export const CUSTOM_PACK_PHOTOS = 20;
+export const CUSTOM_PACK_VIDEOS = 1;
+export async function customPacksForSubscription(db:any, plan:{id?:number;code?:string}|null):Promise<number>{
+  if(plan?.code!=="premium"||!plan.id)return 0;
+  try{const row=await db.prepare("SELECT packs FROM subscription_custom_capacity WHERE subscription_id=?").bind(plan.id).first();return Number.isInteger(row?.packs)&&row.packs>=0&&Number.isSafeInteger(row.packs)?row.packs:0;}catch{return 0;}
+}

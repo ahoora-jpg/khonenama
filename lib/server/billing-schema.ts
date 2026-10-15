@@ -14,6 +14,10 @@ export const approvedBillingPrices = [
   "INSERT OR IGNORE INTO billing_configuration_versions(id) VALUES('20261005-monthly-prices')",
 ];
 export async function ensureBilling(db: any) {
+  await db.batch([
+    db.prepare("CREATE TABLE IF NOT EXISTS checkout_custom_capacity (checkout_id TEXT PRIMARY KEY REFERENCES billing_checkouts(id),packs INTEGER NOT NULL CHECK(packs>=0),unit_toman INTEGER NOT NULL CHECK(unit_toman=15000))"),
+    db.prepare("CREATE TABLE IF NOT EXISTS subscription_custom_capacity (subscription_id INTEGER PRIMARY KEY REFERENCES subscriptions(id),packs INTEGER NOT NULL CHECK(packs>=0))"),
+  ]);
   await db.batch(billingSchema.map(sql => db.prepare(sql)));
   await db.batch([db.prepare("INSERT OR IGNORE INTO billing_prices(plan_code) VALUES('pro')"), db.prepare("INSERT OR IGNORE INTO billing_prices(plan_code) VALUES('premium')")]);
   await db.batch(approvedBillingPrices.map(sql => db.prepare(sql)));
