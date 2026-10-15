@@ -39,7 +39,7 @@ export default function DownloadAppPage() {
             </a>
             <div className="app-download-facts">
               <span><CheckCircle2 size={16} /> نسخه ۱.۲.۱۱</span>
-              <span><CheckCircle2 size={16} /> نسخه آزمایشی آماده نصب</span>
+              <span><CheckCircle2 size={16} /> نسخه اندروید آماده نصب</span>
               <span><ShieldCheck size={16} /> فایل نصب رسمی خونه‌نما</span>
             </div>
           </article>
@@ -74,7 +74,7 @@ export default function DownloadAppPage() {
           </section>
 
           <p className="app-download-security">
-            لینک دانلود نسخه ۱.۲.۱۱ در مخزن رسمی خونه‌نما نگهداری می‌شود و تاریخ انقضای لینک Expo را ندارد. دریافت اعلان و عملکرد کامل اپ باید پس از نصب روی گوشی بررسی شود. اثرانگشت SHA-256 فایل: <code>a6e104e5196ee9d2373d5b50fd2bc21f592492e33ffc6a0cd128966740bd9558</code>
+            نسخه ۱.۲.۱۱ را از لینک رسمی همین صفحه دریافت کنید. برای دریافت خبر درخواست‌های مشتری، پس از ورود اجازه اعلان را فعال کنید. اثرانگشت SHA-256 فایل: <code>a6e104e5196ee9d2373d5b50fd2bc21f592492e33ffc6a0cd128966740bd9558</code>
             
           </p>
         </div>

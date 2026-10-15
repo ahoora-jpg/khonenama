@@ -5,6 +5,7 @@ const groups = [
     title: "دسته‌ها",
     links: [
       ["پرده", "/category/curtain"],
+      ["نورپردازی داخلی", "/category/lighting"],
       ["موکت", "/category/carpet"],
       ["کفپوش", "/category/flooring"],
       ["کاغذ دیواری", "/category/wallpaper"],
@@ -29,7 +30,7 @@ const groups = [
       ["مجله خونه نما", "/magazine"],
       ["راهنمای پرده شید", "/magazine/shade-curtain-guide"],
       ["پرده برقی و نور طبیعی", "/magazine/smart-curtain-daylight-guide"],
-      ["ابزار Scope خانه هوشمند", "/tools/smart-home-scope"],
+      ["برآورد امکانات خانه هوشمند", "/tools/smart-home-scope"],
       ["برای کسب‌وکارها", "/for-business"],
       ["راهنمای معرفی آنلاین", "/for-business/online-discovery-guide"],
     ],

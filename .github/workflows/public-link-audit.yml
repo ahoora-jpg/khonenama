@@ -6,7 +6,7 @@ permissions:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -17,5 +17,7 @@ jobs:
         if: always()
         with:
           name: public-link-audit
-          path: outputs/public-link-audit.json
+          path: |
+            outputs/public-link-audit.json
+            outputs/public-content-audit.json
           retention-days: 7

@@ -235,37 +235,17 @@ export default function BusinessOnboardingWizard() {
           INVALID_EXISTING_PASSWORD: "این شماره قبلاً ثبت شده است؛ رمز همان حساب را وارد کنید.",
           INVALID_REQUIRED_FIELDS: "اطلاعات ضروری را کامل کنید.",
           INCOMPLETE_PROFILE: "خدمات، محدوده فعالیت و معرفی کسب‌وکار را کامل کنید.",
-          D1_BINDING_NOT_AVAILABLE: "اتصال دیتابیس در محیط اجرا فعال نیست.",
+          D1_BINDING_NOT_AVAILABLE: "ثبت اطلاعات موقتاً در دسترس نیست؛ کمی بعد دوباره تلاش کنید.",
           INVALID_CATEGORY: "حداقل یک دسته فعالیت انتخاب کنید.",
-          CATEGORY_NOT_FOUND: "یکی از دسته‌های انتخاب‌شده در دیتابیس پیدا نشد.",
+          CATEGORY_NOT_FOUND: "فهرست دسته‌ها تغییر کرده است؛ صفحه را تازه کنید و دسته فعالیت را دوباره انتخاب کنید.",
           EMAIL_IN_USE: "این ایمیل قبلاً برای حساب دیگری ثبت شده است. با همان حساب وارد شوید یا ایمیل دیگری وارد کنید.",
           PHONE_IN_USE: "این شماره همراه قبلاً ثبت شده است.",
-          PASSWORD_SCHEMA_REQUIRED: "بخش ورود با رمز هنوز در دیتابیس فعال نشده است.",
+          PASSWORD_SCHEMA_REQUIRED: "ساخت حساب موقتاً در دسترس نیست؛ کمی بعد دوباره تلاش کنید یا با پشتیبانی تماس بگیرید.",
           PASSWORD_SETUP_REQUIRED: "این شماره مربوط به یک حساب قدیمی است که هنوز رمز ندارد. برای امنیت حساب، رمز جدید از مسیر بازیابی یا با کمک مدیریت تنظیم می‌شود و از فرم ثبت کسب‌وکار قابل تعیین نیست.",
-          DB_SCHEMA_OUTDATED: "ساختار دیتابیس هنوز کامل نیست؛ لطفاً دوباره تلاش کنید.",
+          DB_SCHEMA_OUTDATED: "ثبت اطلاعات انجام نشد؛ کمی بعد دوباره تلاش کنید یا با پشتیبانی تماس بگیرید.",
         };
 
-        const stageLabels: Record<string, string> = {
-          "parse-request": "خواندن فرم",
-          "category-lookup": "بررسی دسته‌ها",
-          "user-lookup": "بررسی حساب",
-          "password-check": "بررسی رمز عبور",
-          "user-save": "ذخیره حساب",
-          "business-create": "ساخت کسب‌وکار",
-          "business-relations": "اتصال دسته و محدوده",
-          "services-save": "ذخیره خدمات",
-          "subscription-save": "ساخت اشتراک",
-          "session-create": "ساخت نشست ورود",
-        };
-
-        const fallback =
-          result?.error === "NON_JSON_RESPONSE"
-            ? "پاسخ سرور قابل خواندن نبود. کد HTTP: " + response.status
-            : "ذخیره اطلاعات انجام نشد. کد HTTP: " +
-              response.status +
-              (result?.stage
-                ? " — مرحله: " + (stageLabels[result.stage] || result.stage)
-                : "");
+        const fallback = "ذخیره اطلاعات انجام نشد؛ دوباره تلاش کنید یا با پشتیبانی تماس بگیرید.";
 
         throw new Error(messages[result?.error] || fallback);
       }
@@ -462,7 +442,7 @@ export default function BusinessOnboardingWizard() {
             </div>
 
             <small className="field-hint">
-              خونه نما رمز را داخل پیش‌نویس محلی فرم ذخیره نمی‌کند؛ در سرور نیز فقط نسخه هش‌شده نگهداری می‌شود.
+              رمز عبور در پیش‌نویس فرم ذخیره نمی‌شود. رمزتان را محرمانه نگه دارید.
             </small>
           </section>
         )}

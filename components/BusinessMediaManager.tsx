@@ -123,7 +123,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
     if (!response.ok || !result?.ok) {
       if (result?.error === "IMAGEKIT_NOT_CONFIGURED" || result?.error === "MEDIA_STORAGE_NOT_CONFIGURED") {
         setConfigured(false);
-        throw new Error("فضای تصاویر هنوز به سایت متصل نشده است.");
+        throw new Error("بارگذاری فایل موقتاً در دسترس نیست؛ کمی بعد دوباره تلاش کنید یا با پشتیبانی تماس بگیرید.");
       }
       if (["VIDEO_TOO_LONG", "INVALID_VIDEO", "VIDEO_PLAN_REQUIRED", "VIDEO_LIMIT_REACHED"].includes(result?.error)) throw new Error(result.error === "VIDEO_TOO_LONG" ? "ویدیو باید حداکثر ۲۰ ثانیه باشد." : result.error === "INVALID_VIDEO" ? "فایل ویدیو معتبر نیست." : "ظرفیت ویدیو یا اشتراک فعال را بررسی کنید.");
       if (result?.error === "GALLERY_LIMIT_REACHED") {
