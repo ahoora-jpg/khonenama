@@ -756,7 +756,7 @@ export default function BusinessOnboardingWizard() {
             <span className="section-kicker">مرحله ۵</span>
             <h2>مرور نهایی و انتخاب پلن</h2>
             <p>
-              پلن پایه رایگان است. ارتقا به پلن‌های پولی بعداً از داخل پنل انجام می‌شود.
+              ثبت‌نام با پلن پایه رایگان انجام می‌شود. امکانات و ظرفیت اشتراک‌ها را در پنل کسب‌وکار ببینید.
             </p>
 
             <div className="onboarding-review-grid">
