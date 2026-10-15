@@ -51,6 +51,8 @@ const websiteJsonLd = {
     { "@type": "Thing", name: "کاغذ دیواری" },
     { "@type": "Thing", name: "طراحی داخلی" },
     { "@type": "Thing", name: "خانه هوشمند" },
+    { "@type": "Thing", name: "موکت" },
+    { "@type": "Thing", name: "نورپردازی داخلی" },
   ],
   publisher: { "@id": "https://khonenama.ir/#organization" },
   potentialAction: {
@@ -74,6 +76,7 @@ const categoryListJsonLd = {
     { "@type": "ListItem", position: 4, name: "کاغذ دیواری", url: "https://khonenama.ir/category/wallpaper" },
     { "@type": "ListItem", position: 5, name: "طراحی داخلی", url: "https://khonenama.ir/category/interior-design" },
     { "@type": "ListItem", position: 6, name: "خانه هوشمند", url: "https://khonenama.ir/category/smart-home" },
+    { "@type": "ListItem", position: 7, name: "نورپردازی داخلی", url: "https://khonenama.ir/category/lighting" },
   ],
 };
 
@@ -146,7 +149,7 @@ export default async function HomePage() {
             <span className="section-kicker">تعریف خونه نما</span>
             <h2 id="brand-definition-title">خونه نما چیست؟</h2>
             <p>
-              خونه‌نما بازار تخصصی پرده و دکوراسیون داخلی است؛ جایی برای شناخت و مقایسه پرده، کفپوش، موکت، کاغذ دیواری، طراحی داخلی و خانه هوشمند. پیش از خرید، راهنماها را بخوانید، تفاوت متریال‌ها و روش اجرا را بشناسید و نمونه‌کار و خدمات غرفه‌ها را مقایسه کنید. هدف ما این است که با اطلاعات روشن‌تر و دید بازتر انتخاب کنید؛ اعتماد شما با شفافیت اطلاعات و حفظ حریم خصوصی معنا پیدا می‌کند.
+              خونه‌نما بازار تخصصی پرده و دکوراسیون داخلی است؛ جایی برای شناخت و مقایسه پرده، کفپوش، موکت، کاغذ دیواری و دیوارپوش، طراحی داخلی، خانه هوشمند و نورپردازی داخلی. پیش از خرید، راهنماها را بخوانید، تفاوت متریال‌ها و روش اجرا را بشناسید و نمونه‌کار و خدمات غرفه‌ها را مقایسه کنید. هدف ما این است که با اطلاعات روشن‌تر و دید بازتر انتخاب کنید؛ اعتماد شما با شفافیت اطلاعات و حفظ حریم خصوصی معنا پیدا می‌کند.
             </p>
             <a href="/magazine/minimalist-curtain-guide">پرده مینیمال؛ تفاوت مدل‌ها و راهنمای انتخاب</a><a href="/magazine">قبل از انتخاب، راهنماهای دکوراسیون را بخوانید</a><a href="/about">درباره خونه نما و نحوه کار پلتفرم</a>
           </div>
