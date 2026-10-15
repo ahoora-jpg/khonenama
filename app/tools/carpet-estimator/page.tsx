@@ -11,7 +11,7 @@ const description =
   "هر رول موکت چند متر است و برای اتاق چند متر موکت لازم دارید؟ متراژ موکت رول یا تعداد موکت تایلی را با ابعاد فضا، عرض رول، پرت و تعداد تایل محاسبه کنید.";
 
 export const metadata: Metadata = {
-  title,
+  title: { absolute: title.includes("خونه") ? title : title + " | خونه‌نما" },
   description,
   keywords: [
     "هر رول موکت چند متر است",

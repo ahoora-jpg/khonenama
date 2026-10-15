@@ -11,7 +11,7 @@ const description =
   "تعداد رول کاغذ دیواری را با درنظرگرفتن عرض و طول رول، ارتفاع و عرض دیوار، Pattern Repeat، تلرانس برش و پرت محاسبه کنید.";
 
 export const metadata: Metadata = {
-  title,
+  title: { absolute: title.includes("خونه") ? title : title + " | خونه‌نما" },
   description,
   keywords: [
     "محاسبه تعداد رول کاغذ دیواری",

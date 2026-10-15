@@ -11,7 +11,7 @@ const description =
   "متراژ پارکت، لمینت و کفپوش PVC را با ابعاد فضا، پوشش هر بسته، عرض رول و درصد پرت برآورد کنید و مقدار خرید اولیه را به دست آورید.";
 
 export const metadata: Metadata = {
-  title,
+  title: { absolute: title.includes("خونه") ? title : title + " | خونه‌نما" },
   description,
   keywords: [
     "محاسبه متراژ پارکت",
