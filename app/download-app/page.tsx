@@ -5,10 +5,10 @@ import { CheckCircle2, Download, ShieldCheck, Smartphone } from "lucide-react";
 
 const pageUrl = "https://khonenama.ir/download-app";
 const apkUrl =
-  "https://github.com/ahoora-jpg/khonenama-mobile/releases/download/android-1.2.10/khonenama-1.2.10.apk";
+  "https://github.com/ahoora-jpg/khonenama-mobile/releases/download/android-1.2.11/khonenama-1.2.11.apk";
 
 export const metadata: Metadata = {
-  title: { absolute: "دانلود اپ اندروید خونه نما | نسخه ۱.۲.۱۰" },
+  title: { absolute: "دانلود اپ اندروید خونه نما | نسخه ۱.۲.۱۱" },
   description: "دانلود مستقیم اپلیکیشن اندروید خونه نما و راهنمای نصب امن نسخه رسمی صاحبان کسب‌وکار.",
   alternates: { canonical: pageUrl },
   robots: { index: true, follow: true },
@@ -35,10 +35,10 @@ export default function DownloadAppPage() {
               نسخه جدید اپ خونه نما برای ثبت کسب‌وکار، عکاسی و آپلود نمونه‌کار، مدیریت گالری و آلبوم، نمایش کیوآرکد و پاسخ‌گویی به درخواست مشتری است.
             </p>
             <a className="pill-button dark app-download-primary" href={apkUrl}>
-              <Download size={20} /> دانلود مستقیم نسخه ۱.۲.۱۰
+              <Download size={20} /> دانلود مستقیم نسخه ۱.۲.۱۱
             </a>
             <div className="app-download-facts">
-              <span><CheckCircle2 size={16} /> نسخه ۱.۲.۱۰</span>
+              <span><CheckCircle2 size={16} /> نسخه ۱.۲.۱۱</span>
               <span><CheckCircle2 size={16} /> نسخه آزمایشی آماده نصب</span>
               <span><ShieldCheck size={16} /> فایل نصب رسمی خونه‌نما</span>
             </div>
@@ -74,7 +74,7 @@ export default function DownloadAppPage() {
           </section>
 
           <p className="app-download-security">
-            لینک دانلود نسخه ۱.۲.۱۰ در مخزن رسمی خونه‌نما نگهداری می‌شود و تاریخ انقضای لینک Expo را ندارد. دریافت اعلان و عملکرد کامل اپ باید پس از نصب روی گوشی بررسی شود. اثرانگشت SHA-256 فایل: <code>674e3e108e99b9d681b6aa50d0bda00ccb2f8edb01eb946e70ca086262b088a5</code>
+            لینک دانلود نسخه ۱.۲.۱۱ در مخزن رسمی خونه‌نما نگهداری می‌شود و تاریخ انقضای لینک Expo را ندارد. دریافت اعلان و عملکرد کامل اپ باید پس از نصب روی گوشی بررسی شود. اثرانگشت SHA-256 فایل: <code>a6e104e5196ee9d2373d5b50fd2bc21f592492e33ffc6a0cd128966740bd9558</code>
             
           </p>
         </div>
