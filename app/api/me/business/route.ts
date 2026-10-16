@@ -140,6 +140,7 @@ export async function PATCH(request: Request) {
   }
 
   const body = await request.json().catch(() => ({}));
+  if(!body || typeof body !== "object" || Array.isArray(body)) return Response.json({ok:false,error:"INVALID_REQUEST"},{status:400});
   if (body?.action === "installments") {
     if(typeof body.showInstallments !== "boolean") return Response.json({ok:false,error:"INVALID_INSTALLMENT_OPTION"},{status:400});
     await setInstallmentOption(db,membership.id,body.showInstallments);
