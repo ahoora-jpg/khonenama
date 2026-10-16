@@ -1,4 +1,4 @@
-import { businessPlans } from "@/lib/business-plans";
+import { businessPlans, customCapacityAvailable } from "@/lib/business-plans";
 import { ensureBilling } from "./billing-schema";
 import { activateSubscriptionFromVerifiedPayment } from "./billing-activation";
 import type { PaymentProvider } from "./payment-provider";
@@ -34,6 +34,7 @@ export async function createCheckout(owner: any, body: any, provider: PaymentPro
   const customUnit=body?.billingPeriod==="annual"?180000:15000;
   if(!Number.isSafeInteger(packs)||packs<0||packs>Math.floor((100000000-(plan.amountToman||0))/customUnit))throw new BillingError("INVALID_CUSTOM_PACKS",400);
   if(packs && plan.code!=="premium")throw new BillingError("CUSTOM_PREMIUM_ONLY",400);
+  if(packs && !customCapacityAvailable())throw new BillingError("CUSTOM_CAPACITY_NOT_AVAILABLE",409);
   if(packs && plan.amountToman)plan={...plan,amountToman:plan.amountToman+packs*customUnit};
   if (plan.code === "free") throw new BillingError("FREE_PLAN_DOES_NOT_REQUIRE_PAYMENT");
   if (!provider) throw new BillingError("PAYMENT_PROVIDER_NOT_CONFIGURED", 503);

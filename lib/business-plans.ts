@@ -1,3 +1,6 @@
+export const CUSTOM_CAPACITY_AVAILABLE_AT = "2026-11-21T20:30:00Z";
+export function customCapacityAvailable(now = Date.now()) { return now >= Date.parse(CUSTOM_CAPACITY_AVAILABLE_AT); }
+
 export const businessPlans = [
   {
     code: "free",
