@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SellerAcquisitionTracker from "@/components/SellerAcquisitionTracker";
 import { ArrowUpLeft, BadgeCheck, MapPin, Search, Store } from "lucide-react";
 
 const pageUrl = "https://khonenama.ir/for-business/online-discovery-guide";
@@ -62,7 +63,7 @@ const articleJsonLd = {
   mainEntityOfPage: pageUrl,
   inLanguage: "fa-IR",
   datePublished: "2026-09-24",
-  dateModified: "2026-10-05",
+  dateModified: "2026-10-17",
   author: { "@id": "https://khonenama.ir/#organization" },
   publisher: { "@id": "https://khonenama.ir/#organization" },
   about: [
@@ -87,6 +88,7 @@ const faqJsonLd = {
 export default function OnlineBusinessDiscoveryGuide() {
   return (
     <main>
+      <SellerAcquisitionTracker page="guide" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <Header />
@@ -111,6 +113,17 @@ export default function OnlineBusinessDiscoveryGuide() {
           </section>
 
           <section className="guide-content">
+            <section id="registration-guide">
+              <h2>ساخت غرفه از شروع ثبت‌نام تا انتشار</h2>
+              <p>ابتدا <a href="/for-business#plans">ظرفیت و تعرفه پلن‌ها</a> را ببینید؛ ثبت اولیه با پایه رایگان آغاز می‌شود. در <a href="/register-business">فرم ثبت غرفه</a> اطلاعات صاحب حساب و کسب‌وکار را وارد کنید، خدمات و محدوده واقعی را مشخص کنید و توضیح و تصاویر متعلق به خودتان را اضافه کنید. ذخیره فرم با انتشار غرفه یکسان نیست؛ وضعیت انتشار و موارد ناقص را در پنل بررسی کنید.</p>
+              <p>اگر فروشگاه یا نصاب در کرج هستید، نشانی مراجعه، محدوده بازدید و نصب و زمان پاسخ‌گویی را جدا توضیح دهید. فقط محله‌هایی را انتخاب کنید که واقعاً پوشش می‌دهید. <a href="/for-business#karaj">راهنمای معرفی کسب‌وکارهای کرج</a> تفاوت اطلاعات لازم برای فروشگاه، نصاب و مجری را توضیح می‌دهد.</p>
+            </section>
+            <section id="project-photos">
+              <h2>نمونه‌کار پرده و دکوراسیون را چطور معرفی کنیم؟</h2>
+              <p>به‌جای بارگذاری عکس بدون توضیح، یک آلبوم برای کار واقعی بسازید و خدمت انجام‌شده، متریال، محدوده پروژه و توضیح هر عکس را بنویسید. برای پرده، مدل، نوع دوخت و یراق و نقش خودتان در اجرا را روشن کنید؛ برای کفپوش و دیوارپوش، جنس و زیرسازی و بخش انجام‌شده را توضیح دهید. عکس کاتالوگ تأمین‌کننده را نمونه اجرای خودتان معرفی نکنید.</p>
+              <p>نمونه متن برای تکمیل با اطلاعات واقعی: «خدمت انجام‌شده: …؛ متریال: …؛ محدوده پروژه: …؛ نقش مجموعه ما: …». این الگو پروژه یا سابقه واقعی شما نیست. پیش از انتشار تصویر فضای خصوصی، اجازه لازم را بگیرید و چهره، نشانی دقیق، شماره تماس و اطلاعات خصوصی مشتری را منتشر نکنید.</p>
+              <p>پلن پایه ظرفیت عکس دارد؛ ویدیو فقط مطابق ظرفیت پلن و شرایط فعال آن قابل استفاده است. پیش از آماده‌سازی فایل، <a href="/for-business#plans">امکانات پلن فعلی</a> را بررسی کنید. تصویر روشن و توضیح دقیق از افزودن نام شهرها و کلمات تکراری مفیدتر است.</p>
+            </section>
             <section id="profile-checklist" aria-labelledby="profile-checklist-title">
               <h2 id="profile-checklist-title">پیش از ثبت‌نام، اطلاعات غرفه را آماده کنید</h2>
               <ol>
@@ -120,7 +133,7 @@ export default function OnlineBusinessDiscoveryGuide() {
                 <li>راه تماس عمومی، روش مراجعه و ساعت کاری واقعی را آماده کنید. شماره خصوصی مشتری و کد پیگیری در توضیح عمومی جایی ندارند.</li>
                 <li>لوگو، عکس محصول یا نمونه‌کار متعلق به کسب‌وکار خودتان را آماده کنید. برای آلبوم پروژه، خدمت انجام‌شده، متریال، محدوده و توضیح هر تصویر را دقیق ثبت کنید؛ اطلاعات خصوصی مشتری را منتشر نکنید.</li>
               </ol>
-              <h3>مسیرهای معرفی غرفه در شش حوزه</h3>
+              <h3>مسیرهای معرفی غرفه در دسته‌های تخصصی سایت</h3>
               <ul>
                 <li><a href="/category/curtain">پرده و پوشش پنجره</a>: محصول واقعی، اندازه‌گیری، دوخت، نصب یا تعمیر.</li>
                 <li><a href="/category/flooring">کفپوش، پارکت و لمینت</a>: نوع متریال، زیرسازی، قرنیز و خدمات نصب واقعی.</li>
@@ -128,6 +141,7 @@ export default function OnlineBusinessDiscoveryGuide() {
                 <li><a href="/category/wallpaper">کاغذ دیواری و دیوارپوش</a>: نوع پوشش، زیرسازی و دامنه اجرای واقعی.</li>
                 <li><a href="/category/interior-design">طراحی و اجرای دکوراسیون داخلی</a>: مشخص کنید طراحی، اجرا یا هر دو را انجام می‌دهید.</li>
                 <li><a href="/category/smart-home">خانه هوشمند</a>: خدمات قابل ارائه، نصب، تنظیم و پشتیبانی را دقیق معرفی کنید.</li>
+                <li><a href="/category/lighting">نورپردازی داخلی</a>: طراحی نور، نوع چراغ و خدمات نصب واقعی را مشخص کنید.</li>
               </ul>
               <p>ثبت‌نام، ذخیره اطلاعات و انتشار سه مرحله متفاوت‌اند. پس از تکمیل و بررسی، صفحه عمومی غرفه و مسیرهای مرتبط را بررسی کنید. اطلاعات دسته، خدمات و محدوده فعالیت باید با کاری که واقعاً انجام می‌دهید هماهنگ باشند.</p>
             </section>

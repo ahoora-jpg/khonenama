@@ -5,6 +5,7 @@ export function crossSiteMutation(request: Request) {
 }
 
 export function publicRequestLimit(path: string): number | null {
+  if (path === "/api/seller-acquisition") return 30;
   if (["/api/billing/checkout", "/api/billing/reconcile"].includes(path)) return 20;
   if (path === "/api/me/business/media/upload") return 120;
   if (path === "/api/search-interest") return 60;
