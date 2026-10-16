@@ -40,7 +40,7 @@ const websiteJsonLd = {
   "@type": "WebSite",
   "@id": "https://khonenama.ir/#website",
   name: "خونه نما",
-  alternateName: ["خونه‌نما", "Khonenama", "Khonenama.ir", "khonenama.ir"],
+  alternateName: ["خونه‌نما", "خونهنما", "KhonehNama", "Khoneh Nama", "Khonenama", "Khone Nama", "khonenama.ir"],
   url: "https://khonenama.ir/",
   inLanguage: "fa-IR",
   disambiguatingDescription: "خونه نما (Khonenama) درباره دکوراسیون و فضای داخلی خانه است؛ نه نمای بیرونی ساختمان، پلان معماری یا خرید و فروش ملک.",
@@ -85,7 +85,7 @@ const organizationJsonLd = {
   "@type": "Organization",
   "@id": "https://khonenama.ir/#organization",
   name: "خونه نما",
-  alternateName: ["خونه‌نما", "Khonenama", "Khonenama.ir", "khonenama.ir"],
+  alternateName: ["خونه‌نما", "خونهنما", "KhonehNama", "Khoneh Nama", "Khonenama", "Khone Nama", "khonenama.ir"],
   url: "https://khonenama.ir/",
   disambiguatingDescription: "خونه نما یک مرجع فارسی برای فضای داخلی خانه و دکوراسیون داخلی است و به طراحی نمای بیرونی ساختمان یا خرید و فروش ملک مربوط نیست.",
   sameAs: ["https://github.com/ahoora-jpg/khonenama"],
@@ -148,6 +148,7 @@ export default async function HomePage() {
           <div className="brand-definition-card glass-panel">
             <span className="section-kicker">تعریف خونه نما</span>
             <h2 id="brand-definition-title">خونه نما چیست؟</h2>
+            <p>خونه‌نما با املای «خونه نما» و «خونهنما» نیز نوشته می‌شود؛ KhonehNama و Khoneh Nama نام همین برند و khonenama.ir دامنه رسمی آن است.</p>
             <p>
               خونه‌نما بازار تخصصی پرده و دکوراسیون داخلی است؛ جایی برای شناخت و مقایسه پرده، کفپوش، موکت، کاغذ دیواری و دیوارپوش، طراحی داخلی، خانه هوشمند و نورپردازی داخلی. پیش از خرید، راهنماها را بخوانید، تفاوت متریال‌ها و روش اجرا را بشناسید و نمونه‌کار و خدمات غرفه‌ها را مقایسه کنید. هدف ما این است که با اطلاعات روشن‌تر و دید بازتر انتخاب کنید؛ اعتماد شما با شفافیت اطلاعات و حفظ حریم خصوصی معنا پیدا می‌کند.
             </p>

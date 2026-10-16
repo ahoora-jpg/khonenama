@@ -5,8 +5,8 @@ import { listPublishedBusinessSitemapEntries } from "@/lib/server/business-sitem
 
 const baseUrl = "https://khonenama.ir";
 const seoRefreshDate = "2026-09-25";
-const homepageBrandRefreshDate = "2026-10-15";
-const aboutBrandRefreshDate = "2026-10-08";
+const homepageBrandRefreshDate = "2026-10-16";
+const aboutBrandRefreshDate = "2026-10-16";
 const categoryRefreshDate = "2026-10-15";
 // Fixed date of published content/link changes, never the sitemap request date.
 const sixDomainSeoRefreshDate = "2026-10-04";
@@ -29,11 +29,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/karaj/smart-home", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.9 },
     { url: baseUrl + "/karaj/baraghan", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.92 },
     { url: baseUrl + "/category/lighting", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
-    { url: baseUrl + "/category/curtain", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.9 },
-    { url: baseUrl + "/category/flooring", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.88 },
+    { url: baseUrl + "/category/curtain", lastModified: "2026-10-16", changeFrequency: "weekly", priority: 0.9 },
+    { url: baseUrl + "/category/flooring", lastModified: "2026-10-16", changeFrequency: "weekly", priority: 0.88 },
     { url: baseUrl + "/category/carpet", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/category/wallpaper", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
-    { url: baseUrl + "/category/interior-design", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
+    { url: baseUrl + "/category/interior-design", lastModified: "2026-10-16", changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/category/smart-home", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.86 },
     { url: baseUrl + "/magazine", lastModified: "2026-10-15", changeFrequency: "weekly", priority: 0.86 },
     { url: baseUrl + "/tools", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.8 },
