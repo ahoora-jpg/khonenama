@@ -736,6 +736,8 @@ export default function BusinessOnboardingWizard() {
 
             <label className="form-row"><span><input type="checkbox" checked={form.showInstallments === true} onChange={e=>update("showInstallments",e.target.checked)}/> مایلم نشان «فروش اقساطی» روی غرفه‌ام نمایش داده شود.</span><small className="field-hint">اگر فروش یا خدمات اقساطی دارید، این گزینه را فعال کنید. هر زمان از میز کار قابل تغییر است؛ شرایط اقساط را در معرفی غرفه بنویسید.</small></label>
 
+            <p className="field-hint"><strong>غرفهٔ بدون عکس در ویترین صفحهٔ اصلی نمایش داده نمی‌شود.</strong> پس از ثبت‌نام، از میز کار حداقل یک عکس از محصولات، فضای کار یا نمونه‌کارها اضافه کنید. غرفهٔ بدون عکس همچنان در جستجو و دسته‌بندی‌ها قابل مشاهده است.</p>
+
             <div className="media-upload-grid onboarding-media-preview">
               <div className="media-upload-tile">
                 <Upload size={22} />
