@@ -29,7 +29,7 @@ jobs:
       - run: npm ci
       - run: node --test tools/test-custom-capacity.mjs tools/test-media-retention.mjs
       - run: node --test tools/test-owner-slug-limit.mjs tools/test-model-quotes.mjs
-      - run: node --test tools/test-password-recovery.mjs
+      - run: node --test tools/test-password-recovery.mjs tools/test-profile-reminders.mjs
       - run: node --test tools/test-service-search.mjs tools/test-quote-metrics.mjs tools/test-notification-test.mjs
       - run: node --test tools/test-video-plans.mjs tools/test-conversion-flow.mjs tools/test-business-push.mjs tools/test-business-web-push.mjs tools/test-service-discovery.mjs tools/test-customer-form-readability.mjs
       - run: node --test tools/test-customer-safeguards.mjs tools/test-billing.mjs tools/test-subscription-lifecycle.mjs tools/test-gallery-security.mjs tools/test-commercial-readiness.mjs tools/test-admin-offers.mjs tools/test-image-upload-processing.mjs tools/test-r2-media.mjs tools/test-business-upload.mjs tools/test-admin-business-lifecycle.mjs tools/test-build-glob.mjs tools/test-marketplace-workflows.mjs tools/test-request-security.mjs
