@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import LaunchOfferBanner from "@/components/LaunchOfferBanner";
+import SellerAcquisitionTracker from "@/components/SellerAcquisitionTracker";
 import { businessPlans } from "@/lib/business-plans";
 import { businessDiscoveryAnswers } from "@/lib/ai-search-content";
 import {
@@ -20,9 +21,9 @@ import {
 } from "lucide-react";
 
 const pageUrl = "https://khonenama.ir/for-business";
-const pageTitle = "ثبت کسب‌وکار دکوراسیون | معرفی فروشگاه و خدمات";
+const pageTitle = "ثبت رایگان غرفه و فروشگاه دکوراسیون | خونه‌نما";
 const pageDescription =
-  "کسب‌وکار دکوراسیون خود را در خونه نما معرفی کنید؛ پروفایل عمومی، دسته‌بندی تخصصی، جستجوی محلی، نمونه‌کار و مسیر دریافت درخواست مشتری.";
+  "ثبت رایگان غرفه برای فروشگاه، تولیدکننده و نصاب دکوراسیون؛ راهنمای معرفی کسب‌وکار در کرج، مقایسه پلن‌ها، نمونه‌کار و مراحل انتشار در خونه‌نما.";
 
 export const metadata: Metadata = {
   title: { absolute: pageTitle },
@@ -47,8 +48,10 @@ const steps = [
 
 const businessFaqs = [
   { question: "ثبت کسب‌وکار رایگان است؟", answer: "بله. پلن پایه برای ساخت و انتشار پروفایل اولیه رایگان است." },
-  { question: "چطور نشان تأییدشده می‌گیرم؟", answer: "تأیید شماره تماس مرحله پایه است و برای نشان تأییدشده، مدارک و اطلاعات کسب‌وکار بررسی می‌شوند." },
-  { question: "تبلیغ پولی روی رتبه طبیعی اثر می‌گذارد؟", answer: "جایگاه‌های پولی با برچسب «ویژه» یا «اسپانسر» مشخص می‌شوند و از اعتبار تأیید کسب‌وکار جدا هستند." },
+  { question: "چطور نشان تأییدشده می‌گیرم؟", answer: "ثبت حساب یا خرید اشتراک به‌تنهایی نشان تأیید کسب‌وکار نیست. وضعیت و مراحل بررسی اطلاعات کسب‌وکار را در پنل پیگیری کنید؛ تکمیل فرم به معنی تأیید مالکیت شماره یا صدور خودکار نشان نیست." },
+  { question: "خرید اشتراک رتبه گوگل یا مشتری را تضمین می‌کند؟", answer: "خیر. اشتراک ظرفیت و امکانات معرفی غرفه را تغییر می‌دهد؛ نشانه کیفیت کار یا تأیید کسب‌وکار نیست و رتبه گوگل، تعداد تماس یا فروش را تضمین نمی‌کند." },
+  { question: "برای ثبت فروشگاه پرده یا معرفی نصاب در کرج چه چیزی لازم است؟", answer: "نام واقعی، نوع فعالیت، خدمات دقیق، شهر و محدوده واقعی کار، راه تماس و تصاویر متعلق به خودتان را ثبت کنید. فروشگاه پرده، تولیدکننده، دوزنده و نصاب می‌توانند نوع فعالیت واقعی خود را معرفی کنند؛ شهر کرج را فقط اگر واقعاً در آن فعالیت یا خدمت دارید انتخاب کنید." },
+  { question: "آیا ثبت رایگان فروشگاه به معنی ساخت فروشگاه با پرداخت آنلاین است؟", answer: "خیر. غرفه خونه‌نما صفحه معرفی کسب‌وکار، خدمات، نمونه‌کار و راه ارتباط یا درخواست قیمت است. ثبت غرفه به‌خودی‌خود سبد خرید، انبارداری یا درگاه فروش محصولات شما ایجاد نمی‌کند." },
   { question: "برای ساخت پروفایل چه اطلاعاتی لازم است؟", answer: "نام واقعی کسب‌وکار، دسته و خدمات، شهر و محدوده فعالیت، شماره تماس و توضیح روشن پایه کار هستند؛ تصاویر واقعی هم به کامل‌تر شدن پروفایل کمک می‌کنند." },
 ] as const;
 
@@ -98,6 +101,7 @@ const faqJsonLd = {
 export default function ForBusinessPage() {
   return (
     <main>
+      <SellerAcquisitionTracker page="landing" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webpageJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
@@ -108,16 +112,17 @@ export default function ForBusinessPage() {
         <div className="shell business-landing-grid">
           <div>
             <span className="section-kicker">خونه نما برای کسب‌وکارها</span>
-            <h1>کسب‌وکارت را جایی معرفی کن که مشتری دنبال دکوراسیون می‌گردد.</h1>
+            <h1>ثبت رایگان غرفه برای فروشگاه و متخصص دکوراسیون</h1>
             <p>
               پروفایل حرفه‌ای بساز، در دسته و جستجوی محلی دیده شو، نمونه‌کارت را نمایش بده
               و مسیر ارتباط با مشتری را ساده‌تر کن.
             </p>
             <div className="business-hero-actions">
               <a className="pill-button dark" href="/register-business">
-                ثبت رایگان کسب‌وکار <ArrowUpLeft size={17} />
+                ثبت رایگان غرفه <ArrowUpLeft size={17} />
               </a>
               <a className="pill-button" href="#plans">دیدن پلن‌ها</a>
+              <a className="pill-button" href="#karaj">راهنمای فروشندگان کرج</a>
             </div>
             <div className="business-hero-proof">
               <span><ShieldCheck size={16} /> شروع رایگان</span>
@@ -144,6 +149,20 @@ export default function ForBusinessPage() {
               <span><strong>آمار پنل</strong><small>تعامل‌های ثبت‌شده با پروفایل</small></span>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="section business-benefits" id="karaj" aria-labelledby="karaj-seller-title">
+        <div className="shell">
+          <h2 id="karaj-seller-title">ثبت فروشگاه و معرفی نصاب دکوراسیون در کرج</h2>
+          <p>اگر صاحب پرده‌فروشی، فروشگاه کفپوش، موکت یا کاغذ دیواری در کرج هستید، تولید می‌کنید یا خدمات دوخت، نصب، طراحی، نورپردازی و خانه هوشمند ارائه می‌دهید، غرفه را با خدمات و محدوده واقعی خود بسازید. نشانی محل مراجعه را از محله‌هایی که برای نصب یا بازدید پوشش می‌دهید جدا کنید؛ بدون محل مراجعه نیز می‌توانید نوع فعالیت مستقل خود را دقیق توضیح دهید.</p>
+          <div className="local-intent-grid">
+            <article className="local-intent-card"><h3>ثبت فروشگاه پرده و خدمات دوخت و نصب</h3><p>فروش پارچه یا پرده آماده را از اندازه‌گیری، دوخت، نصب و تعمیر جدا ثبت کنید. در توضیح نمونه‌کار، نوع پرده، یراق و کاری را که خودتان انجام داده‌اید بنویسید؛ نام محله به‌تنهایی جای توضیح خدمت را نمی‌گیرد.</p><a href="/category/curtain">مشاهده دسته پرده و متعلقات</a></article>
+            <article className="local-intent-card"><h3>معرفی فروشگاه کفپوش، موکت و دیوارپوش</h3><p>نوع متریال و خدمات واقعی مثل زیرسازی، نصب، قرنیز، برش و دوردوزی را انتخاب کنید. عکس متعلق به خودتان و توضیح کاربرد محصول برای مشتری از تکرار عبارت «بهترین فروشگاه کرج» مفیدتر است.</p><a href="/for-business/online-discovery-guide#profile-checklist">چک‌لیست معرفی غرفه</a></article>
+            <article className="local-intent-card"><h3>معرفی طراح، مجری و متخصص مستقل</h3><p>طراحی را از اجرا و نظارت تفکیک کنید. برای خانه هوشمند و نورپردازی، نصب، تنظیمات و خدمات پشتیبانی واقعی را بنویسید؛ محدوده خدمت و روش بازدید را پیش از دریافت درخواست روشن کنید.</p><a href="/for-business/online-discovery-guide#project-photos">روش معرفی نمونه‌کار</a></article>
+          </div>
+          <p>تمرکز محتوای محلی این مرحله کرج است؛ ثبت‌نام برای کسب‌وکارهای تمام ایران باز می‌ماند. شرایط هر پیشنهاد آغاز فعالیت فقط در صورت نمایش فعال آن در همین صفحه معتبر است؛ هدیه یا کمپین مخصوص کرج را بدون اعلام شرایط فرض نکنید.</p>
+          <a className="pill-button dark" href="/register-business">ثبت رایگان غرفه</a>
         </div>
       </section>
 
@@ -193,7 +212,7 @@ export default function ForBusinessPage() {
         </div>
       </section>
 
-      <section className="section business-onboarding-section">
+      <section className="section business-onboarding-section" id="registration-steps">
         <div className="shell">
           <div className="section-heading premium-heading">
             <div>
@@ -221,7 +240,7 @@ export default function ForBusinessPage() {
               <span className="section-kicker">پلن‌ها</span>
               <h2>رایگان شروع کن؛ وقتی نیاز داشتی ارتقا بده.</h2>
             </div>
-            <p>قیمت پلن‌های پولی قبل از فعال‌شدن پرداخت عمومی نهایی می‌شود.</p>
+            <p>تعرفه و ظرفیت فعلی هر پلن در ادامه آمده است. ثبت‌نام با پایه رایگان شروع می‌شود؛ پرداخت عمومی و خرید پلن پولی فعلاً فعال نیست. خرید اشتراک نشانه کیفیت یا تضمین جذب مشتری نیست.</p>
           </div>
 
           <div className="business-plan-grid">
@@ -245,7 +264,7 @@ export default function ForBusinessPage() {
         </div>
       </section>
 
-      <section className="section business-faq-section">
+      <section className="section business-faq-section" id="seller-faq">
         <div className="shell business-faq-layout">
           <div>
             <span className="section-kicker">سوالات رایج</span>

@@ -19,6 +19,7 @@ export default function BusinessCTA() {
             <div className="cta-actions">
               <a href="/register-business" className="pill-button light premium-light-cta">ثبت رایگان کسب‌وکار <ArrowUpLeft size={17} /></a>
               <a href="/for-business/online-discovery-guide" className="pill-button ghost-light">راهنمای دیده‌شدن آنلاین</a>
+              <a href="/for-business#karaj" className="pill-button ghost-light">معرفی کسب‌وکار در کرج</a>
               <a href="/dashboard" className="pill-button ghost-light">مشاهده داشبورد</a>
             </div>
           </div>
