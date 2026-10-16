@@ -1,6 +1,11 @@
 name: Audit public links and uploaded assets
 on:
   workflow_dispatch:
+    inputs:
+      paths_json:
+        description: Optional JSON array of internal paths to recheck
+        type: string
+        default: "[]"
 permissions:
   contents: read
 jobs:
@@ -13,6 +18,8 @@ jobs:
         with:
           node-version: 22
       - run: node tools/audit-public-links.mjs
+        env:
+          AUDIT_PATHS_JSON: ${{ inputs.paths_json }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
