@@ -7,6 +7,7 @@ export async function GET(request: Request) {
   const parsedLimit = Number(params.get("limit") || 30);
   const businesses = await listPublishedBusinesses({
     query: clean(params.get("q")) || undefined,
+    requirePhoto: params.get("withPhotos") === "1",
     location: clean(params.get("location")) || undefined,
     categorySlug: clean(params.get("category")) || undefined,
     limit: Number.isFinite(parsedLimit) ? Math.max(1, Math.min(parsedLimit, 50)) : 30,
@@ -14,7 +15,7 @@ export async function GET(request: Request) {
   return Response.json({ ok: true, data: businesses.map(b => ({
     slug: b.slug, name: b.name, description: b.description, city: b.city, area: b.area,
     category: b.category, categoryName: b.categoryName, services: b.services,
-    coverUrl: b.media.find(m => m.kind === "cover")?.url || b.media[0]?.url || "",
+    coverUrl: b.media.find(m => m.kind === "cover")?.url || b.media.find(m=>m.kind === "image")?.url || "",
     verified: ["verified", "professional"].includes(b.verificationStatus),
     rating: b.rating, reviewCount: b.reviewCount, promoted: b.promoted,
   })) }, { headers: { "Cache-Control": "no-store" } });

@@ -47,7 +47,7 @@ export default function Header() {
               <div className="nav-mega-grid">
                 {categories.map(([label, href], index) => (
                   <a href={href} key={href} style={{ ["--i" as string]: index }}>
-                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <span>{(index + 1).toLocaleString("fa-IR", { minimumIntegerDigits: 2 })}</span>
                     <strong>{label}</strong>
                   </a>
                 ))}
@@ -68,7 +68,7 @@ export default function Header() {
             <Download size={17} />
             <span>دانلود اپ</span>
           </a>
-          <a className="icon-button desktop-search depth-button" href="/search" aria-label="جستجو">
+          <a className="icon-button desktop-search depth-button" href="/search" aria-label="جستجو" title="جستجو">
             <Search size={19} />
           </a>
           <a className="desktop-business-login" href="/business/login">ورود کسب‌وکار</a>

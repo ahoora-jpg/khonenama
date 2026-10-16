@@ -78,7 +78,7 @@ export default function Footer() {
             </div>
 
             <div className="footer-trust-links">
-              <a className="footer-admin-contact" href="mailto:info@khonehnama.ir"><Mail size={17}/><span dir="ltr">info@khonehnama.ir</span></a>
+              <a className="footer-admin-contact" href="mailto:info@khonenama.ir"><Mail size={17}/><span dir="ltr">info@khonenama.ir</span></a>
               <a href="/privacy">حریم خصوصی</a>
               <a href="/terms">قوانین استفاده</a>
               <a href="/editorial-policy">سیاست تحریریه</a>
@@ -108,7 +108,6 @@ export default function Footer() {
           <span>© ۲۰۲۶ خونه نما · همه حقوق محفوظ است.</span>
           <a className="kh-footer-top" href="#">بازگشت به بالا ↑</a>
           <div className="footer-credit">
-            <a href="/admin/login" rel="nofollow" style={{ fontSize: "14px", fontWeight: 400 }}>ورود مدیریت</a>
             <span>طراحی وب‌سایت توسط</span>
             <a href="https://ahoora-studio.ir/" target="_blank" rel="noopener">
               اهورا استودیو <ExternalLink size={12} />

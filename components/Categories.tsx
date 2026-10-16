@@ -23,7 +23,7 @@ export default function Categories() {
         </div>
 
         <div className="bento-grid premium-bento">
-          {categories.map(({ title, description, className, icon: Icon, href, number, photo }) => {
+          {categories.map(({ title, description, className, icon: Icon, href, number, photo }, index) => {
             const base = `https://khonenama.ir/images/editorial/${photo}.webp`;
             return (
               <a className={`${className} premium-category-card`} href={href} key={href}>
@@ -37,7 +37,7 @@ export default function Categories() {
                   decoding="async"
                 />
                 <span className="category-visual-overlay" aria-hidden="true" />
-                <span className="category-number">{number}</span>
+                <span className="category-number">{(index + 1).toLocaleString("fa-IR", { minimumIntegerDigits: 2 })}</span>
                 <span className="category-icon"><Icon size={22} /></span>
                 <div>
                   <h3>{title}</h3>

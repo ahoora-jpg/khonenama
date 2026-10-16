@@ -7,7 +7,7 @@ export type ShelfBusiness = { slug: string; name: string; city: string; area: st
 const categories = [["", "همه غرفه‌ها"], ["curtain", "پرده"], ["flooring", "کفپوش و پارکت"], ["carpet", "موکت"], ["wallpaper", "کاغذ دیواری"], ["interior-design", "طراحی داخلی"], ["lighting", "نورپردازی داخلی"], ["smart-home", "خانه هوشمند"]] as const;
 
 export default function HomeBusinessShelf({ initialBusinesses }: { initialBusinesses: ShelfBusiness[] }) {
-  const [items, setItems] = useState(initialBusinesses);
+  const [items, setItems] = useState(initialBusinesses.filter(b=>!!b.coverUrl));
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -16,10 +16,10 @@ export default function HomeBusinessShelf({ initialBusinesses }: { initialBusine
     setCategory(value); setLoading(true); setError(false);
     const id = ++requestId.current;
     try {
-      const response = await fetch("/api/v1/businesses?limit=6&category=" + encodeURIComponent(value), { cache: "no-store" });
+      const response = await fetch("/api/v1/businesses?limit=6&withPhotos=1&category=" + encodeURIComponent(value), { cache: "no-store" });
       const body = await response.json();
       if (!response.ok || !body.ok || !Array.isArray(body.data)) throw new Error("Unavailable");
-      if (id === requestId.current) setItems(body.data);
+      if (id === requestId.current) setItems(body.data.filter((b:ShelfBusiness)=>!!b.coverUrl));
     } catch { if (id === requestId.current) setError(true); }
     finally { if (id === requestId.current) setLoading(false); }
   }
@@ -31,8 +31,8 @@ export default function HomeBusinessShelf({ initialBusinesses }: { initialBusine
       <div aria-live="polite" aria-busy={loading}>
         {loading ? <div className="market-loading" role="status">در حال دریافت غرفه‌ها…</div> : error ? <div className="market-empty"><Store size={30} /><h3>دریافت غرفه‌ها انجام نشد.</h3><p>دوباره تلاش کن یا وارد جستجوی کسب‌وکارها شو.</p><button className="pill-button" type="button" onClick={() => void selectCategory(category)}>تلاش دوباره</button></div> : items.length ? <div className="market-business-grid">{items.map(b => <article className="market-business-card" key={b.slug}>
           <a className="market-business-photo" href={"/business/" + b.slug + "#gallery"} aria-label={"دیدن نمونه‌کارهای " + b.name}>{b.coverUrl ? <img src={b.coverUrl} alt={"تصویر غرفه " + b.name} width={600} height={400} loading="lazy" decoding="async" /> : <div className="market-photo-empty"><Store size={36} /><span>تصویر غرفه هنوز اضافه نشده</span></div>}<span>دیدن نمونه‌کارها <ArrowUpLeft size={16} /></span></a>
-          <div className="market-business-copy"><small>{b.categoryName}</small><h3><a href={"/business/" + b.slug}>{b.name}</a>{b.verified && <BadgeCheck size={19} aria-label="کسب‌وکار تأییدشده" />}</h3><p><MapPin size={14} />{[b.city, b.area].filter(Boolean).join("، ") || "موقعیت ثبت نشده"}</p><a className="market-business-rating" href={"/business/" + b.slug + "#reviews"}><Star size={16} fill={b.reviewCount ? "currentColor" : "none"} />{b.reviewCount ? <><strong>{b.rating.toLocaleString("fa-IR", { maximumFractionDigits: 1 })}</strong><span>از ۵ · {b.reviewCount.toLocaleString("fa-IR")} نظر</span></> : <span>هنوز نظری منتشر نشده</span>}</a><a className="market-business-open" href={"/business/" + b.slug}>ورود به غرفه <ArrowUpLeft size={17} /></a></div>
-        </article>)}</div> : <div className="market-empty"><Store size={32} /><h3>{category ? "هنوز غرفه‌ای در «" + categoryName + "» منتشر نشده است." : "هنوز غرفه‌ای برای نمایش منتشر نشده است."}</h3><a className="pill-button" href={category ? "/category/" + category : "/#categories"}>راهنمای انتخاب خدمات <ArrowUpLeft size={17} /></a></div>}
+          <div className="market-business-copy"><small>{b.categoryName}</small><h3><a href={"/business/" + b.slug}>{b.name}</a>{b.verified && <BadgeCheck size={19} aria-label="کسب‌وکار تأییدشده" />}</h3><p><MapPin size={14} />{[b.city, b.area].filter(Boolean).join("، ") || "موقعیت ثبت نشده"}</p><a className="market-business-rating" href={"/business/" + b.slug + "#reviews"}><Star size={16} fill={b.reviewCount ? "currentColor" : "none"} />{b.reviewCount ? <><strong>{b.rating.toLocaleString("fa-IR", { maximumFractionDigits: 1 })}</strong><span>از ۵ · {b.reviewCount.toLocaleString("fa-IR")} نظر</span></> : <span>اولین نظر را بنویس</span>}</a><a className="market-business-open" href={"/business/" + b.slug}>ورود به غرفه <ArrowUpLeft size={17} /></a></div>
+        </article>)}</div> : <div className="market-empty"><Store size={32} /><h3>{category ? "نمونه‌کارهای غرفه‌های «" + categoryName + "» را در صفحه این دسته بررسی کنید." : "فروشگاه یا متخصص مناسب را پیدا کنید."}</h3><a className="pill-button" href={category ? "/category/" + category : "/#categories"}>راهنمای انتخاب خدمات <ArrowUpLeft size={17} /></a></div>}
       </div>
     </div>
   </section>;
