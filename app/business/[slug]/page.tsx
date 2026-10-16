@@ -2,6 +2,7 @@ import { businessModelNames } from "@/lib/server/business-models";
 import GalleryModelChoice from "@/components/GalleryModelChoice";
 import { groupServices } from "@/lib/service-groups";
 import type { Metadata } from "next";
+import { cache } from "react";
 import { env } from "cloudflare:workers";
 import { safeWebsiteUrl, safeInstagramUrl } from "@/lib/public-links";
 import { listPublicBusinessAlbums } from "@/lib/server/business-albums";
@@ -31,7 +32,7 @@ const categorySeoLabels: Record<string, string> = {
   "smart-home": "خانه هوشمند و پرده برقی",
 };
 
-async function resolveBusiness(slug: string) {
+const resolveBusiness = cache(async (slug: string) => {
   const demo = getBusiness(slug);
   if (demo) {
     return {
@@ -100,7 +101,7 @@ async function resolveBusiness(slug: string) {
     hours: live.hours,
     reviews: live.reviews,
   };
-}
+});
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;

@@ -4,12 +4,12 @@ import { notFound, permanentRedirect } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { serviceCatalog, servicePath, findService, MIN_SERVICE_BUSINESSES } from "@/lib/service-catalog";
-import { listPublishedBusinesses } from "@/lib/server/public-businesses";
+import { listServiceBusinessSummaries } from "@/lib/server/service-business-summaries";
 import { contentPaths } from "@/lib/content-paths";
 import { getGuide } from "@/lib/guides";
 export const dynamic = "force-dynamic";
 type Params = Promise<{category: string; service: string}>;
-const getBusinesses = cache((category: string, serviceName: string) => listPublishedBusinesses({serviceName, limit: 50}));
+const getBusinesses = cache((category: string, serviceName: string) => listServiceBusinessSummaries(serviceName,50));
 export async function generateMetadata({params}: {params: Params}): Promise<Metadata> {
  const p=await params; const item=findService(p.category,p.service); if(!item) return {};
  const businesses=await getBusinesses(item.category,item.name);

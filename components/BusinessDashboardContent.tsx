@@ -202,7 +202,7 @@ export default function BusinessDashboardContent() {
           </div>
         </div>
 
-        <div style={sectionStyle("media")}>
+        <div id="media" style={sectionStyle("media")}>
           {source === "server" && <BusinessMediaManager plan={profile.plan || "free"} />}
         </div>
         <div style={sectionStyle("public-link")}>
