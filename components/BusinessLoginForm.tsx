@@ -1,5 +1,6 @@
 "use client";
 
+import { safeNextPath } from "@/lib/public-links";
 import { useRef, useState } from "react";
 import { ArrowLeft, Eye, EyeOff, KeyRound, LockKeyhole, Phone, ShieldCheck } from "lucide-react";
 
@@ -77,7 +78,7 @@ export default function BusinessLoginForm() {
       }
 
       const next = new URLSearchParams(window.location.search).get("next");
-      const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+      const safeNext = safeNextPath(next);
       window.location.href = safeNext;
     } catch (error: any) {
       if (error?.name === "AbortError") {

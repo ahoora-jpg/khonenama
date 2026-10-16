@@ -32,6 +32,7 @@ for (const status of ['draft', 'pending', 'suspended', 'published']) {
       };
     } };
     const route = loadRoute('app/api/me/business/route.ts', {
+      '@/lib/server/business-installments': {installmentBusinessIds:async()=>new Set()},
       'cloudflare:workers': { env: { DB: db } },
       '@/lib/server/business-session': { getBusinessSession: async () => ({ user_id: 'owner' }) },
       '@/lib/business-slug': { createUniqueBusinessSlug: async () => 'real-vendor' },

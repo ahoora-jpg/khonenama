@@ -1,3 +1,4 @@
+import { installmentBusinessIds } from "@/lib/server/business-installments";
 import { customPacksForSubscription } from "@/lib/business-entitlements";
 import { normalizeServiceAreas } from "@/lib/service-area";
 import { matchingServiceNames, literalLike, normalizeServiceQuery } from "@/lib/service-search";
@@ -23,6 +24,7 @@ export type PublicBusiness = {
   status: string;
   verificationStatus: string;
   featured: boolean;
+  showInstallments: boolean;
   category: string;
   categoryName: string;
   categories: { slug: string; name: string; primary: boolean }[];
@@ -67,6 +69,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
   await ensureReviewReplies(db);
   await ensureBusinessCoverage(db);
 
+  const installmentIds = await installmentBusinessIds(db,rows.map(r=>Number(r.id)));
   const result: PublicBusiness[] = [];
   for (const row of rows) {
     const [servicesResult, categoriesResult, reviewResult, planResult, promotionResult, mediaResult, hoursResult, reviewsResult, areasResult] = await Promise.all([
@@ -138,6 +141,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
       status: row.status,
       verificationStatus: row.verification_status,
       featured: Boolean(row.is_featured),
+      showInstallments: installmentIds.has(Number(row.id)),
       category: row.category_slug || "",
       categoryName: row.category_name || "",
       categories: (categoriesResult?.results || []).map((item: any) => ({

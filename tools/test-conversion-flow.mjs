@@ -11,7 +11,7 @@ function fixture(status='draft') {
  sql.prepare('INSERT INTO businesses VALUES(1,?,?,?,?,NULL)').run('Test shop','Complete business description','Test city',status);
  const db={prepare(query){return{values:[],bind(...values){this.values=values;return this},async first(){return sql.prepare(query).get(...this.values)||null},async all(){return{results:sql.prepare(query).all(...this.values)}},async run(){return{meta:{changes:sql.prepare(query).run(...this.values).changes}}}}}};
  const metrics=load('lib/server/conversion-metrics.ts');
- const route=load('app/api/me/business/route.ts',{'cloudflare:workers':{env:{DB:db}},'@/lib/server/business-session':{getBusinessSession:async()=>({user_id:'owner'})},'@/lib/business-slug':{},'@/lib/server/welcome-trial':load('lib/server/welcome-trial.ts'),'@/lib/server/conversion-metrics':metrics});
+ const route=load('app/api/me/business/route.ts',{'cloudflare:workers':{env:{DB:db}},'@/lib/server/business-session':{getBusinessSession:async()=>({user_id:'owner'})},'@/lib/business-slug':{},'@/lib/server/welcome-trial':load('lib/server/welcome-trial.ts'),'@/lib/server/conversion-metrics':metrics,'@/lib/server/business-installments':{installmentBusinessIds:async()=>new Set(),setInstallmentOption:async()=>{}}});
  return{sql,db,route,metrics};
 }
 const publish=()=>new Request('https://khonenama.ir/api/me/business',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'publish'})});

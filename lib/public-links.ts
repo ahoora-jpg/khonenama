@@ -16,3 +16,8 @@ export function safeInstagramUrl(value: string): string {
   const url = new URL(safe);
   return ["instagram.com", "www.instagram.com"].includes(url.hostname) ? url.href : "";
 }
+
+export function safeNextPath(value: string | null | undefined) {
+  if (!value || !value.startsWith("/") || value.startsWith("//") || /[\\\u0000-\u0020\u007f]/.test(value)) return "/dashboard";
+  return value;
+}

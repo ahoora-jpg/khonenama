@@ -1,3 +1,4 @@
+import { setInstallmentOption } from "@/lib/server/business-installments";
 import { ensureBusinessCoverage } from "@/lib/server/business-coverage";
 import { parseServiceArea } from "@/lib/service-area";
 import { env } from "cloudflare:workers";
@@ -260,6 +261,7 @@ export async function POST(request: Request) {
       return Response.json({ ok: false, error: "BUSINESS_CREATE_FAILED" }, { status: 500 });
     }
 
+    if(body.showInstallments === true) await setInstallmentOption(db,createdBusinessId,true);
     stage = "business-relations";
     const relationStatements = [
       db

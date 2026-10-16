@@ -1,3 +1,4 @@
+import { installmentBusinessIds, setInstallmentOption } from "@/lib/server/business-installments";
 import { env } from "cloudflare:workers";
 import { recordConversion } from "@/lib/server/conversion-metrics";
 import { getBusinessSession } from "@/lib/server/business-session";
@@ -106,6 +107,7 @@ export async function GET(request: Request) {
       },
       business: {
         ...business,
+        showInstallments: (await installmentBusinessIds(db,[business.id])).has(Number(business.id)),
         moderation: {reason: business.status==='suspended' ? (moderation?.reason || 'برای توضیح و اصلاح، موضوع اعتراض به وضعیت غرفه را در پشتیبانی ثبت کنید.') : reviewNote?.status==='rejected' ? (reviewNote.reviewer_note || 'برای توضیح، با پشتیبانی تماس بگیرید.') : null},
         services,
         serviceAreas: areas,
@@ -138,6 +140,11 @@ export async function PATCH(request: Request) {
   }
 
   const body = await request.json().catch(() => ({}));
+  if (body?.action === "installments") {
+    if(typeof body.showInstallments !== "boolean") return Response.json({ok:false,error:"INVALID_INSTALLMENT_OPTION"},{status:400});
+    await setInstallmentOption(db,membership.id,body.showInstallments);
+    return Response.json({ok:true,showInstallments:body.showInstallments});
+  }
   if (body?.action === "publish") {
     const row = await db.prepare("SELECT b.*, (SELECT COUNT(*) FROM business_services s WHERE s.business_id=b.id) AS service_count, (SELECT COUNT(*) FROM business_categories c WHERE c.business_id=b.id) AS category_count, (SELECT COUNT(*) FROM business_service_areas a WHERE a.business_id=b.id) AS area_count FROM businesses b WHERE b.id=?").bind(membership.id).first();
     if (!row || !["draft","published"].includes(row.status)) return Response.json({ok:false,error:"PUBLICATION_RESTRICTED"}, {status:409});
@@ -147,6 +154,7 @@ export async function PATCH(request: Request) {
     if (updated) await recordConversion(db,"booth_published");
     return Response.json({ok:true,status:"published"});
   }
+  if(body.showInstallments !== undefined && typeof body.showInstallments !== "boolean") return Response.json({ok:false,error:"INVALID_INSTALLMENT_OPTION"},{status:400});
   const name = cleanText(body?.name, 180);
   const description = cleanText(body?.description, 2000);
   const city = cleanText(body?.city, 100);
@@ -168,5 +176,6 @@ export async function PATCH(request: Request) {
     .bind(name, description, city, area, address, phone, whatsapp, website, instagram, membership.id)
     .run();
 
+  if(typeof body.showInstallments === "boolean") await setInstallmentOption(db,membership.id,body.showInstallments);
   return Response.json({ ok: true });
 }

@@ -8,6 +8,7 @@ import BusinessTaxonomyEditor from "@/components/BusinessTaxonomyEditor";
 type ProfileForm = {
   name: string;
   description: string;
+  showInstallments: boolean;
   city: string;
   area: string;
   address: string;
@@ -20,6 +21,7 @@ type ProfileForm = {
 const emptyForm: ProfileForm = {
   name: "",
   description: "",
+  showInstallments: false,
   city: "",
   area: "",
   address: "",
@@ -56,6 +58,7 @@ export default function BusinessProfileEditor() {
           setForm({
             name: business.name || "",
             description: business.description || "",
+            showInstallments: business.showInstallments === true,
             city: business.city || "",
             area: business.area || "",
             address: business.address || "",
@@ -67,7 +70,7 @@ export default function BusinessProfileEditor() {
         }
       } catch {
         if (!cancelled) {
-          setError("برای ویرایش امن پروفایل باید Session پنل فعال باشد. پس از اعمال مرحله اتصال Session، صفحه خودکار به D1 وصل می‌شود.");
+          setError("اطلاعات پروفایل دریافت نشد؛ دوباره تلاش کنید یا وارد حساب شوید.");
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -192,6 +195,8 @@ export default function BusinessProfileEditor() {
           <textarea rows={7} value={form.description} onChange={(e) => update("description", e.target.value)} />
           <small className="field-hint">حداقل ۲۰ کاراکتر؛ تخصص، خدمات و شرایط همکاری مثل فروش اقساطی یا نحوه محاسبه دستمزد را بنویسید. این متن در بالای غرفه به مشتری نمایش داده می‌شود.</small>
         </label>
+
+        <label className="form-row"><span><input type="checkbox" checked={form.showInstallments} onChange={e=>update("showInstallments",e.target.checked)}/> نمایش نشان «فروش اقساطی» روی غرفه</span><small className="field-hint">با برداشتن تیک و ذخیره تغییرات، نشان از غرفه حذف می‌شود. شرایط فروش اقساطی را در معرفی کسب‌وکار توضیح دهید.</small></label>
 
         <div className="profile-editor-actions">
           <button className="pill-button dark" type="button" onClick={save} disabled={saving}>

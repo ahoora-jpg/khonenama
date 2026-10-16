@@ -37,6 +37,7 @@ const resolveBusiness = cache(async (slug: string) => {
   if (demo) {
     return {
       source: "demo" as const,
+      showInstallments: false,
       id: 0,
       slug: demo.slug,
       name: demo.name,
@@ -76,6 +77,7 @@ const resolveBusiness = cache(async (slug: string) => {
 
   return {
     source: "d1" as const,
+    showInstallments: live.showInstallments,
     id: live.id,
     slug: live.slug,
     name: live.name,
@@ -240,7 +242,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
       <section className="inner-page business-profile-page">
         <div className="shell">
           <div className="business-profile-hero">
-            <BusinessPhotoHeader name={business.name} cover={business.media.find((item: any) => item.kind === "cover")?.url} logo={business.media.find((item: any) => item.kind === "logo")?.url} />
+            <BusinessPhotoHeader showInstallments={business.showInstallments} name={business.name} cover={business.media.find((item: any) => item.kind === "cover")?.url} logo={business.media.find((item: any) => item.kind === "logo")?.url} />
             <div className={"profile-main-card glass-panel plan-" + business.planCode}>
               <div className="profile-title-row">
                 <div>

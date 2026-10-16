@@ -4,6 +4,7 @@ import BusinessLogoutButton from "@/components/BusinessLogoutButton";
 import BusinessWelcomeTrial from "@/components/BusinessWelcomeTrial";
 import BusinessPublicationPanel from "@/components/BusinessPublicationPanel";
 import BusinessPublicLinkCard from "@/components/BusinessPublicLinkCard";
+import BusinessInstallmentToggle from "@/components/BusinessInstallmentToggle";
 import BusinessMediaManager from "@/components/BusinessMediaManager";
 import BusinessLeadInbox from "@/components/BusinessLeadInbox";
 import BusinessBrowserNotifications from "@/components/BusinessBrowserNotifications";
@@ -202,6 +203,7 @@ export default function BusinessDashboardContent() {
           </div>
         </div>
 
+        {source === "server" && <BusinessInstallmentToggle />}
         <div id="media" style={sectionStyle("media")}>
           {source === "server" && <BusinessMediaManager plan={profile.plan || "free"} />}
         </div>

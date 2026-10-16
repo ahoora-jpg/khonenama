@@ -53,6 +53,7 @@ type FormState = {
   serviceAreas: string[];
   coverageNote: string;
   description: string;
+  showInstallments: boolean;
   plan: "free" | "pro" | "premium";
 };
 
@@ -76,6 +77,7 @@ const initialState: FormState = {
   serviceAreas: [],
   coverageNote: "",
   description: "",
+  showInstallments: false,
   plan: "free",
 };
 
@@ -266,6 +268,7 @@ export default function BusinessOnboardingWizard() {
         serviceAreas: normalizeServiceAreas(form.serviceAreas,form.city),
         coverageNote: form.coverageNote,
         description: form.description,
+        showInstallments: form.showInstallments === true,
         plan: form.plan,
         businessId: result.business.id,
         businessSlug: result.business.slug,
@@ -730,6 +733,8 @@ export default function BusinessOnboardingWizard() {
                 حداقل ۲۰ کاراکتر؛ از تکرار کلمات تبلیغاتی بدون توضیح واقعی خودداری کنید.
               </small>
             </label>
+
+            <label className="form-row"><span><input type="checkbox" checked={form.showInstallments === true} onChange={e=>update("showInstallments",e.target.checked)}/> مایلم نشان «فروش اقساطی» روی غرفه‌ام نمایش داده شود.</span><small className="field-hint">اگر فروش یا خدمات اقساطی دارید، این گزینه را فعال کنید. هر زمان از میز کار قابل تغییر است؛ شرایط اقساط را در معرفی غرفه بنویسید.</small></label>
 
             <div className="media-upload-grid onboarding-media-preview">
               <div className="media-upload-tile">

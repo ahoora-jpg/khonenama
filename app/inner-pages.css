@@ -4212,3 +4212,5 @@ button.business-photo-avatar { cursor:pointer; }
   body:has(.payment-receipt) .receipt-feed { overflow:visible; margin:0; }
   body:has(.payment-receipt) .receipt-paper { animation:none!important; transform:none!important; box-shadow:none; border:0; color:#000; }
 }
+
+.business-installments-badge { position:absolute;inset-inline-end:12px;top:12px;z-index:2;max-width:calc(100% - 24px);padding:6px 12px;border-radius:999px;background:#fff7e5;color:#64401c;border:1px solid #d8b772;font-size:14px;font-weight:700;box-shadow:0 2px 8px #0002;pointer-events:none; }
