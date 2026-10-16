@@ -104,11 +104,12 @@ export default function Header() {
             <Download size={17} />
             دانلود اپلیکیشن اندروید
           </a>
-          <a href="/for-business" onClick={() => setOpen(false)}>برای کسب‌وکارها</a>
-          <a href="/business/login" onClick={() => setOpen(false)}>ورود کسب‌وکار</a>
-          <a className="pill-button dark" href="/register-business" onClick={() => setOpen(false)}>
-            ثبت کسب‌وکار
-          </a>
+          <details className="mobile-business-menu">
+            <summary>برای کسب‌وکارها</summary>
+            <a href="/for-business" onClick={() => setOpen(false)}>راهنمای حضور در خونه‌نما</a>
+            <a href="/business/login" onClick={() => setOpen(false)}>ورود کسب‌وکار</a>
+            <a className="pill-button dark" href="/register-business" onClick={() => setOpen(false)}>ثبت کسب‌وکار</a>
+          </details>
         </div>
       )}
     </header>
