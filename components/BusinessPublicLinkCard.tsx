@@ -102,21 +102,13 @@ export default function BusinessPublicLinkCard({
     <section id="public-link" className="dashboard-panel glass-panel business-public-link-card">
       <div className="business-public-link-copy">
         <span className="section-kicker">لینک اختصاصی کسب‌وکار</span>
-        <h2><Link2 size={20} /> لینک اختصاصی و کیوآرکد گالری شما</h2>
+        <h2><Link2 size={20} /> لینک اختصاصی غرفهٔ شما</h2>
         <p>
           این لینک مخصوص همین کسب‌وکار است و می‌توانید آن را در Google Business،
           شبکه‌های اجتماعی، آگهی‌ها، سایت شخصی و هر جای دیگری قرار دهید.
         </p>
       </div>
 
-      {isPublished && (
-        <div style={{ textAlign: "center", margin: "1rem 0" }}>
-          <img src="/api/me/business/qr" alt="کیوآرکد اختصاصی گالری کسب‌وکار" width={192} height={192} />
-          <p>از آلبوم کارهای ما دیدن کنید</p>
-          <a className="pill-button" href="/api/me/business/qr" download="khonenama-gallery.svg">دانلود کیوآرکد برای چاپ</a>
-          <small style={{ display: "block", marginTop: "0.5rem" }}>این کد با تغییر آدرس پروفایل ثابت می‌ماند و مستقیم گالری شما را باز می‌کند.</small>
-        </div>
-      )}
       <div className="business-public-link-box">
         <p>آدرس غرفه حداکثر دو بار قابل تغییر است.{remaining !== null ? ` ${remaining.toLocaleString("fa-IR")} تغییر باقی مانده.` : ""} لینک‌های قبلی همچنان معتبر می‌مانند.</p>
         {editing ? (

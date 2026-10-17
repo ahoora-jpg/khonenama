@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AdminBusinessModeration from "@/components/AdminBusinessModeration";
 import AdminLaunchOffer from "@/components/AdminLaunchOffer";
+import AdminStoryTemplates from "@/components/AdminStoryTemplates";
 import AdminPayments from "@/components/AdminPayments";
 import AdminTaxonomySuggestions from "@/components/AdminTaxonomySuggestions";
 
@@ -20,6 +21,7 @@ export default function AdminBusinessesPage() {
           <AdminBusinessModeration />
           <AdminTaxonomySuggestions />
           <AdminLaunchOffer />
+          <AdminStoryTemplates />
           <AdminPayments />
         </div>
       </section>

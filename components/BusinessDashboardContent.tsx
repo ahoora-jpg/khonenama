@@ -4,6 +4,7 @@ import BusinessLogoutButton from "@/components/BusinessLogoutButton";
 import BusinessWelcomeTrial from "@/components/BusinessWelcomeTrial";
 import BusinessPublicationPanel from "@/components/BusinessPublicationPanel";
 import BusinessPublicLinkCard from "@/components/BusinessPublicLinkCard";
+import BusinessPromotionStudio from "@/components/BusinessPromotionStudio";
 import BusinessInstallmentToggle from "@/components/BusinessInstallmentToggle";
 import BusinessMediaManager from "@/components/BusinessMediaManager";
 import BusinessLeadInbox from "@/components/BusinessLeadInbox";
@@ -213,6 +214,7 @@ export default function BusinessDashboardContent() {
           status={profile.status}
           onSlugChange={(businessSlug) => setProfile((current) => ({ ...current, businessSlug }))}
         />
+        {source === "server" && <BusinessPromotionStudio />}
 
         </div>
         <div style={sectionStyle("overview")} className="dashboard-stats">

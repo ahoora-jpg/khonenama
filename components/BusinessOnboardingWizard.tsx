@@ -109,6 +109,7 @@ export default function BusinessOnboardingWizard() {
   const [serviceAreaQuery, setServiceAreaQuery] = useState("");
   const [profileAreaOpen, setProfileAreaOpen] = useState(false);
   const [draftReady, setDraftReady] = useState(false);
+  const [draftStatus, setDraftStatus] = useState("");
   const registrationStarted = useRef(false);
   function trackStart() {
     if (registrationStarted.current) return;
@@ -135,13 +136,18 @@ export default function BusinessOnboardingWizard() {
         password: "",
         confirmPassword: "",
       });
-    } catch {} finally { setDraftReady(true); }
+    } catch { setDraftStatus("پیش‌نویس قبلی قابل خواندن نیست؛ لطفاً اطلاعات را دوباره بررسی کنید."); } finally { setDraftReady(true); }
   }, []);
 
   useEffect(() => {
     if (!draftReady || saved) return;
     const { password, confirmPassword, ...safeDraft } = form;
-    try { localStorage.setItem("khonenama-business-draft", JSON.stringify(safeDraft)); } catch {}
+    try {
+      localStorage.setItem("khonenama-business-draft", JSON.stringify(safeDraft));
+      setDraftStatus("اطلاعات فرم در همین مرورگر ذخیره شد؛ رمز عبور ذخیره نمی‌شود. می‌توانید بعداً ادامه دهید.");
+    } catch {
+      setDraftStatus("ذخیرهٔ خودکار در این مرورگر ممکن نیست؛ پیش از بستن صفحه ثبت‌نام را کامل کنید.");
+    }
   }, [form, draftReady, saved]);
 
   const progress = ((step + 1) / steps.length) * 100;
@@ -304,6 +310,7 @@ export default function BusinessOnboardingWizard() {
 
   return (
     <div className="onboarding-shell" onFocusCapture={trackStart}>
+      {draftStatus && <p className="field-hint" role="status" aria-live="polite">{draftStatus}</p>}
       <div className="onboarding-progress-wrap">
         <div className="onboarding-progress-top">
           <strong>ساخت پروفایل کسب‌وکار</strong>

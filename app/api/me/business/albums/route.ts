@@ -47,6 +47,7 @@ export async function DELETE(request: Request) {
 export async function PATCH(request: Request) {
   const owned = await getOwnedBusiness(request);
   if (!owned) return Response.json({ ok: false, error: "UNAUTHENTICATED" }, { status: 401, headers });
+  if(await getAlbumLimit(owned.db,owned.business.id)===0)return Response.json({ok:false,error:"PAID_PLAN_REQUIRED"},{status:403,headers});
   const body = await request.json().catch(() => null);
   if (!Number.isSafeInteger(body?.id) || body.id < 1 || typeof body.title !== "string" || !body.title.trim() || body.title.length > 100 || typeof body.description !== "string" || body.description.length > 2000 || !Array.isArray(body.mediaIds)) return Response.json({ ok: false, error: "INVALID_ALBUM" }, { status: 400, headers });
   const ids = [...new Set<number>(body.mediaIds)];

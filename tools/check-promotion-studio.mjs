@@ -1,0 +1,52 @@
+import {build} from 'esbuild';
+import {createServer} from 'node:http';
+import {readFileSync,mkdirSync,writeFileSync} from 'node:fs';
+import {createRequire} from 'node:module';
+import assert from 'node:assert/strict';
+import QRCode from 'qrcode';
+import {STORY_TEMPLATES} from '../lib/story-templates.ts';
+const require=createRequire(import.meta.url);
+const {chromium}=require('C:/Users/Apadana/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const bundled=await build({stdin:{contents:'import React from "react";import {createRoot} from "react-dom/client";import Studio from "./components/BusinessPromotionStudio";createRoot(document.getElementById("root")).render(<Studio/>);',resolveDir:process.cwd(),loader:'tsx'},bundle:true,write:false,jsx:'automatic',define:{'process.env.NODE_ENV':'"production"'}});
+const server=createServer((req,res)=>{if(req.url==='/bundle.js'){res.setHeader('Content-Type','application/javascript');res.end(bundled.outputFiles[0].text);}else if(req.url==='/fonts/digi-hamishe.woff2'){res.setHeader('Content-Type','font/woff2');res.end(readFileSync('public/fonts/digi-hamishe.woff2'));}else if(req.url==='/khonenama-logo.svg'){res.setHeader('Content-Type','image/svg+xml');res.end(readFileSync('public/khonenama-logo.svg'));}else if(req.url?.startsWith('/sample/')){const names=['12_53_04','12_54_40','12_54_51','12_55_00'];const index=Number(req.url.split('/').at(-1))-1;if(index<0||index>3){res.statusCode=404;res.end();return;}res.setHeader('Content-Type','image/jpeg');res.end(readFileSync('G:/khone/ChatGPT Image Oct 17, 2026, '+names[index]+' PM.jpg'));}else{res.setHeader('Content-Type','text/html; charset=utf-8');res.end('<meta charset="utf-8"><style>@font-face{font-family:DigiHamishe;src:url(/fonts/digi-hamishe.woff2)}body{font-family:DigiHamishe;max-width:600px;margin:auto}label{display:block;margin:12px}img{max-width:100%}</style><div id="root"></div><script src="/bundle.js"></script>');}});
+await new Promise(r=>server.listen(0,'127.0.0.1',r));
+let browser;
+try{
+  browser=await chromium.launch({channel:'chrome',headless:true});
+  const page=await browser.newPage({viewport:{width:390,height:844}});
+  let plan='premium';
+  const qr=await QRCode.toString('https://khonenama.ir/p/0123456789abcdef0123456789abcdef',{type:'svg',margin:4,width:512});
+  await page.route('**/api/me/business/qr',r=>r.fulfill({contentType:'image/svg+xml',body:qr}));
+  await page.route('**/api/me/business/promotion*',r=>{const query=new URL(r.request().url()).searchParams;const allowed=STORY_TEMPLATES.filter(t=>plan==='premium'||t.minimumPlan==='pro');const denied=plan==='free'||(query.has('template')&&!allowed.some(t=>t.id===Number(query.get('template'))));return r.fulfill({status:denied?403:200,contentType:'application/json',body:JSON.stringify(denied?{error:'PAID_PLAN_REQUIRED'}:{ok:true,templates:allowed.length,availableTemplates:allowed,selectedImage:query.has('image')?{file_url:'/sample/'+query.get('image')}:null,url:'https://khonenama.ir/p/0123456789abcdef0123456789abcdef',business:{name:'نمونهٔ آزمایشی خونه‌نما',city:'کرج',category:'پرده و دکوراسیون'}})});});
+  await page.route('**/api/me/business/media',r=>r.fulfill({contentType:'application/json',body:JSON.stringify({media:[1,2,3,4].map(id=>({id,file_url:'/sample/'+id,kind:'image',alt_text:'عکس نمونه '+id}))})}));
+  await page.goto(`http://127.0.0.1:${server.address().port}`);
+  await page.getByRole('button',{name:'ساخت پیش‌نمایش'}).waitFor();
+  assert.equal(await page.locator('select').nth(1).locator('option').count(),4);
+  const preview=page.getByAltText('پیش‌نمایش تصویر معرفی غرفه');
+  mkdirSync('outputs/promotion-studio',{recursive:true});
+  for(let id=1;id<=4;id++){
+    await page.getByText('متن‌های اختیاری',{exact:true}).click();
+    await page.getByLabel('عنوان محصول یا خدمت').fill(['پرده مینیمال','پرده‌های بلند و یکدست','پرده زبرا','معرفی فضای فروشگاه'][id-1]);
+    await page.getByLabel('شعار کوتاه').fill('زیبایی در جزئیات خانه');
+    await page.getByText('متن‌های اختیاری',{exact:true}).click();
+    await page.locator('select').nth(1).selectOption(String(id));
+    await page.locator('select').nth(2).selectOption(String(id));
+    await page.getByRole('button',{name:'ساخت پیش‌نمایش'}).click();
+    await preview.waitFor();
+    assert.deepEqual(await preview.evaluate(img=>({w:img.naturalWidth,h:img.naturalHeight})),{w:1080,h:1920});
+    writeFileSync(`outputs/promotion-studio/template-${id}.png`,Buffer.from((await preview.getAttribute('src')).split(',')[1],'base64'));
+    await page.getByLabel('فرمت دانلود').selectOption('jpg');
+    writeFileSync(`outputs/promotion-studio/template-${id}.jpg`,Buffer.from((await preview.getAttribute('src')).split(',')[1],'base64'));
+    await page.getByLabel('فرمت دانلود').selectOption('png');
+  }
+  await page.screenshot({path:'outputs/promotion-studio/mobile.png',fullPage:true});
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true);
+  await page.locator('select').first().selectOption('card');await page.getByRole('button',{name:'ساخت پیش‌نمایش'}).click();await preview.waitFor();assert.deepEqual(await preview.evaluate(img=>({w:img.naturalWidth,h:img.naturalHeight})),{w:1080,h:1080});
+  plan='pro';await page.reload();await page.getByRole('button',{name:'ساخت پیش‌نمایش'}).waitFor();assert.equal(await page.locator('select').nth(1).locator('option').count(),2);
+  plan='free';await page.reload();await page.getByRole('status').waitFor();assert.equal(await page.getByRole('button',{name:'ساخت پیش‌نمایش'}).count(),0);
+  await page.setViewportSize({width:1120,height:590});
+  const images=STORY_TEMPLATES.map(t=>`<div><p>${t.name}</p><img style="width:260px;height:auto" src="data:image/png;base64,${readFileSync(`outputs/promotion-studio/template-${t.id}.png`).toString('base64')}"></div>`).join('');
+  await page.setContent(`<meta charset="utf-8"><style>body{margin:12px;background:#e7e5e0;font-family:Tahoma}main{display:flex;gap:14px}p{text-align:center}</style><main>${images}</main>`);
+  await page.locator('img').last().waitFor();await page.screenshot({path:'outputs/promotion-studio/four-templates.png',fullPage:true});
+  console.log('PASS: premium four templates, pro two, free locked, story 1080x1920, card 1080x1080; local fixtures only.');
+}finally{await browser?.close();server.close();}

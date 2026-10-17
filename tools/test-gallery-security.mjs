@@ -33,9 +33,9 @@ test('One album can contain all seventy premium photos and five videos',async()=
   const mediaIds=[1,...Array.from({length:74},(_,index)=>index+3)];
   const response=await route.POST(request({title:'آلبوم کامل',description:'نمونه‌کار',mediaIds}));assert.equal(response.status,201);assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM business_album_media').get().n,75);
 });
-test('Free plan keeps ten photo slots while allowing album organization', async () => {
+test('Free plan keeps ten photo slots and blocks paid album organization', async () => {
   const entitlements = load('lib/business-entitlements.ts'); assert.equal(entitlements.planPresentation.free.galleryLimit, 10);
-  const { route } = fixture('free'); assert.equal((await route.POST(request({ title: 'Project', description: '', mediaIds: [1] }))).status, 201);
+  const { route } = fixture('free'); assert.equal((await route.POST(request({ title: 'Project', description: '', mediaIds: [1] }))).status, 403);
 });
 test('Album rejects another business photo without creating data', async () => {
   const { route, sqlite } = fixture(); assert.equal((await route.POST(request({ title: 'Project', description: '', mediaIds: [2] }))).status, 400);
@@ -67,17 +67,18 @@ test('Deleting another business album is denied; deleting own album preserves ph
   assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM business_media').get().n, 2); assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM business_album_media').get().n, 0);
 });
 test('Gallery link follows current slug, hides paused and unpublished businesses', async () => {
-  const { db, sqlite } = fixture(); const route = load('app/g/[id]/route.ts', { 'cloudflare:workers': { env: { DB: db } } });
+  const { db, sqlite } = fixture(); const route = load('app/g/[id]/route.ts', { 'cloudflare:workers': { env: { DB: db } }, '@/lib/business-plans': {LEGACY_PROMOTION_QR_END_AT:'2099-01-01T00:00:00Z'} });
   const get = id => route.GET(new Request('https://khonenama.ir/g/' + id), { params: Promise.resolve({ id }) });
   assert.equal((await get('1')).headers.get('location'), 'https://khonenama.ir/business/vendor#gallery');
   sqlite.exec("UPDATE businesses SET slug='changed' WHERE id=1"); assert.equal((await get('1')).headers.get('location'), 'https://khonenama.ir/business/changed#gallery');
   sqlite.exec('INSERT INTO business_visibility_controls VALUES(1,1)'); assert.equal((await get('1')).status, 404); assert.equal((await get('2')).status, 404); assert.equal((await get('1evil')).status, 404);
 });
-test('QR route requires ownership and encodes the stable business gallery address', async () => {
+test('QR route requires paid ownership and encodes the revocable promotion address', async () => {
   let captured;
-  const route = load('app/api/me/business/qr/route.ts', { qrcode: { toString: async (url, options) => { captured = url; return QRCode.toString(url, options); } }, '@/lib/server/business-media': { getOwnedBusiness: async () => ({ business: { id: 42 } }) } });
-  const response = await route.GET(new Request('https://khonenama.ir/api/me/business/qr')); assert.equal(captured, 'https://khonenama.ir/g/42'); assert.match(await response.text(), /<svg/); assert.equal(response.headers.get('cache-control'), 'private, no-store');
-  const anonymous = load('app/api/me/business/qr/route.ts', { qrcode: QRCode, '@/lib/server/business-media': { getOwnedBusiness: async () => null } }); assert.equal((await anonymous.GET(new Request('https://khonenama.ir/api/me/business/qr'))).status, 401);
+  const promotion={'@/lib/server/business-promotion':{promotionSubscription:async()=>({id:1,code:'pro'}),storyTemplateCount:()=>2,promotionLink:async()=>'https://khonenama.ir/p/0123456789abcdef0123456789abcdef'}};
+  const route = load('app/api/me/business/qr/route.ts', { ...promotion,qrcode: { toString: async (url, options) => { captured = url; return QRCode.toString(url, options); } }, '@/lib/server/business-media': { getOwnedBusiness: async () => ({ business: { id: 42 } }) } });
+  const response = await route.GET(new Request('https://khonenama.ir/api/me/business/qr')); assert.equal(captured, 'https://khonenama.ir/p/0123456789abcdef0123456789abcdef'); assert.match(await response.text(), /<svg/); assert.equal(response.headers.get('cache-control'), 'private, no-store');
+  const anonymous = load('app/api/me/business/qr/route.ts', { ...promotion,qrcode: QRCode, '@/lib/server/business-media': { getOwnedBusiness: async () => null } }); assert.equal((await anonymous.GET(new Request('https://khonenama.ir/api/me/business/qr'))).status, 401);
 });
 test('Cookie mutations from another origin fail before any database access', async () => {
   const session = load('lib/server/business-session.ts', { 'cloudflare:workers': { env: { DB: new Proxy({}, { get() { throw new Error('DB must not be accessed'); } }) } } });

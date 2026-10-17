@@ -7,7 +7,7 @@ async function send(slug: string, event: string) {
     await fetch("/api/business/" + encodeURIComponent(slug) + "/analytics", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ event }),
+      body: JSON.stringify({ event,referrer:document.referrer.slice(0,500),source:new URLSearchParams(window.location.search).get("utm_source")||"" }),
       keepalive: true,
     });
   } catch {}

@@ -233,7 +233,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
         <span className="section-kicker">غرفه شما از نگاه مشتری</span>
         <p>۱. روی پس‌زمینه بزنید و کاور را انتخاب کنید. ۲. روی پروفایل بزنید و عکس آن را بگذارید. ۳. نمونه‌کارها را اضافه کنید. هر عکس را می‌توانید دوباره عوض کنید.</p>
       {pickerOpen && <div id="media-source-picker" className="media-source-picker" role="group" aria-label="انتخاب منبع عکس">
-        <strong>{uploadKind === "video" ? "افزودن ویدیو (MP4، تا ۲۰ ثانیه و ۱۵ مگابایت)" : uploadKind === "cover" ? "تصویر پس‌زمینه" : uploadKind === "logo" ? "عکس پروفایل" : "افزودن عکس به آلبوم"}</strong>
+        <strong>{uploadKind === "video" ? "افزودن ویدیو (MP4، تا ۲۰ ثانیه و ۱۵ مگابایت)" : uploadKind === "cover" ? "تصویر پس‌زمینه" : uploadKind === "logo" ? "عکس پروفایل" : "افزودن عکس نمونه‌کار"}</strong>
         <button className="pill-button dark" type="button" onClick={()=>fileRef.current?.click()}><ImagePlus size={18}/> انتخاب از گالری</button>
         {uploadKind !== "video" && <button className="pill-button" type="button" onClick={()=>cameraRef.current?.click()}><Camera size={18}/> عکس گرفتن</button>}
         <button className="pill-button" type="button" onClick={()=>setPickerOpen(false)}>انصراف</button>
@@ -247,7 +247,7 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
         <div><strong>{number(remaining)}</strong><span>جای خالی برای عکس</span></div>
 
       </div>
-      <p className="media-capacity-note">کاور و پروفایل جدا از این تعداد هستند. تعداد آلبوم‌ها محدود نیست.</p>
+      <p className="media-capacity-note">کاور و پروفایل جدا از این تعداد هستند. تعداد دسته‌های نمونه‌کار محدود نیست.</p>
       <p>ویدیو: {number(media.filter(item => item.kind === "video").length)} ذخیره‌شده از {number(videoLimit)}؛ {number(videoRemaining)} جای خالی. MP4، حداکثر ۲۰ ثانیه و ۱۵ مگابایت.</p>
       {videoLimit > 0 && <button type="button" className="pill-button" disabled={uploading || !videoRemaining || !configured} onClick={() => pick("video")}>+ افزودن ویدیو</button>}
       <input ref={fileRef} type="file" accept={uploadKind === "video" ? "video/mp4" : "image/*"} multiple={uploadKind === "image" || uploadKind === "video"} hidden onChange={event => chooseFiles(event.target.files)} />

@@ -17,7 +17,7 @@ export const planPresentation: Record<BusinessPlanCode, {
     publicBadge: null,
     searchPriority: 0,
     galleryLimit: 10,
-    albumLimit: null,
+    albumLimit: 0,
     analytics: false,
     reviewReply: false,
     promotedPlacement: false,
