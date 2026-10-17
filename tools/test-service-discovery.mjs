@@ -15,6 +15,9 @@ test('Service sitemap requires exact selection and published complete unpaused b
  function add(id,status='published',service=1){sql.prepare('INSERT INTO businesses VALUES(?,?,?,?,?,?)').run(id,'offline-'+id,'Offline fixture','A sufficiently complete offline fixture','Test city',status);sql.prepare('INSERT INTO business_categories VALUES(?,1)').run(id);sql.prepare('INSERT INTO business_services VALUES(?,?)').run(id,service);sql.prepare('INSERT INTO business_service_areas VALUES(?)').run(id);}
  add(1);add(2);add(3,'pending');add(4,'published',2);assert.equal((await m.listServiceSitemapEntries()).length,0);
  sql.exec("UPDATE businesses SET status='published' WHERE id=3");let entries=await m.listServiceSitemapEntries();assert.equal(entries.length,1);assert.ok(entries[0].url.endsWith(encodeURIComponent('میل-پرده')));
+ // The service keeps its canonical category even when its owners also have an unrelated category.
+ sql.exec("INSERT INTO categories VALUES(2,'wallpaper'); UPDATE business_categories SET category_id=2; INSERT INTO business_categories SELECT id,1 FROM businesses");
+ entries=await m.listServiceSitemapEntries();assert.equal(entries.length,1);assert.ok(entries[0].url.includes('/services/curtain/'));
  sql.exec('INSERT INTO business_visibility_controls VALUES(3,1,NULL)');assert.equal((await m.listServiceSitemapEntries()).length,0);
  sql.exec('DELETE FROM business_visibility_controls; DELETE FROM business_service_areas WHERE business_id=3');assert.equal((await m.listServiceSitemapEntries()).length,0);sql.close();
 });
