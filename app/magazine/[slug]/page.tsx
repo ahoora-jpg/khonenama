@@ -315,13 +315,24 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                 </section>
               )}
 
-              {guide.sections.map((section) => {
+              {(guide.slug === "curtain-buying-guide" || guide.slug === "best-curtain-living-room") && (
+                <nav aria-label="پرسش‌های انتخاب پرده">
+                  <h2>پاسخ پرسش خود را پیدا کنید</h2>
+                  <ul>
+                    {guide.sections.slice(0, guide.slug === "curtain-buying-guide" ? 4 : 6).map((section, index) => (
+                      <li key={section.heading}><a href={`#guide-section-${index + 1}`}>{section.heading}</a></li>
+                    ))}
+                  </ul>
+                </nav>
+              )}
+
+              {guide.sections.map((section, index) => {
                 const visibleParagraphs = section.paragraphs.slice(0, 2);
                 const extraParagraphs = section.paragraphs.slice(2);
                 const hasExtraDetails = extraParagraphs.length > 0 || Boolean(section.bullets?.length);
 
                 return (
-                  <section key={section.heading}>
+                  <section key={section.heading} id={`guide-section-${index + 1}`}>
                     <h2>{section.heading}</h2>
                     {visibleParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
                     {hasExtraDetails && (
