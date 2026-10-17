@@ -300,8 +300,8 @@ export default async function BusinessPage({ params, searchParams }: { params: P
                   <MessageCircle size={14} /> واتساپ
                 </a>
               )}
-              {business.website && <a data-analytics-event="website" href={business.website} target="_blank" rel="noreferrer"><Globe2 size={14} /> وب‌سایت</a>}
-              {business.instagram && <a data-analytics-event="instagram" href={business.instagram.startsWith("http") ? business.instagram : "https://instagram.com/" + business.instagram.replace(/^@/, "")} target="_blank" rel="noreferrer"><Instagram size={14} /> اینستاگرام</a>}
+              {business.website && <a data-analytics-event="website" href={business.website} target="_blank" rel="ugc nofollow noopener noreferrer"><Globe2 size={14} /> وب‌سایت</a>}
+              {business.instagram && <a data-analytics-event="instagram" href={business.instagram.startsWith("http") ? business.instagram : "https://instagram.com/" + business.instagram.replace(/^@/, "")} target="_blank" rel="ugc nofollow noopener noreferrer"><Instagram size={14} /> اینستاگرام</a>}
               {business.hours.length > 0 && (
                 <div className="public-hours">
                   <strong><Clock3 size={14} /> ساعات کاری</strong>

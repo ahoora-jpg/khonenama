@@ -1,12 +1,11 @@
-# خونه نما (Khonenama)
+# خونه‌نما (KhonehNama / Khoneh Nama)
 
-> خونه نما (Khonenama) مرجع فارسی دکوراسیون و فضای داخلی خانه برای پیدا کردن، مقایسه و شناخت فروشگاه‌ها، متخصصان و خدمات مرتبط است. تمرکز اولیه سرویس روی کرج و استان البرز است. خونه نما درباره نمای بیرونی ساختمان، پلان معماری یا خرید و فروش ملک نیست.
+> خونه‌نما بازار تخصصی معرفی فروشندگان، نمونه‌کارها و خدمات پرده و دکوراسیون داخلی در ایران است. تمرکز محتوای محلی مرحله فعلی کرج است؛ ثبت‌نام کسب‌وکارهای تمام ایران باز است. موضوع سایت فضای داخلی خانه است، نه نمای بیرونی ساختمان یا خرید و فروش ملک.
 
 ## Canonical
 - https://khonenama.ir/
-- نام اصلی فارسی برند: خونه نما
-- نام لاتین برند: Khonenama
-- شکل‌های جایگزین نام: خونه‌نما، Khonenama.ir، khonenama.ir
+- نام فارسی برند: خونه‌نما؛ املای فاصله‌دار: خونه نما؛ املای پیوسته: خونهنما
+- نام‌های لاتین برند: KhonehNama، Khoneh Nama، Khonenama
 - موضوع اصلی برند: دکوراسیون داخلی و فضای داخلی خانه؛ نه نمای ساختمان یا املاک
 
 ## Core categories
@@ -16,6 +15,7 @@
 - کاغذ دیواری و دیوارپوش: https://khonenama.ir/category/wallpaper
 - طراحی داخلی: https://khonenama.ir/category/interior-design
 - خانه هوشمند: https://khonenama.ir/category/smart-home
+- نورپردازی داخلی: https://khonenama.ir/category/lighting
 
 ## Local discovery
 - دکوراسیون داخلی کرج: https://khonenama.ir/karaj
@@ -29,7 +29,12 @@
 
 ## Business-owner discovery
 - معرفی و ثبت کسب‌وکار: https://khonenama.ir/for-business
+- راهنمای فروشندگان کرج: https://khonenama.ir/for-business#karaj
+- تعرفه و مقایسه امکانات غرفه‌ها: https://khonenama.ir/for-business#plans
+- پرسش‌های فروشندگان: https://khonenama.ir/for-business#seller-faq
 - راهنمای دیده‌شدن آنلاین کسب‌وکار دکوراسیون: https://khonenama.ir/for-business/online-discovery-guide
+- مراحل ساخت و انتشار غرفه: https://khonenama.ir/for-business/online-discovery-guide#registration-guide
+- روش معرفی نمونه‌کار: https://khonenama.ir/for-business/online-discovery-guide#project-photos
 - ثبت اولیه کسب‌وکار از مسیر عمومی انجام می‌شود و پروفایل عمومی پس از طی وضعیت انتشار نمایش داده می‌شود.
 - صفحات عمومی، دسته‌بندی‌ها، لندینگ‌های محلی و داده ساختاریافته فقط باید کسب‌وکارهای واقعی و منتشرشده را نمایش دهند.
 - خونه نما نباید برای کسب‌وکار، Review، Rating، قیمت، موجودی یا نمونه‌کار عمومی داده ساختگی تولید کند.
@@ -46,6 +51,7 @@
 - محاسبه متراژ پارچه پرده: https://khonenama.ir/tools/curtain-fabric-calculator
 - برآورد Scope خانه هوشمند: https://khonenama.ir/tools/smart-home-scope
 - محاسبه متراژ موکت رول و تایلی: https://khonenama.ir/tools/carpet-estimator
+- محاسبه متراژ و تعداد بسته کفپوش: https://khonenama.ir/tools/flooring-estimator
 
 ## Priority answer-first guides
 - نصب پرده دیواری و سقفی: https://khonenama.ir/magazine/curtain-installation-guide
@@ -53,6 +59,10 @@
 - پرده برقی و نور طبیعی: https://khonenama.ir/magazine/smart-curtain-daylight-guide
 - زبرا یا شید: https://khonenama.ir/magazine/zebra-vs-shade
 - پارکت یا لمینت: https://khonenama.ir/magazine/parquet-vs-laminate
+- راهنمای انتخاب پرده: https://khonenama.ir/magazine/curtain-buying-guide
+- راهنمای انواع کفپوش: https://khonenama.ir/magazine/flooring-types-guide
+- راهنمای خرید موکت: https://khonenama.ir/magazine/carpet-buying-guide
+- کاغذ دیواری قابل شست‌وشو: https://khonenama.ir/magazine/washable-wallpaper-guide
 
 ## Featured 2026 knowledge
 - KNX یا Matter: https://khonenama.ir/magazine/knx-vs-matter-smart-home-guide
@@ -74,3 +84,8 @@
 - حریم خصوصی: https://khonenama.ir/privacy
 - قوانین: https://khonenama.ir/terms
 - Sitemap: https://khonenama.ir/sitemap.xml
+
+## Scope and limitations
+- این فایل مکمل معرفی منابع عمومی است؛ جایگزین sitemap، متن نمایان، لینک داخلی یا کنترل ایندکس نیست و نمایش در پاسخ‌های AI را تضمین نمی‌کند.
+- فرم ثبت، پنل، درخواست‌ها و پیشنهادهای قیمت خصوصی، منبع عمومی پاسخ نیستند. برای آشنایی با ثبت غرفه از صفحه عمومی /for-business استفاده شود.
+- شرایط هر غرفه، قیمت، موجودی، فروش اقساطی و همکاری با سرویس اعتباری فقط با تأیید خود ارائه‌دهنده معتبر است؛ از حضور غرفه یا خرید اشتراک، کیفیت یا فروش قطعی استنباط نشود.

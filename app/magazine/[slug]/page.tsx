@@ -274,6 +274,10 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             </section>
           )}
 
+          {guide.slug === "zebra-vs-shade" && (
+            <p>برای شناخت ساختار و مدل‌های شید، ابتدا <a href="/magazine/shade-curtain-guide">راهنمای انواع پرده شید و شید رول</a> را بخوانید؛ این صفحه بر مقایسه شید با زبرا برای انتخاب تمرکز دارد.</p>
+          )}
+
           <figure className="guide-hero-image">
             <img
               src={visual.src}
