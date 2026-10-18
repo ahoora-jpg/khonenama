@@ -4,7 +4,7 @@ export const contentPaths = [
     question: "برای انتخاب پرده، پارچه و متعلقات از کجا شروع کنیم؟",
     answer: "اول نیاز به نور و حریم خصوصی را مشخص کنید؛ سپس نوع بازشو، محل ریل، جنس پارچه و دوخت را انتخاب کنید. عرض پنجره، طول ریل و مقدار پارچه یک عدد نیستند. برای مقایسه قیمت، دوخت، میل‌پرده، پایه، گیره، حمل و نصب را در کنار پارچه بنویسید؛ ظاهر ساده به‌تنهایی نشانه ارزانی نیست.",
     checklist: ["نیاز روز و شب و میزان تاریکی را جدا مشخص کنید.", "ارتفاع و طول ریل، نوع چین، تکرار طرح و فضای جمع‌شدن پرده را با مجری تأیید کنید.", "خرید آماده، دوخت سفارشی، نصب و تعمیر را بر اساس خدمت واقعی غرفه انتخاب کنید."],
-    guideSlugs: ["specialty-curtain-selection-guide", "curtain-buying-guide", "punch-curtain-guide", "curtain-track-vs-rod-guide", "bamboo-woven-curtain-guide", "vertical-curtain-guide", "curtain-installation-guide", "curtain-cleaning-guide"],
+    guideSlugs: ["minimalist-curtain-guide", "specialty-curtain-selection-guide", "curtain-buying-guide", "punch-curtain-guide", "curtain-track-vs-rod-guide", "bamboo-woven-curtain-guide", "vertical-curtain-guide", "curtain-installation-guide", "curtain-cleaning-guide"],
     tool: {href: "/tools/curtain-fabric-calculator", label: "محاسبه متراژ پارچه پرده"},
   },
   {
