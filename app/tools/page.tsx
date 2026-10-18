@@ -198,6 +198,25 @@ export default function ToolsPage() {
             </a>
           </section>
 
+          <section className="category-results" aria-labelledby="after-calculation-title">
+            <h2 id="after-calculation-title">بعد از محاسبه، چطور فروشنده یا مجری را انتخاب کنیم؟</h2>
+            <ol>
+              <li><strong>مقدار را با مشخصات محصول تأیید کنید:</strong> نتیجه ابزار برآورد اولیه است. عرض پارچه یا رول، پوشش بسته و تکرار طرح باید مربوط به همان محصول باشند؛ اندازه نهایی و شرایط نصب را با فروشنده یا مجری تأیید کنید.</li>
+              <li><strong>گزینه مرتبط پیدا کنید:</strong> خدمات، محدوده فعالیت و نمونه‌کار غرفه‌ها را در دسته موردنیاز ببینید؛ ثبت یک خدمت به معنی موجودی روز محصول یا تأیید تخصص آن کسب‌وکار نیست.</li>
+              <li><strong>برای مشخصات یکسان قیمت بگیرید:</strong> مقدار، جنس، دوخت یا زیرسازی، یراق، حمل و نصب را جدا بخواهید. با <a href="/help#compare-quotes">چک‌لیست مقایسه پیشنهاد قیمت</a> اقلام شامل و خارج از مبلغ را بررسی کنید.</li>
+            </ol>
+            <nav aria-label="انتخاب فروشگاه و مجری پس از محاسبه">
+              <ul>
+                <li><a href="/category/curtain">فروشگاه پرده، دوخت و نصب</a></li>
+                <li><a href="/category/carpet">فروش و نصب موکت رول و تایلی</a></li>
+                <li><a href="/category/flooring">فروشگاه و نصاب پارکت، لمینت و کفپوش</a></li>
+                <li><a href="/category/wallpaper">فروش و اجرای کاغذ دیواری و دیوارپوش</a></li>
+                <li><a href="/category/smart-home">مجری و خدمات خانه هوشمند</a></li>
+              </ul>
+            </nav>
+            <p>برای <a href="/category/interior-design">طراحی و اجرای دکوراسیون داخلی</a> و <a href="/category/lighting">نورپردازی داخلی</a>، به‌جای تعمیم عدد یک محاسبه‌گر، شرح نیاز و خروجی موردانتظار را با مجری مشخص کنید. <a href="/magazine">راهنماهای انتخاب و مقایسه</a> به آماده‌کردن سؤال‌های پیش از تماس کمک می‌کنند.</p>
+          </section>
+
           <section className="category-results category-faq-block">
             <div className="section-heading compact-heading">
               <div><span className="section-kicker">پاسخ سریع</span><h2>سوالات رایج درباره محاسبه قبل از اجرا</h2></div>
