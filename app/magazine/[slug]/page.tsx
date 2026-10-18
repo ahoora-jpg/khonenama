@@ -315,11 +315,11 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                 </section>
               )}
 
-              {["curtain-buying-guide", "best-curtain-living-room", "curtain-fullness-guide", "curtain-track-vs-rod-guide"].includes(guide.slug) && (
+              {["minimalist-curtain-guide", "curtain-buying-guide", "best-curtain-living-room", "curtain-fullness-guide", "curtain-track-vs-rod-guide"].includes(guide.slug) && (
                 <nav aria-label="پرسش‌های انتخاب پرده">
                   <h2>پاسخ پرسش خود را پیدا کنید</h2>
                   <ul>
-                    {(guide.slug === "curtain-buying-guide" ? [0, 1, 2, 3, 6, 7] : Array.from({ length: guide.slug === "curtain-fullness-guide" ? 2 : 6 }, (_, index) => index)).map((index) => (
+                    {(guide.slug === "curtain-buying-guide" ? [0, 1, 2, 3, 6, 7] : Array.from({ length: guide.slug === "minimalist-curtain-guide" ? guide.sections.length : guide.slug === "curtain-fullness-guide" ? 2 : 6 }, (_, index) => index)).map((index) => (
                       <li key={guide.sections[index].heading}><a href={`#guide-section-${index + 1}`}>{guide.sections[index].heading}</a></li>
                     ))}
                   </ul>
