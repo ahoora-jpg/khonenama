@@ -4,6 +4,8 @@ import { activateSubscriptionFromVerifiedPayment } from "./billing-activation";
 import type { PaymentProvider } from "./payment-provider";
 
 export const billingHeaders = { "Cache-Control": "private, no-store" };
+// Annual sales remain disabled independently of the payment provider.
+export const ANNUAL_BILLING_ENABLED = false;
 export class BillingError extends Error {
   constructor(public code: string, public status = 409) { super(code); }
 }
@@ -16,7 +18,7 @@ export async function billingCatalog(db: any, provider: PaymentProvider | null) 
     const amountToman = plan.code === "free" ? 0 : price?.enabled === 1 ? Number(price.amount_toman) || null : null;
     const annualPrice = annualRows.find((r: any) => r.plan_code === plan.code);
     const annualAmount = annualPrice?.enabled === 1 ? Number(annualPrice.amount_toman) : null;
-    return { ...plan, amountToman, durationDays: plan.code === "free" ? null : Number(price?.duration_days || 30), purchasable: plan.code !== "free" && !!amountToman && !!provider, annual: annualPrice ? { amountToman: annualAmount, durationDays: 365, purchasable: !!annualAmount && !!provider } : null };
+    return { ...plan, amountToman, durationDays: plan.code === "free" ? null : Number(price?.duration_days || 30), purchasable: plan.code !== "free" && !!amountToman && !!provider, annual: annualPrice ? { amountToman: annualAmount, durationDays: 365, purchasable: ANNUAL_BILLING_ENABLED && !!annualAmount && !!provider } : null };
   });
 }
 async function hash(value: string) {
@@ -29,6 +31,7 @@ export async function createCheckout(owner: any, body: any, provider: PaymentPro
   const offer = plans.find(p => p.code === body?.planCode);
   if (!offer) throw new BillingError("PLAN_NOT_FOUND", 404);
   if (body?.billingPeriod !== undefined && !["monthly", "annual"].includes(body.billingPeriod)) throw new BillingError("INVALID_BILLING_PERIOD", 400);
+  if (body?.billingPeriod === "annual" && !ANNUAL_BILLING_ENABLED) throw new BillingError("ANNUAL_BILLING_NOT_AVAILABLE", 409);
   let plan = body?.billingPeriod === "annual" && offer.annual ? { ...offer, ...offer.annual } : offer;
   const packs=body?.customPacks??0;
   const customUnit=body?.billingPeriod==="annual"?180000:15000;

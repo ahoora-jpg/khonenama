@@ -1,5 +1,5 @@
 import { env } from 'cloudflare:workers';
-import { billingCatalog,billingHeaders } from '@/lib/server/billing';
+import { ANNUAL_BILLING_ENABLED,billingCatalog,billingHeaders } from '@/lib/server/billing';
 import { paymentProvider } from '@/lib/server/payment-provider';
 export async function POST(request: Request) {
   const body=await request.json().catch(()=>({}));
@@ -7,6 +7,7 @@ export async function POST(request: Request) {
   const offer=(await billingCatalog((env as any).DB,paymentProvider(env as any))).find(p=>p.code===body.planCode);
   if(!offer)return Response.json({ok:false,error:'PLAN_NOT_FOUND'},{status:404});
   if(body.billingPeriod!==undefined&&!['monthly','annual'].includes(body.billingPeriod))return Response.json({ok:false,error:'VALIDATION_ERROR'},{status:400});
+  if(body.billingPeriod==='annual'&&!ANNUAL_BILLING_ENABLED)return Response.json({ok:false,error:'ANNUAL_BILLING_NOT_AVAILABLE'},{status:409,headers:billingHeaders});
   const plan=body.billingPeriod==='annual'&&offer.annual?{...offer,...offer.annual}:offer;
   if(plan.amountToman===null)return Response.json({ok:false,error:'PLAN_PRICING_NOT_ACTIVE'},{status:409});
   return Response.json({ok:true,plan:{code:plan.code,name:plan.name},durationDays:plan.durationDays,purchasable:plan.purchasable,currency:'IRT',amounts:{subtotal:plan.amountToman,discount:0,tax:0,total:plan.amountToman}},{headers:billingHeaders});

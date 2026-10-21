@@ -23,9 +23,19 @@ export async function GET(request: Request) {
     selectedImage=await owned.db.prepare("SELECT id,file_url FROM business_media WHERE id=? AND business_id=? AND media_type!='video'").bind(id,owned.business.id).first();
     if(!selectedImage?.file_url)return Response.json({ok:false,error:"IMAGE_NOT_OWNED"},{status:403,headers});
   }
-  const details = await owned.db.prepare("SELECT b.city,b.phone,b.instagram,b.description,c.name AS category FROM businesses b LEFT JOIN business_categories bc ON bc.business_id=b.id AND bc.is_primary=1 LEFT JOIN categories c ON c.id=bc.category_id WHERE b.id=?").bind(owned.business.id).first();
+  const supportValue=query.get("supporting")||"";
+  const supportIds=supportValue?Array.from(new Set(supportValue.split(",").map(Number))):[];
+  if(supportIds.length>3||supportIds.some(id=>!Number.isSafeInteger(id)||id<1))return Response.json({ok:false,error:"INVALID_IMAGE"},{status:400,headers});
+  const supportingImages=[];
+  for(const id of supportIds){
+    const item=await owned.db.prepare("SELECT id,file_url FROM business_media WHERE id=? AND business_id=? AND media_type!='video' AND kind!='logo'").bind(id,owned.business.id).first();
+    if(!item?.file_url)return Response.json({ok:false,error:"IMAGE_NOT_OWNED"},{status:403,headers});
+    supportingImages.push(item);
+  }
+  const services=await owned.db.prepare("SELECT s.id,s.name FROM services s JOIN business_services bs ON bs.service_id=s.id WHERE bs.business_id=? ORDER BY s.id").bind(owned.business.id).all();
+  const details = await owned.db.prepare("SELECT b.city,b.area,b.phone,b.instagram,b.description,c.name AS category FROM businesses b LEFT JOIN business_categories bc ON bc.business_id=b.id AND bc.is_primary=1 LEFT JOIN categories c ON c.id=bc.category_id WHERE b.id=?").bind(owned.business.id).first();
   const logo=await owned.db.prepare("SELECT file_url FROM business_media WHERE business_id=? AND kind='logo' ORDER BY id DESC LIMIT 1").bind(owned.business.id).first();
-  return Response.json({ok:true,business:{...owned.business,...details,logo:logo?.file_url||null},templates,availableTemplates,selectedImage,url,expiresAt:subscription.ends_at},{headers});
+  return Response.json({ok:true,business:{...owned.business,...details,logo:logo?.file_url||null},services:services.results||[],supportingImages,templates,availableTemplates,selectedImage,url,expiresAt:subscription.ends_at},{headers});
 }
 
 export async function POST(request:Request){
