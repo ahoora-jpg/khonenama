@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import LaunchOfferBanner from "@/components/LaunchOfferBanner";
 import SellerAcquisitionTracker from "@/components/SellerAcquisitionTracker";
 import { businessPlans } from "@/lib/business-plans";
+import { PublicPlanPrice } from "@/components/RegistrationOffers";
 import { businessDiscoveryAnswers } from "@/lib/ai-search-content";
 import {
   ArrowUpLeft,
@@ -248,7 +249,7 @@ export default function ForBusinessPage() {
               <article className={"business-plan-card " + (plan.code === "pro" ? "is-highlighted" : "")} key={plan.code}>
                 <span className="business-plan-badge">{plan.badge}</span>
                 <h3>{plan.name}</h3>
-                <strong>{plan.priceLabel}</strong>
+                <strong><PublicPlanPrice code={plan.code} normal={plan.priceLabel} /></strong>
                 <p>{plan.description}</p>
                 <ul>
                   {plan.features.map((feature) => (

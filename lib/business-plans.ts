@@ -1,5 +1,11 @@
 export const LEGACY_PROMOTION_QR_END_AT = "2026-11-21T20:30:00Z";
 export const CUSTOM_CAPACITY_AVAILABLE_AT = "2026-11-21T20:30:00Z";
+export const LAUNCH_DISCOUNT_END_AT = "2027-01-20T20:30:00Z";
+export function launchDiscountActive(now = Date.now()) { return now < Date.parse(LAUNCH_DISCOUNT_END_AT); }
+export function discountedMonthlyPrice(code: string, normal: number | null, now = Date.now()) {
+  if (normal === null || !launchDiscountActive(now)) return normal;
+  return code === "pro" ? 150000 : code === "premium" ? 250000 : normal;
+}
 export function customCapacityAvailable(now = Date.now()) { return now >= Date.parse(CUSTOM_CAPACITY_AVAILABLE_AT); }
 
 export const businessPlans = [

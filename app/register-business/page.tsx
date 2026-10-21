@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { businessPlans } from "@/lib/business-plans";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BusinessOnboardingWizard from "@/components/BusinessOnboardingWizard";
-import LaunchOfferBanner from "@/components/LaunchOfferBanner";
+import { RegistrationGift, RegistrationPlanImages } from "@/components/RegistrationOffers";
 import { BadgeCheck, MapPin, ShieldCheck, Store } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -21,7 +20,7 @@ export default function RegisterBusinessPage() {
 
       <section className="inner-page register-page onboarding-page">
         <div className="shell">
-          <LaunchOfferBanner />
+          <RegistrationGift />
           <div className="onboarding-page-heading">
             <div>
               <span className="section-kicker">ثبت کسب‌وکار</span>
@@ -47,10 +46,10 @@ export default function RegisterBusinessPage() {
           </details>
           <details className="glass-panel" style={{padding:"1rem",marginBottom:"1rem"}} open>
             <summary>مقایسه ظرفیت و هزینه اشتراک‌ها</summary>
-            <div className="registration-plan-images">{businessPlans.map((plan,index)=><article key={plan.code}><img src={`/images/plans/${plan.code}-20261015.webp`} width={1000} height={1000} alt={`پلن ${plan.name}: ${[10,30,70][index]} عکس و ${[0,2,5][index]} ویدیو؛ ${plan.priceLabel}`} loading="lazy" /></article>)}</div>
+            <RegistrationPlanImages />
             <p>خرید اشتراک سالانه فعلاً فعال نیست؛ قیمت سالانه درج‌شده در تصویرها قابل خرید نیست.</p>
             <img src="/images/plans/custom-20261015.webp" width={1000} height={1000} alt="افزونه ویژه؛ هر بسته ۲۰ عکس و ۱ ویدیو، ۱۵ هزار تومان؛ فقط برای پلن ویژه" loading="lazy" style={{width:"100%",maxWidth:360,height:"auto",display:"block",margin:"16px auto"}}/><p>هر بسته افزونه ویژه، ۲۰ عکس و ۱ ویدیو با هزینه ۱۵ هزار تومان برای ۳۰ روز اضافه می‌کند؛ تعداد بسته را خودتان انتخاب می‌کنید. پلن حرفه‌ای افزونه ندارد.</p><p>فایل‌های خارج از ظرفیت رایگان تا ۳۰ روز پس از پایان اشتراک نگهداری می‌شوند؛ پس از آن حذف دائمی می‌شوند. ۱۰ عکس اول، کاور و پروفایل باقی می‌مانند.</p>
-            <p>ثبت‌نام همیشه با پایه رایگان شروع می‌شود. کاور و پروفایل جدا از ظرفیت عکس‌اند؛ تعداد آلبوم‌ها محدود نیست. ویدیو MP4 حداکثر ۲۰ ثانیه و ۱۵ مگابایت است. ارتقا پس از ثبت‌نام و فعال‌شدن پرداخت امکان‌پذیر است.</p>
+            <p>ثبت‌نام با پایه رایگان شروع می‌شود. کاور و پروفایل جدا از ظرفیت عکس‌اند؛ تعداد آلبوم‌ها محدود نیست. ویدیو MP4 حداکثر ۲۰ ثانیه و ۱۵ مگابایت است. خرید اشتراک پس از فعال‌شدن پرداخت امکان‌پذیر است.</p>
           </details>
           <BusinessOnboardingWizard />
         </div>
