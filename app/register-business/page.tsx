@@ -44,7 +44,7 @@ export default function RegisterBusinessPage() {
             <p>فروشگاه، نصاب، مجری و متخصص نورپردازی و دیگر خدمات مرتبط می‌توانند غرفه بسازند. نام و توضیح واقعی کسب‌وکار، دسته و خدمات، شهر و محدوده فعالیت، راه تماس عمومی و تصاویر متعلق به خودتان را آماده کنید. مشخصات و عکس خصوصی مشتری را در غرفه عمومی وارد نکنید.</p>
             <a href="/for-business/online-discovery-guide#profile-checklist">چک‌لیست کامل آماده‌سازی غرفه در شش حوزه</a>
           </details>
-          <details className="glass-panel" style={{padding:"1rem",marginBottom:"1rem"}} open>
+          <details className="glass-panel" style={{padding:"1rem",marginBottom:"1rem"}}>
             <summary>مقایسه ظرفیت و هزینه اشتراک‌ها</summary>
             <RegistrationPlanImages />
             <p>خرید اشتراک سالانه فعلاً فعال نیست؛ قیمت سالانه درج‌شده در تصویرها قابل خرید نیست.</p>

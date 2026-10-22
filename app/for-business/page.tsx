@@ -218,7 +218,7 @@ export default function ForBusinessPage() {
           <div className="section-heading premium-heading">
             <div>
               <span className="section-kicker">فرآیند ثبت</span>
-              <h2>چهار مرحله تا داشتن پروفایل در خونه نما</h2>
+              <h2>مسیر ساخت و انتشار پروفایل در خونه نما</h2>
             </div>
           </div>
 
