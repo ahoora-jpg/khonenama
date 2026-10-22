@@ -2,10 +2,10 @@ import { ArrowUpLeft, Images, Sparkles } from "lucide-react";
 
 const items = [
   {
-    title: "پرده مدرن و نور طبیعی",
+    title: "کرکره پنجره و نور طبیعی",
     category: "پرده و پارچه",
     href: "/category/curtain",
-    img: "https://khonenama.ir/images/editorial/photo-1513694203232-719a280e022f.webp",
+    img: "https://khonenama.ir/images/editorial/photo-1602612996819-3cd306f68b4e.webp",
   },
   {
     title: "چوب و کفپوش گرم",

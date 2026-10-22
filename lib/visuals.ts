@@ -9,7 +9,7 @@ export type EditorialVisual = {
 export const editorialVisuals = {
   curtain: {
     src: "https://khonenama.ir/images/editorial/photo-1602612996819-3cd306f68b4e.webp",
-    alt: "کرکره و پرده پنجره با نور طبیعی در فضای داخلی",
+    alt: "کرکره پنجره و نور طبیعی در فضای داخلی",
     width: 1200,
     height: 675,
     sourcePage: "https://unsplash.com/photos/white-window-blinds-on-window-Bij3VCHV9e8",

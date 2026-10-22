@@ -6,7 +6,7 @@ import { ArrowLeft, ArrowRight, ArrowUpLeft } from "lucide-react";
 const slides = [
   {
     image: "/images/editorial/photo-1602612996819-3cd306f68b4e.webp",
-    alt: "پرده و کرکره مدرن در فضای داخلی روشن",
+    alt: "کرکره پنجره و نور طبیعی در فضای داخلی",
     eyebrow: "پرده و پوشش پنجره",
     title: "نور را دقیق‌تر مدیریت کن",
     description: "مدل‌ها، فروشگاه‌ها و راهنماهای انتخاب پرده را یکجا ببین.",

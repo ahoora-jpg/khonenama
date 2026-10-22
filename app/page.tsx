@@ -27,12 +27,12 @@ export const metadata = {
     description:
       "خونه نما؛ مرجع پیدا کردن و مقایسه فروشگاه‌ها، متخصصان و خدمات دکوراسیون و فضای داخلی خانه.",
     url: "https://khonenama.ir/",
-    images: [{ url: "https://khonenama.ir/images/editorial/photo-1600210492486-724fe5c67fb0.webp", width: 1200, height: 675, alt: "خونه نما؛ دکوراسیون و فضای داخلی خانه" }],
+    images: [{ url: "https://khonenama.ir/images/editorial/photo-1602612996819-3cd306f68b4e.webp", width: 1200, height: 675, alt: "کرکره پنجره و نور طبیعی در فضای داخلی" }],
     siteName: "خونه نما",
     locale: "fa_IR",
     type: "website",
   },
-  twitter: { card: "summary_large_image", title: homeTitle, images: ["https://khonenama.ir/images/editorial/photo-1600210492486-724fe5c67fb0.webp"] },
+  twitter: { card: "summary_large_image", title: homeTitle, images: ["https://khonenama.ir/images/editorial/photo-1602612996819-3cd306f68b4e.webp"] },
 };
 
 const websiteJsonLd = {
@@ -62,6 +62,20 @@ const websiteJsonLd = {
       urlTemplate: "https://khonenama.ir/search?q={search_term_string}",
     },
     "query-input": "required name=search_term_string",
+  },
+};
+
+const homePageJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://khonenama.ir/#webpage",
+  url: "https://khonenama.ir/",
+  name: homeTitle,
+  isPartOf: { "@id": "https://khonenama.ir/#website" },
+  primaryImageOfPage: {
+    "@type": "ImageObject",
+    contentUrl: "https://khonenama.ir/images/editorial/photo-1602612996819-3cd306f68b4e.webp",
+    caption: "کرکره پنجره و نور طبیعی در فضای داخلی",
   },
 };
 
@@ -125,6 +139,10 @@ export default async function HomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homePageJsonLd) }}
       />
       <script
         type="application/ld+json"

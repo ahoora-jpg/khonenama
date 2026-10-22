@@ -23,8 +23,8 @@ export function GET() {
 
   const homeEntry = imageEntry(
     `${baseUrl}/`,
-    `${baseUrl}/images/editorial/photo-1600210492486-724fe5c67fb0.webp`,
-    "خونه نما؛ دکوراسیون و فضای داخلی خانه"
+    `${baseUrl}/images/editorial/photo-1602612996819-3cd306f68b4e.webp`,
+    "کرکره پنجره و نور طبیعی در فضای داخلی"
   );
 
   const categoryEntries = categorySlugs.map((slug) => {
