@@ -46,6 +46,7 @@ type StoredProfile = {
   verificationStatus?: string;
   completion?: number;
   plan?: string;
+  planEndsAt?: string | null;
   leadCount?: number;
   businessSlug?: string;
   mediaCount?: number;
@@ -60,6 +61,7 @@ const nav = [
   ["درخواست‌های مشتری", "#leads", MessageCircle],
   ["نظرها", "#reviews", BadgeCheck],
   ["آمار", "#analytics", BarChart3],
+  ["قالب استوری و لینک غرفه", "#public-link", Sparkles],
   ["اشتراک و پرداخت", "/dashboard/billing", CreditCard],
   ["تنظیمات", "#settings", Settings],
 ] as const;
@@ -103,6 +105,7 @@ export default function BusinessDashboardContent() {
               verificationStatus: business.verification_status,
               completion: business.completion,
               plan: business.plan?.code || "free",
+              planEndsAt: business.plan?.ends_at || null,
               leadCount: business.leadCount || 0,
               businessSlug: business.slug,
               mediaCount: Number(business.mediaCount || 0),
@@ -134,7 +137,7 @@ export default function BusinessDashboardContent() {
     };
   }, []);
 
-  const completion = profile.completion || (profile.businessName ? 58 : 22);
+  const completion = profile.completion ?? (profile.businessName ? 58 : 22);
   const stats = [
     { label: "بازدید پروفایل", value: "—", icon: Eye },
     { label: "کلیک تماس", value: "—", icon: MousePointerClick },
@@ -194,7 +197,8 @@ export default function BusinessDashboardContent() {
             <span className="section-kicker">پنل کسب‌وکار</span>
             <h1>{displayName}</h1>
             <p>اطلاعات، نمونه‌کارها، درخواست‌ها و وضعیت اشتراک را از همین‌جا مدیریت کن.</p>
-            <a href="/dashboard/billing" className={"dashboard-current-plan plan-" + (profile.plan || "free")}>پلن فعلی: {planLabel} · مشاهده پلن‌ها</a>
+            {source === "server" ? <a href="/dashboard/billing" className={"dashboard-current-plan plan-" + (profile.plan || "free")}>پلن فعلی: {planLabel} · مشاهده پلن‌ها</a> : <p>{source === "loading" ? "در حال دریافت وضعیت اشتراک…" : "وضعیت اشتراک دریافت نشد؛ برای مشاهده اطلاعات به‌روز، صفحه را دوباره باز کنید."}</p>}
+            {source === "server" && profile.plan !== "free" && profile.planEndsAt && <p>پایان اعتبار فعلی: {new Date(/(?:Z|[+-]\d{2}:\d{2})$/i.test(profile.planEndsAt) ? profile.planEndsAt : profile.planEndsAt.replace(" ", "T") + "Z").toLocaleDateString("fa-IR", { timeZone: "Asia/Tehran", year: "numeric", month: "long", day: "numeric" })}</p>}
           </div>
           <div className="dashboard-heading-actions">
             {profile.businessSlug && <a className="pill-button" href={"/business/"+profile.businessSlug} target="_blank" rel="noreferrer"><Eye size={17}/> نمایش غرفه</a>}
