@@ -1,4 +1,5 @@
 import { minimalistCurtainGuide } from "./guide-minimalist-curtain";
+import { newEditorialGuides } from "./guides-editorial-october-2026";
 import { catalogCoverageGuides } from "./guides-catalog-coverage";
 import { interiorLightingGuide } from "./guide-interior-lighting";
 import { seoBatchGuides } from "@/lib/guides-seo-batch";
@@ -36,6 +37,7 @@ export type Guide = {
 };
 
 export const guides: Guide[] = [
+  ...newEditorialGuides,
   ...catalogCoverageGuides,
   minimalistCurtainGuide,
   interiorLightingGuide,

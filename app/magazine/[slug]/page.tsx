@@ -9,6 +9,7 @@ import { ArrowUpLeft, Calculator, Clock3, Link2 } from "lucide-react";
 import { notFound } from "next/navigation";
 
 const CURTAIN_INSTALLATION_SLUG = "curtain-installation-guide";
+const ILLUSTRATIVE_GUIDES = new Set(["microcement-interior-wall-guide", "layered-curtains-light-privacy-guide", "matter-smart-curtain-buying-guide"]);
 const CURTAIN_INSTALLATION_MODIFIED_AT = "2026-09-23";
 const SHEET_WALLCOVERING_GUIDES = new Set([
   "marble-sheet-wallpanel-guide", "thermowall-guide", "pvc-mdf-wallpanel-guide", "wall-mural-guide", "wall-moulding-decor-guide", "specialty-wallcovering-selection-guide",
@@ -288,7 +289,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               fetchPriority="high"
               decoding="async"
             />
-            <figcaption>{visual.alt}؛ تصویر مرتبط برای درک بهتر موضوع و دارای مجوز انتشار.</figcaption>
+            <figcaption>{visual.alt}؛ {ILLUSTRATIVE_GUIDES.has(guide.slug) ? "تصویر عمومی فضای داخلی است و نمونه اجرای موضوع مقاله یا پروژه خونه‌نما نیست." : "تصویر مرتبط برای درک بهتر موضوع و دارای مجوز انتشار."}</figcaption>
           </figure>
 
           <div className="guide-layout">

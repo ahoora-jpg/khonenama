@@ -97,6 +97,9 @@ export const localVisuals = {
 } satisfies Record<string, EditorialVisual>;
 
 const guideVisuals: Record<string, EditorialVisual> = {
+  "microcement-interior-wall-guide": editorialVisuals.interiorDesign,
+  "layered-curtains-light-privacy-guide": editorialVisuals.curtain,
+  "matter-smart-curtain-buying-guide": editorialVisuals.smartHome,
   "curtain-installation-guide": {
     src: "https://khonenama.ir/images/editorial/photo-1495652286171-4bba4cd113c5.webp",
     alt: "پرده کرکره‌ای روشن روی پنجره برای بررسی محل نصب",
