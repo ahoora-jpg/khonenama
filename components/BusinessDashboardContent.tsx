@@ -138,12 +138,6 @@ export default function BusinessDashboardContent() {
   }, []);
 
   const completion = profile.completion ?? (profile.businessName ? 58 : 22);
-  const stats = [
-    { label: "بازدید پروفایل", value: "—", icon: Eye },
-    { label: "کلیک تماس", value: "—", icon: MousePointerClick },
-    { label: "درخواست مشتری", value: String(profile.leadCount ?? 0), icon: MessageCircle },
-    { label: "نمایش در جستجو", value: "—", icon: BarChart3 },
-  ];
   const displayName = profile.businessName || "کسب‌وکار شما";
   const location = [profile.city, profile.area].filter(Boolean).join("، ") || "محدوده ثبت نشده";
   const services = profile.services || [];
@@ -221,13 +215,10 @@ export default function BusinessDashboardContent() {
         {source === "server" && <PreparedStoryStudio />}
 
         </div>
-        <div style={sectionStyle("overview")} className="dashboard-stats">
-          {stats.map(({ label, value, icon: Icon }) => (
-            <div className="dashboard-stat glass-panel" key={label}>
-              <Icon size={20} />
-              <span><strong>{value}</strong><small>{label}</small></span>
-            </div>
-          ))}
+        <div style={sectionStyle("overview")} className="dashboard-panel glass-panel">
+          <h2>عملکرد غرفه</h2>
+          <p>آمار ثبت‌شده بازدید، درخواست‌ها و امکانات گزارش اشتراک خود را ببینید.</p>
+          <a className="pill-button dark" href="#analytics">مشاهده آمار غرفه</a>
         </div>
 
         <div style={sectionStyle("profile")} className="dashboard-grid">

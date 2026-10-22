@@ -59,3 +59,12 @@ test('Repeated analytics events count once, bots do not count, free reports expo
   const premium=await (await report.GET(new Request('https://khonenama.ir/api/me/business/analytics'))).json();assert.equal(premium.daily.length,30);assert.equal(premium.sources[0].source,'search');
   f.sql.exec("UPDATE subscriptions SET status='expired'");const free=await (await report.GET(new Request('https://khonenama.ir/api/me/business/analytics'))).json();assert.equal(free.daily.length,0);assert.deepEqual(Object.keys(free.totals).sort(),['profileViews','quoteSubmits']);assert.equal(free.sources,undefined);
 });
+test('Premium report applies the selected period to sent proposals and saved requests',async()=>{
+  const f=fixture();const sources=load('lib/server/analytics-sources.ts');
+  f.sql.exec("INSERT INTO leads(id,city,request_text,created_at) VALUES(1,'Tehran','one',datetime('now','-2 days')),(2,'Tehran','two',datetime('now','-20 days')); INSERT INTO lead_recipients(lead_id,business_id) VALUES(1,1),(2,1); INSERT INTO lead_quotes(lead_id,business_id,status,created_at) VALUES(1,1,'sent',datetime('now','-1 day')),(2,1,'accepted',datetime('now','-19 days'));");
+  const report=load('app/api/me/business/analytics/route.ts',{'@/lib/server/business-media':{getOwnedBusiness:async()=>({db:f.db,business:{id:1}})},'@/lib/server/business-promotion':f.promotion,'@/lib/server/analytics-sources':sources});
+  const week=await(await report.GET(new Request('https://khonenama.ir/api/me/business/analytics?days=7'))).json();
+  const month=await(await report.GET(new Request('https://khonenama.ir/api/me/business/analytics?days=30'))).json();
+  assert.equal(week.totals.proposalsSent,1);assert.equal(week.totals.proposalsAccepted,0);assert.equal(week.totals.quoteSubmits,1);
+  assert.equal(month.totals.proposalsSent,2);assert.equal(month.totals.proposalsAccepted,1);assert.equal(month.totals.quoteSubmits,2);
+});

@@ -51,7 +51,7 @@ export async function GET(request: Request) {
     instagramClicks:0, quoteStarts:0, quoteSubmits:0
   });
 
-  const proposals = await owned.db.prepare("SELECT COUNT(*) AS sent, SUM(CASE WHEN q.status='accepted' THEN 1 ELSE 0 END) AS accepted, AVG(MAX(0,(julianday(q.created_at)-julianday(l.created_at))*1440)) AS response_minutes FROM lead_quotes q JOIN leads l ON l.id=q.lead_id WHERE q.business_id=? AND q.created_at >= datetime('now','-30 days') AND q.status IN ('sent','accepted','rejected')").bind(owned.business.id).first();
+  const proposals = await owned.db.prepare("SELECT COUNT(*) AS sent, SUM(CASE WHEN q.status='accepted' THEN 1 ELSE 0 END) AS accepted, AVG(MAX(0,(julianday(q.created_at)-julianday(l.created_at))*1440)) AS response_minutes FROM lead_quotes q JOIN leads l ON l.id=q.lead_id WHERE q.business_id=? AND q.created_at >= datetime('now',?) AND q.status IN ('sent','accepted','rejected')").bind(owned.business.id,`-${days} days`).first();
   totals.proposalsSent=Number(proposals?.sent||0); totals.proposalsAccepted=Number(proposals?.accepted||0); totals.averageResponseMinutes=proposals?.response_minutes==null?null:Math.round(proposals.response_minutes);
   // Read real saved requests rather than treating a click as a submitted quote.
   const leads=await owned.db.prepare("SELECT COUNT(DISTINCT l.id) AS n FROM leads l JOIN lead_recipients r ON r.lead_id=l.id WHERE r.business_id=? AND l.status!='cancelled' AND l.created_at>=datetime('now',?)").bind(owned.business.id,`-${days} days`).first();
