@@ -8,6 +8,7 @@
   "main": "worker.ts",
   "triggers": { "crons": ["*/2 * * * *"] },
   "assets": {
+    "binding": "ASSETS",
     "not_found_handling": "none"
   },
   "observability": {
