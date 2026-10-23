@@ -1350,7 +1350,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   z-index: -3;
   background-position: center;
   background-size: cover;
-  filter: blur(30px) brightness(.34) saturate(.8);
+  filter: blur(10px) brightness(.34) saturate(.8);
   transform: scale(1.1);
   transition: background-image .45s ease;
 }

@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight, ArrowUpLeft } from "lucide-react";
 
 const slides = [
   {
-    image: "/images/editorial/photo-1602612996819-3cd306f68b4e.webp",
+    image: "/images/hero/photo-1602612996819-3cd306f68b4e.webp",
     alt: "کرکره پنجره و نور طبیعی در فضای داخلی",
     eyebrow: "پرده و پوشش پنجره",
     title: "نور را دقیق‌تر مدیریت کن",
@@ -13,7 +13,7 @@ const slides = [
     href: "/category/curtain",
   },
   {
-    image: "/images/editorial/photo-1581688127942-81aa836de621.webp",
+    image: "/images/hero/photo-1581688127942-81aa836de621.webp",
     alt: "کفپوش چوبی روشن در فضای داخلی کنار پنجره",
     eyebrow: "کفپوش و پارکت",
     title: "گرمای چوب زیر پای خانه",
@@ -21,7 +21,7 @@ const slides = [
     href: "/category/flooring",
   },
   {
-    image: "/images/editorial/photo-1742799431910-985c27143e98.webp",
+    image: "/images/hero/photo-1742799431910-985c27143e98.webp",
     alt: "کاغذ دیواری طرح‌دار در فضای داخلی",
     eyebrow: "دیوار و بافت",
     title: "دیوارها را وارد طراحی کن",
@@ -29,7 +29,7 @@ const slides = [
     href: "/category/wallpaper",
   },
   {
-    image: "/images/editorial/photo-1560185127-6ed189bf02f4.webp",
+    image: "/images/hero/photo-1560185127-6ed189bf02f4.webp",
     alt: "چیدمان و طراحی داخلی نشیمن مدرن با نور طبیعی",
     eyebrow: "طراحی داخلی",
     title: "از ایده تا یک فضای هماهنگ",
@@ -37,7 +37,7 @@ const slides = [
     href: "/category/interior-design",
   },
   {
-    image: "/images/editorial/photo-1600607687920-4e2a09cf159d.webp",
+    image: "/images/hero/photo-1600607687920-4e2a09cf159d.webp",
     alt: "فضای داخلی هوشمند با نورپردازی و پرده برقی",
     eyebrow: "خانه هوشمند",
     title: "راحتی را برای خانه برنامه‌ریزی کن",
@@ -45,7 +45,7 @@ const slides = [
     href: "/category/smart-home",
   },
   {
-    image: "/images/editorial/photo-1661820030641-35d02e9e9b37.webp",
+    image: "/images/hero/photo-1661820030641-35d02e9e9b37.webp",
     alt: "پوشش کف و فرش در نشیمن روشن",
     eyebrow: "موکت و پوشش کف",
     title: "نرمی و آرامش زیر پا",
@@ -53,7 +53,7 @@ const slides = [
     href: "/category/carpet",
   },
   {
-    image: "/images/editorial/photo-1518002903142-1f4ef6851390.webp",
+    image: "/images/hero/photo-1518002903142-1f4ef6851390.webp",
     alt: "کرکره سفید کنار پنجره و گیاه سبز",
     eyebrow: "پرده و کرکره",
     title: "قاب تازه‌ای برای نور خانه",
@@ -61,7 +61,7 @@ const slides = [
     href: "/category/curtain",
   },
   {
-    image: "/images/editorial/photo-1624900044729-fe57757bbaaa.webp",
+    image: "/images/hero/photo-1624900044729-fe57757bbaaa.webp",
     alt: "کف چوبی در کنار دیوار روشن",
     eyebrow: "پارکت و لمینت",
     title: "شروع طراحی از کف خانه",
@@ -69,7 +69,7 @@ const slides = [
     href: "/category/flooring",
   },
   {
-    image: "/images/editorial/photo-1780672824152-e671d2470d78.webp",
+    image: "/images/hero/photo-1780672824152-e671d2470d78.webp",
     alt: "کاغذ دیواری راه‌راه در فضای داخلی",
     eyebrow: "کاغذ دیواری",
     title: "طرحی که به خانه شخصیت می‌دهد",
@@ -126,7 +126,7 @@ export default function HeroCoverflow() {
               aria-hidden={!isActive}
               onClick={() => !isActive && setActive(index)}
             >
-              <img
+              {position !== "hidden" && <img
                 src={slide.image}
                 alt={isActive ? slide.alt : ""}
                 width={1200}
@@ -135,7 +135,7 @@ export default function HeroCoverflow() {
                 fetchPriority={index === 0 ? "high" : "low"}
                 decoding="async"
                 draggable={false}
-              />
+              />}
               <span className="kh-coverflow-card-shade" aria-hidden="true" />
               <div className="kh-coverflow-content">
                 <span>{slide.eyebrow}</span>
