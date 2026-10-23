@@ -24,7 +24,7 @@ export default function Categories() {
 
         <div className="bento-grid premium-bento">
           {categories.map(({ title, description, className, icon: Icon, href, number, photo }, index) => {
-            const base = `https://khonenama.ir/images/editorial/${photo}.webp`;
+            const base = `/images/home-v1/${photo}.webp`;
             return (
               <a className={`${className} premium-category-card`} href={href} key={href}>
                 <img

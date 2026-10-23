@@ -5,25 +5,25 @@ const items = [
     title: "کرکره پنجره و نور طبیعی",
     category: "پرده و پارچه",
     href: "/category/curtain",
-    img: "https://khonenama.ir/images/editorial/photo-1602612996819-3cd306f68b4e.webp",
+    img: "/images/home-v1/photo-1602612996819-3cd306f68b4e.webp",
   },
   {
     title: "چوب و کفپوش گرم",
     category: "پارکت و لمینت",
     href: "/category/flooring",
-    img: "https://khonenama.ir/images/editorial/photo-1600573472550-8090b5e0745e.webp",
+    img: "/images/home-v1/photo-1600573472550-8090b5e0745e.webp",
   },
   {
     title: "دیوار شاخص و بافت",
     category: "کاغذ دیواری",
     href: "/category/wallpaper",
-    img: "https://khonenama.ir/images/editorial/photo-1615874694520-474822394e73.webp",
+    img: "/images/home-v1/photo-1615874694520-474822394e73.webp",
   },
   {
     title: "خانه‌ای با نور و بافت",
     category: "طراحی داخلی",
     href: "/category/interior-design",
-    img: "https://khonenama.ir/images/editorial/photo-1616486338812-3dadae4b4ace.webp",
+    img: "/images/home-v1/photo-1616486338812-3dadae4b4ace.webp",
   },
 ];
 
