@@ -15,7 +15,7 @@ export async function GET(request: Request) {
   return Response.json({ ok: true, data: businesses.map(b => ({
     slug: b.slug, name: b.name, description: b.description, city: b.city, area: b.area,
     category: b.category, categoryName: b.categoryName, services: b.services,
-    coverUrl: b.media.find(m => m.kind === "cover")?.url || b.media.find(m=>m.kind === "image")?.url || "",
+    coverUrl: b.media.find(m => m.kind === "cover")?.thumbnailUrl || b.media.find(m => m.kind === "cover")?.url || b.media.find(m=>m.kind === "image")?.thumbnailUrl || b.media.find(m=>m.kind === "image")?.url || "",
     verified: ["verified", "professional"].includes(b.verificationStatus),
     rating: b.rating, reviewCount: b.reviewCount, promoted: b.promoted,
   })) }, { headers: { "Cache-Control": "no-store" } });
