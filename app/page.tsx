@@ -132,7 +132,7 @@ const organizationJsonLd = {
 };
 
 export default async function HomePage() {
-  const businesses = await listPublishedBusinesses({ limit: 6, requirePhoto: true });
+  const businesses = await listPublishedBusinesses({ limit: 6 });
   const shelf = businesses.map(b => ({ slug: b.slug, name: b.name, city: b.city, area: b.area, category: b.category, categoryName: b.categoryName, coverUrl: b.media.find(m => m.kind === "cover")?.thumbnailUrl || b.media.find(m => m.kind === "cover")?.url || b.media.find(m => m.kind === "image")?.thumbnailUrl || b.media.find(m => m.kind === "image")?.url || "", verified: ["verified", "professional"].includes(b.verificationStatus), rating: b.rating, reviewCount: b.reviewCount }));
   return (
     <main className="home-compact">
