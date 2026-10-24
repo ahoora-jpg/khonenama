@@ -16,7 +16,7 @@ export default function HomeBusinessShelf({ initialBusinesses }: { initialBusine
     setCategory(value); setLoading(true); setError(false);
     const id = ++requestId.current;
     try {
-      const response = await fetch("/api/v1/businesses?limit=6&category=" + encodeURIComponent(value), { cache: "no-store" });
+      const response = await fetch("/api/v1/businesses?limit=12&category=" + encodeURIComponent(value), { cache: "no-store" });
       const body = await response.json();
       if (!response.ok || !body.ok || !Array.isArray(body.data)) throw new Error("Unavailable");
       if (id === requestId.current) setItems(body.data);
@@ -26,7 +26,7 @@ export default function HomeBusinessShelf({ initialBusinesses }: { initialBusine
   const categoryName = categories.find(([value]) => value === category)?.[1];
   return <section className="section market-shelf" id="shops" aria-labelledby="market-shelf-title">
     <div className="shell">
-      <div className="market-section-heading"><div><span className="section-kicker">ویترین کسب‌وکارهای خونه‌نما</span><h2 id="market-shelf-title">غرفه‌ها را همین‌جا ببین.</h2><p>خرید اشتراک امتیاز مشتری نیست. ترتیب این فهرست از امتیازهای منتشرشده و تعداد نظرها تأثیر می‌گیرد؛ غرفه‌های جدید بدون نظر با امتیاز ساختگی نمایش داده نمی‌شوند.</p><p>نمونه‌کار، شهر و نظر مشتریان؛ اطلاعاتی که برای انتخاب نیاز داری.</p></div><a href={category ? "/category/" + category : "/search"}>مشاهده همه <ArrowUpLeft size={18} /></a></div>
+      <div className="market-section-heading"><div><span className="section-kicker">ویترین کسب‌وکارهای خونه‌نما</span><h2 id="market-shelf-title">غرفه‌ها را همین‌جا ببین.</h2><p>شهر، خدمت و نمونه‌کار هر غرفه را بررسی کن.</p></div><a href={category ? "/category/" + category : "/search"}>مشاهده همه <ArrowUpLeft size={18} /></a></div>
       <div className="market-filter-row" aria-label="انتخاب صنف">{categories.map(([value, label]) => <button type="button" aria-pressed={category === value} key={value} onClick={() => void selectCategory(value)}>{label}</button>)}</div>
       <div aria-live="polite" aria-busy={loading}>
         {loading ? <div className="market-loading" role="status">در حال دریافت غرفه‌ها…</div> : error ? <div className="market-empty"><Store size={30} /><h3>دریافت غرفه‌ها انجام نشد.</h3><p>دوباره تلاش کن یا وارد جستجوی کسب‌وکارها شو.</p><button className="pill-button" type="button" onClick={() => void selectCategory(category)}>تلاش دوباره</button></div> : items.length ? <div className="market-business-grid">{items.map(b => <article className="market-business-card" key={b.slug}>
@@ -34,6 +34,7 @@ export default function HomeBusinessShelf({ initialBusinesses }: { initialBusine
           <div className="market-business-copy"><small>{b.categoryName}</small><h3><a href={"/business/" + b.slug}>{b.name}</a>{b.verified && <BadgeCheck size={19} aria-label="کسب‌وکار تأییدشده" />}</h3><p><MapPin size={14} />{[b.city, b.area].filter(Boolean).join("، ") || "موقعیت ثبت نشده"}</p><a className="market-business-rating" href={"/business/" + b.slug + "#reviews"}><Star size={16} fill={b.reviewCount ? "currentColor" : "none"} />{b.reviewCount ? <><strong>{b.rating.toLocaleString("fa-IR", { maximumFractionDigits: 1 })}</strong><span>از ۵ · {b.reviewCount.toLocaleString("fa-IR")} نظر</span></> : <span>اولین نظر را بنویس</span>}</a><a className="market-business-open" href={"/business/" + b.slug}>ورود به غرفه <ArrowUpLeft size={17} /></a></div>
         </article>)}</div> : <div className="market-empty"><Store size={32} /><h3>{category ? "هنوز غرفه‌ای در دستهٔ «" + categoryName + "» منتشر نشده است." : "هنوز غرفه‌ای منتشر نشده است."}</h3><a className="pill-button" href={category ? "/category/" + category : "/search"}>جست‌وجوی کسب‌وکارها <ArrowUpLeft size={17} /></a></div>}
       </div>
+      <p className="market-shelf-disclosure">خرید اشتراک امتیاز مشتری نیست. ترتیب فهرست از امتیازهای منتشرشده و تعداد نظرها تأثیر می‌گیرد؛ برای غرفه‌های تازه امتیاز ساختگی نمایش داده نمی‌شود.</p>
     </div>
   </section>;
 }
