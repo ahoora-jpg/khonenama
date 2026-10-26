@@ -5,6 +5,24 @@
   const states = new WeakMap();
   const queue = [];
   let active = 0;
+  const debug = new URL(location.href).searchParams.get("imageDebug") === "1";
+  const stats = { watched: 0, recovered: 0, attempts: 0, failed: 0, requests: 0, retries: 0, lastError: "" };
+  function updateDebug() {
+    if (!debug || !document.body) return;
+    let box = document.getElementById("khonenama-image-debug");
+    if (!box) {
+      box = document.createElement("pre");
+      box.id = "khonenama-image-debug";
+      box.dir = "rtl";
+      box.style.cssText = "position:fixed;bottom:12px;right:12px;z-index:2147483647;max-width:90vw;max-height:220px;overflow:auto;white-space:pre-wrap;padding:12px;background:#fff;color:#111;border:2px solid #975534;font:13px/1.8 Tahoma,sans-serif";
+      box.setAttribute("role", "status");
+      document.body.appendChild(box);
+    }
+    box.textContent = "برنامهٔ بازیابی عکس فعال است\nعکس‌های شناسایی‌شده: " + stats.watched +
+      "\nبازسازی‌شده: " + stats.recovered + "\nتلاش بازیابی: " + stats.attempts +
+      "\nدرخواست قطعه: " + stats.requests + "\nتکرار درخواست: " + stats.retries +
+      "\nتلاش ناموفق: " + stats.failed + "\nآخرین خطا: " + (stats.lastError || "ندارد");
+  }
 
   function eligible(source) {
     try {
@@ -22,7 +40,8 @@
     const url = `/api/image-chunk?path=${encodeURIComponent(path)}&index=${index}`;
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
-        const response = await fetch(url, { signal: AbortSignal.timeout(7000), credentials: "omit" });
+        stats.requests++; updateDebug();
+        const response = await fetch(url, { signal: AbortSignal.timeout(12000), credentials: "omit" });
         if ([400, 403, 404, 413, 416].includes(response.status)) throw Object.assign(Error("unavailable"), { permanent: true });
         if (!response.ok || response.headers.get("X-Chunk-Index") !== String(index)) throw Error("chunk failed");
         const total = Number(response.headers.get("X-Image-Length"));
@@ -32,7 +51,9 @@
         if (expected < 1 || bytes.byteLength !== expected) throw Error("incomplete chunk");
         return { total, bytes };
       } catch (error) {
+        stats.lastError = error.name + ": " + error.message; updateDebug();
         if (error.permanent || attempt === 2) throw error;
+        stats.retries++; updateDebug();
         await new Promise(resolve => setTimeout(resolve, 250 * (attempt + 1)));
       }
     }
@@ -41,6 +62,7 @@
   async function restoreImage(img, state) {
     if (states.get(img) !== state || !img.isConnected || (img.complete && img.naturalWidth > 0) || img.getAttribute("src") !== state.source) return;
     state.attempts++;
+    stats.attempts++; updateDebug();
     const srcset = img.getAttribute("srcset");
     img.removeAttribute("srcset");
     img.src = EMPTY; // Cancel the stalled full-size transfer.
@@ -61,8 +83,10 @@
       img.removeAttribute("srcset");
       const objectUrl = URL.createObjectURL(new Blob(parts, { type: "image/webp" }));
       img.src = objectUrl;
+      stats.recovered++; updateDebug();
       setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
     } catch {
+      stats.failed++; updateDebug();
       if (states.get(img) === state && img.isConnected && img.getAttribute("src") === EMPTY) {
         if (srcset) img.setAttribute("srcset", srcset);
         img.src = state.source;
@@ -106,6 +130,7 @@
     if (previous?.source === source) return;
     if (previous?.timer) clearTimeout(previous.timer);
     states.set(img, { source, path, timer: null, attempts: 0, queued: false });
+    stats.watched++; updateDebug();
     intersection.observe(img);
   }
 
@@ -126,4 +151,5 @@
 
   // The deferred script can run before DOMContentLoaded; other stalled modules must not block recovery.
   start();
+  if (debug) setTimeout(updateDebug, 2000);
 })();

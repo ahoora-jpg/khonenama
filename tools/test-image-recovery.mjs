@@ -3,11 +3,19 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 
-const script=readFileSync('public/image-rescue.js','utf8');
+const script=readFileSync('public/image-rescue.js','utf8').replace(/\r\n/g,'\n');
 const original=readFileSync('public/images/editorial/photo-1602612996819-3cd306f68b4e.webp');
 
-function fixture(alwaysFail=false){
+test('the bundled inline payload is exactly the tested script and cannot terminate its HTML element',()=>{
+  const generated=readFileSync('lib/image-rescue-source.ts','utf8');
+  const payload=JSON.parse(generated.match(/export const imageRescueSource = ([\s\S]*);\s*$/)[1]);
+  assert.equal(payload,script);
+  assert.doesNotMatch(payload,/<\/script/i);
+});
+
+function fixture(alwaysFail=false,debug=false){
   const calls=[];let blob,resolveDone;
+  const elements=new Map();
   const done=new Promise(resolve=>resolveDone=resolve);
   const source='/images/editorial/photo-1602612996819-3cd306f68b4e.webp';
   class Image {
@@ -28,8 +36,10 @@ function fixture(alwaysFail=false){
     static revokeObjectURL(){}
   }
   vm.runInNewContext(script,{
-    URL:BrowserURL,Blob,AbortSignal,HTMLImageElement:Image,location:{href:'https://khonenama.ir/'},
-    document:{readyState:'loading',documentElement:{},querySelectorAll:()=>[image],addEventListener(){throw Error('DOMContentLoaded must not be required');}},
+    URL:BrowserURL,Blob,AbortSignal,HTMLImageElement:Image,location:{href:'https://khonenama.ir/'+(debug?'?imageDebug=1':'')},
+    document:{readyState:'loading',documentElement:{},body:{appendChild:el=>elements.set(el.id,el)},
+      getElementById:id=>elements.get(id),createElement:()=>({style:{},setAttribute(){}}),
+      querySelectorAll:()=>[image],addEventListener(){throw Error('DOMContentLoaded must not be required');}},
     IntersectionObserver:class{constructor(cb){this.cb=cb;}observe(target){queueMicrotask(()=>this.cb([{isIntersecting:true,target}]));}unobserve(){}},
     MutationObserver:class{observe(){}},
     setTimeout:(fn,ms)=>ms>=60000?0:setTimeout(fn,0),clearTimeout,queueMicrotask,
@@ -44,16 +54,17 @@ function fixture(alwaysFail=false){
       return new Response(original.subarray(index*48000,(index+1)*48000),{headers:{'X-Chunk-Index':String(index),'X-Image-Length':String(original.length)}});
     },
   });
-  return {done,calls,image,source,blob:()=>blob};
+  return {done,calls,image,source,blob:()=>blob,debugText:()=>elements.get('khonenama-image-debug')?.textContent};
 }
 
 test('recovery starts without DOMContentLoaded and reconstructs exact bytes after a transient failure',async()=>{
-  const f=fixture();
+  const f=fixture(false,true);
   await Promise.race([f.done,new Promise((_,reject)=>setTimeout(()=>reject(Error('recovery did not finish')),2000).unref())]);
   assert.equal(f.image.getAttribute('src'),'blob:restored');
   assert.deepEqual(Buffer.from(await f.blob().arrayBuffer()),original);
   assert.equal(f.calls.filter(i=>i===0).length,2);
   assert.equal(f.calls.length,Math.ceil(original.length/48000)+1);
+  assert.match(f.debugText(),/بازسازی‌شده: 1/);
 });
 
 test('persistent failure retries finitely and restores the original source and srcset',async()=>{
