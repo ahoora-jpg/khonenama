@@ -28,6 +28,7 @@ jobs:
           test -n "$CLOUDFLARE_ACCOUNT_ID" || (echo "Missing Cloudflare account ID" && exit 1)
       - run: npm ci
       - run: node --experimental-strip-types --test tools/test-sms-center.mjs
+      - run: node --test tools/test-image-recovery.mjs
       - run: node --test tools/test-custom-capacity.mjs tools/test-media-retention.mjs
       - run: node --test tools/test-owner-slug-limit.mjs tools/test-model-quotes.mjs
       - run: node --test tools/test-password-recovery.mjs tools/test-profile-reminders.mjs tools/test-business-installments.mjs
