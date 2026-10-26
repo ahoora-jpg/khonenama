@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>بررسی اتصال خونه‌نما</title>
+<style>body{font:16px/1.9 Tahoma,sans-serif;max-width:760px;margin:28px auto;padding:16px;background:#faf8f4;color:#222}button{font:inherit;padding:8px 20px;cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:white;padding:16px;border:1px solid #ddd;direction:ltr;text-align:left}#progress{padding:12px;background:#fff}</style>
+<h1>بررسی اتصال خونه‌نما</h1>
+<p>این صفحه محل توقف بارگذاری را بررسی می‌کند. رمز، شماره تماس و اطلاعات حساب خوانده یا ارسال نمی‌شود. نتیجه فقط در همین صفحه نمایش داده می‌شود.</p>
+<p id="progress" role="status" aria-live="polite">در حال بررسی؛ لطفاً این صفحه را باز نگه دارید.</p>
+<pre id="report" aria-label="گزارش اتصال"></pre>
+<button id="copy" disabled>کپی گزارش</button>
+<script>
+(() => {
+  'use strict';
+  const report = document.getElementById('report');
+  const progress = document.getElementById('progress');
+  const copy = document.getElementById('copy');
+  const results = [];
+  let stylesheet;
+  async function probe(label, path) {
+    const start = performance.now();
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    const result = { file: label, status: null, headersMs: null, bytes: 0, encoding: null, protocol: null, complete: false };
+    progress.textContent = 'در حال بررسی: ' + label;
+    try {
+      const url = new URL(path, location.origin);
+      if (url.origin !== location.origin) throw Error('invalid_origin');
+      const response = await fetch(url, { cache: 'no-store', credentials: 'omit', signal: controller.signal });
+      result.status = response.status;
+      result.headersMs = Math.round(performance.now() - start);
+      result.encoding = response.headers.get('content-encoding');
+      if (path === '/') {
+        const link = response.headers.get('link') || '';
+        const css = link.match(/<([^>]+\.css(?:\?[^>]*)?)>/);
+        if (css && css[1].startsWith('/_next/static/')) stylesheet = css[1];
+      }
+      if (!response.body) throw Error('missing_body');
+      const reader = response.body.getReader();
+      try {
+        while (true) {
+          const part = await reader.read();
+          if (part.done) break;
+          result.bytes += part.value.byteLength;
+          if (result.bytes > 2 * 1024 * 1024) { controller.abort(); throw Error('size_limit'); }
+        }
+      } finally { reader.releaseLock(); }
+      result.complete = response.ok;
+      if (!response.ok) result.error = 'http_' + response.status;
+    } catch (error) {
+      result.error = controller.signal.aborted ? 'timeout' : (error.name || 'network_error');
+    } finally {
+      clearTimeout(timer);
+      result.totalMs = Math.round(performance.now() - start);
+      const entry = performance.getEntriesByName(new URL(path, location.origin).href).at(-1);
+      result.protocol = entry?.nextHopProtocol || null;
+      results.push(result);
+      report.textContent = JSON.stringify({ version: 1, results }, null, 2);
+    }
+  }
+  copy.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(report.textContent); copy.textContent = 'گزارش کپی شد'; }
+    catch { copy.textContent = 'متن گزارش را انتخاب و کپی کنید'; }
+  });
+  async function run() {
+    await probe('robots', '/robots.txt');
+    await probe('home', '/');
+    if (stylesheet) await probe('stylesheet', stylesheet);
+    await probe('font', '/fonts/digi-hamishe.woff2');
+    await probe('image', '/images/editorial/photo-1602612996819-3cd306f68b4e.webp');
+    progress.textContent = 'بررسی پایان یافت. «کپی گزارش» را بزنید و نتیجه را در گفت‌وگو بفرستید.';
+    copy.disabled = false;
+  }
+  run().catch(() => { progress.textContent = 'بررسی متوقف شد؛ نتیجهٔ موجود را کپی کنید.'; copy.disabled = false; });
+})();
+</script>
+</html>
