@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import {estimateSms} from "@/lib/sms-text";
 
 type Group={id:string;name:string};
 type Campaign={id:string;name:string;body:string;status:string;max_recipients:number;group_count:number;eligible_count:number;queued_count:number};
@@ -11,15 +12,16 @@ export default function SmsCampaigns(){
   const [notice,setNotice]=useState(""),[busy,setBusy]=useState(false);
   const [contacts,setContacts]=useState<Contact[]>([]),[memberId,setMemberId]=useState("");
   const [authorized,setAuthorized]=useState(false);
-  async function refresh(){try{const [response,people]=await Promise.all([fetch("/api/admin/sms/campaigns",{cache:"no-store"}),fetch("/api/admin/sms",{cache:"no-store"})]);const data=await response.json();setAuthorized(response.ok);if(response.ok){setGroups(data.groups);setCampaigns(data.campaigns);}if(people.ok)setContacts((await people.json()).contacts||[]);}catch{/* Main panel shows connection errors. */}}
+  const [liveSendingEnabled,setLiveSendingEnabled]=useState(false);
+  async function refresh(){try{const [response,people]=await Promise.all([fetch("/api/admin/sms/campaigns",{cache:"no-store"}),fetch("/api/admin/sms",{cache:"no-store"})]);const data=await response.json();setAuthorized(response.ok);if(response.ok){setGroups(data.groups);setCampaigns(data.campaigns);setLiveSendingEnabled(data.liveSendingEnabled===true);}if(people.ok)setContacts((await people.json()).contacts||[]);}catch{/* Main panel shows connection errors. */}}
   useEffect(()=>{void refresh();const listener=()=>void refresh();window.addEventListener("sms-admin-ready",listener);return()=>window.removeEventListener("sms-admin-ready",listener);},[]);
   async function act(fields:Record<string,unknown>){setBusy(true);try{const response=await fetch("/api/admin/sms/campaigns",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(fields)});const data=await response.json();if(!response.ok)throw Error("عملیات انجام نشد؛ ورودی و وضعیت کمپین را بررسی کنید.");setNotice("ثبت شد.");await refresh();return data;}catch(e){setNotice((e as Error).message);return null;}finally{setBusy(false);}}
   async function importFile(file:File){const csv=await file.text();const data=await act({action:"importCsv",groupId,csv});if(data)setNotice(`${data.imported} مخاطب وارد شد؛ رضایت تبلیغاتی به‌صورت خودکار ثبت نشد. ${data.invalid} شماره نامعتبر بود.`);}
-  const ascii=/^[\x20-\x7E\n\r]*$/.test(body),length=Array.from(body).length;
-  const parts=length===0?0:length<=(ascii?160:70)?1:Math.ceil(length/(ascii?153:67));
+  const {parts}=estimateSms(body);
   if(!authorized)return null;
-  return <section dir="rtl" style={{maxWidth:1100,margin:"2rem auto",padding:"1rem",border:"1px solid #ddd",borderRadius:16}}>
+  return <section id="sms-campaigns" dir="rtl" style={{maxWidth:1100,margin:"2rem auto",padding:"1rem",border:"1px solid #ddd",borderRadius:16}}>
     <h2>گروه‌ها و کمپین‌ها</h2><p>فایل مخاطبان به‌تنهایی مجوز ارسال تبلیغاتی نیست. کمپین فقط مخاطبان دارای رضایت مستند را در زمان ارسال انتخاب می‌کند.</p>
+    {!liveSendingEnabled&&<p className="sms-setup-banner">در مرحلهٔ بازبینی می‌توانید گروه و پیش‌نویس کمپین بسازید؛ تأیید و شروع ارسال غیرفعال است.</p>}
     {notice&&<p role="status">{notice}</p>}
     <form onSubmit={async e=>{e.preventDefault();const data=await act({action:"group",name:groupName});if(data){setGroupId(data.id);setGroupName("");}}}>
       <label>نام گروه <input value={groupName} onChange={e=>setGroupName(e.target.value)} required/></label> <button disabled={busy}>ساخت گروه</button>
@@ -39,6 +41,6 @@ export default function SmsCampaigns(){
       <button disabled={busy||!groupId}>ثبت پیش‌نویس</button>
     </form>
     <h3>فهرست کمپین‌ها</h3>
-    <div style={{overflowX:"auto"}}><table style={{width:"100%",textAlign:"right"}}><thead><tr><th>نام و متن</th><th>وضعیت</th><th>اعضای گروه</th><th>دارای رضایت</th><th>ثبت‌شده در صف</th><th>عملیات</th></tr></thead><tbody>{campaigns.map(c=><tr key={c.id}><td><details><summary>{c.name}</summary><p>{c.body}</p></details></td><td>{({draft:"پیش‌نویس",approved:"تأییدشده",running:"در حال ثبت",paused:"متوقف",completed:"پایان‌یافته",cancelled:"لغوشده"} as Record<string,string>)[c.status]||c.status}</td><td>{c.group_count}</td><td>{c.eligible_count}</td><td>{c.queued_count} / {c.max_recipients}</td><td>{c.status==="draft"&&<button disabled={busy} onClick={()=>{if(window.confirm("این کمپین با رضایت‌های ثبت‌شده وارد صف شود؟"))void act({action:"approve",id:c.id});}}>تأیید</button>}{c.status==="running"&&<button disabled={busy} onClick={()=>void act({action:"pause",id:c.id})}>توقف</button>}{c.status==="paused"&&<button disabled={busy} onClick={()=>void act({action:"resume",id:c.id})}>ادامه</button>}{["draft","approved","running","paused"].includes(c.status)&&<button disabled={busy} onClick={()=>void act({action:"cancel",id:c.id})}>لغو</button>}</td></tr>)}</tbody></table></div>
+    <div className="sms-table-scroll"><table style={{width:"100%",textAlign:"right"}}><thead><tr><th>نام و متن</th><th>وضعیت</th><th>اعضای گروه</th><th>دارای رضایت</th><th>ثبت‌شده در صف</th><th>عملیات</th></tr></thead><tbody>{campaigns.map(c=><tr key={c.id}><td><details><summary>{c.name}</summary><p>{c.body}</p></details></td><td>{({draft:"پیش‌نویس",approved:"تأییدشده",running:"در حال ثبت",paused:"متوقف",completed:"پایان‌یافته",cancelled:"لغوشده"} as Record<string,string>)[c.status]||c.status}</td><td>{c.group_count}</td><td>{c.eligible_count}</td><td>{c.queued_count} / {c.max_recipients}</td><td>{c.status==="draft"&&<button disabled={busy||!liveSendingEnabled} onClick={()=>{if(window.confirm("این کمپین با رضایت‌های ثبت‌شده وارد صف شود؟"))void act({action:"approve",id:c.id});}}>تأیید</button>}{c.status==="running"&&<button disabled={busy} onClick={()=>void act({action:"pause",id:c.id})}>توقف</button>}{c.status==="paused"&&<button disabled={busy||!liveSendingEnabled} onClick={()=>void act({action:"resume",id:c.id})}>ادامه</button>}{["draft","approved","running","paused"].includes(c.status)&&<button disabled={busy} onClick={()=>void act({action:"cancel",id:c.id})}>لغو</button>}</td></tr>)}{!campaigns.length&&<tr><td colSpan={6}>هنوز کمپینی ثبت نشده است.</td></tr>}</tbody></table></div>
   </section>;
 }

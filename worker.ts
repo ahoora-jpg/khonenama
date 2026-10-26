@@ -6,6 +6,7 @@ import { cleanExpiredMedia } from "./lib/server/media-retention";
 import { reconcileSms } from "./lib/server/sms/reconcile";
 import { routeSmsHost } from "./lib/server/sms/host";
 import { ensureSmsSchema } from "./lib/server/sms/schema";
+import { liveSmsEnabled } from "./lib/server/sms/config";
 export default {
  async fetch(request:Request, env:any, ctx:any){
   const routed=routeSmsHost(request);
@@ -21,6 +22,6 @@ export default {
   ctx.waitUntil(drainBusinessWebPush(env.DB));
   ctx.waitUntil(cleanExpiredMedia(env.DB));
   ctx.waitUntil(drainProfileReminders(env.DB, env).catch(()=>console.warn("PROFILE_REMINDER_JOB_FAILED")));
-  ctx.waitUntil(ensureSmsSchema(env.DB).then(()=>reconcileSms(env.DB)).catch(()=>console.warn("SMS_RECONCILE_JOB_FAILED")));
+  ctx.waitUntil(ensureSmsSchema(env.DB).then(()=>reconcileSms(env.DB,{liveSendingEnabled:liveSmsEnabled(env)})).catch(()=>console.warn("SMS_RECONCILE_JOB_FAILED")));
  },
 };

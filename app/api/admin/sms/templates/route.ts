@@ -1,16 +1,18 @@
 import {env} from "cloudflare:workers";
 import {isSmsAdminRequest} from "@/lib/server/sms/admin-auth";
 import {TENANT,noStore} from "@/lib/server/sms/domain";
+import {liveSmsEnabled} from "@/lib/server/sms/config";
 export async function GET(request:Request){
   if(!await isSmsAdminRequest(request))return noStore({ok:false},401);
   const db=(env as any).DB;
   const rows=await db.prepare("SELECT id,code,category,body,enabled FROM sms_templates WHERE tenant_id=? ORDER BY code").bind(TENANT).all();
-  return noStore({ok:true,templates:rows.results});
+  return noStore({ok:true,templates:rows.results,liveSendingEnabled:liveSmsEnabled(env as any)});
 }
 export async function POST(request:Request){
   if(!await isSmsAdminRequest(request))return noStore({ok:false},401);
   const db=(env as any).DB,input=await request.json().catch(()=>null);
   if(input?.action==="toggle"){
+    if(input.confirm==="ENABLE"&&!liveSmsEnabled(env as any))return noStore({ok:false,error:"LIVE_SEND_DISABLED"},403);
     if(!/^[a-z0-9_]{2,60}$/.test(input.code||"") || input.confirm!=="ENABLE" && input.confirm!=="DISABLE")return noStore({ok:false,error:"CONFIRMATION_REQUIRED"},400);
     const enabled=input.confirm==="ENABLE"?1:0;
     const row=await db.prepare("UPDATE sms_templates SET enabled=? WHERE tenant_id=? AND code=? RETURNING id").bind(enabled,TENANT,input.code).first();

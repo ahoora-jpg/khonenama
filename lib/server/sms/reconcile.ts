@@ -1,6 +1,6 @@
 import { TENANT } from "./domain";
 
-export async function reconcileSms(db:any):Promise<void> {
+export async function reconcileSms(db:any,options:{liveSendingEnabled:boolean}={liveSendingEnabled:false}):Promise<void> {
   // A claimed task may already have reached Android. Never requeue it automatically.
   const uncertain=await db.prepare(`UPDATE sms_messages SET status='unknown',updated_at=CURRENT_TIMESTAMP
     WHERE id IN (SELECT id FROM sms_messages WHERE tenant_id=? AND status='leased' AND lease_until<CURRENT_TIMESTAMP LIMIT 100)
@@ -13,9 +13,10 @@ export async function reconcileSms(db:any):Promise<void> {
   // Retain operational metadata; erase sensitive payloads after 90 days.
   await db.prepare(`UPDATE sms_messages SET body='[حذف‌شده طبق سیاست نگهداری]'
     WHERE tenant_id=? AND created_at<datetime('now','-90 days')
-      AND status IN ('sent','delivered','failed','cancelled','unknown')
+      AND status IN ('draft','sent','delivered','failed','cancelled','unknown')
       AND body<>'[حذف‌شده طبق سیاست نگهداری]'`).bind(TENANT).run();
   await db.prepare(`DELETE FROM sms_inbound_messages WHERE tenant_id=? AND created_at<datetime('now','-90 days')`).bind(TENANT).run();
+  if(!options.liveSendingEnabled)return;
   const campaigns=await db.prepare(`SELECT id,group_id,body,max_recipients FROM sms_campaigns
     WHERE tenant_id=? AND status IN ('approved','running') AND (scheduled_at IS NULL OR julianday(scheduled_at)<=julianday('now'))
       AND EXISTS(SELECT 1 FROM sms_gateways g JOIN sms_gateway_agents a ON a.gateway_id=g.id

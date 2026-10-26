@@ -1,6 +1,7 @@
 import {env} from "cloudflare:workers";
 import {isSmsAdminRequest} from "@/lib/server/sms/admin-auth";
 import {TENANT,noStore,normalizePhone} from "@/lib/server/sms/domain";
+import {liveSmsEnabled} from "@/lib/server/sms/config";
 
 function csvRows(value:string):string[][]{
   const rows:string[][]=[];let row:string[]=[],field="",quoted=false;
@@ -77,6 +78,7 @@ export async function POST(request:Request){
     return noStore({ok:true,id});
   }
   if(["approve","pause","resume","cancel"].includes(body.action)){
+    if(["approve","resume"].includes(body.action)&&!liveSmsEnabled(env as any))return noStore({ok:false,error:"LIVE_SEND_DISABLED"},403);
     const id=String(body.id||"");
     const update:Record<string,[string,string]>={approve:["draft","approved"],pause:["running","paused"],resume:["paused","running"],cancel:["draft","cancelled"]};
     const pair=update[body.action];
@@ -106,5 +108,5 @@ export async function GET(request:Request){
       (SELECT COUNT(*) FROM sms_campaign_recipients cr WHERE cr.campaign_id=c.id) AS queued_count
       FROM sms_campaigns c WHERE c.tenant_id=? ORDER BY c.created_at DESC LIMIT 50`).bind(TENANT).all(),
   ]);
-  return noStore({ok:true,groups:groups.results,campaigns:campaigns.results});
+  return noStore({ok:true,groups:groups.results,campaigns:campaigns.results,liveSendingEnabled:liveSmsEnabled(env as any)});
 }

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { KeyRound, ShieldCheck } from "lucide-react";
 
-export default function AdminLoginForm({ redirectTo = "/admin/businesses" }: { redirectTo?: string }) {
+export default function AdminLoginForm({ redirectTo = "/admin/businesses", keyLabel = "کلید مدیریت", title = "ورود مدیر" }: { redirectTo?: string; keyLabel?: string; title?: string }) {
   const [key, setKey] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -45,16 +45,16 @@ export default function AdminLoginForm({ redirectTo = "/admin/businesses" }: { r
     >
       <span className="business-login-icon"><KeyRound size={22} /></span>
       <span className="section-kicker">مدیریت خونه نما</span>
-      <h1>ورود مدیر</h1>
+      <h1>{title}</h1>
       <p>این بخش فقط برای مدیریت داخلی خونه نماست.</p>
       <label>
-        <span>کلید مدیریت</span>
+        <span>{keyLabel}</span>
         <input
           type="password"
           name="khonenama_admin_access_key"
           value={key}
           onChange={(e) => setKey(e.target.value)}
-          autoComplete="new-password"
+          autoComplete="current-password"
           autoCapitalize="none"
           spellCheck={false}
         />
