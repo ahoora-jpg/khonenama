@@ -27,7 +27,8 @@
     { "binding": "BUSINESS_MEDIA", "bucket_name": "khonenama-business-media" }
   ],
   "routes": [
-    { "pattern": "www.khonenama.ir/*", "zone_name": "khonenama.ir" }
+    { "pattern": "www.khonenama.ir/*", "zone_name": "khonenama.ir" },
+    { "pattern": "sms.khonenama.ir/*", "zone_name": "khonenama.ir" }
   ],
   "vars": {
     "RECOVERY_EMAIL_FROM": "noreply@khonenama.ir",

@@ -13,8 +13,9 @@ function load(path, imports={}) {
 const schema=load('lib/server/billing-schema.ts'),activation=load('lib/server/billing-activation.ts');
 const plans=load('lib/business-plans.ts');
 // Keep existing billing invariants exercised at the regular, post-promotion price.
-const service=load('lib/server/billing.ts',{'@/lib/business-plans':{...plans,discountedMonthlyPrice:(code,normal)=>plans.discountedMonthlyPrice(code,normal,Date.parse('2027-01-20T20:30:00Z'))},'./billing-schema':schema,'./billing-activation':activation});
-const promotionalService=load('lib/server/billing.ts',{'@/lib/business-plans':{...plans,discountedMonthlyPrice:(code,normal)=>plans.discountedMonthlyPrice(code,normal,Date.parse('2027-01-20T20:29:59Z'))},'./billing-schema':schema,'./billing-activation':activation});
+const sms={queueTransactionalEvent:async()=>false};
+const service=load('lib/server/billing.ts',{'@/lib/business-plans':{...plans,discountedMonthlyPrice:(code,normal)=>plans.discountedMonthlyPrice(code,normal,Date.parse('2027-01-20T20:30:00Z'))},'./billing-schema':schema,'./billing-activation':activation,'./sms/transactional':sms});
+const promotionalService=load('lib/server/billing.ts',{'@/lib/business-plans':{...plans,discountedMonthlyPrice:(code,normal)=>plans.discountedMonthlyPrice(code,normal,Date.parse('2027-01-20T20:29:59Z'))},'./billing-schema':schema,'./billing-activation':activation,'./sms/transactional':sms});
 const providerModule=load('lib/server/payment-provider.ts');
 function fixture(){
   const sql=new DatabaseSync(':memory:');sql.exec(readFileSync('db/schema.sql','utf8'));

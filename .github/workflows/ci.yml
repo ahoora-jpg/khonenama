@@ -23,6 +23,8 @@ jobs:
       - name: Security audit
         run: npm audit --audit-level=high
       - run: npx tsc --noEmit
+      - name: SMS center mock gateway and migration tests
+        run: node --experimental-strip-types --test tools/test-sms-center.mjs
       - run: node --test tools/test-build-glob.mjs
       - name: Seller acquisition aggregate event boundaries
         run: node --test tools/test-seller-acquisition.mjs
