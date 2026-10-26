@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./inner-pages.css";
 import "@/components/home-refresh.css";
+import { imageRescueSource } from "@/lib/image-rescue-source";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://khonenama.ir"),
@@ -40,7 +41,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fa" dir="rtl">
-      <head><link rel="preload" href="/fonts/digi-hamishe.woff2" as="font" type="font/woff2" crossOrigin="anonymous"/><link rel="icon" href="/favicon.ico?v=2" sizes="any"/><link rel="icon" type="image/png" href="/khonenama-icon.png?v=2"/><link rel="apple-touch-icon" href="/khonenama-icon.png?v=2"/><script src="/image-rescue.js" defer /></head>
+      <head><link rel="preload" href="/fonts/digi-hamishe.woff2" as="font" type="font/woff2" crossOrigin="anonymous"/><link rel="icon" href="/favicon.ico?v=2" sizes="any"/><link rel="icon" type="image/png" href="/khonenama-icon.png?v=2"/><link rel="apple-touch-icon" href="/khonenama-icon.png?v=2"/><script dangerouslySetInnerHTML={{__html:imageRescueSource}} /></head>
       <body>{children}</body>
     </html>
   );
