@@ -499,6 +499,15 @@
   padding:0 12px;
   outline:0;
 }
+.admin-password-field { position:relative; }
+.admin-login-card .admin-password-field input { padding-left:48px; direction:ltr; text-align:left; }
+.admin-login-card .admin-password-toggle {
+  position:absolute; left:5px; top:50%; transform:translateY(-50%);
+  width:38px; height:38px; display:grid; place-items:center;
+  padding:0; margin:0; border:0; border-radius:8px;
+  background:transparent; color:#6d5b4f; box-shadow:none; cursor:pointer;
+}
+.admin-login-card .admin-password-toggle:focus-visible { outline:3px solid #bc8f4c; outline-offset:1px; }
 .admin-moderation {
   display:grid;
   gap:16px;
