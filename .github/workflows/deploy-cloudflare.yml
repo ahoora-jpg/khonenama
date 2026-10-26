@@ -27,7 +27,7 @@ jobs:
           test -n "$CLOUDFLARE_API_TOKEN" || (echo "Missing GitHub Actions secret: CLOUDFLARE_API_TOKEN" && exit 1)
           test -n "$CLOUDFLARE_ACCOUNT_ID" || (echo "Missing Cloudflare account ID" && exit 1)
       - run: npm ci
-      - run: node --experimental-strip-types --test tools/test-sms-center.mjs
+      - run: node --experimental-strip-types --test tools/test-sms-center.mjs tools/test-sms-admin.mjs
       - run: node --test tools/test-image-recovery.mjs
       - run: node --test tools/test-custom-capacity.mjs tools/test-media-retention.mjs
       - run: node --test tools/test-owner-slug-limit.mjs tools/test-model-quotes.mjs

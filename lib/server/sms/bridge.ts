@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import { GATEWAY, TENANT, canTransition, gatewayState, isOptOut, noStore, normalizePhone, type SmsState } from "./domain";
 import { CLAIM_SQL } from "./queue";
+import {liveSmsEnabled} from "./config";
 
 async function digest(value: string): Promise<Uint8Array> {
   return new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value)));
@@ -38,6 +39,7 @@ export async function handleBridge(request: Request): Promise<Response> {
     return noStore({ok:true});
   }
   if (input.action==="claim") {
+    if(!liveSmsEnabled(env as any))return noStore({ok:false,error:"LIVE_SEND_DISABLED"},403);
     const id=crypto.randomUUID(), token=crypto.randomUUID();
     const rawInterval=Number((env as any).SMS_MIN_INTERVAL_SECONDS||15);
     const interval=Number.isFinite(rawInterval)?Math.max(15,Math.min(3600,Math.round(rawInterval))):15;
@@ -50,6 +52,7 @@ export async function handleBridge(request: Request): Promise<Response> {
     return noStore({ok:true,job:{id:row.id,phone:contact.phone_e164,body:row.body,expiresAt:row.expires_at,leaseToken:row.lease_token,gatewayId:row.id,simNumber:2}});
   }
   if(input.action==="authorize"){
+    if(!liveSmsEnabled(env as any))return noStore({ok:false,error:"LIVE_SEND_DISABLED"},403);
     const id=typeof input.messageId==="string"?input.messageId:"";
     const token=typeof input.leaseToken==="string"?input.leaseToken:"";
     const permitted=await db.prepare(`SELECT 1 AS allowed FROM sms_messages m WHERE m.id=? AND m.tenant_id=?

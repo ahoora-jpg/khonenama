@@ -1,10 +1,12 @@
-# Cloudflare Worker secrets; enter through wrangler secret put, never commit values.
+# Optional extra SMS administrator key; leave absent to use the existing site administrator role.
 SMS_ADMIN_ACCESS_KEY=
+# Bridge secret is configured only during the later phone integration phase.
 SMS_BRIDGE_TOKEN=
 
 # Existing site secret used by its administrator session.
 ADMIN_ACCESS_KEY=
 SMS_MIN_INTERVAL_SECONDS=15
+SMS_LIVE_SEND_ENABLED=false
 
 # Windows bridge: local-only environment variables set by Start-SmsBridge.ps1.
 SMS_BRIDGE_CONFIG=tools/sms-bridge/sms-bridge.config.json

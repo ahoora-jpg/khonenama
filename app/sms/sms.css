@@ -1,0 +1,23 @@
+.sms-workspace{max-width:1240px;padding-bottom:48px;color:#242724}
+.sms-workspace section{scroll-margin-top:24px}
+.sms-nav,.sms-toolbar{display:flex;flex-wrap:wrap;gap:12px;padding-block:16px}
+.sms-nav a{padding:8px 14px;background:#fff;border:1px solid #d8ded9;border-radius:12px;text-decoration:none}
+.sms-workspace button{font:inherit;background:#234e43;color:#fff;border:1px solid #234e43;border-radius:10px;padding:9px 14px;cursor:pointer;margin:4px}
+.sms-workspace button:disabled{opacity:.45;cursor:not-allowed}
+.sms-workspace input,.sms-workspace select,.sms-workspace textarea{font:inherit;max-width:100%;padding:10px;border:1px solid #bcc9c1;border-radius:9px;background:#fff;color:#242724;margin-block:6px}
+.sms-workspace input[type=file]{max-width:290px}
+.sms-workspace textarea{resize:vertical}
+.sms-workspace label{line-height:1.9}
+.sms-workspace button:focus-visible,.sms-workspace input:focus-visible,.sms-workspace select:focus-visible,.sms-workspace textarea:focus-visible,.sms-nav a:focus-visible{outline:3px solid #bc8f4c;outline-offset:3px}
+.sms-setup-banner,.sms-access-card{background:#f3f7f4;border:1px solid #bdcdc2;border-radius:14px;padding:16px;margin-block:16px}
+.sms-setup-banner p{margin-bottom:0}
+.sms-table-scroll{overflow:auto;max-height:460px;border:1px solid #d9dfdb;border-radius:12px;margin-block:16px}
+.sms-workspace table{border-collapse:collapse;font-size:.94rem;background:#fff}
+.sms-workspace th,.sms-workspace td{padding:12px;border-bottom:1px solid #e3e8e4;vertical-align:top}
+.sms-workspace th{background:#eef3ef;position:sticky;top:0}
+.sms-message-detail{padding:20px;background:#fff;border:1px solid #becdc3;border-radius:14px;white-space:pre-wrap}
+.sms-settings{background:#fff;padding:18px;border:1px solid #d5ded7;border-radius:12px}
+.sms-settings summary{cursor:pointer;font-weight:700}
+.sms-settings dl{display:grid;grid-template-columns:minmax(120px,1fr) 2fr;gap:10px}
+.sms-settings dd{margin:0}
+@media(max-width:600px){.sms-workspace{padding-inline:14px}.sms-workspace h1{font-size:1.7rem}.sms-nav{gap:6px}.sms-nav a{padding:7px 10px}.sms-settings dl{grid-template-columns:1fr}.sms-settings dd{margin-bottom:10px}.sms-toolbar button{flex:1}}
