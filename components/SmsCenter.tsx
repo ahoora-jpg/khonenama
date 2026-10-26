@@ -42,9 +42,9 @@ export default function SmsCenter(){
     <h1>مرکز پیامک خونه‌نما</h1>
     <p>وضعیت پذیرش در گوشی، ارسال و تحویل جداگانه ثبت می‌شود. پیام‌های دارای وضعیت نامشخص خودکار دوباره ارسال نمی‌شوند.</p>
     {error&&<p role="alert" style={{color:"#a12c20"}}>{error}</p>}
-    {!data&&<form onSubmit={async e=>{e.preventDefault();const response=await fetch("/api/admin/sms/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({key:smsKey})});setSmsKey("");if(response.ok){await refresh();window.dispatchEvent(new Event("sms-admin-ready"));}else setError("ورود انجام نشد. دسترسی مدیریت سایت و کلید مستقل مرکز پیامک را بررسی کنید.");}}>
+    {!data&&<><p>ابتدا <a href="/sms/login">وارد مدیریت سایت شوید</a>، سپس کلید مستقل مرکز پیامک را وارد کنید.</p><form onSubmit={async e=>{e.preventDefault();const response=await fetch("/api/admin/sms/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({key:smsKey})});setSmsKey("");if(response.ok){await refresh();window.dispatchEvent(new Event("sms-admin-ready"));}else setError("ورود انجام نشد. دسترسی مدیریت سایت و کلید مستقل مرکز پیامک را بررسی کنید.");}}>
       <label>کلید دسترسی مرکز پیامک <input type="password" value={smsKey} onChange={e=>setSmsKey(e.target.value)} required autoComplete="off" /></label> <button>ورود</button>
-    </form>}
+    </form></>}
     {data&&<>
     <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(170px,1fr))",gap:12,marginBlock:24}}>
       {(["queued","submitted","sent","delivered","failed","unknown"] as const).map(status=><div key={status} style={{padding:16,border:"1px solid #ddd",borderRadius:12,background:"#fff"}}><strong>{labels[status]}</strong><div style={{fontSize:28}}>{counts[status]??0}</div></div>)}

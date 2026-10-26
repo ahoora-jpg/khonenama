@@ -8,6 +8,20 @@ import ts from "typescript";
 import vm from "node:vm";
 import {normalizePhone,isOptOut,canTransition,gatewayState,hasPromotionalConsent} from "../lib/server/sms/domain.ts";
 import {CLAIM_SQL} from "../lib/server/sms/queue.ts";
+import {routeSmsHost} from "../lib/server/sms/host.ts";
+
+test("SMS subdomain maps its home and rejects unrelated site routes",()=>{
+  const home=routeSmsHost(new Request("https://sms.khonenama.ir/"));
+  assert.equal(home instanceof Request,true);
+  assert.equal(new URL(home.url).pathname,"/sms");
+  const login=routeSmsHost(new Request("https://sms.khonenama.ir/login"));
+  assert.equal(new URL(login.url).pathname,"/sms/login");
+  assert.equal(routeSmsHost(new Request("https://sms.khonenama.ir/business/example")).status,404);
+  assert.equal(routeSmsHost(new Request("https://sms.khonenama.ir/api/v1/sms/bridge")).status,404);
+  assert.equal(routeSmsHost(new Request("https://sms.khonenama.ir/robots.txt")).status,200);
+  assert.equal(routeSmsHost(new Request("https://sms.khonenama.ir/api/admin/sms")).url,"https://sms.khonenama.ir/api/admin/sms");
+  assert.equal(routeSmsHost(new Request("https://khonenama.ir/business/example")).url,"https://khonenama.ir/business/example");
+});
 
 test("Iranian phone normalization and rejection",()=>{
   assert.equal(normalizePhone("۰۹۱۲ ۳۴۵ ۶۷۸۹"),"+989123456789");

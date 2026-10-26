@@ -4,8 +4,12 @@ import { drainBusinessPush } from "./lib/server/business-push";
 import { drainBusinessWebPush } from "./lib/server/business-web-push";
 import { cleanExpiredMedia } from "./lib/server/media-retention";
 import { reconcileSms } from "./lib/server/sms/reconcile";
+import { routeSmsHost } from "./lib/server/sms/host";
 export default {
- fetch: app.fetch,
+ fetch(request:Request, env:any, ctx:any){
+  const routed=routeSmsHost(request);
+  return routed instanceof Response ? routed : app.fetch(routed,env,ctx);
+ },
  scheduled(_event:unknown, env:any, ctx:{waitUntil:(promise:Promise<unknown>)=>void}){
   ctx.waitUntil(drainBusinessPush(env.DB));
   ctx.waitUntil(drainBusinessWebPush(env.DB));

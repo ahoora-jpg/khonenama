@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { KeyRound, ShieldCheck } from "lucide-react";
 
-export default function AdminLoginForm() {
+export default function AdminLoginForm({ redirectTo = "/admin/businesses" }: { redirectTo?: string }) {
   const [key, setKey] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ export default function AdminLoginForm() {
         }
         return;
       }
-      window.location.href = "/admin/businesses";
+      window.location.href = redirectTo;
     } catch {
       setMessage("ورود انجام نشد.");
     } finally {
