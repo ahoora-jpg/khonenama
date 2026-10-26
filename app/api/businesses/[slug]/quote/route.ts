@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import { recordSavedQuote } from "@/lib/server/quote-metrics";
 import { sendBusinessLeadPush } from "@/lib/server/business-push";
 import { sendBusinessWebPush } from "@/lib/server/business-web-push";
+import { queueTransactionalEvent } from "@/lib/server/sms/transactional";
 
 function normalizeDigits(value: string) {
   const fa = "۰۱۲۳۴۵۶۷۸۹";
@@ -49,7 +50,7 @@ export async function POST(
 
   const business = await db
     .prepare(
-      "SELECT b.id, b.city, b.area, " +
+      "SELECT b.id, b.city, b.area, b.owner_user_id, " +
       "(SELECT bc.category_id FROM business_categories bc WHERE bc.business_id = b.id ORDER BY bc.is_primary DESC, bc.category_id LIMIT 1) AS category_id " +
       "FROM businesses b WHERE b.slug = ? AND b.status = 'published' LIMIT 1"
     )
@@ -102,6 +103,12 @@ export async function POST(
 
   await recordSavedQuote(db,Number(business.id),Number(lead.id)).catch(()=>console.warn("Request metric unavailable"));
   await Promise.all([sendBusinessLeadPush(db, Number(business.id), Number(lead.id)), sendBusinessWebPush(db, Number(business.id), Number(lead.id))]);
+  if(business.owner_user_id){
+    await (async()=>{
+      const owner=await db.prepare("SELECT phone FROM users WHERE id=? AND phone_verified_at IS NOT NULL AND status='active'").bind(business.owner_user_id).first();
+      if(owner?.phone) await queueTransactionalEvent(db,{code:"quote_received",eventId:`lead:${lead.id}`,phone:owner.phone,variables:{leadId:String(lead.id)}});
+    })().catch(()=>console.warn("SMS_QUEUE_UNAVAILABLE"));
+  }
 
   return Response.json({ ok: true, leadId: lead.id });
 }

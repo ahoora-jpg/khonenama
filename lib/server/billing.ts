@@ -2,6 +2,7 @@ import { businessPlans, customCapacityAvailable, discountedMonthlyPrice } from "
 import { ensureBilling } from "./billing-schema";
 import { activateSubscriptionFromVerifiedPayment } from "./billing-activation";
 import type { PaymentProvider } from "./payment-provider";
+import { queueTransactionalEvent } from "./sms/transactional";
 
 export const billingHeaders = { "Cache-Control": "private, no-store" };
 // Annual sales remain disabled independently of the payment provider.
@@ -87,7 +88,7 @@ export async function verifyCheckout(db: any, id: string, provider: PaymentProvi
   const row = await db.prepare("SELECT c.*,p.invoice_id,p.provider,p.provider_authority,p.status,p.amount,p.currency,i.total_amount,i.status invoice_status FROM billing_checkouts c JOIN payments p ON p.id=c.payment_id JOIN invoices i ON i.id=p.invoice_id WHERE c.id=?").bind(id).first();
   if (!row) throw new BillingError("NOT_FOUND", 404);
   if (callback && (!/^[a-f0-9]{64}$/.test(callback.token) || await hash(callback.token) !== row.callback_hash || callback.authority !== row.provider_authority)) throw new BillingError("INVALID_CALLBACK", 400);
-  if (row.status === "verified") { await activateSubscriptionFromVerifiedPayment(db, row.payment_id); return "paid"; }
+  if (row.status === "verified") { await activateSubscriptionFromVerifiedPayment(db, row.payment_id); await queuePaymentNotice(db,row).catch(()=>console.warn("SMS_QUEUE_UNAVAILABLE")); return "paid"; }
   if (["failed", "cancelled", "refunded"].includes(row.status)) return row.status;
   if (!provider || row.provider !== provider.code) throw new BillingError("PAYMENT_PROVIDER_NOT_CONFIGURED", 503);
   if (!row.provider_authority) return "pending";
@@ -109,7 +110,12 @@ export async function verifyCheckout(db: any, id: string, provider: PaymentProvi
     db.prepare("UPDATE payments SET status='verified',provider_reference=?,verified_at=COALESCE(verified_at,CURRENT_TIMESTAMP),raw_code=? WHERE id=? AND status IN ('redirected','pending','verified') AND EXISTS(SELECT 1 FROM billing_receipts WHERE provider=? AND reference=? AND payment_id=?)").bind(result.reference, result.code, row.payment_id, provider.code, result.reference, row.payment_id),
   ]);
   await activateSubscriptionFromVerifiedPayment(db, row.payment_id);
+  await queuePaymentNotice(db,row).catch(()=>console.warn("SMS_QUEUE_UNAVAILABLE"));
   return "paid";
+}
+async function queuePaymentNotice(db:any,row:any){
+  const user=await db.prepare("SELECT u.phone FROM invoices i JOIN users u ON u.id=i.user_id WHERE i.id=? AND u.phone_verified_at IS NOT NULL AND u.status='active'").bind(row.invoice_id).first();
+  if(user?.phone) await queueTransactionalEvent(db,{code:"payment_verified",eventId:`payment:${row.payment_id}`,phone:user.phone,variables:{plan:row.plan_code}});
 }
 export async function billingHistory(db: any, businessId: number) {
   await ensureBilling(db);

@@ -8,3 +8,5 @@ dist/
 !.env.example
 *.log
 .DS_Store
+tools/sms-bridge/sms-bridge.config.json
+tools/sms-bridge/sms-bridge.journal.json*
