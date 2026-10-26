@@ -9,6 +9,17 @@ import vm from "node:vm";
 import {normalizePhone,isOptOut,canTransition,gatewayState,hasPromotionalConsent} from "../lib/server/sms/domain.ts";
 import {CLAIM_SQL} from "../lib/server/sms/queue.ts";
 import {routeSmsHost} from "../lib/server/sms/host.ts";
+import {ensureSmsSchema} from "../lib/server/sms/schema.ts";
+
+test("Worker binding initializes additive schema once with sending disabled",async()=>{
+  const sqlite=new DatabaseSync(':memory:');let batches=0;
+  const db={prepare:q=>q,batch:async statements=>{batches++;sqlite.exec('BEGIN');try{for(const q of statements)sqlite.exec(q);sqlite.exec('COMMIT');}catch(e){sqlite.exec('ROLLBACK');throw e;}}};
+  await Promise.all([ensureSmsSchema(db),ensureSmsSchema(db)]);
+  assert.equal(batches,1);
+  assert.equal(sqlite.prepare("SELECT enabled FROM sms_gateways").get().enabled,0);
+  assert.equal(sqlite.prepare("SELECT enabled FROM sms_gateway_agents").get().enabled,0);
+  sqlite.close();
+});
 
 test("SMS subdomain maps its home and rejects unrelated site routes",()=>{
   const home=routeSmsHost(new Request("https://sms.khonenama.ir/"));

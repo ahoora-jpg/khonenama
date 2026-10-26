@@ -36,13 +36,6 @@ jobs:
       - run: node --test tools/test-customer-safeguards.mjs tools/test-billing.mjs tools/test-subscription-lifecycle.mjs tools/test-gallery-security.mjs tools/test-commercial-readiness.mjs tools/test-admin-offers.mjs tools/test-image-upload-processing.mjs tools/test-r2-media.mjs tools/test-business-upload.mjs tools/test-admin-business-lifecycle.mjs tools/test-build-glob.mjs tools/test-marketplace-workflows.mjs tools/test-request-security.mjs
       - run: node --test tools/test-business-promotion.mjs
       - run: npx tsc --noEmit --incremental false
-      - name: Prepare SMS schema with sending disabled
-        run: |
-          npx wrangler d1 time-travel info khonenama-db --json
-          npx wrangler d1 execute khonenama-db --remote --file=db/migrations/0012_sms_center.sql
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: 9bbb17f959c166a9e2b73c9a087c0beb
       - run: npm run deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
