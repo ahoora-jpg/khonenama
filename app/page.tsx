@@ -1,18 +1,9 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import HomeBusinessShelf from "@/components/HomeBusinessShelf";
-import HeroCoverflow from "@/components/HeroCoverflow";
 import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 
 export const dynamic = "force-dynamic";
-import Categories from "@/components/Categories";
-import HomeTools from "@/components/HomeTools";
-import HomeAppDownload from "@/components/HomeAppDownload";
-import HomeBoothInvitation from "@/components/HomeBoothInvitation";
-import InspirationGallery from "@/components/InspirationGallery";
-import LocalDiscovery from "@/components/LocalDiscovery";
-import MagazineHomeEntry from "@/components/MagazineHomeEntry";
-import HowItWorks from "@/components/HowItWorks";
 import BusinessCTA from "@/components/BusinessCTA";
 import Footer from "@/components/Footer";
 
@@ -133,7 +124,7 @@ const organizationJsonLd = {
 };
 
 export default async function HomePage() {
-  const businesses = await listPublishedBusinesses({ limit: 12 });
+  const businesses = await listPublishedBusinesses({ limit: 6, requirePhoto: true });
   const shelf = businesses.map(b => ({ slug: b.slug, name: b.name, city: b.city, area: b.area, category: b.category, categoryName: b.categoryName, coverUrl: b.media.find(m => m.kind === "cover")?.thumbnailUrl || b.media.find(m => m.kind === "cover")?.url || b.media.find(m => m.kind === "image")?.thumbnailUrl || b.media.find(m => m.kind === "image")?.url || "", verified: ["verified", "professional"].includes(b.verificationStatus), rating: b.rating, reviewCount: b.reviewCount }));
   return (
     <main className="home-compact">
@@ -156,16 +147,6 @@ export default async function HomePage() {
       <Header />
       <Hero />
       <HomeBusinessShelf initialBusinesses={shelf} />
-      <section className="home-inspiration" aria-label="ایده‌های دکوراسیون داخلی">
-        <HeroCoverflow />
-        <p className="hero-image-note">تصاویر الهام‌بخش؛ نمونه‌کارهای واقعی هر کسب‌وکار را در غرفهٔ همان کسب‌وکار ببینید.</p>
-      </section>
-      <HomeTools />
-      <Categories />
-      <MagazineHomeEntry />
-      <InspirationGallery />
-      <LocalDiscovery />
-      <HowItWorks />
       <section className="brand-definition" aria-labelledby="brand-definition-title">
         <div className="shell">
           <div className="brand-definition-card glass-panel">
@@ -179,8 +160,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-      <HomeBoothInvitation />
-      <HomeAppDownload />
       <BusinessCTA />
       <Footer />
     </main>

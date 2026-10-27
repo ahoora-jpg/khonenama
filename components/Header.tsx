@@ -14,10 +14,10 @@ const categories = [
 ] as const;
 
 const links = [
-  ["چطور کار می‌کند؟", "/#how-it-works"],
-  ["راهنماها", "/magazine"],
+  ["یافتن متخصص", "/search"],
+  ["ایده‌ها", "/ideas"],
+  ["مجله و راهنماها", "/magazine"],
   ["ابزارها", "/tools"],
-  ["پیگیری درخواست", "/request-status"],
 ] as const;
 
 const androidDownloadUrl = "/download-app";
@@ -89,6 +89,7 @@ export default function Header() {
 
       {open && (
         <div className="mobile-nav shell glass-panel premium-mobile-nav">
+          <a href="/" onClick={() => setOpen(false)}>صفحه اصلی</a>
           <strong>دسته‌بندی‌ها</strong>
           {categories.map(([label, href]) => (
             <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
@@ -96,6 +97,7 @@ export default function Header() {
           {links.map(([label, href]) => (
             <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
           ))}
+          <a href="/request-status" onClick={() => setOpen(false)}>پیگیری درخواست</a>
           <a
             className="pill-button app-download-mobile"
             href={androidDownloadUrl}

@@ -29,7 +29,7 @@ const items = [
 
 export default function InspirationGallery() {
   return (
-    <section className="section inspiration-showcase" aria-labelledby="inspiration-title">
+    <section id="ideas" className="section inspiration-showcase" aria-labelledby="inspiration-title">
       <div className="shell">
         <div className="section-heading premium-heading inspiration-heading">
           <div>
