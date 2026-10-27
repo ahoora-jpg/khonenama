@@ -1,5 +1,5 @@
 {
-  "siteUrl": "https://khonenama.ir",
+  "siteUrl": "https://sms.khonenama.ir",
   "bridgeToken": "REPLACE_LOCALLY",
   "phoneUrl": "http://192.168.1.100:8080",
   "phoneUser": "sms",
@@ -7,5 +7,5 @@
   "sendPath": "/message",
   "statusPath": "VERIFY_IN_PHONE_DOCS",
   "enableInbox": false,
-  "simNumber": 2
+  "simNumber": "default"
 }

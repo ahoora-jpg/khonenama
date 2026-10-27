@@ -10,7 +10,7 @@ export function validateConfig(c) {
   if (!c || ![2,"default"].includes(c.simNumber)) throw Error("Invalid bridge configuration");
   let site,phone;
   try{site=new URL(c.siteUrl);phone=new URL(c.phoneUrl);}catch{throw Error("Invalid bridge URL");}
-  if(site.protocol!=="https:" || !["khonenama.ir","www.khonenama.ir"].includes(site.hostname) || site.username || site.password ||
+  if(site.protocol!=="https:" || !["khonenama.ir","www.khonenama.ir","sms.khonenama.ir"].includes(site.hostname) || site.username || site.password ||
     phone.protocol!=="http:" || !/^(?:localhost|127\.0\.0\.1|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})$/.test(phone.hostname) || phone.username || phone.password)
     throw Error("Bridge endpoints must be Khonenama HTTPS and a private phone address");
   if (!c.bridgeToken || !c.phoneUser || !c.phonePassword || !["/message","/messages"].includes(c.sendPath)) throw Error("Missing bridge configuration");
