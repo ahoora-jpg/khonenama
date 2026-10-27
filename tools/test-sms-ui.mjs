@@ -83,6 +83,7 @@ test("dashboard renders a real overview and all navigation links without any edi
   assert.ok(!html.includes("<form"));
   assert.ok(html.includes("هنوز کمپینی ندارید"));
   assert.ok(!html.includes("12 480"));
+  assert.ok(html.includes('/sms/history?status=delivered'));assert.ok(html.includes('/sms/contacts?filter=active'));assert.ok(html.includes('/sms/campaigns?status=active'));
   assert.ok(!html.includes("98.4"));
   for (const path of [
     "/sms/send",

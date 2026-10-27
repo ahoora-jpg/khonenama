@@ -134,6 +134,8 @@ export async function smsApi(path: string, payload?: Record<string, unknown>) {
   const result = await response.json();
   if (!response.ok) {
     const labels: Record<string, string> = {
+      CONTACT_REMOVED:'این شماره حذف شده است و دوباره برای ارسال اضافه نمی‌شود.',
+      CONTACT_BUSY:'پیامی در اختیار گوشی است؛ پس از مشخص‌شدن نتیجه دوباره حذف کنید.',
       INVALID_TRACKING_OPTIONS:'مقصد، انقضا، تعرفه یا فاصله ارسال معتبر نیست.',
       REGISTRATION_LINK_REQUIRED:'متغیر لینک اختصاصی را در تمام نسخه‌های متن قرار دهید.',
       UNRESOLVED_VARIABLE:'متن پیام دارای متغیر ناشناخته یا لینک فعال‌نشده است.',
@@ -594,12 +596,14 @@ export function StatCard({
   title,
   value,
   hint,
+  href,
 }: {
   title: string;
   value: number | null;
   hint?: string;
+  href?:string;
 }) {
-  return (
+  const card=(
     <article className="sms-stat">
       <span className="sms-stat-icon">
         <MessageSquare size={19} />
@@ -609,6 +613,7 @@ export function StatCard({
       {hint && <small>{hint}</small>}
     </article>
   );
+  return href?<Link href={href} aria-label={'مشاهده '+title}>{card}</Link>:card;
 }
 export function LoadingSkeleton() {
   return (
