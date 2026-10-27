@@ -28,16 +28,7 @@ export default function Header() {
   return (
     <header className="site-header-wrap">
       <div className="site-header shell glass-panel premium-header">
-        <a className="brand" href="/" aria-label="خونه نما">
-          <img src="/khonenama-brand.webp" alt="خونه نما" width={660} height={203} style={{ width: "clamp(136px, 16vw, 200px)", height: "auto", display: "block" }} />
-          <span className="brand-tagline">بازار تخصصی پرده و دکوراسیون</span>
-        </a>
-
         <div className="header-actions">
-          <a className="pill-button dark desktop-cta premium-cta-button" href="/register-business">
-            <Store size={17} />
-            ثبت کسب‌وکار
-          </a>
           <button
             className="site-menu-button"
             aria-label={open ? "بستن منو" : "باز کردن منو"}
@@ -47,13 +38,27 @@ export default function Header() {
             {open ? <X size={21} /> : <Menu size={21} />}
             <span>{open ? "بستن" : "منو"}</span>
           </button>
+          <a className="pill-button dark desktop-cta premium-cta-button" href="/register-business">
+            <Store size={17} />
+            ثبت کسب‌وکار
+          </a>
         </div>
+
+        <a className="brand" href="/" aria-label="خونه نما">
+          <img src="/khonenama-brand.webp" alt="خونه نما" width={660} height={203} style={{ width: "clamp(136px, 16vw, 200px)", height: "auto", display: "block" }} />
+          <span className="brand-tagline">بازار تخصصی پرده و دکوراسیون</span>
+        </a>
       </div>
 
       {open && (
         <>
           <button className="site-menu-backdrop" type="button" aria-label="بستن منو" onClick={() => setOpen(false)} />
-          <div className="site-menu-panel shell glass-panel premium-mobile-nav" aria-label="منوی اصلی">
+          <aside className="site-menu-panel premium-mobile-nav" aria-label="منوی اصلی">
+            <div className="site-menu-panel-intro">
+              <span>خونه‌نما</span>
+              <strong>برای خانه‌ات، یک انتخاب مطمئن بساز.</strong>
+              <p>متخصص، ایده و راهنمای مورد نیازت را از همین‌جا پیدا کن.</p>
+            </div>
             <a className="site-menu-home" href="/" onClick={() => setOpen(false)}>صفحه اصلی</a>
             <a className="site-menu-primary-link" href="/search" onClick={() => setOpen(false)}>یافتن متخصص و غرفه‌ها</a>
             <details className="site-menu-details">
@@ -86,7 +91,7 @@ export default function Header() {
               <Download size={17} />
               دانلود اپلیکیشن اندروید
             </a>
-          </div>
+          </aside>
         </>
       )}
     </header>
