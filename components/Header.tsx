@@ -51,40 +51,43 @@ export default function Header() {
       </div>
 
       {open && (
-        <div className="site-menu-panel shell glass-panel premium-mobile-nav" aria-label="منوی اصلی">
-          <a className="site-menu-home" href="/" onClick={() => setOpen(false)}>صفحه اصلی</a>
-          <a className="site-menu-primary-link" href="/search" onClick={() => setOpen(false)}>یافتن متخصص و غرفه‌ها</a>
-          <details className="site-menu-details">
-            <summary>دسته‌بندی‌ها</summary>
-            <div className="site-menu-details-links">
-            {categories.map(([label, href]) => (
-              <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
-            ))}
-            </div>
-          </details>
-          <details className="site-menu-details">
-            <summary>ایده و راهنما</summary>
-            <div className="site-menu-details-links">
-              {links.filter(([label]) => label !== "یافتن متخصص").map(([label, href]) => (
+        <>
+          <button className="site-menu-backdrop" type="button" aria-label="بستن منو" onClick={() => setOpen(false)} />
+          <div className="site-menu-panel shell glass-panel premium-mobile-nav" aria-label="منوی اصلی">
+            <a className="site-menu-home" href="/" onClick={() => setOpen(false)}>صفحه اصلی</a>
+            <a className="site-menu-primary-link" href="/search" onClick={() => setOpen(false)}>یافتن متخصص و غرفه‌ها</a>
+            <details className="site-menu-details">
+              <summary>دسته‌بندی‌ها</summary>
+              <div className="site-menu-details-links">
+              {categories.map(([label, href]) => (
                 <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
               ))}
-              <a href="/about" onClick={() => setOpen(false)}>درباره خونه‌نما</a>
-              <a href="/request-status" onClick={() => setOpen(false)}>پیگیری درخواست</a>
-            </div>
-          </details>
-          <details className="site-menu-details site-menu-business">
-            <summary>برای کسب‌وکارها</summary>
-            <div className="site-menu-details-links">
-              <a href="/for-business" onClick={() => setOpen(false)}>راهنمای حضور در خونه‌نما</a>
-              <a href="/business/login" onClick={() => setOpen(false)}>ورود کسب‌وکار</a>
-              <a className="pill-button dark" href="/register-business" onClick={() => setOpen(false)}>ثبت کسب‌وکار</a>
-            </div>
-          </details>
-          <a className="site-menu-download" href={androidDownloadUrl} onClick={() => setOpen(false)}>
-            <Download size={17} />
-            دانلود اپلیکیشن اندروید
-          </a>
-        </div>
+              </div>
+            </details>
+            <details className="site-menu-details">
+              <summary>ایده و راهنما</summary>
+              <div className="site-menu-details-links">
+                {links.filter(([label]) => label !== "یافتن متخصص").map(([label, href]) => (
+                  <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
+                ))}
+                <a href="/about" onClick={() => setOpen(false)}>درباره خونه‌نما</a>
+                <a href="/request-status" onClick={() => setOpen(false)}>پیگیری درخواست</a>
+              </div>
+            </details>
+            <details className="site-menu-details site-menu-business">
+              <summary>برای کسب‌وکارها</summary>
+              <div className="site-menu-details-links">
+                <a href="/for-business" onClick={() => setOpen(false)}>راهنمای حضور در خونه‌نما</a>
+                <a href="/business/login" onClick={() => setOpen(false)}>ورود کسب‌وکار</a>
+                <a className="pill-button dark" href="/register-business" onClick={() => setOpen(false)}>ثبت کسب‌وکار</a>
+              </div>
+            </details>
+            <a className="site-menu-download" href={androidDownloadUrl} onClick={() => setOpen(false)}>
+              <Download size={17} />
+              دانلود اپلیکیشن اندروید
+            </a>
+          </div>
+        </>
       )}
     </header>
   );

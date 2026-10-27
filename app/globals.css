@@ -147,7 +147,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .pill-button.dark { background: var(--ink); color: #fff; box-shadow: 0 10px 24px rgba(0,0,0,.12); }
 .mobile-menu-button { display: none; }
 .site-menu-button {
-  min-height: 43px; padding: 0 13px; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  position: relative; z-index: 91; min-height: 43px; padding: 0 13px; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
   border: 1px solid var(--line); border-radius: 14px; background: #fff; color: var(--ink); cursor: pointer;
   font: inherit; font-size: 14px; font-weight: 900; transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
 }
@@ -159,6 +159,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   background: rgba(250,250,247,.99); box-shadow: 0 24px 70px rgba(30,31,29,.18);
   animation: site-menu-in .18s ease-out both;
 }
+.site-menu-backdrop { position: fixed; z-index: 80; inset: 0; border: 0; background: transparent; cursor: default; }
 .site-menu-home,
 .site-menu-primary-link,
 .site-menu-group a,
