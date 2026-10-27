@@ -34,12 +34,10 @@ type History = {
 };
 export function ConsentLabel({ status }: { status: string }) {
   return (
-    <span className={`sms-badge sms-consent-${status}`}>
-      {status === "granted"
-        ? "رضایت ثبت‌شده"
-        : status === "revoked"
-          ? "لغو عضویت"
-          : "فاقد رضایت"}
+    <span
+      className={`sms-badge sms-consent-${status === "revoked" ? "revoked" : "granted"}`}
+    >
+      {status === "revoked" ? "لغو دریافت" : "قابل ارسال"}
     </span>
   );
 }
@@ -49,7 +47,7 @@ export function ContactsPage() {
   const [q, setQ] = useState(""),
     [filter, setFilter] = useState(""),
     [page, setPage] = useState(1),
-    [modal, setModal] = useState<"new" | "edit" | "detail" | "consent" | null>(
+    [modal, setModal] = useState<"new" | "edit" | "detail" | null>(
       params.get("new") === "1" ? "new" : null,
     ),
     [selected, setSelected] = useState<Contact | null>(null),
@@ -92,7 +90,7 @@ export function ContactsPage() {
             placeholder="جست‌وجوی نام یا شماره همراه"
           />
           <label className="sms-filter-label">
-            رضایت
+            وضعیت دریافت
             <select
               value={filter}
               onChange={(e) => {
@@ -101,9 +99,8 @@ export function ContactsPage() {
               }}
             >
               <option value="">همه مخاطبان</option>
-              <option value="granted">دارای رضایت</option>
+              <option value="active">قابل ارسال</option>
               <option value="revoked">لغو عضویت</option>
-              <option value="none">فاقد رضایت</option>
             </select>
           </label>
           <button
@@ -131,7 +128,7 @@ export function ContactsPage() {
                     <th>نام</th>
                     <th>شماره همراه</th>
                     <th>نوع</th>
-                    <th>رضایت تبلیغاتی</th>
+                    <th>وضعیت دریافت</th>
                     <th>گروه‌ها</th>
                     <th>تاریخ ثبت</th>
                     <th>عملیات</th>
@@ -181,7 +178,7 @@ export function ContactsPage() {
                             }
                           }}
                         >
-                          جزئیات و رضایت
+                          جزئیات
                         </button>
                       </td>
                     </tr>
@@ -246,9 +243,7 @@ export function ContactsPage() {
               <p>
                 شمارهٔ مخاطب: <bdi>{selected?.phone_e164}</bdi>
                 <br />
-                <small>
-                  برای شمارهٔ جدید، مخاطب جدا بسازید تا رضایت‌ها منتقل نشوند.
-                </small>
+                <small>برای شمارهٔ جدید، مخاطب جدا بسازید.</small>
               </p>
             )}
             <Field label="نام نمایشی">
@@ -267,10 +262,7 @@ export function ContactsPage() {
                 ))}
               </select>
             </Field>
-            <p className="sms-muted">
-              ثبت مخاطب به معنی رضایت تبلیغاتی نیست. شمارهٔ تکراری دوباره ثبت
-              نمی‌شود.
-            </p>
+            <p className="sms-muted">شمارهٔ تکراری دوباره ثبت نمی‌شود.</p>
             <button disabled={busy}>
               {busy ? "در حال ثبت…" : "ذخیره مخاطب"}
             </button>
@@ -278,15 +270,14 @@ export function ContactsPage() {
         </Modal>
       )}
       {modal === "detail" && detail && (
-        <Modal title="مشخصات و سابقهٔ رضایت" onClose={() => setModal(null)}>
+        <Modal title="مشخصات مخاطب" onClose={() => setModal(null)}>
           <h3>{detail.contact.display_name || "بدون نام"}</h3>
           <p>
             <bdi>{detail.contact.phone_e164}</bdi> ·{" "}
             <ConsentLabel status={detail.contact.consent_status} />
           </p>
           <div className="sms-toolbar">
-            <button onClick={() => setModal("consent")}>ثبت رضایت مستند</button>
-            {detail.contact.consent_status === "granted" && (
+            {detail.contact.consent_status !== "revoked" && (
               <button
                 className="sms-secondary"
                 disabled={busy}
@@ -306,56 +297,6 @@ export function ContactsPage() {
               </button>
             )}
           </div>
-          <h3>تاریخچهٔ رضایت</h3>
-          {detail.history.length ? (
-            <ol className="sms-timeline">
-              {detail.history.map((h, i) => (
-                <li key={i}>
-                  <ConsentLabel status={h.status} />
-                  <time>{smsDate(h.created_at)}</time>
-                  <p>
-                    روش: <bdi>{h.method}</bdi>
-                  </p>
-                  <p>
-                    نسخه: <bdi>{h.text_version}</bdi>
-                  </p>
-                  <p>
-                    مرجع سند: <bdi>{h.evidence_ref}</bdi>
-                  </p>
-                </li>
-              ))}
-            </ol>
-          ) : (
-            <p>هنوز رضایتی ثبت نشده است.</p>
-          )}
-        </Modal>
-      )}
-      {modal === "consent" && selected && (
-        <Modal title="ثبت رضایت تبلیغاتی" onClose={() => setModal(null)}>
-          <p>فقط سند روشن و قابل اثباتِ رضایت همین مخاطب را ثبت کنید.</p>
-          <form
-            className="sms-form"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const fields = new FormData(e.currentTarget);
-              void run({
-                action: "consent",
-                contactId: selected.id,
-                status: "granted",
-                method: "admin_verified",
-                textVersion: fields.get("version"),
-                evidenceRef: fields.get("evidence"),
-              });
-            }}
-          >
-            <Field label="نسخهٔ متن رضایت">
-              <input name="version" required maxLength={80} />
-            </Field>
-            <Field label="مرجع سند رضایت">
-              <input name="evidence" required maxLength={300} />
-            </Field>
-            <button disabled={busy}>ثبت رضایت مستند</button>
-          </form>
         </Modal>
       )}
     </>
@@ -413,7 +354,7 @@ export function GroupsPage() {
                 <tr>
                   <th>گروه</th>
                   <th>اعضا</th>
-                  <th>دارای رضایت معتبر</th>
+                  <th>قابل ارسال</th>
                   <th>عملیات</th>
                 </tr>
               </thead>
@@ -458,8 +399,8 @@ export function GroupsPage() {
           />
         )}
         <p className="sms-muted">
-          حداکثر ۵۰۰ گروه نمایش داده می‌شود. عضویت در گروه، رضایت تبلیغاتی ایجاد
-          نمی‌کند.
+          حداکثر ۵۰۰ گروه نمایش داده می‌شود. شماره‌های لغو دریافت در زمان ارسال
+          کنار گذاشته می‌شوند.
         </p>
       </Panel>
       {current && (
@@ -493,6 +434,17 @@ export function GroupsPage() {
               پروندهٔ CSV با ستون‌های <bdi>phone,name</bdi>، حداکثر ۲۰۰ ردیف و
               ۱۰۰ کیلوبایت. شماره‌های تکراری دوباره ساخته نمی‌شوند.
             </p>
+            <p className="sms-muted">
+              در اکسل، ستون شماره را روی «متن» بگذارید و فایل را با گزینهٔ CSV
+              UTF-8 ذخیره کنید. فایل مستقیم اکسل (.xlsx) پذیرفته نمی‌شود.
+            </p>
+            <a
+              className="sms-button sms-secondary"
+              href="/sms-assets/contacts-template.csv"
+              download="نمونه-مخاطبان.csv"
+            >
+              دریافت قالب فایل مخاطبان
+            </a>
             <label className="sms-file-label">
               انتخاب پروندهٔ مخاطبان
               <input
@@ -517,7 +469,7 @@ export function GroupsPage() {
                     });
                     if (value)
                       setResult(
-                        `${faNumber(value.imported)} ردیف پردازش شد؛ ${faNumber(value.invalid)} شماره نامعتبر. رضایت تبلیغاتی خودکار ثبت نشد.`,
+                        `${faNumber(value.imported)} ردیف پردازش شد؛ ${faNumber(value.invalid)} شماره نامعتبر.`,
                       );
                   } catch {
                     notify("خواندن پرونده انجام نشد.");
@@ -534,7 +486,7 @@ export function GroupsPage() {
                   <tr>
                     <th>نام</th>
                     <th>شماره</th>
-                    <th>رضایت</th>
+                    <th>وضعیت دریافت</th>
                     <th>عملیات</th>
                   </tr>
                 </thead>

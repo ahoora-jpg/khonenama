@@ -145,3 +145,8 @@ test('SMS shell uses its own uploaded logo asset',()=>{
  assert.ok(html.includes('src="/sms-assets/logo.webp"'));
  assert.ok(!readFileSync(new URL('app/layout.tsx',root),'utf8').includes('/sms-assets/'));
 });
+
+test('everyday SMS screens do not ask for initial consent',()=>{
+ const pages=[load('components/sms/SmsMessages.tsx').SendPage,load('components/sms/SmsContacts.tsx').ContactsPage,load('components/sms/SmsContacts.tsx').GroupsPage,load('components/sms/SmsCampaignWorkspace.tsx').CampaignsPage];
+ for(const Page of pages){const html=render(Page,{...empty,liveSendingEnabled:true});assert.ok(!html.includes('رضایت'));}
+});

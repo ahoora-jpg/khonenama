@@ -6,7 +6,7 @@ import {join} from "node:path";
 import {DatabaseSync} from "node:sqlite";
 import ts from "typescript";
 import vm from "node:vm";
-import {normalizePhone,isOptOut,canTransition,gatewayState,hasPromotionalConsent} from "../lib/server/sms/domain.ts";
+import {normalizePhone,isOptOut,canTransition,gatewayState,canReceivePromotionalMessage} from "../lib/server/sms/domain.ts";
 import {CLAIM_SQL} from "../lib/server/sms/queue.ts";
 import {routeSmsHost} from "../lib/server/sms/host.ts";
 import {ensureSmsSchema} from "../lib/server/sms/schema.ts";
@@ -70,19 +70,19 @@ test("migration constraints and tenant uniqueness",async()=>{
   assert.throws(()=>db.prepare("INSERT INTO sms_contacts(id,tenant_id,phone_e164,source) VALUES('c2','khonenama','+989123456789','test')").run());
   db.close();
 });
-test("promotional consent is denied by default and suppressed after opt-out",async()=>{
+test("promotional recipients need no initial consent and are suppressed after opt-out",async()=>{
   const sql=await readFile(new URL("../db/migrations/0012_sms_center.sql",import.meta.url),"utf8");
   const sqlite=new DatabaseSync(":memory:");sqlite.exec(sql);
   sqlite.prepare("INSERT INTO sms_contacts(id,tenant_id,phone_e164,source) VALUES('c1','khonenama','+989123456789','csv_import')").run();
   const db={prepare:(query)=>({bind:(...params)=>({first:async()=>sqlite.prepare(query).get(...params)})})};
-  assert.equal(await hasPromotionalConsent(db,"c1"),false);
+  assert.equal(await canReceivePromotionalMessage(db,"c1"),true);
   sqlite.prepare("INSERT INTO sms_consents(id,tenant_id,contact_id,status,method,text_version,evidence_ref) VALUES('s1','khonenama','c1','granted','form','v1','record-1')").run();
-  assert.equal(await hasPromotionalConsent(db,"c1"),true);
+  assert.equal(await canReceivePromotionalMessage(db,"c1"),true);
   sqlite.prepare("INSERT INTO sms_opt_outs(tenant_id,contact_id,source) VALUES('khonenama','c1','inbound_sms')").run();
-  assert.equal(await hasPromotionalConsent(db,"c1"),false);
+  assert.equal(await canReceivePromotionalMessage(db,"c1"),false);
   sqlite.close();
 });
-test("dispatch prioritizes transactional messages and rechecks consent",async()=>{
+test("dispatch prioritizes transactional messages and rechecks opt-out",async()=>{
   const sqlite=new DatabaseSync(":memory:");sqlite.exec(await readFile(new URL("../db/migrations/0012_sms_center.sql",import.meta.url),"utf8"));
   sqlite.prepare("INSERT INTO sms_contacts(id,tenant_id,phone_e164,source) VALUES('c1','khonenama','+989123456789','test'),('c2','khonenama','+989111111111','test')").run();
   const insert=sqlite.prepare(`INSERT INTO sms_messages(id,tenant_id,contact_id,category,body,status,priority,idempotency_key,expires_at)
@@ -129,7 +129,7 @@ test("idempotency and tenant boundaries are enforced by persistence",async()=>{
     VALUES(?,'khonenama','c1','transactional','test','queued','same',datetime('now','+1 day'))`);
   insert.run("m1");assert.throws(()=>insert.run("m2"));
   const db={prepare:query=>({bind:(...params)=>({first:async()=>sqlite.prepare(query).get(...params)})})};
-  assert.equal(await hasPromotionalConsent(db,"c2"),false);
+  assert.equal(await canReceivePromotionalMessage(db,"c2"),false);
   sqlite.close();
 });
 test("bridge payload forces SIM 2 and reconciles uncertain outcome",async()=>{

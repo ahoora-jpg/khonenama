@@ -83,7 +83,7 @@ export function DashboardPage() {
           ["ارسال‌شده", counts.sent || 0],
           ["تحویل‌شده", counts.delivered || 0],
           ["ناموفق", counts.failed || 0],
-          ["مخاطبان مجاز", data.summary.consented_contacts],
+          ["مخاطبان قابل ارسال", data.summary.consented_contacts],
           ["کمپین‌های فعال", data.summary.active_campaigns ?? null],
         ].map(([title, value]) => (
           <StatCard
@@ -149,7 +149,7 @@ export function DashboardPage() {
           ) : (
             <EmptyState
               title="هنوز کمپینی ندارید"
-              text="برای گروهی از مخاطبان دارای رضایت، پیش‌نویس بسازید."
+              text="مخاطبان را وارد کنید، گروه بسازید و متن کمپین را آماده کنید."
               href="/sms/campaigns?new=1"
               action="ساخت کمپین"
             />
@@ -291,11 +291,9 @@ export function ReportsPage() {
                 value={resource.outcomes.reduce((a, v) => a + v.count, 0)}
               />
               <StatCard
-                title="رویدادهای ثبت رضایت"
-                value={
-                  resource.consents.find((c) => c.status === "granted")
-                    ?.count || 0
-                }
+                title="مخاطبان قابل ارسال"
+                value={data.summary.consented_contacts}
+                hint="وضعیت فعلی، همهٔ زمان‌ها"
               />
               <StatCard title="لغو عضویت در بازه" value={resource.optouts} />
               <StatCard
@@ -342,15 +340,9 @@ export function ReportsPage() {
                     </li>
                   ))}
                 </ul>
+
                 <p>
-                  رویدادهای لغو رضایت:{" "}
-                  {faNumber(
-                    resource.consents.find((c) => c.status === "revoked")
-                      ?.count || 0,
-                  )}
-                </p>
-                <p>
-                  مخاطبان دارای رضایت فعلی، همهٔ زمان‌ها:{" "}
+                  مخاطبان قابل ارسال، همهٔ زمان‌ها:{" "}
                   {faNumber(data.summary.consented_contacts)}
                 </p>
                 <p className="sms-muted">
