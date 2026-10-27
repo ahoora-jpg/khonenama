@@ -1,4 +1,6 @@
 export const smsPages = [
+  {key:'acquisition',path:'/sms/acquisition',title:'تحلیل کمپین و جذب غرفه',description:'کلیک، ثبت‌نام و غرفه‌های واقعی منتسب به پیامک'},
+  {key:'prospects',path:'/sms/prospects',title:'مخاطبان ثبت‌نام‌نکرده',description:'گروه‌های پویا و انتخاب مخاطبان کمپین بعدی'},
   {
     key: "dashboard",
     path: "/sms",

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import {AcquisitionPage,ProspectsPage} from './SmsAcquisition';
 import { SmsAdminShell, LoadingSkeleton } from "./SmsAdminShell";
 import {
   DashboardPage,
@@ -11,6 +12,8 @@ import { ContactsPage, GroupsPage } from "./SmsContacts";
 import { CampaignsPage, TemplatesPage } from "./SmsCampaignWorkspace";
 import type { SmsPageKey } from "@/lib/sms-admin-ui";
 const pages = {
+  acquisition:AcquisitionPage,
+  prospects:ProspectsPage,
   dashboard: DashboardPage,
   send: SendPage,
   contacts: ContactsPage,
