@@ -45,6 +45,10 @@ export function SendPage() {
             try {
               const result = await smsApi("/api/admin/sms", {
                 action: "queue",
+                draftOnly:
+                  (e.nativeEvent as SubmitEvent).submitter?.getAttribute(
+                    "value",
+                  ) === "draft",
                 contactId,
                 body,
                 category,
@@ -131,13 +135,29 @@ export function SendPage() {
               ارسال تبلیغاتی نیازمند بررسی سمت سرور است.
             </p>
           )}
-          <button disabled={busy || (data.liveSendingEnabled && !eligible)}>
-            {busy
-              ? "در حال ثبت…"
-              : data.liveSendingEnabled
-                ? "ثبت در صف ارسال"
-                : "ذخیره پیش‌نویس"}
-          </button>
+          <div className="sms-modal-actions">
+            {data.liveSendingEnabled && (
+              <button
+                type="submit"
+                value="draft"
+                className="sms-secondary"
+                disabled={busy}
+              >
+                ذخیره پیش‌نویس
+              </button>
+            )}
+            <button
+              type="submit"
+              value={data.liveSendingEnabled ? "queue" : "draft"}
+              disabled={busy || (data.liveSendingEnabled && !eligible)}
+            >
+              {busy
+                ? "در حال ثبت…"
+                : data.liveSendingEnabled
+                  ? "ثبت در صف ارسال"
+                  : "ذخیره پیش‌نویس"}
+            </button>
+          </div>
         </form>
       </Panel>
       <div>

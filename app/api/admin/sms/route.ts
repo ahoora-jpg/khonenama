@@ -83,7 +83,7 @@ export async function POST(request: Request) {
         return noStore({ok:false,error:"INVALID_MESSAGE"},400);
       const contact = await db().prepare("SELECT id FROM sms_contacts WHERE id=? AND tenant_id=?").bind(contactId,TENANT).first();
       if (!contact) return noStore({ok:false,error:"CONTACT_NOT_FOUND"},404);
-      const state=liveSmsEnabled(env as any)?"queued":"draft";
+      const state=liveSmsEnabled(env as any)&&input.draftOnly!==true?"queued":"draft";
       if (state==="queued" && category === "promotional" && !await hasPromotionalConsent(db(),contactId)) return noStore({ok:false,error:"PROMOTIONAL_CONSENT_REQUIRED"},403);
       const prior=await db().prepare("SELECT id,contact_id,category,body FROM sms_messages WHERE tenant_id=? AND idempotency_key=?").bind(TENANT,key).first();
       if(prior && (prior.contact_id!==contactId || prior.category!==category || prior.body!==body)) return noStore({ok:false,error:"IDEMPOTENCY_CONFLICT"},409);

@@ -171,6 +171,7 @@ export function SmsAdminShell({
   const [now, setNow] = useState(() => Date.now());
   const drawerRef = useRef<HTMLElement>(null),
     menuRef = useRef<HTMLButtonElement>(null);
+  const accountRef = useRef<HTMLDetailsElement>(null);
   const current = smsPages.find((item) => item.key === page)!;
   const refresh = useCallback(async () => {
     setBusy(true);
@@ -210,6 +211,29 @@ export function SmsAdminShell({
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 30000);
     return () => clearInterval(timer);
+  }, []);
+  useEffect(() => {
+    const outside = (event: PointerEvent) => {
+      const menu = accountRef.current;
+      if (
+        menu?.open &&
+        event.target instanceof Node &&
+        !menu.contains(event.target)
+      )
+        menu.open = false;
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && accountRef.current?.open) {
+        accountRef.current.open = false;
+        accountRef.current.querySelector<HTMLElement>("summary")?.focus();
+      }
+    };
+    document.addEventListener("pointerdown", outside);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", outside);
+      document.removeEventListener("keydown", escape);
+    };
   }, []);
   useEffect(() => {
     if (!toast) return;
@@ -272,7 +296,7 @@ export function SmsAdminShell({
         {...(drawer ? { role: "dialog", "aria-modal": true } : {})}
       >
         <div className="sms-brand">
-          <MessageSquare size={28} />
+          <img className="sms-brand-image" src="/sms-assets/logo.webp" width={52} height={52} alt="نشان مرکز پیامک خونه‌نما" />
           <div>
             <strong>خونه‌نما</strong>
             <small>مرکز پیامک</small>
@@ -360,7 +384,18 @@ export function SmsAdminShell({
             >
               <RefreshCw size={18} />
             </button>
-            <details className="sms-user-menu">
+            <details
+              ref={accountRef}
+              className="sms-user-menu"
+              onClick={(event) => {
+                if (
+                  event.target instanceof Element &&
+                  event.target.closest("a") &&
+                  accountRef.current
+                )
+                  accountRef.current.open = false;
+              }}
+            >
               <summary aria-label="حساب مدیریت">م</summary>
               <div>
                 <strong>مدیریت خونه‌نما</strong>
