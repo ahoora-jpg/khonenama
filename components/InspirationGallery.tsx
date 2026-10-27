@@ -1,4 +1,8 @@
-import { ArrowUpLeft, Images, Sparkles } from "lucide-react";
+"use client";
+
+import { ArrowUpLeft, Bookmark, BookmarkCheck, Images, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { readIdeaBoard, type SavedIdea, writeIdeaBoard } from "@/components/idea-board";
 
 const items = [
   {
@@ -28,6 +32,22 @@ const items = [
 ];
 
 export default function InspirationGallery() {
+  const [savedIds, setSavedIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    setSavedIds(readIdeaBoard().map((item) => item.id));
+  }, []);
+
+  function toggleSaved(item: typeof items[number]) {
+    const current = readIdeaBoard();
+    const exists = current.some((saved) => saved.id === item.href);
+    const next: SavedIdea[] = exists
+      ? current.filter((saved) => saved.id !== item.href)
+      : [{ id: item.href, title: item.title, category: item.category, href: item.href, img: item.img }, ...current];
+    writeIdeaBoard(next);
+    setSavedIds(next.map((saved) => saved.id));
+  }
+
   return (
     <section id="ideas" className="section inspiration-showcase" aria-labelledby="inspiration-title">
       <div className="shell">
@@ -37,34 +57,21 @@ export default function InspirationGallery() {
             <h2 id="inspiration-title">قبل از انتخاب، فضا و اجرای خوب را ببین.</h2>
             <p>چند تصویر منتخب برای مقایسه سبک، نور، بافت و متریال؛ تصاویر بیشتر داخل راهنماهای تخصصی قرار می‌گیرند.</p>
           </div>
-          <a className="text-link-arrow" href="/magazine">
-            راهنماهای دکوراسیون <ArrowUpLeft size={16} />
-          </a>
+          <div className="inspiration-heading-links"><a className="text-link-arrow" href="/my-ideas">ایده‌های من <Bookmark size={16} /></a><a className="text-link-arrow" href="/magazine">راهنماهای دکوراسیون <ArrowUpLeft size={16} /></a></div>
         </div>
 
         <div className="inspiration-masonry">
           {items.map((item, index) => (
-            <a
-              className={"inspiration-tile inspiration-tile-" + ((index % 4) + 1)}
-              href={item.href}
-              key={item.title}
-              aria-label={item.title}
-            >
-              <img
-                src={item.img}
-                alt={item.title}
-                width={1200}
-                height={675}
-                loading="lazy"
-                decoding="async"
-              />
-              <span className="inspiration-scrim" aria-hidden="true" />
-              <span className="inspiration-overlay">
-                <small>{item.category}</small>
-                <strong>{item.title}</strong>
-                <span><Images size={14} /> مشاهده ایده</span>
-              </span>
-            </a>
+            <article className={"inspiration-tile inspiration-tile-" + ((index % 4) + 1)} key={item.title}>
+              <a href={item.href} aria-label={item.title}>
+                <img src={item.img} alt={item.title} width={1200} height={675} loading="lazy" decoding="async" />
+                <span className="inspiration-scrim" aria-hidden="true" />
+                <span className="inspiration-overlay"><small>{item.category}</small><strong>{item.title}</strong><span><Images size={14} /> مشاهده ایده</span></span>
+              </a>
+              <button className="idea-save-button" type="button" aria-pressed={savedIds.includes(item.href)} onClick={() => toggleSaved(item)}>
+                {savedIds.includes(item.href) ? <><BookmarkCheck size={17} /> ذخیره شد</> : <><Bookmark size={17} /> ذخیره ایده</>}
+              </button>
+            </article>
           ))}
         </div>
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import InspirationGallery from "@/components/InspirationGallery";
-import { ArrowUpLeft, Search, Store } from "lucide-react";
+import { ArrowUpLeft, Bookmark, Search, Store } from "lucide-react";
 
 const url = "https://khonenama.ir/ideas";
 const title = "ایده‌های دکوراسیون داخلی | خونه نما";
@@ -29,6 +29,7 @@ export default function IdeasPage() {
               اینجا گالری نمونه‌کار نیست. برای مقایسه سبک، نور، بافت و متریال ساخته شده تا بتوانی نیازت را دقیق‌تر توضیح بدهی و متخصص مناسب را پیدا کنی.
             </p>
             <div className="ideas-hero-actions">
+              <a className="pill-button" href="/my-ideas"><Bookmark size={17} /> ایده‌های من</a>
               <a className="pill-button dark" href="/search"><Search size={17} /> یافتن متخصص</a>
               <a className="pill-button" href="/register-business"><Store size={17} /> ساخت غرفه کسب‌وکار</a>
             </div>
