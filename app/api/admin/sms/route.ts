@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { isSmsAdminRequest } from "@/lib/server/sms/admin-auth";
-import { GATEWAY, TENANT, hasPromotionalConsent, maskPhone, noStore, normalizePhone } from "@/lib/server/sms/domain";
+import { GATEWAY, TENANT, canReceivePromotionalMessage, maskPhone, noStore, normalizePhone } from "@/lib/server/sms/domain";
 import {liveSmsEnabled,smsSimSelection} from "@/lib/server/sms/config";
 import {smsKeyConfigured} from "@/lib/server/sms/admin-auth";
 
@@ -24,8 +24,7 @@ export async function GET(request: Request) {
         (SELECT COUNT(*) FROM sms_campaigns WHERE tenant_id=? AND status IN ('approved','running')) AS active_campaigns,
         (SELECT COUNT(*) FROM sms_opt_outs WHERE tenant_id=?) AS opt_outs,
         (SELECT COUNT(*) FROM sms_messages WHERE tenant_id=? AND status='queued' AND priority>0) AS priority_queued,
-        (SELECT COUNT(*) FROM sms_contacts c WHERE c.tenant_id=? AND NOT EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=c.tenant_id AND o.contact_id=c.id)
-          AND (SELECT status FROM sms_consents s WHERE s.tenant_id=c.tenant_id AND s.contact_id=c.id ORDER BY s.created_at DESC,s.rowid DESC LIMIT 1)='granted') AS consented_contacts`).bind(TENANT,TENANT,TENANT,TENANT).first(),
+        (SELECT COUNT(*) FROM sms_contacts c WHERE c.tenant_id=? AND NOT EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=c.tenant_id AND o.contact_id=c.id)) AS consented_contacts`).bind(TENANT,TENANT,TENANT,TENANT).first(),
     ]);
     return noStore({ ok: true, counts: counts.results, contacts: contacts.results.map((c:any)=>({ ...c, phone_e164: maskPhone(c.phone_e164) })),
       messages: messages.results.map((m:any)=>({ ...m, phone_e164: maskPhone(m.phone_e164) })), campaigns: campaigns.results, agent:agent?{...agent,sim_selection:smsSimSelection(env as any)}:null,summary,
@@ -110,7 +109,7 @@ export async function POST(request: Request) {
       const contact = await db().prepare("SELECT id FROM sms_contacts WHERE id=? AND tenant_id=?").bind(contactId,TENANT).first();
       if (!contact) return noStore({ok:false,error:"CONTACT_NOT_FOUND"},404);
       const state=liveSmsEnabled(env as any)&&input.draftOnly!==true?"queued":"draft";
-      if (state==="queued" && category === "promotional" && !await hasPromotionalConsent(db(),contactId)) return noStore({ok:false,error:"PROMOTIONAL_CONSENT_REQUIRED"},403);
+      if (state==="queued" && category === "promotional" && !await canReceivePromotionalMessage(db(),contactId)) return noStore({ok:false,error:"RECIPIENT_OPTED_OUT"},403);
       const prior=await db().prepare("SELECT id,contact_id,category,body FROM sms_messages WHERE tenant_id=? AND idempotency_key=?").bind(TENANT,key).first();
       if(prior && (prior.contact_id!==contactId || prior.category!==category || prior.body!==body)) return noStore({ok:false,error:"IDEMPOTENCY_CONFLICT"},409);
       const id=crypto.randomUUID();

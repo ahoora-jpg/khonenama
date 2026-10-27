@@ -40,12 +40,10 @@ export function gatewayState(state: unknown): SmsState | null {
   }
 }
 
-export async function hasPromotionalConsent(db: any, contactId: string): Promise<boolean> {
+export async function canReceivePromotionalMessage(db: any, contactId: string): Promise<boolean> {
   const row = await db.prepare(`SELECT 1 AS permitted FROM sms_contacts c
     WHERE c.id=? AND c.tenant_id=? AND NOT EXISTS
-      (SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=c.tenant_id AND o.contact_id=c.id)
-    AND (SELECT status FROM sms_consents s WHERE s.tenant_id=c.tenant_id AND s.contact_id=c.id
-      ORDER BY s.created_at DESC,s.rowid DESC LIMIT 1)='granted'`).bind(contactId, TENANT).first();
+      (SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=c.tenant_id AND o.contact_id=c.id)`).bind(contactId, TENANT).first();
   return Boolean(row);
 }
 

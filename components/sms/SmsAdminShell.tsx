@@ -134,9 +134,8 @@ export async function smsApi(path: string, payload?: Record<string, unknown>) {
     const labels: Record<string, string> = {
       INVALID_PHONE: "شماره همراه معتبر نیست.",
       INVALID_MESSAGE: "متن، مخاطب و دلیل پیام را بررسی کنید.",
-      PROMOTIONAL_CONSENT_REQUIRED:
-        "رضایت تبلیغاتی معتبر برای مخاطب ثبت نشده است.",
-      EVIDENCE_REQUIRED: "نسخهٔ متن و مرجع سند رضایت لازم است.",
+      RECIPIENT_OPTED_OUT:
+        "این مخاطب لغو دریافت کرده است و پیام تبلیغاتی برایش ارسال نمی‌شود.",
       LIVE_SEND_DISABLED: "ارسال واقعی غیرفعال است.",
       INVALID_SCHEDULE: "زمان شروع باید در آینده باشد.",
       DUPLICATE_PHONE: "این شماره قبلاً ثبت شده است.",

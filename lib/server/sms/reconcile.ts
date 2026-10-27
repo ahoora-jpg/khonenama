@@ -35,8 +35,12 @@ export async function reconcileSms(db:any,options:{liveSendingEnabled:boolean}={
       WHERE gm.group_id=? AND c.tenant_id=?
         AND NOT EXISTS(SELECT 1 FROM sms_campaign_recipients cr WHERE cr.campaign_id=? AND cr.contact_id=c.id)
         AND NOT EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=? AND o.contact_id=c.id)
-        AND (SELECT status FROM sms_consents s WHERE s.tenant_id=? AND s.contact_id=c.id ORDER BY s.created_at DESC,s.rowid DESC LIMIT 1)='granted'
-      ORDER BY c.created_at,c.id LIMIT ?`).bind(campaign.group_id,TENANT,campaign.id,TENANT,TENANT,remaining).all();
+      ORDER BY c.created_at,c.id LIMIT ?`).bind(campaign.group_id,TENANT,campaign.id,TENANT,remaining).all();
+    if(!contacts.results?.length && Number(countRow?.count||0)===0){
+      await db.prepare("UPDATE sms_campaigns SET status='paused' WHERE id=? AND tenant_id=? AND status='running'").bind(campaign.id,TENANT).run();
+      await db.prepare("INSERT INTO sms_audit_logs(tenant_id,actor,action,target_id,detail) VALUES(?,'system','campaign_empty_audience',?,'No eligible recipients; no messages queued')").bind(TENANT,campaign.id).run();
+      continue;
+    }
     for(const contact of contacts.results||[]){
       const id=crypto.randomUUID(),key=`campaign:${campaign.id}:${contact.id}`;
       await db.prepare(`INSERT OR IGNORE INTO sms_messages(id,tenant_id,contact_id,category,body,status,priority,idempotency_key,campaign_id,expires_at)
