@@ -59,6 +59,32 @@ export async function POST(request: Request) {
       await audit("contact_upsert",row.id);
       return noStore({ok:true,id:row.id,duplicate:row.id!==id});
     }
+    if (input.action === "syncPublishedBusinesses") {
+      const groupId = "khonenama-published-businesses";
+      await db().prepare("INSERT OR IGNORE INTO sms_contact_groups(id,tenant_id,name) VALUES(?,?,?)")
+        .bind(groupId, TENANT, "غرفه‌های منتشرشده").run();
+      const rows = await db().prepare(
+        "SELECT b.name,b.phone FROM businesses b WHERE b.status='published' " +
+        "AND b.slug NOT GLOB 'ghrfh-azmayshy-tbdyl-[0-9]*-thran' AND b.slug NOT IN ('alayy-dkvr-krj') " +
+        "AND NOT EXISTS (SELECT 1 FROM business_visibility_controls bvc WHERE bvc.business_id=b.id AND bvc.owner_paused=1)"
+      ).all();
+      let synced = 0, skipped = 0;
+      for (const business of rows.results || []) {
+        const phone = normalizePhone(business.phone);
+        if (!phone) { skipped++; continue; }
+        const contactId = crypto.randomUUID();
+        await db().prepare(
+          "INSERT INTO sms_contacts(id,tenant_id,phone_e164,display_name,kind,source) VALUES(?,?,?,?,?,'published_business_sync') " +
+          "ON CONFLICT(tenant_id,phone_e164) DO UPDATE SET display_name=excluded.display_name,kind='seller'"
+        ).bind(contactId, TENANT, phone, str(business.name, 120), "seller").run();
+        const contact = await db().prepare("SELECT id FROM sms_contacts WHERE tenant_id=? AND phone_e164=?").bind(TENANT, phone).first();
+        await db().prepare("INSERT OR IGNORE INTO sms_group_members(tenant_id,group_id,contact_id) VALUES(?,?,?)")
+          .bind(TENANT, groupId, contact.id).run();
+        synced++;
+      }
+      await audit("published_business_contacts_synced", groupId);
+      return noStore({ok:true,synced,skipped,groupId});
+    }
     if (input.action === "consent") {
       const contactId = str(input.contactId,64);
       const contact = await db().prepare("SELECT id FROM sms_contacts WHERE id=? AND tenant_id=?").bind(contactId,TENANT).first();

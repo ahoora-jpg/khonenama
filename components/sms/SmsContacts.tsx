@@ -79,6 +79,19 @@ export function ContactsPage() {
       setBusy(false);
     }
   }
+  async function syncPublishedBusinesses() {
+    setBusy(true);
+    try {
+      const result = await smsApi("/api/admin/sms", { action: "syncPublishedBusinesses" });
+      notify(`${faNumber(result.synced || 0)} شمارهٔ غرفهٔ منتشرشده آمادهٔ ارسال پیام عملیاتی شد.`);
+      reload();
+      await refresh();
+    } catch (e) {
+      notify((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
   return (
     <>
       <Panel>
@@ -113,6 +126,9 @@ export function ContactsPage() {
             }}
           >
             افزودن مخاطب
+          </button>
+          <button className="sms-secondary" disabled={busy} onClick={() => void syncPublishedBusinesses()}>
+            همگام‌سازی غرفه‌ها
           </button>
           <a className="sms-button sms-secondary" href="/sms/groups">
             ورود از پرونده

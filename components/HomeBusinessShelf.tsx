@@ -7,7 +7,7 @@ export type ShelfBusiness = { slug: string; name: string; city: string; area: st
 const categories = [["curtain", "پرده"], ["flooring", "کفپوش و پارکت"], ["carpet", "موکت"], ["wallpaper", "کاغذ دیواری"], ["interior-design", "طراحی داخلی"], ["lighting", "نورپردازی داخلی"], ["smart-home", "خانه هوشمند"]] as const;
 
 export default function HomeBusinessShelf({ initialBusinesses }: { initialBusinesses: ShelfBusiness[] }) {
-  const [items, setItems] = useState(initialBusinesses.filter(b=>!!b.coverUrl));
+  const [items, setItems] = useState(initialBusinesses);
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -16,10 +16,10 @@ export default function HomeBusinessShelf({ initialBusinesses }: { initialBusine
     setCategory(value); setLoading(true); setError(false);
     const id = ++requestId.current;
     try {
-      const response = await fetch("/api/v1/businesses?limit=6&withPhotos=1&category=" + encodeURIComponent(value), { cache: "no-store" });
+      const response = await fetch("/api/v1/businesses?limit=6&category=" + encodeURIComponent(value), { cache: "no-store" });
       const body = await response.json();
       if (!response.ok || !body.ok || !Array.isArray(body.data)) throw new Error("Unavailable");
-      if (id === requestId.current) setItems(body.data.filter((b:ShelfBusiness)=>!!b.coverUrl));
+      if (id === requestId.current) setItems(body.data);
     } catch { if (id === requestId.current) setError(true); }
     finally { if (id === requestId.current) setLoading(false); }
   }
