@@ -34,6 +34,7 @@
   ],
   "vars": {
     "SMS_LIVE_SEND_ENABLED": "true",
+    "SMS_SIM_MODE": "default",
     "RECOVERY_EMAIL_FROM": "noreply@khonenama.ir",
     "IMAGEKIT_URL_ENDPOINT": "https://ik.imagekit.io/khonenama",
     "MEDIA_STORAGE_PROVIDER": "r2"

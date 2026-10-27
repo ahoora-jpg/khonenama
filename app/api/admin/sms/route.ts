@@ -1,7 +1,7 @@
 import { env } from "cloudflare:workers";
 import { isSmsAdminRequest } from "@/lib/server/sms/admin-auth";
 import { GATEWAY, TENANT, hasPromotionalConsent, maskPhone, noStore, normalizePhone } from "@/lib/server/sms/domain";
-import {liveSmsEnabled} from "@/lib/server/sms/config";
+import {liveSmsEnabled,smsSimSelection} from "@/lib/server/sms/config";
 import {smsKeyConfigured} from "@/lib/server/sms/admin-auth";
 
 const db = () => (env as any).DB;
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
           AND (SELECT status FROM sms_consents s WHERE s.tenant_id=c.tenant_id AND s.contact_id=c.id ORDER BY s.created_at DESC,s.rowid DESC LIMIT 1)='granted') AS consented_contacts`).bind(TENANT,TENANT,TENANT,TENANT).first(),
     ]);
     return noStore({ ok: true, counts: counts.results, contacts: contacts.results.map((c:any)=>({ ...c, phone_e164: maskPhone(c.phone_e164) })),
-      messages: messages.results.map((m:any)=>({ ...m, phone_e164: maskPhone(m.phone_e164) })), campaigns: campaigns.results, agent,summary,
+      messages: messages.results.map((m:any)=>({ ...m, phone_e164: maskPhone(m.phone_e164) })), campaigns: campaigns.results, agent:agent?{...agent,sim_selection:smsSimSelection(env as any)}:null,summary,
       liveSendingEnabled:liveSmsEnabled(env as any),setup:{separateKeyConfigured:smsKeyConfigured(),bridgeCredentialConfigured:Boolean((env as any).SMS_BRIDGE_TOKEN)} });
   } catch { return noStore({ ok: false, error: "SMS_SCHEMA_UNAVAILABLE" }, 503); }
 }

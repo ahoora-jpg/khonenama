@@ -7,7 +7,7 @@ const journalPath = resolve(process.env.SMS_BRIDGE_JOURNAL || "./sms-bridge.jour
 const delay = ms => new Promise(done=>setTimeout(done,ms));
 
 export function validateConfig(c) {
-  if (!c || c.simNumber!==2) throw Error("Invalid bridge configuration");
+  if (!c || ![2,"default"].includes(c.simNumber)) throw Error("Invalid bridge configuration");
   let site,phone;
   try{site=new URL(c.siteUrl);phone=new URL(c.phoneUrl);}catch{throw Error("Invalid bridge URL");}
   if(site.protocol!=="https:" || !["khonenama.ir","www.khonenama.ir"].includes(site.hostname) || site.username || site.password ||
@@ -30,8 +30,8 @@ export function parseExpiry(value) {
   return Date.parse(/^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d(?:\.\d+)?$/.test(value)?value.replace(" ","T")+"Z":value);
 }
 export function gatewayPayload(job) {
-  if (job.simNumber!==2) throw Error("SIM 2 required");
-  return { id: job.gatewayId, textMessage:{text:job.body}, phoneNumbers:[job.phone], simNumber:2, withDeliveryReport:true,
+  if (![2,"default"].includes(job.simNumber)) throw Error("Approved SIM selection required");
+  return { id: job.gatewayId, textMessage:{text:job.body}, phoneNumbers:[job.phone], ...(job.simNumber===2?{simNumber:2}:{}), withDeliveryReport:true,
     ttl:Math.max(5,Math.floor((parseExpiry(job.expiresAt)-Date.now())/1000)) };
 }
 
@@ -39,7 +39,7 @@ export async function bridgeRequest(config,action,fields={}) {
   const attempts=["heartbeat","authorize","inboxSenders"].includes(action)?3:1;
   let response;
   for(let attempt=0;attempt<attempts;attempt++){
-    try{response=await fetch(new URL("/api/v1/sms/bridge",config.siteUrl),{method:"POST",headers:{"Authorization":"Bearer "+config.bridgeToken,"Content-Type":"application/json"},body:JSON.stringify({action,...fields}),signal:AbortSignal.timeout(15000)});break;}
+    try{response=await fetch(new URL("/api/v1/sms/bridge",config.siteUrl),{method:"POST",headers:{"Authorization":"Bearer "+config.bridgeToken,"Content-Type":"application/json"},body:JSON.stringify({action,simNumber:config.simNumber,...fields}),signal:AbortSignal.timeout(15000)});break;}
     catch(error){if(attempt===attempts-1 || !["TimeoutError","AbortError","TypeError"].includes(error.name))throw error;await delay(500);}
   }
   const data=await response.json();
@@ -78,7 +78,7 @@ export async function syncInbox(config,seen,allowed) {
 }
 
 export async function processJob(config,job,journal) {
-  if (job.simNumber!==2 || !/^\+\d{8,15}$/.test(job.phone) || !Number.isFinite(parseExpiry(job.expiresAt)) || parseExpiry(job.expiresAt)<=Date.now()) {
+  if (![2,"default"].includes(job.simNumber) || job.simNumber!==config.simNumber || !/^\+\d{8,15}$/.test(job.phone) || !Number.isFinite(parseExpiry(job.expiresAt)) || parseExpiry(job.expiresAt)<=Date.now()) {
     journal[job.id]={job,phase:"report_pending",report:{uncertain:true}}; await saveJournal(journal); return;
   }
   const permission=await bridgeRequest(config,"authorize",{messageId:job.id,leaseToken:job.leaseToken});

@@ -1,7 +1,7 @@
 import { env } from "cloudflare:workers";
 import { GATEWAY, TENANT, canTransition, gatewayState, isOptOut, noStore, normalizePhone, type SmsState } from "./domain";
 import { CLAIM_SQL } from "./queue";
-import {liveSmsEnabled} from "./config";
+import {liveSmsEnabled,smsSimSelection} from "./config";
 
 async function digest(value: string): Promise<Uint8Array> {
   return new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value)));
@@ -23,7 +23,8 @@ export async function handleBridge(request: Request): Promise<Response> {
   if (!input || typeof input!=="object") return noStore({ok:false,error:"INVALID_JSON"},400);
   const agent=await db.prepare("SELECT a.enabled,g.enabled AS gateway_enabled,g.sim_number FROM sms_gateway_agents a JOIN sms_gateways g ON g.id=a.gateway_id WHERE a.id='khonenama-windows' AND a.tenant_id=? AND g.id=?")
     .bind(TENANT,GATEWAY).first();
-  if (!agent?.enabled || !agent?.gateway_enabled || agent.sim_number!==2) return noStore({ok:false,error:"BRIDGE_DISABLED"},403);
+  const selectedSim=smsSimSelection(env as any);
+  if (!agent?.enabled || !agent?.gateway_enabled || agent.sim_number!==2 || selectedSim===null) return noStore({ok:false,error:"BRIDGE_DISABLED"},403);
   if (input.action==="heartbeat") {
     await db.prepare("UPDATE sms_gateway_agents SET last_seen_at=CURRENT_TIMESTAMP,last_error=NULL WHERE id='khonenama-windows' AND tenant_id=?").bind(TENANT).run();
     return noStore({ok:true});
@@ -39,6 +40,7 @@ export async function handleBridge(request: Request): Promise<Response> {
     return noStore({ok:true});
   }
   if (input.action==="claim") {
+    if((input.simNumber??2)!==selectedSim)return noStore({ok:false,error:"SIM_SELECTION_MISMATCH"},409);
     if(!liveSmsEnabled(env as any))return noStore({ok:false,error:"LIVE_SEND_DISABLED"},403);
     const id=crypto.randomUUID(), token=crypto.randomUUID();
     const rawInterval=Number((env as any).SMS_MIN_INTERVAL_SECONDS||15);
@@ -49,7 +51,7 @@ export async function handleBridge(request: Request): Promise<Response> {
     if (!row) return noStore({ok:true,job:null});
     const contact=await db.prepare("SELECT phone_e164 FROM sms_contacts WHERE id=? AND tenant_id=?").bind(row.contact_id,TENANT).first();
     await db.prepare("INSERT INTO sms_message_events(tenant_id,message_id,state,detail) VALUES(?,?,'leased',?)").bind(TENANT,row.id,id).run();
-    return noStore({ok:true,job:{id:row.id,phone:contact.phone_e164,body:row.body,expiresAt:row.expires_at,leaseToken:row.lease_token,gatewayId:row.id,simNumber:2}});
+    return noStore({ok:true,job:{id:row.id,phone:contact.phone_e164,body:row.body,expiresAt:row.expires_at,leaseToken:row.lease_token,gatewayId:row.id,simNumber:selectedSim}});
   }
   if(input.action==="authorize"){
     if(!liveSmsEnabled(env as any))return noStore({ok:false,error:"LIVE_SEND_DISABLED"},403);
