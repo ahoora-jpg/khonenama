@@ -77,6 +77,7 @@ export type Dashboard = {
     enabled: number;
     gateway_enabled: number;
     sim_number: number;
+    sim_selection?: 2 | "default" | null;
     inbound_enabled: number;
   } | null;
   summary: {
@@ -740,7 +741,7 @@ export function GatewayStatus() {
       <dd>{smsDate(data.agent?.last_seen_at)}</dd>
       <dt>سیم‌کارت مجاز</dt>
       <dd>
-        {data.agent?.sim_number === 2 ? "سیم‌کارت دوم" : "پیکربندی تأیید نشده"}
+        {data.agent?.sim_selection === "default" ? "پیش‌فرض گوشی" : data.agent?.sim_number === 2 ? "سیم‌کارت دوم" : "پیکربندی تأیید نشده"}
       </dd>
       <dt>پیام‌های در صف</dt>
       <dd>

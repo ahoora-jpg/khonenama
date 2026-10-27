@@ -196,3 +196,25 @@ test('authorized live mode queues messages but preserves optional drafts and con
     assert.notEqual(repeated.status,'queued','a draft cannot be promoted by replaying its key');
   }finally{f.sql.close();}
 });
+
+test('default SIM mode omits simNumber at the phone and requires matching server and agent modes',async()=>{
+ const f=await fixture();try{
+  f.env.SMS_SIM_MODE='default';f.env.SMS_LIVE_SEND_ENABLED='true';
+  const route=load('app/api/admin/sms/route.ts',f.imports);
+  const person=await(await route.POST(f.request({action:'contact',phone:'09123456789',name:'local test',kind:'admin'}))).json();
+  await route.POST(f.request({action:'queue',contactId:person.id,body:'mock only',reason:'test',category:'transactional',expiresAt:new Date(Date.now()+3600000).toISOString(),idempotencyKey:'default-sim-test'}));
+  f.sql.exec('UPDATE sms_gateways SET enabled=1;UPDATE sms_gateway_agents SET enabled=1');
+  const queue=load('lib/server/sms/queue.ts');
+  const bridge=load('lib/server/sms/bridge.ts',{'cloudflare:workers':{env:f.env},'./domain':f.domain,'./queue':queue,'./config':f.config});
+  const request=mode=>new Request('https://khonenama.ir/api/v1/sms/bridge',{method:'POST',headers:{authorization:'Bearer '+f.env.SMS_BRIDGE_TOKEN,'content-type':'application/json'},body:JSON.stringify({action:'claim',simNumber:mode})});
+  assert.equal((await bridge.handleBridge(request(2))).status,409);
+  const claimed=await(await bridge.handleBridge(request('default'))).json();assert.equal(claimed.job.simNumber,'default');
+  const {gatewayPayload,validateConfig}=await import('./sms-bridge/agent.mjs');
+  const payload=gatewayPayload(claimed.job);assert.ok(!Object.hasOwn(payload,'simNumber'));assert.equal(payload.phoneNumbers.length,1);
+  const legacy=gatewayPayload({...claimed.job,simNumber:2});assert.equal(legacy.simNumber,2);
+  assert.throws(()=>gatewayPayload({...claimed.job,simNumber:1}));
+  assert.equal(f.config.smsSimSelection({SMS_SIM_MODE:'typo'}),null);
+  const dashboard=await(await route.GET(f.get('/api/admin/sms'))).json();assert.equal(dashboard.agent.sim_selection,'default');
+  assert.equal(validateConfig({siteUrl:'https://khonenama.ir',phoneUrl:'http://192.168.43.1:8080',sendPath:'/messages',statusPath:'/messages/{id}',bridgeToken:'mock',phoneUser:'mock',phonePassword:'mock',simNumber:'default'}).simNumber,'default');
+ }finally{f.sql.close();}
+});
