@@ -53,7 +53,12 @@ export default function Header() {
       {open && (
         <>
           <button className="site-menu-backdrop" type="button" aria-label="بستن منو" onClick={() => setOpen(false)} />
-          <div className="site-menu-panel shell glass-panel premium-mobile-nav" aria-label="منوی اصلی">
+          <aside className="site-menu-panel premium-mobile-nav" aria-label="منوی اصلی">
+            <div className="site-menu-panel-intro">
+              <span>خونه‌نما</span>
+              <strong>برای خانه‌ات، یک انتخاب مطمئن بساز.</strong>
+              <p>متخصص، ایده و راهنمای مورد نیازت را از همین‌جا پیدا کن.</p>
+            </div>
             <a className="site-menu-home" href="/" onClick={() => setOpen(false)}>صفحه اصلی</a>
             <a className="site-menu-primary-link" href="/search" onClick={() => setOpen(false)}>یافتن متخصص و غرفه‌ها</a>
             <details className="site-menu-details">
@@ -86,7 +91,7 @@ export default function Header() {
               <Download size={17} />
               دانلود اپلیکیشن اندروید
             </a>
-          </div>
+          </aside>
         </>
       )}
     </header>
