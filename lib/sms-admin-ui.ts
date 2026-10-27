@@ -15,13 +15,13 @@ export const smsPages = [
     key: "contacts",
     path: "/sms/contacts",
     title: "مخاطبان",
-    description: "مدیریت مخاطبان و رضایت مستند",
+    description: "مدیریت شماره‌ها و وضعیت دریافت پیام",
   },
   {
     key: "groups",
     path: "/sms/groups",
     title: "گروه‌های مخاطبان",
-    description: "سازمان‌دهی مخاطبان؛ عضویت در گروه مجوز تبلیغ نیست",
+    description: "سازمان‌دهی مخاطبان و ورود شماره‌ها از فایل",
   },
   {
     key: "campaigns",

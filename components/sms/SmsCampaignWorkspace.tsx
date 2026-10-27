@@ -159,7 +159,7 @@ export function CampaignsPage() {
                   <th>کمپین و متن</th>
                   <th>وضعیت</th>
                   <th>مخاطبان گروه</th>
-                  <th>واجد رضایت</th>
+                  <th>قابل ارسال</th>
                   <th>شروع</th>
                   <th>پیشرفت ثبت در صف</th>
                   <th>عملیات</th>
@@ -197,6 +197,20 @@ export function CampaignsPage() {
                         />
                       </td>
                       <td>
+                        {c.status === "completed" && c.queued_count === 0 && (
+                          <button
+                            className="sms-quiet"
+                            disabled={busy || !data.liveSendingEnabled}
+                            onClick={() =>
+                              setConfirmation({
+                                action: "retryEmpty",
+                                id: c.id,
+                              })
+                            }
+                          >
+                            اجرای مجدد
+                          </button>
+                        )}
                         {c.status === "draft" && (
                           <button
                             className="sms-quiet"
@@ -257,7 +271,7 @@ export function CampaignsPage() {
         ) : (
           <EmptyState
             title="هنوز کمپینی ساخته نشده"
-            text="با انتخاب گروه دارای رضایت، متن و زمان‌بندی، پیش‌نویس بسازید."
+            text="گروه مخاطبان، متن و زمان‌بندی را انتخاب کنید و کمپین بسازید."
           />
         )}
         <p className="sms-muted">
@@ -299,7 +313,7 @@ export function CampaignsPage() {
                   />
                 </Field>
                 <Field label="نوع کمپین">
-                  <input value="تبلیغاتی؛ فقط با رضایت مستند" readOnly />
+                  <input value="تبلیغاتی" readOnly />
                 </Field>
                 <p className="sms-muted">
                   کمپین فعلی برای تبلیغات گروهی است. پیام عملیاتی را از صفحهٔ
@@ -330,12 +344,12 @@ export function CampaignsPage() {
                 {group && (
                   <p>
                     {faNumber(group.member_count)} عضو ·{" "}
-                    {faNumber(group.eligible_count)} مخاطب دارای رضایت فعلی
+                    {faNumber(group.eligible_count)} مخاطب قابل ارسال
                   </p>
                 )}
                 <p className="sms-muted">
-                  رضایت در زمان ثبت در صف و دوباره در زمان ارسال بررسی می‌شود.
-                  انتخاب گروه به‌تنهایی مجوز ارسال نیست.
+                  شماره‌های تکراری دوباره ارسال نمی‌شوند. شماره‌های لغو دریافت
+                  در زمان ارسال کنار گذاشته می‌شوند.
                 </p>
               </>
             )}
@@ -387,7 +401,7 @@ export function CampaignsPage() {
                   <dd>تبلیغاتی</dd>
                   <dt>گروه</dt>
                   <dd>{group?.name || "نامشخص"}</dd>
-                  <dt>دارای رضایت فعلی</dt>
+                  <dt>قابل ارسال</dt>
                   <dd>{group ? faNumber(group.eligible_count) : "—"}</dd>
                   <dt>سقف گیرندگان</dt>
                   <dd>{faNumber(limit)}</dd>
@@ -464,7 +478,7 @@ export function CampaignsPage() {
           <p>
             {confirmation.action === "cancel"
               ? "این کمپین و پیام‌های باقی‌ماندهٔ آن در صف لغو شوند؟"
-              : "این عملیات می‌تواند کمپین را وارد صف ارسال کند. رضایت مخاطبان در سمت سرور بررسی خواهد شد."}
+              : "این عملیات می‌تواند کمپین را وارد صف ارسال کند. شماره‌های لغو دریافت کنار گذاشته می‌شوند."}
           </p>
           <div className="sms-modal-actions">
             <button

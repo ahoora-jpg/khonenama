@@ -90,6 +90,14 @@ export async function POST(request:Request){
     await db.prepare("INSERT INTO sms_audit_logs(tenant_id,actor,action,target_id) VALUES(?,'site_admin','campaign_created',?)").bind(TENANT,id).run();
     return noStore({ok:true,id});
   }
+  if(body.action==="retryEmpty"){
+    if(!liveSmsEnabled(env as any))return noStore({ok:false,error:"LIVE_SEND_DISABLED"},403);
+    const id=String(body.id||"");
+    const row=await db.prepare("UPDATE sms_campaigns SET status='approved',approved_at=CURRENT_TIMESTAMP WHERE id=? AND tenant_id=? AND status='completed' AND NOT EXISTS(SELECT 1 FROM sms_campaign_recipients cr WHERE cr.campaign_id=sms_campaigns.id) AND NOT EXISTS(SELECT 1 FROM sms_messages m WHERE m.campaign_id=sms_campaigns.id AND m.tenant_id=sms_campaigns.tenant_id) RETURNING id").bind(id,TENANT).first();
+    if(!row)return noStore({ok:false,error:"INVALID_TRANSITION"},409);
+    await db.prepare("INSERT INTO sms_audit_logs(tenant_id,actor,action,target_id) VALUES(?,'site_admin','campaign_retry_empty',?)").bind(TENANT,id).run();
+    return noStore({ok:true});
+  }
   if(["approve","pause","resume","cancel"].includes(body.action)){
     if(["approve","resume"].includes(body.action)&&!liveSmsEnabled(env as any))return noStore({ok:false,error:"LIVE_SEND_DISABLED"},403);
     const id=String(body.id||"");
@@ -116,8 +124,7 @@ export async function GET(request:Request){
       (SELECT COUNT(*) FROM sms_group_members gm JOIN sms_contacts co ON co.id=gm.contact_id WHERE gm.group_id=c.group_id AND co.tenant_id=c.tenant_id) AS group_count,
       (SELECT COUNT(*) FROM sms_group_members gm JOIN sms_contacts co ON co.id=gm.contact_id
         WHERE gm.group_id=c.group_id AND co.tenant_id=c.tenant_id
-          AND NOT EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=co.tenant_id AND o.contact_id=co.id)
-          AND (SELECT status FROM sms_consents s WHERE s.tenant_id=co.tenant_id AND s.contact_id=co.id ORDER BY s.created_at DESC,s.rowid DESC LIMIT 1)='granted') AS eligible_count,
+          AND NOT EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=co.tenant_id AND o.contact_id=co.id)) AS eligible_count,
       (SELECT COUNT(*) FROM sms_campaign_recipients cr WHERE cr.campaign_id=c.id) AS queued_count
       FROM sms_campaigns c WHERE c.tenant_id=? ORDER BY c.created_at DESC LIMIT 50`).bind(TENANT).all(),
   ]);

@@ -65,7 +65,6 @@ export async function handleBridge(request: Request): Promise<Response> {
         EXISTS(SELECT 1 FROM sms_gateways g WHERE g.id=m.gateway_id AND g.inbound_enabled=1)
         AND
         NOT EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=m.tenant_id AND o.contact_id=m.contact_id)
-        AND (SELECT status FROM sms_consents s WHERE s.tenant_id=m.tenant_id AND s.contact_id=m.contact_id ORDER BY s.created_at DESC,s.rowid DESC LIMIT 1)='granted'
         AND EXISTS(SELECT 1 FROM sms_gateway_agents a WHERE a.gateway_id=m.gateway_id AND a.last_inbox_at>=datetime('now','-5 minutes'))
       ))`).bind(id,TENANT,token).first();
     return noStore({ok:true,allowed:Boolean(permitted)});

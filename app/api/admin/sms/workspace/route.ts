@@ -2,7 +2,7 @@ import { env } from "cloudflare:workers";
 import { isSmsAdminRequest } from "@/lib/server/sms/admin-auth";
 import { TENANT, maskPhone, noStore } from "@/lib/server/sms/domain";
 
-const consentSql = `(CASE WHEN EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=c.tenant_id AND o.contact_id=c.id) THEN 'revoked' ELSE COALESCE((SELECT status FROM sms_consents s WHERE s.tenant_id=c.tenant_id AND s.contact_id=c.id ORDER BY s.created_at DESC,s.rowid DESC LIMIT 1),'none') END)`;
+const consentSql = `(CASE WHEN EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=c.tenant_id AND o.contact_id=c.id) THEN 'revoked' ELSE 'active' END)`;
 export async function GET(request: Request) {
   if (!(await isSmsAdminRequest(request))) return noStore({ ok: false }, 401);
   const db = (env as any).DB;
@@ -24,7 +24,7 @@ export async function GET(request: Request) {
         where += " AND (c.display_name LIKE ? OR c.phone_e164 LIKE ?)";
         values.push("%" + q + "%", "%" + q + "%");
       }
-      if (["granted", "revoked", "none"].includes(filter)) {
+      if (["active", "revoked"].includes(filter)) {
         where += " AND " + consentSql + "=?";
         values.push(filter);
       }
@@ -139,7 +139,7 @@ export async function GET(request: Request) {
       const groups = await db
         .prepare(
           `SELECT g.id,g.name,(SELECT COUNT(*) FROM sms_group_members gm WHERE gm.tenant_id=g.tenant_id AND gm.group_id=g.id) AS member_count,
-        (SELECT COUNT(*) FROM sms_group_members gm JOIN sms_contacts c ON c.id=gm.contact_id AND c.tenant_id=gm.tenant_id WHERE gm.tenant_id=g.tenant_id AND gm.group_id=g.id AND ${consentSql}='granted') AS eligible_count FROM sms_contact_groups g WHERE g.tenant_id=? ORDER BY g.name LIMIT 500`,
+        (SELECT COUNT(*) FROM sms_group_members gm JOIN sms_contacts c ON c.id=gm.contact_id AND c.tenant_id=gm.tenant_id WHERE gm.tenant_id=g.tenant_id AND gm.group_id=g.id AND ${consentSql}='active') AS eligible_count FROM sms_contact_groups g WHERE g.tenant_id=? ORDER BY g.name LIMIT 500`,
         )
         .bind(TENANT)
         .all();

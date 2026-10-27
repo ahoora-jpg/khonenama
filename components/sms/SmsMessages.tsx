@@ -31,7 +31,8 @@ export function SendPage() {
   const contact = data.contacts.find((c) => c.id === contactId),
     estimate = estimateSms(body);
   const eligible =
-    category !== "promotional" || contact?.consent_status === "granted";
+    category !== "promotional" ||
+    Boolean(contact && contact.consent_status !== "revoked");
   return (
     <div className="sms-compose-layout">
       <Panel title="نگارش پیام">
@@ -131,8 +132,8 @@ export function SendPage() {
           </div>
           {category === "promotional" && !eligible && (
             <p role="status" className="sms-alert">
-              رضایت معتبر مخاطب ثبت نشده است. فقط پیش‌نویس قابل نگهداری است؛
-              ارسال تبلیغاتی نیازمند بررسی سمت سرور است.
+              مخاطب را انتخاب کنید. شماره‌هایی که لغو دریافت کرده‌اند در ارسال
+              تبلیغاتی کنار گذاشته می‌شوند.
             </p>
           )}
           <div className="sms-modal-actions">
@@ -166,12 +167,12 @@ export function SendPage() {
           <dl className="sms-definition">
             <dt>تعداد گیرندگان</dt>
             <dd>{contactId ? "۱" : "۰"}</dd>
-            <dt>رضایت تبلیغاتی</dt>
+            <dt>وضعیت دریافت تبلیغات</dt>
             <dd>
-              {contact?.consent_status === "granted"
-                ? "ثبت شده"
+              {contact && contact.consent_status !== "revoked"
+                ? "قابل ارسال"
                 : contact
-                  ? "فاقد رضایت معتبر"
+                  ? "لغو دریافت"
                   : "مخاطب انتخاب نشده"}
             </dd>
             <dt>زمان‌بندی پیام دستی</dt>

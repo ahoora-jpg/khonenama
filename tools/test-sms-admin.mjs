@@ -67,11 +67,11 @@ test('review mode saves idempotent drafts and exposes masked recipients only',as
     assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_message_events').get().n,1);
     f.env.SMS_LIVE_SEND_ENABLED='true';
     const replay=await(await route.POST(f.request(input))).json();assert.equal(replay.status,'draft','retry cannot promote an existing draft');
-    const denied=await route.POST(f.request({...input,category:'promotional',idempotencyKey:'promotional-live'}));assert.equal(denied.status,403);
+    const denied=await route.POST(f.request({...input,category:'promotional',idempotencyKey:'promotional-live'}));assert.equal(denied.status,200);
     delete f.env.SMS_LIVE_SEND_ENABLED;
     const promotional=await(await route.POST(f.request({...input,category:'promotional',idempotencyKey:'promotional-draft'}))).json();assert.equal(promotional.status,'draft');
     const data=await(await route.GET(f.get('/api/admin/sms'))).json();
-    assert.equal(data.messages.length,2);assert.ok(data.messages.every(message=>!message.phone_e164.includes('9123456789')));
+    assert.equal(data.messages.length,3);assert.ok(data.messages.every(message=>!message.phone_e164.includes('9123456789')));
   }finally{f.sql.close();}
 });
 
@@ -182,7 +182,7 @@ test('UI bridge status never reports online from configuration or future heartbe
   assert.equal(ui.bridgeState({enabled:1,gateway_enabled:1,last_seen_at:'invalid'},now),'offline');
 });
 
-test('authorized live mode queues messages but preserves optional drafts and consent checks',async()=>{
+test('authorized live mode queues messages without initial consent and preserves optional drafts',async()=>{
   const f=await fixture();try{
     f.env.SMS_LIVE_SEND_ENABLED='true';
     const route=load('app/api/admin/sms/route.ts',f.imports);
@@ -190,8 +190,8 @@ test('authorized live mode queues messages but preserves optional drafts and con
     const input={action:'queue',contactId:contact.id,body:'authorized local test only',reason:'test',category:'transactional',expiresAt:new Date(Date.now()+3600000).toISOString(),idempotencyKey:'live-queue'};
     const queued=await(await route.POST(f.request(input))).json();assert.equal(queued.status,'queued');
     const draft=await(await route.POST(f.request({...input,draftOnly:true,category:'promotional',idempotencyKey:'explicit-draft'}))).json();assert.equal(draft.status,'draft');
-    assert.equal((await route.POST(f.request({...input,category:'promotional',idempotencyKey:'no-consent'}))).status,403);
-    assert.equal(f.sql.prepare("SELECT COUNT(*) n FROM sms_messages WHERE status='queued'").get().n,1);
+    assert.equal((await route.POST(f.request({...input,category:'promotional',idempotencyKey:'no-consent'}))).status,200);
+    assert.equal(f.sql.prepare("SELECT COUNT(*) n FROM sms_messages WHERE status='queued'").get().n,2);
     const repeated=await(await route.POST(f.request({...input,idempotencyKey:'explicit-draft',category:'promotional'}))).json();
     assert.notEqual(repeated.status,'queued','a draft cannot be promoted by replaying its key');
   }finally{f.sql.close();}
@@ -230,5 +230,49 @@ test('Worker machine route preserves authentication, origin and body limits befo
   assert.equal((await handler.handleWorkerBridge(make('x'.repeat(65537)),f.db)).status,413);
   f.sql.exec('UPDATE sms_gateways SET enabled=1;UPDATE sms_gateway_agents SET enabled=1');
   const response=await handler.handleWorkerBridge(make(JSON.stringify({action:'heartbeat'})),f.db);assert.equal(response.status,200);assert.equal((await response.json()).ok,true);assert.equal(response.headers.get('x-content-type-options'),'nosniff');assert.equal(response.headers.get('cache-control'),'private, no-store');assert.equal(schemaCalls,1);
+ }finally{f.sql.close();}
+});
+
+test('campaigns expand imported numbers without initial consent while opt-outs remain excluded at every stage',async()=>{
+ const f=await fixture();try{
+  f.env.SMS_LIVE_SEND_ENABLED='true';
+  const api=load('app/api/admin/sms/route.ts',f.imports),campaigns=load('app/api/admin/sms/campaigns/route.ts',f.imports);
+  const group=await(await campaigns.POST(f.request({action:'group',name:'audience'}))).json();
+  const imported=await(await campaigns.POST(f.request({action:'importCsv',groupId:group.id,csv:'phone,name\n09123456789,first\n09123456788,second\n09123456787,excluded\n09123456789,duplicate'}))).json();
+  assert.equal(imported.imported,4);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_contacts').get().n,3);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_consents').get().n,0);
+  const excluded=f.sql.prepare("SELECT id FROM sms_contacts WHERE phone_e164='+989123456787'").get().id;
+  f.sql.prepare("INSERT INTO sms_opt_outs(tenant_id,contact_id,source) VALUES('khonenama',?,'inbound_sms')").run(excluded);
+  const campaign=await(await campaigns.POST(f.request({action:'create',groupId:group.id,name:'campaign',body:'mock campaign',maxRecipients:10}))).json();
+  assert.equal((await campaigns.POST(f.request({action:'approve',id:campaign.id}))).status,200);
+  f.sql.exec('UPDATE sms_gateways SET enabled=1,inbound_enabled=1;UPDATE sms_gateway_agents SET enabled=1,last_inbox_at=CURRENT_TIMESTAMP');
+  const reconcile=load('lib/server/sms/reconcile.ts',{'./domain':f.domain});
+  await reconcile.reconcileSms(f.db,{liveSendingEnabled:true});await reconcile.reconcileSms(f.db,{liveSendingEnabled:true});
+  assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_campaign_recipients').get().n,2);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_messages').get().n,2);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_messages WHERE contact_id=?').get(excluded).n,0);
+  const data=await(await campaigns.GET(f.get('/api/admin/sms/campaigns'))).json();assert.equal(data.campaigns[0].eligible_count,2);
+  const bridge=load('lib/server/sms/bridge.ts',{'cloudflare:workers':{env:f.env},'./domain':f.domain,'./queue':load('lib/server/sms/queue.ts'),'./config':f.config});
+  const request=payload=>new Request('https://sms.khonenama.ir/api/v1/sms/bridge',{method:'POST',headers:{authorization:'Bearer '+f.env.SMS_BRIDGE_TOKEN,'content-type':'application/json'},body:JSON.stringify(payload)});
+  const {job}=await(await bridge.handleBridge(request({action:'claim',simNumber:2}))).json();assert.ok(job);
+  assert.equal((await(await bridge.handleBridge(request({action:'authorize',messageId:job.id,leaseToken:job.leaseToken}))).json()).allowed,true);
+  const leasedContact=f.sql.prepare('SELECT contact_id FROM sms_messages WHERE id=?').get(job.id).contact_id;
+  f.sql.prepare("INSERT INTO sms_opt_outs(tenant_id,contact_id,source) VALUES('khonenama',?,'inbound_sms')").run(leasedContact);
+  assert.equal((await(await bridge.handleBridge(request({action:'authorize',messageId:job.id,leaseToken:job.leaseToken}))).json()).allowed,false);
+  f.sql.prepare("UPDATE sms_campaigns SET status='completed' WHERE id=?").run(campaign.id);
+  assert.equal((await campaigns.POST(f.request({action:'retryEmpty',id:campaign.id}))).status,409,'a campaign with any queued recipient cannot be replayed');
+ }finally{f.sql.close();}
+});
+
+test('empty audiences pause instead of falsely completing; zero-send legacy campaigns can be explicitly retried',async()=>{
+ const f=await fixture();try{
+  f.env.SMS_LIVE_SEND_ENABLED='true';
+  const api=load('app/api/admin/sms/campaigns/route.ts',f.imports);
+  const group=await(await api.POST(f.request({action:'group',name:'empty'}))).json();
+  const campaign=await(await api.POST(f.request({action:'create',groupId:group.id,name:'empty campaign',body:'mock',maxRecipients:10}))).json();
+  await api.POST(f.request({action:'approve',id:campaign.id}));
+  f.sql.exec('UPDATE sms_gateways SET enabled=1,inbound_enabled=1;UPDATE sms_gateway_agents SET enabled=1,last_inbox_at=CURRENT_TIMESTAMP');
+  const {reconcileSms}=load('lib/server/sms/reconcile.ts',{'./domain':f.domain});await reconcileSms(f.db,{liveSendingEnabled:true});
+  assert.equal(f.sql.prepare('SELECT status FROM sms_campaigns WHERE id=?').get(campaign.id).status,'paused');assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_messages').get().n,0);
+  f.sql.prepare("UPDATE sms_campaigns SET status='completed' WHERE id=?").run(campaign.id);
+  assert.equal((await api.POST(f.request({action:'retryEmpty',id:campaign.id}))).status,200);assert.equal(f.sql.prepare('SELECT status FROM sms_campaigns WHERE id=?').get(campaign.id).status,'approved');
+  assert.equal((await api.POST(f.request({action:'retryEmpty',id:campaign.id}))).status,409);
  }finally{f.sql.close();}
 });
