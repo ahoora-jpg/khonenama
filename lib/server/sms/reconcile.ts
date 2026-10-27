@@ -1,4 +1,5 @@
 import { TENANT } from "./domain";
+import {prepareRecipient} from './acquisition';
 
 export async function reconcileSms(db:any,options:{liveSendingEnabled:boolean}={liveSendingEnabled:false}):Promise<void> {
   // A claimed task may already have reached Android. Never requeue it automatically.
@@ -35,7 +36,9 @@ export async function reconcileSms(db:any,options:{liveSendingEnabled:boolean}={
       WHERE gm.group_id=? AND c.tenant_id=?
         AND NOT EXISTS(SELECT 1 FROM sms_campaign_recipients cr WHERE cr.campaign_id=? AND cr.contact_id=c.id)
         AND NOT EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=? AND o.contact_id=c.id)
-      ORDER BY c.created_at,c.id LIMIT ?`).bind(campaign.group_id,TENANT,campaign.id,TENANT,remaining).all();
+        AND NOT EXISTS(SELECT 1 FROM sms_campaign_options opt JOIN users u ON REPLACE(REPLACE(u.phone,'+98','0'),' ','')=REPLACE(c.phone_e164,'+98','0') JOIN businesses b ON b.owner_user_id=u.id WHERE opt.campaign_id=? AND opt.exclude_booth_owners=1 AND b.status<>'suspended')
+        AND NOT EXISTS(SELECT 1 FROM sms_campaign_options opt JOIN sms_messages prev ON prev.contact_id=c.id AND prev.tenant_id=c.tenant_id WHERE opt.campaign_id=? AND prev.campaign_id<>? AND prev.category='promotional' AND prev.attempts>0 AND prev.created_at>datetime('now','-'||opt.cooldown_days||' days'))
+      ORDER BY c.created_at,c.id LIMIT ?`).bind(campaign.group_id,TENANT,campaign.id,TENANT,campaign.id,campaign.id,campaign.id,remaining).all();
     if(!contacts.results?.length && Number(countRow?.count||0)===0){
       await db.prepare("UPDATE sms_campaigns SET status='paused' WHERE id=? AND tenant_id=? AND status='running'").bind(campaign.id,TENANT).run();
       await db.prepare("INSERT INTO sms_audit_logs(tenant_id,actor,action,target_id,detail) VALUES(?,'system','campaign_empty_audience',?,'No eligible recipients; no messages queued')").bind(TENANT,campaign.id).run();
@@ -43,9 +46,12 @@ export async function reconcileSms(db:any,options:{liveSendingEnabled:boolean}={
     }
     for(const contact of contacts.results||[]){
       const id=crypto.randomUUID(),key=`campaign:${campaign.id}:${contact.id}`;
+      let prepared;try{prepared=await prepareRecipient(db,campaign,String(contact.id),id);}catch{await db.prepare("UPDATE sms_campaigns SET status='paused' WHERE id=?").bind(campaign.id).run();break;}
       await db.prepare(`INSERT OR IGNORE INTO sms_messages(id,tenant_id,contact_id,category,body,status,priority,idempotency_key,campaign_id,expires_at)
-        VALUES(?,?,?,'promotional',?,'queued',0,?,?,datetime('now','+1 day'))`).bind(id,TENANT,contact.id,campaign.body,key,campaign.id).run();
+        VALUES(?,?,?,'promotional',?,'queued',0,?,?,datetime('now','+1 day'))`).bind(id,TENANT,contact.id,prepared.text,key,campaign.id).run();
       const message=await db.prepare("SELECT id FROM sms_messages WHERE tenant_id=? AND idempotency_key=?").bind(TENANT,key).first();
+      await db.prepare("INSERT INTO sms_message_events(tenant_id,message_id,state) SELECT ?,?,'queued' WHERE NOT EXISTS(SELECT 1 FROM sms_message_events WHERE tenant_id=? AND message_id=? AND state='queued')").bind(TENANT,message.id,TENANT,message.id).run();
+      await db.prepare('INSERT OR IGNORE INTO sms_message_costs(message_id,parts,tariff,estimated_cost) VALUES(?,?,?,?)').bind(message.id,prepared.parts,prepared.tariff,prepared.tariff===null?null:prepared.parts*prepared.tariff).run();
       await db.prepare("INSERT OR IGNORE INTO sms_campaign_recipients(campaign_id,contact_id,message_id) VALUES(?,?,?)").bind(campaign.id,contact.id,message.id).run();
     }
     if((contacts.results||[]).length<remaining) await db.prepare(`UPDATE sms_campaigns SET status='completed' WHERE id=? AND status='running'

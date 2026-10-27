@@ -106,6 +106,8 @@ export function useSms() {
   return value;
 }
 const icons = [
+  BarChart3,
+  Users,
   LayoutDashboard,
   Send,
   Users,
@@ -132,6 +134,9 @@ export async function smsApi(path: string, payload?: Record<string, unknown>) {
   const result = await response.json();
   if (!response.ok) {
     const labels: Record<string, string> = {
+      INVALID_TRACKING_OPTIONS:'مقصد، انقضا، تعرفه یا فاصله ارسال معتبر نیست.',
+      REGISTRATION_LINK_REQUIRED:'متغیر لینک اختصاصی را در تمام نسخه‌های متن قرار دهید.',
+      UNRESOLVED_VARIABLE:'متن پیام دارای متغیر ناشناخته یا لینک فعال‌نشده است.',
       INVALID_PHONE: "شماره همراه معتبر نیست.",
       INVALID_MESSAGE: "متن، مخاطب و دلیل پیام را بررسی کنید.",
       RECIPIENT_OPTED_OUT:

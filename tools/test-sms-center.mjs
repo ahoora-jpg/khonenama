@@ -9,7 +9,10 @@ import vm from "node:vm";
 import {normalizePhone,isOptOut,canTransition,gatewayState,canReceivePromotionalMessage} from "../lib/server/sms/domain.ts";
 import {CLAIM_SQL} from "../lib/server/sms/queue.ts";
 import {routeSmsHost} from "../lib/server/sms/host.ts";
-import {ensureSmsSchema} from "../lib/server/sms/schema.ts";
+const schemaExports={},acqSchemaExports={};
+vm.runInNewContext(ts.transpileModule(await readFile("lib/server/sms/acquisition-schema.ts","utf8"),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText,{exports:acqSchemaExports});
+vm.runInNewContext(ts.transpileModule(await readFile("lib/server/sms/schema.ts","utf8"),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText,{exports:schemaExports,require:()=>acqSchemaExports});
+const {ensureSmsSchema}=schemaExports;
 
 test("Worker binding initializes additive schema once with sending disabled",async()=>{
   const sqlite=new DatabaseSync(':memory:');let batches=0;

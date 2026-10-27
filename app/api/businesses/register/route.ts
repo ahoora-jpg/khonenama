@@ -1,4 +1,5 @@
 import { setInstallmentOption } from "@/lib/server/business-installments";
+import {recordAcquisitionStage,recordAcquisitionConversion} from '@/lib/server/sms/acquisition';
 import { ensureBusinessCoverage } from "@/lib/server/business-coverage";
 import { parseServiceArea } from "@/lib/service-area";
 import { env } from "cloudflare:workers";
@@ -53,6 +54,8 @@ export async function POST(request: Request) {
       const db = (env as any).DB;
       if (!db) return Response.json({ok:false}, {status:503});
       await recordConversion(db, "registration_start");
+      await recordAcquisitionStage(db,request,'registration_start').catch(()=>{});
+      await recordAcquisitionStage(db,request,'booth_start').catch(()=>{});
       return Response.json({ok:true});
     }
 
@@ -330,6 +333,7 @@ export async function POST(request: Request) {
     const session = await createBusinessSession(userId, request);
     await recordConversion(db, "business_registered");
     if (publicationStatus === "published") await recordConversion(db, "booth_published");
+    await recordAcquisitionConversion(db,request,{userId:String(userId),businessId:Number(createdBusinessId),phone,newAccount:!existingUser,published:publicationStatus==='published',complete:categories.length>0&&selectedServices.length>0}).catch(()=>console.warn('SMS_CONVERSION_UNAVAILABLE'));
 
     return Response.json(
       {

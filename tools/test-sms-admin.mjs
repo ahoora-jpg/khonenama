@@ -13,13 +13,15 @@ function load(file,imports={}){
   return exports;
 }
 async function fixture(){
-  const sql=new DatabaseSync(':memory:');sql.exec(readFileSync('db/migrations/0012_sms_center.sql','utf8'));
+  const sql=new DatabaseSync(':memory:');sql.exec(readFileSync('db/migrations/0012_sms_center.sql','utf8'));sql.exec(readFileSync('db/migrations/0013_sms_acquisition.sql','utf8'));sql.exec('CREATE TABLE users(id TEXT PRIMARY KEY,phone TEXT);CREATE TABLE businesses(id INTEGER PRIMARY KEY,owner_user_id TEXT,status TEXT)');
   const db={prepare(query){return{values:[],bind(...values){this.values=values;return this;},async first(){return sql.prepare(query).get(...this.values)||null;},async all(){return{results:sql.prepare(query).all(...this.values)};},async run(){return{meta:{changes:sql.prepare(query).run(...this.values).changes}};}};}};
+  db.batch=async statements=>{sql.exec('BEGIN');try{const results=[];for(const statement of statements)results.push(await statement.run());sql.exec('COMMIT');return results;}catch(e){sql.exec('ROLLBACK');throw e;}};
   const env={DB:db,ADMIN_ACCESS_KEY:'test-site-key-only',SMS_BRIDGE_TOKEN:'test-bridge-key-only'};
   const admin=load('lib/server/admin-session.ts',{'cloudflare:workers':{env}});
   const auth=load('lib/server/sms/admin-auth.ts',{'cloudflare:workers':{env},'@/lib/server/admin-session':admin});
   const domain=load('lib/server/sms/domain.ts'),config=load('lib/server/sms/config.ts');
-  const imports={'cloudflare:workers':{env},'@/lib/server/admin-session':admin,'@/lib/server/sms/admin-auth':auth,'@/lib/server/sms/domain':domain,'@/lib/server/sms/config':config};
+  const acquisition=load('lib/server/sms/acquisition.ts',{'./domain':domain,'../../sms-text':load('lib/sms-text.ts')});
+  const imports={'@/lib/server/sms/acquisition':acquisition,'cloudflare:workers':{env},'@/lib/server/admin-session':admin,'@/lib/server/sms/admin-auth':auth,'@/lib/server/sms/domain':domain,'@/lib/server/sms/config':config};
   const cookie=(await admin.createAdminCookie()).split(';')[0];
   const request=(body,cookies=cookie)=>new Request('https://sms.khonenama.ir/api/admin/sms',{method:'POST',headers:{cookie:cookies,origin:'https://sms.khonenama.ir','content-type':'application/json'},body:JSON.stringify(body)});
   const get=(path,cookies=cookie)=>new Request('https://sms.khonenama.ir'+path,{headers:{cookie:cookies}});
@@ -87,7 +89,7 @@ test('review mode blocks campaign approval, template activation and bridge dispa
     assert.equal((await templates.POST(f.request({action:'toggle',code:'quote_received',confirm:'ENABLE'}))).status,403);
     assert.equal(f.sql.prepare('SELECT enabled FROM sms_templates').get().enabled,0);
     f.sql.exec('UPDATE sms_gateways SET enabled=1;UPDATE sms_gateway_agents SET enabled=1;');
-    const bridge=load('lib/server/sms/bridge.ts',{'cloudflare:workers':{env:f.env},'./domain':f.domain,'./config':f.config,'./queue':{CLAIM_SQL:'FORBIDDEN_DISPATCH_SQL'}});
+    const bridge=load('lib/server/sms/bridge.ts',{'cloudflare:workers':{env:f.env},'./domain':f.domain,'./config':f.config,'./acquisition':f.imports['@/lib/server/sms/acquisition'],'./queue':{CLAIM_SQL:'FORBIDDEN_DISPATCH_SQL'}});
     for(const action of ['claim','authorize']){
       const request=new Request('https://khonenama.ir/api/v1/sms/bridge',{method:'POST',headers:{authorization:'Bearer '+f.env.SMS_BRIDGE_TOKEN,'content-type':'application/json'},body:JSON.stringify({action})});
       const response=await bridge.handleBridge(request);assert.equal(response.status,403);assert.equal((await response.json()).error,'LIVE_SEND_DISABLED');
@@ -107,7 +109,7 @@ test('SMS estimates count Unicode surrogate pairs and GSM extension characters c
 test('review-mode cron never expands even an already-approved campaign',async()=>{
   const f=await fixture();try{
     f.sql.exec("INSERT INTO sms_contact_groups(id,tenant_id,name) VALUES('g','khonenama','group');INSERT INTO sms_contacts(id,tenant_id,phone_e164,source) VALUES('c','khonenama','+989123456789','test');INSERT INTO sms_group_members(tenant_id,group_id,contact_id) VALUES('khonenama','g','c');INSERT INTO sms_consents(id,tenant_id,contact_id,status,method,text_version,evidence_ref) VALUES('s','khonenama','c','granted','form','v1','test-evidence');INSERT INTO sms_campaigns(id,tenant_id,name,body,group_id,status,max_recipients) VALUES('campaign','khonenama','test','test','g','approved',1);UPDATE sms_gateways SET enabled=1,inbound_enabled=1;UPDATE sms_gateway_agents SET enabled=1,last_inbox_at=CURRENT_TIMESTAMP;");
-    const {reconcileSms}=load('lib/server/sms/reconcile.ts',{'./domain':f.domain});
+    const {reconcileSms}=load('lib/server/sms/reconcile.ts',{'./domain':f.domain,'./acquisition':f.imports['@/lib/server/sms/acquisition']});
     await reconcileSms(f.db,{liveSendingEnabled:false});
     assert.equal(f.sql.prepare('SELECT status FROM sms_campaigns').get().status,'approved');
     assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_messages').get().n,0);
@@ -205,7 +207,7 @@ test('default SIM mode omits simNumber at the phone and requires matching server
   await route.POST(f.request({action:'queue',contactId:person.id,body:'mock only',reason:'test',category:'transactional',expiresAt:new Date(Date.now()+3600000).toISOString(),idempotencyKey:'default-sim-test'}));
   f.sql.exec('UPDATE sms_gateways SET enabled=1;UPDATE sms_gateway_agents SET enabled=1');
   const queue=load('lib/server/sms/queue.ts');
-  const bridge=load('lib/server/sms/bridge.ts',{'cloudflare:workers':{env:f.env},'./domain':f.domain,'./queue':queue,'./config':f.config});
+  const bridge=load('lib/server/sms/bridge.ts',{'cloudflare:workers':{env:f.env},'./domain':f.domain,'./acquisition':f.imports['@/lib/server/sms/acquisition'],'./queue':queue,'./config':f.config});
   const request=mode=>new Request('https://khonenama.ir/api/v1/sms/bridge',{method:'POST',headers:{authorization:'Bearer '+f.env.SMS_BRIDGE_TOKEN,'content-type':'application/json'},body:JSON.stringify({action:'claim',simNumber:mode})});
   assert.equal((await bridge.handleBridge(request(2))).status,409);
   const claimed=await(await bridge.handleBridge(request('default'))).json();assert.equal(claimed.job.simNumber,'default');
@@ -221,7 +223,7 @@ test('default SIM mode omits simNumber at the phone and requires matching server
 
 test('Worker machine route preserves authentication, origin and body limits before invoking the SMS engine',async()=>{
  const f=await fixture();try{
-  const queue=load('lib/server/sms/queue.ts');const bridge=load('lib/server/sms/bridge.ts',{'cloudflare:workers':{env:f.env},'./domain':f.domain,'./queue':queue,'./config':f.config});
+  const queue=load('lib/server/sms/queue.ts');const bridge=load('lib/server/sms/bridge.ts',{'cloudflare:workers':{env:f.env},'./domain':f.domain,'./acquisition':f.imports['@/lib/server/sms/acquisition'],'./queue':queue,'./config':f.config});
   const security=load('lib/request-security.ts');let schemaCalls=0;
   const handler=load('lib/server/sms/worker-bridge.ts',{'./bridge':bridge,'./schema':{ensureSmsSchema:async()=>{schemaCalls++;}},'../../request-security':security});
   const make=(body,extra={})=>new Request('https://khonenama.ir/api/v1/sms/bridge',{method:'POST',headers:{authorization:'Bearer '+f.env.SMS_BRIDGE_TOKEN,'content-type':'application/json',...extra},body});
@@ -245,11 +247,11 @@ test('campaigns expand imported numbers without initial consent while opt-outs r
   const campaign=await(await campaigns.POST(f.request({action:'create',groupId:group.id,name:'campaign',body:'mock campaign',maxRecipients:10}))).json();
   assert.equal((await campaigns.POST(f.request({action:'approve',id:campaign.id}))).status,200);
   f.sql.exec('UPDATE sms_gateways SET enabled=1,inbound_enabled=1;UPDATE sms_gateway_agents SET enabled=1,last_inbox_at=CURRENT_TIMESTAMP');
-  const reconcile=load('lib/server/sms/reconcile.ts',{'./domain':f.domain});
+  const reconcile=load('lib/server/sms/reconcile.ts',{'./domain':f.domain,'./acquisition':f.imports['@/lib/server/sms/acquisition']});
   await reconcile.reconcileSms(f.db,{liveSendingEnabled:true});await reconcile.reconcileSms(f.db,{liveSendingEnabled:true});
   assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_campaign_recipients').get().n,2);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_messages').get().n,2);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_messages WHERE contact_id=?').get(excluded).n,0);
   const data=await(await campaigns.GET(f.get('/api/admin/sms/campaigns'))).json();assert.equal(data.campaigns[0].eligible_count,2);
-  const bridge=load('lib/server/sms/bridge.ts',{'cloudflare:workers':{env:f.env},'./domain':f.domain,'./queue':load('lib/server/sms/queue.ts'),'./config':f.config});
+  const bridge=load('lib/server/sms/bridge.ts',{'cloudflare:workers':{env:f.env},'./domain':f.domain,'./acquisition':f.imports['@/lib/server/sms/acquisition'],'./queue':load('lib/server/sms/queue.ts'),'./config':f.config});
   const request=payload=>new Request('https://sms.khonenama.ir/api/v1/sms/bridge',{method:'POST',headers:{authorization:'Bearer '+f.env.SMS_BRIDGE_TOKEN,'content-type':'application/json'},body:JSON.stringify(payload)});
   const {job}=await(await bridge.handleBridge(request({action:'claim',simNumber:2}))).json();assert.ok(job);
   assert.equal((await(await bridge.handleBridge(request({action:'authorize',messageId:job.id,leaseToken:job.leaseToken}))).json()).allowed,true);
@@ -269,7 +271,7 @@ test('empty audiences pause instead of falsely completing; zero-send legacy camp
   const campaign=await(await api.POST(f.request({action:'create',groupId:group.id,name:'empty campaign',body:'mock',maxRecipients:10}))).json();
   await api.POST(f.request({action:'approve',id:campaign.id}));
   f.sql.exec('UPDATE sms_gateways SET enabled=1,inbound_enabled=1;UPDATE sms_gateway_agents SET enabled=1,last_inbox_at=CURRENT_TIMESTAMP');
-  const {reconcileSms}=load('lib/server/sms/reconcile.ts',{'./domain':f.domain});await reconcileSms(f.db,{liveSendingEnabled:true});
+  const {reconcileSms}=load('lib/server/sms/reconcile.ts',{'./domain':f.domain,'./acquisition':f.imports['@/lib/server/sms/acquisition']});await reconcileSms(f.db,{liveSendingEnabled:true});
   assert.equal(f.sql.prepare('SELECT status FROM sms_campaigns WHERE id=?').get(campaign.id).status,'paused');assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_messages').get().n,0);
   f.sql.prepare("UPDATE sms_campaigns SET status='completed' WHERE id=?").run(campaign.id);
   assert.equal((await api.POST(f.request({action:'retryEmpty',id:campaign.id}))).status,200);assert.equal(f.sql.prepare('SELECT status FROM sms_campaigns WHERE id=?').get(campaign.id).status,'approved');

@@ -18,6 +18,8 @@ import {
   useSmsResource,
 } from "./SmsAdminShell";
 type Campaign = {
+  group_id:string;
+  variant_b:string|null;
   id: string;
   name: string;
   body: string;
@@ -50,6 +52,13 @@ const steps = [
 ];
 export function CampaignsPage() {
   const { data, notify, refresh } = useSms();
+  const [tracking, setTracking] = useState(false),
+    [destination, setDestination] = useState("/register-business"),
+    [variantB, setVariantB] = useState(""),
+    [tariff, setTariff] = useState(""),
+    [cooldownDays, setCooldownDays] = useState(7),
+    [linkExpires, setLinkExpires] = useState(""),
+    [preview, setPreview] = useState<any[] | null>(null);
   const params = useSearchParams();
   const [wizard, setWizard] = useState(params.get("new") === "1"),
     [step, setStep] = useState(0),
@@ -73,7 +82,12 @@ export function CampaignsPage() {
     "/api/admin/sms/workspace?view=groups",
   );
   const group = groups.resource?.groups.find((g) => g.id === groupId),
-    estimate = estimateSms(body);
+    estimate = estimateSms(
+      body.replaceAll(
+        "{{registration_link}}",
+        "https://khonenama.ir/s/" + "a".repeat(40),
+      ),
+    );
   async function act(payload: Record<string, unknown>) {
     setBusy(true);
     try {
@@ -115,6 +129,25 @@ export function CampaignsPage() {
   }
   return (
     <>
+      {preview && (
+        <Modal
+          title="پیش‌نمایش نهایی ۲۵ گیرنده اول؛ بدون ارسال"
+          onClose={() => setPreview(null)}
+        >
+          {preview.map((r) => (
+            <div key={r.contactId}>
+              <p dir="ltr">{r.phone}</p>
+              <p style={{ whiteSpace: "pre-wrap" }}>{r.body}</p>
+              <p>
+                {faNumber(r.units)} نویسه / {faNumber(r.parts)} بخش — هزینه:{" "}
+                {r.estimatedCost == null
+                  ? "داده موجود نیست"
+                  : faNumber(r.estimatedCost) + " تومان"}
+              </p>
+            </div>
+          ))}
+        </Modal>
+      )}
       <Panel
         title="فهرست کمپین‌ها"
         action={
@@ -177,6 +210,7 @@ export function CampaignsPage() {
                         <details>
                           <summary>{c.name}</summary>
                           <p className="sms-message-body">{c.body}</p>
+                          {[c.body,c.variant_b].map((text,index)=>text&&<button key={index} className="sms-secondary" onClick={()=>{setName(c.name+' — '+(index?'نسخه دوم':'نسخه اول'));setBody(text);setGroupId(c.group_id);setTracking(text.includes('{{registration_link}}'));setVariantB('');setSchedule('');setStep(0);setWizard(true);}}>انتخاب {index?'نسخه دوم':'نسخه اول'} برای کمپین جدید</button>)}
                         </details>
                       </td>
                       <td>
@@ -197,6 +231,26 @@ export function CampaignsPage() {
                         />
                       </td>
                       <td>
+                        <a href={"/sms/acquisition?campaign_id=" + c.id}>
+                          تحلیل و گیرندگان
+                        </a>
+                        <button
+                          className="sms-quiet"
+                          disabled={busy}
+                          onClick={async () => {
+                            try {
+                              const r = await smsApi(
+                                "/api/admin/sms/acquisition",
+                                { action: "preview", id: c.id },
+                              );
+                              setPreview(r.rows);
+                            } catch (e) {
+                              notify((e as Error).message);
+                            }
+                          }}
+                        >
+                          پیش‌نمایش گیرندگان
+                        </button>
                         {c.status === "completed" && c.queued_count === 0 && (
                           <button
                             className="sms-quiet"
@@ -365,10 +419,91 @@ export function CampaignsPage() {
                   />
                 </Field>
                 <MessagePreview body={body} parts={estimate.parts} />
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={tracking}
+                    onChange={(e) => {
+                      setTracking(e.target.checked);
+                      if (
+                        e.target.checked &&
+                        !body.includes("{{registration_link}}")
+                      )
+                        setBody(body + "\n{{registration_link}}");
+                    }}
+                  />{" "}
+                  لینک اختصاصی هر گیرنده
+                </label>
+                {tracking && (
+                  <>
+                    <Field label="مقصد لینک">
+                      <select
+                        value={destination}
+                        onChange={(e) => setDestination(e.target.value)}
+                      >
+                        <option value="/register-business">ساخت غرفه</option>
+                        <option value="/for-business">
+                          معرفی خدمات کسب‌وکار
+                        </option>
+                      </select>
+                    </Field>
+                    <button
+                      className="sms-secondary"
+                      onClick={() => setBody(body + "\n{{registration_link}}")}
+                    >
+                      افزودن متغیر لینک
+                    </button>
+                    <Field label="نسخه دوم متن (اختیاری برای مقایسه)">
+                      <textarea
+                        maxLength={1000}
+                        value={variantB}
+                        onChange={(e) => setVariantB(e.target.value)}
+                      />
+                    </Field>
+                    <p>
+                      در هر نسخه از {"{{registration_link}}"} استفاده کنید. هر
+                      گیرنده فقط یکی از نسخه‌ها را دریافت می‌کند.
+                    </p>
+                    <Field label="انقضای اختیاری لینک">
+                      <input
+                        type="datetime-local"
+                        value={linkExpires}
+                        onChange={(e) => setLinkExpires(e.target.value)}
+                      />
+                    </Field>
+                  </>
+                )}
+                <Field label="تعرفه هر بخش (تومان، اختیاری)">
+                  <input
+                    type="number"
+                    min="0"
+                    step="any"
+                    value={tariff}
+                    onChange={(e) => setTariff(e.target.value)}
+                  />
+                </Field>
+                <p>
+                  {tariff
+                    ? `هزینه تخمینی هر گیرنده: ${faNumber(estimate.parts * Number(tariff))} تومان`
+                    : "هزینه: داده موجود نیست"}
+                </p>
               </>
             )}
             {step === 3 && (
               <>
+                <Field label="حداقل فاصله تبلیغ به یک مخاطب (روز)">
+                  <input
+                    type="number"
+                    min="0"
+                    max="365"
+                    value={cooldownDays}
+                    onChange={(e) => setCooldownDays(Number(e.target.value))}
+                  />
+                </Field>
+                <p>
+                  دارندگان غرفه و شماره‌های لغو دریافت از دعوت به ساخت اولین
+                  غرفه کنار گذاشته می‌شوند.
+                </p>
                 <Field label="زمان شروع اختیاری">
                   <input
                     type="datetime-local"
@@ -445,6 +580,14 @@ export function CampaignsPage() {
                       name,
                       groupId,
                       body,
+                      tracking,
+                      destination,
+                      variantB,
+                      tariff: tariff || null,
+                      cooldownDays,
+                      linkExpiresAt: linkExpires
+                        ? new Date(linkExpires).toISOString()
+                        : null,
                       maxRecipients: limit,
                       scheduledAt: schedule
                         ? new Date(schedule).toISOString()
