@@ -147,19 +147,6 @@ export default async function HomePage() {
       <Header />
       <Hero />
       <HomeBusinessShelf initialBusinesses={shelf} />
-      <section className="brand-definition" aria-labelledby="brand-definition-title">
-        <div className="shell">
-          <div className="brand-definition-card glass-panel">
-            <span className="section-kicker">تعریف خونه نما</span>
-            <h2 id="brand-definition-title">خونه نما چیست؟</h2>
-            <p>خونه‌نما با املای «خونه نما» و «خونهنما» نیز نوشته می‌شود؛ KhonehNama و Khoneh Nama نام همین برند و khonenama.ir دامنه رسمی آن است.</p>
-            <p>
-              خونه‌نما بازار تخصصی پرده و دکوراسیون داخلی است؛ جایی برای شناخت و مقایسه پرده، کفپوش، موکت، کاغذ دیواری و دیوارپوش، طراحی داخلی، خانه هوشمند و نورپردازی داخلی. پیش از خرید، راهنماها را بخوانید، تفاوت متریال‌ها و روش اجرا را بشناسید و نمونه‌کار و خدمات غرفه‌ها را مقایسه کنید. هدف ما این است که با اطلاعات روشن‌تر و دید بازتر انتخاب کنید؛ اعتماد شما با شفافیت اطلاعات و حفظ حریم خصوصی معنا پیدا می‌کند.
-            </p>
-            <a href="/magazine/minimalist-curtain-guide">پرده مینیمال؛ تفاوت مدل‌ها و راهنمای انتخاب</a><a href="/magazine">قبل از انتخاب، راهنماهای دکوراسیون را بخوانید</a><a href="/about">درباره خونه نما و نحوه کار پلتفرم</a>
-          </div>
-        </div>
-      </section>
       <BusinessCTA />
       <Footer />
     </main>

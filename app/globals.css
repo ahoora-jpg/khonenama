@@ -146,10 +146,54 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .pill-button:hover { transform: translateY(-2px); }
 .pill-button.dark { background: var(--ink); color: #fff; box-shadow: 0 10px 24px rgba(0,0,0,.12); }
 .mobile-menu-button { display: none; }
-.mobile-nav {
-  margin-top: 8px; padding: 14px; border-radius: 20px; display: grid; gap: 5px;
+.site-menu-button {
+  min-height: 43px; padding: 0 13px; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  border: 1px solid var(--line); border-radius: 14px; background: #fff; color: var(--ink); cursor: pointer;
+  font: inherit; font-size: 14px; font-weight: 900; transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
 }
-.mobile-nav a:not(.pill-button) { padding: 10px 8px; font-size: 14px; font-weight: 750; }
+.site-menu-button:hover,
+.site-menu-button[aria-expanded="true"] { background: var(--ink); color: #fff; border-color: var(--ink); transform: translateY(-1px); }
+.site-menu-panel {
+  position: absolute; top: 78px; inset-inline-end: max(16px, calc((100vw - 1220px) / 2)); z-index: 90;
+  width: min(372px, calc(100vw - 32px)); padding: 11px; border-radius: 22px; display: grid; gap: 8px;
+  background: rgba(250,250,247,.99); box-shadow: 0 24px 70px rgba(30,31,29,.18);
+  animation: site-menu-in .18s ease-out both;
+}
+.site-menu-home,
+.site-menu-primary-link,
+.site-menu-group a,
+.site-menu-business a:not(.pill-button),
+.site-menu-details-links a:not(.pill-button),
+.site-menu-download {
+  min-height: 42px; padding: 0 12px; display: flex; align-items: center; border-radius: 12px;
+  color: var(--ink); font-size: 14px; font-weight: 800; transition: background .18s ease, color .18s ease, padding-inline-start .18s ease;
+}
+.site-menu-home { background: #eeebe5; }
+.site-menu-home:hover,
+.site-menu-primary-link:hover,
+.site-menu-group a:hover,
+.site-menu-business a:not(.pill-button):hover { background: #e9d4c2; color: #69361f; padding-inline-start: 17px; }
+.site-menu-primary-link { background: var(--ink); color: #fff; }
+.site-menu-primary-link:hover { background: #5a2d1d; color: #fff; }
+.site-menu-details { border-top: 1px solid var(--line); }
+.site-menu-details summary {
+  min-height: 48px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; color: var(--ink); font-size: 14px; font-weight: 900; list-style: none;
+}
+.site-menu-details summary::-webkit-details-marker { display: none; }
+.site-menu-details summary::after { content: "+"; color: var(--terracotta); font-size: 22px; font-weight: 500; line-height: 1; }
+.site-menu-details[open] summary { color: var(--terracotta); background: #f5ece5; border-radius: 12px; }
+.site-menu-details[open] summary::after { content: "−"; }
+.site-menu-details-links { display: grid; gap: 2px; padding: 6px 0 9px; }
+.site-menu-details-links a:not(.pill-button):hover { background: #e9d4c2; color: #69361f; padding-inline-start: 17px; }
+.site-menu-group,
+.site-menu-business { display: grid; gap: 2px; padding: 10px 0; border-top: 1px solid var(--line); }
+.site-menu-group strong,
+.site-menu-business strong { padding: 0 12px 6px; color: var(--terracotta); font-size: 13px; font-weight: 900; }
+.site-menu-business .pill-button { margin: 6px 12px 0; }
+.site-menu-download { justify-content: center; gap: 8px; background: linear-gradient(145deg, var(--terracotta), var(--terracotta-hover)); color: #fff; }
+.site-menu-download:hover { background: var(--ink); color: #fff; }
+@keyframes site-menu-in { from { opacity: 0; transform: translateY(-8px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 /* Hero */
 .hero {
@@ -311,7 +355,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .header-actions { margin-inline-start: auto; }
   .app-download-button { min-height: 40px; padding: 0 10px; border-radius: 12px; font-size: 14px; }
   .desktop-cta { display: none; }
-  .mobile-menu-button { display: grid; }
+  .site-menu-button { min-width: 43px; padding: 0 10px; }
+  .site-menu-button span { display: none; }
+  .site-menu-panel { position: static; width: min(100% - 20px, 1220px); margin: 8px auto 0; }
   .hero { padding: 105px 0 48px; min-height: auto; }
   .hero-grid { min-height: auto; }
   .eyebrow { font-size: 14px; }

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Download, Menu, Search, Store, X } from "lucide-react";
+import { Download, Menu, Store, X } from "lucide-react";
 import { useState } from "react";
 
 const categories = [
@@ -33,85 +33,57 @@ export default function Header() {
           <span className="brand-tagline">بازار تخصصی پرده و دکوراسیون</span>
         </a>
 
-        <nav className="desktop-nav premium-nav" aria-label="منوی اصلی">
-          <div className="nav-mega-wrap">
-            <button className="nav-mega-trigger" type="button">
-              دسته‌بندی‌ها <ChevronDown size={15} />
-            </button>
-            <div className="nav-mega">
-              <div className="nav-mega-intro">
-                <span>انتخاب سریع</span>
-                <strong>برای خونه‌ات از اینجا شروع کن</strong>
-                <p>محصول، فروشگاه یا متخصص را بر اساس نیازت پیدا کن.</p>
-              </div>
-              <div className="nav-mega-grid">
-                {categories.map(([label, href], index) => (
-                  <a href={href} key={href} style={{ ["--i" as string]: index }}>
-                    <span>{(index + 1).toLocaleString("fa-IR", { minimumIntegerDigits: 2 })}</span>
-                    <strong>{label}</strong>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-          {links.map(([label, href]) => (
-            <a key={href} href={href}>{label}</a>
-          ))}
-        </nav>
-
         <div className="header-actions">
-          <a
-            className="app-download-button"
-            href={androidDownloadUrl}
-            aria-label="دانلود اپلیکیشن اندروید خونه نما"
-          >
-            <Download size={17} />
-            <span>دانلود اپ</span>
-          </a>
-          <a className="icon-button desktop-search depth-button" href="/search" aria-label="جستجو" title="جستجو">
-            <Search size={19} />
-          </a>
-          <a className="desktop-business-login" href="/business/login">ورود کسب‌وکار</a>
           <a className="pill-button dark desktop-cta premium-cta-button" href="/register-business">
             <Store size={17} />
             ثبت کسب‌وکار
           </a>
           <button
-            className="icon-button mobile-menu-button"
+            className="site-menu-button"
             aria-label={open ? "بستن منو" : "باز کردن منو"}
             aria-expanded={open}
             onClick={() => setOpen((value) => !value)}
           >
             {open ? <X size={21} /> : <Menu size={21} />}
+            <span>{open ? "بستن" : "منو"}</span>
           </button>
         </div>
       </div>
 
       {open && (
-        <div className="mobile-nav shell glass-panel premium-mobile-nav">
-          <a href="/" onClick={() => setOpen(false)}>صفحه اصلی</a>
-          <strong>دسته‌بندی‌ها</strong>
-          {categories.map(([label, href]) => (
-            <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
-          ))}
-          {links.map(([label, href]) => (
-            <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
-          ))}
-          <a href="/request-status" onClick={() => setOpen(false)}>پیگیری درخواست</a>
-          <a
-            className="pill-button app-download-mobile"
-            href={androidDownloadUrl}
-            onClick={() => setOpen(false)}
-          >
+        <div className="site-menu-panel shell glass-panel premium-mobile-nav" aria-label="منوی اصلی">
+          <a className="site-menu-home" href="/" onClick={() => setOpen(false)}>صفحه اصلی</a>
+          <a className="site-menu-primary-link" href="/search" onClick={() => setOpen(false)}>یافتن متخصص و غرفه‌ها</a>
+          <details className="site-menu-details">
+            <summary>دسته‌بندی‌ها</summary>
+            <div className="site-menu-details-links">
+            {categories.map(([label, href]) => (
+              <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
+            ))}
+            </div>
+          </details>
+          <details className="site-menu-details">
+            <summary>ایده و راهنما</summary>
+            <div className="site-menu-details-links">
+              {links.filter(([label]) => label !== "یافتن متخصص").map(([label, href]) => (
+                <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
+              ))}
+              <a href="/about" onClick={() => setOpen(false)}>درباره خونه‌نما</a>
+              <a href="/request-status" onClick={() => setOpen(false)}>پیگیری درخواست</a>
+            </div>
+          </details>
+          <details className="site-menu-details site-menu-business">
+            <summary>برای کسب‌وکارها</summary>
+            <div className="site-menu-details-links">
+              <a href="/for-business" onClick={() => setOpen(false)}>راهنمای حضور در خونه‌نما</a>
+              <a href="/business/login" onClick={() => setOpen(false)}>ورود کسب‌وکار</a>
+              <a className="pill-button dark" href="/register-business" onClick={() => setOpen(false)}>ثبت کسب‌وکار</a>
+            </div>
+          </details>
+          <a className="site-menu-download" href={androidDownloadUrl} onClick={() => setOpen(false)}>
             <Download size={17} />
             دانلود اپلیکیشن اندروید
           </a>
-          <details className="mobile-business-menu">
-            <summary>برای کسب‌وکارها</summary>
-            <a href="/for-business" onClick={() => setOpen(false)}>راهنمای حضور در خونه‌نما</a>
-            <a href="/business/login" onClick={() => setOpen(false)}>ورود کسب‌وکار</a>
-            <a className="pill-button dark" href="/register-business" onClick={() => setOpen(false)}>ثبت کسب‌وکار</a>
-          </details>
         </div>
       )}
     </header>
