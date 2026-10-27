@@ -171,3 +171,19 @@ test("late opt-out authorization denial prevents phone submission",async()=>{
     assert.equal(phoneCalls,0);
   }finally{await rm(dir,{recursive:true,force:true});}
 });
+
+test('Windows bridge interprets D1 expiry as UTC and respects installed gateway minimum TTL',async()=>{
+  const {parseExpiry,gatewayPayload}=await import('./sms-bridge/agent.mjs');
+  const prior=process.env.TZ;
+  try{process.env.TZ='Asia/Tehran';assert.equal(parseExpiry('2030-01-02 03:04:05'),Date.parse('2030-01-02T03:04:05Z'));assert.equal(parseExpiry('2030-01-02T03:04:05+03:30'),Date.parse('2030-01-02T03:04:05+03:30'));assert.ok(Number.isNaN(parseExpiry('invalid')));const payload=gatewayPayload({simNumber:2,gatewayId:'test',phone:'+989123456789',body:'mock',expiresAt:new Date(Date.now()+1000).toISOString()});assert.equal(payload.simNumber,2);assert.equal(payload.ttl,5);}finally{if(prior===undefined)delete process.env.TZ;else process.env.TZ=prior;}
+});
+
+test('bridge retries only safe preflight reads, never a potentially claimed or submitted operation',async()=>{
+ const {bridgeRequest}=await import('./sms-bridge/agent.mjs');const original=globalThis.fetch;let calls=0;
+ try{
+  globalThis.fetch=async()=>{calls++;if(calls===1)throw new DOMException('mock timeout','TimeoutError');return new Response('{"ok":true}',{status:200});};
+  assert.equal((await bridgeRequest({siteUrl:'https://khonenama.ir',bridgeToken:'mock'},'authorize',{messageId:'test'})).ok,true);assert.equal(calls,2);
+  calls=0;globalThis.fetch=async()=>{calls++;throw new DOMException('mock timeout','TimeoutError');};
+  await assert.rejects(()=>bridgeRequest({siteUrl:'https://khonenama.ir',bridgeToken:'mock'},'claim'));assert.equal(calls,1);
+ }finally{globalThis.fetch=original;}
+});
