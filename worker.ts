@@ -7,10 +7,12 @@ import { reconcileSms } from "./lib/server/sms/reconcile";
 import { routeSmsHost } from "./lib/server/sms/host";
 import { ensureSmsSchema } from "./lib/server/sms/schema";
 import { liveSmsEnabled } from "./lib/server/sms/config";
+import { handleWorkerBridge } from "./lib/server/sms/worker-bridge";
 export default {
  async fetch(request:Request, env:any, ctx:any){
   const routed=routeSmsHost(request);
   const url=new URL(request.url);
+  if (!(routed instanceof Response) && url.pathname==='/api/v1/sms/bridge') return handleWorkerBridge(request,env.DB);
   if (!(routed instanceof Response) && (url.hostname==='sms.khonenama.ir' || url.pathname.startsWith('/api/admin/sms') || url.pathname==='/admin/sms')) {
    try { await ensureSmsSchema(env.DB); }
    catch { return new Response('مرکز پیامک موقتاً در دسترس نیست.',{status:503,headers:{'Cache-Control':'no-store'}}); }

@@ -1,6 +1,7 @@
 const SMS_HOST = "sms.khonenama.ir";
 const allowedPaths = new Set([
   "/sms", "/sms/login", "/api/admin/login", "/api/admin/logout",
+  "/api/v1/sms/bridge",
   "/favicon.ico", "/site.webmanifest",
 ]);
 const allowedPrefixes = ["/api/admin/sms/", "/_next/", "/assets/", "/fonts/", "/sms-assets/"];

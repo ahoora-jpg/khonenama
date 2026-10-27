@@ -218,3 +218,17 @@ test('default SIM mode omits simNumber at the phone and requires matching server
   assert.equal(validateConfig({siteUrl:'https://khonenama.ir',phoneUrl:'http://192.168.43.1:8080',sendPath:'/messages',statusPath:'/messages/{id}',bridgeToken:'mock',phoneUser:'mock',phonePassword:'mock',simNumber:'default'}).simNumber,'default');
  }finally{f.sql.close();}
 });
+
+test('Worker machine route preserves authentication, origin and body limits before invoking the SMS engine',async()=>{
+ const f=await fixture();try{
+  const queue=load('lib/server/sms/queue.ts');const bridge=load('lib/server/sms/bridge.ts',{'cloudflare:workers':{env:f.env},'./domain':f.domain,'./queue':queue,'./config':f.config});
+  const security=load('lib/request-security.ts');let schemaCalls=0;
+  const handler=load('lib/server/sms/worker-bridge.ts',{'./bridge':bridge,'./schema':{ensureSmsSchema:async()=>{schemaCalls++;}},'../../request-security':security});
+  const make=(body,extra={})=>new Request('https://khonenama.ir/api/v1/sms/bridge',{method:'POST',headers:{authorization:'Bearer '+f.env.SMS_BRIDGE_TOKEN,'content-type':'application/json',...extra},body});
+  assert.equal((await handler.handleWorkerBridge(new Request('https://khonenama.ir/api/v1/sms/bridge',{method:'POST',body:'{}'}),f.db)).status,401);assert.equal(schemaCalls,0);
+  assert.equal((await handler.handleWorkerBridge(make('{}',{origin:'https://attacker.invalid'}),f.db)).status,403);
+  assert.equal((await handler.handleWorkerBridge(make('x'.repeat(65537)),f.db)).status,413);
+  f.sql.exec('UPDATE sms_gateways SET enabled=1;UPDATE sms_gateway_agents SET enabled=1');
+  const response=await handler.handleWorkerBridge(make(JSON.stringify({action:'heartbeat'})),f.db);assert.equal(response.status,200);assert.equal((await response.json()).ok,true);assert.equal(response.headers.get('x-content-type-options'),'nosniff');assert.equal(response.headers.get('cache-control'),'private, no-store');assert.equal(schemaCalls,1);
+ }finally{f.sql.close();}
+});
