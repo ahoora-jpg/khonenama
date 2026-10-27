@@ -23,6 +23,19 @@ export async function POST(request:Request){
   if(!db) return noStore({ok:false,error:"DB_UNAVAILABLE"},503);
   const body=await request.json().catch(()=>null);
   if(!body || typeof body!=="object") return noStore({ok:false,error:"INVALID_JSON"},400);
+  if(body.action==="renameGroup" || body.action==="removeMember"){
+    const groupId=String(body.groupId||"").slice(0,64);
+    const group=await db.prepare("SELECT id FROM sms_contact_groups WHERE id=? AND tenant_id=?").bind(groupId,TENANT).first();
+    if(!group)return noStore({ok:false},404);
+    if(body.action==="renameGroup"){
+      const name=String(body.name||"").trim().slice(0,100);if(!name)return noStore({ok:false,error:"NAME_REQUIRED"},400);
+      const duplicate=await db.prepare("SELECT id FROM sms_contact_groups WHERE tenant_id=? AND name=? AND id<>?").bind(TENANT,name,groupId).first();
+      if(duplicate)return noStore({ok:false,error:"GROUP_EXISTS"},409);
+      await db.prepare("UPDATE sms_contact_groups SET name=? WHERE id=? AND tenant_id=?").bind(name,groupId,TENANT).run();
+    }else await db.prepare("DELETE FROM sms_group_members WHERE tenant_id=? AND group_id=? AND contact_id=?").bind(TENANT,groupId,String(body.contactId||"").slice(0,64)).run();
+    await db.prepare("INSERT INTO sms_audit_logs(tenant_id,actor,action,target_id) VALUES(?,'site_admin',?,?)").bind(TENANT,body.action,groupId).run();
+    return noStore({ok:true});
+  }
   if(body.action==="group"){
     const name=String(body.name||"").trim().slice(0,100);
     if(!name) return noStore({ok:false,error:"NAME_REQUIRED"},400);

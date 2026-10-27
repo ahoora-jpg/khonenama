@@ -5,11 +5,11 @@ import "../sms.css";
 export const metadata: Metadata = { title: "ورود مرکز پیامک خونه‌نما", robots: { index: false, follow: false } };
 
 export default function SmsLoginPage() {
-  return <main dir="rtl" className="shell sms-workspace" style={{ minHeight: "100vh", paddingBlock: 48 }}>
-    <header style={{ marginBottom: 32 }}><strong>خونه‌نما · مرکز پیامک</strong></header>
-    <section className="business-login-layout">
-      <div className="business-login-copy"><span className="section-kicker">پنل داخلی</span><h1>ورود مرکز پیامک</h1>
-        <p>با رمز مدیریت فعلی خونه‌نما وارد شوید. اگر محافظت با کلید اختصاصی پیامک تنظیم شده باشد، در مرحلهٔ بعد درخواست می‌شود.</p></div>
+  return <main dir="rtl" className="sms-login sms-workspace">
+    <header><strong>خونه‌نما</strong><span>مرکز پیامک</span></header>
+    <section className="sms-login-layout">
+      <div className="sms-login-copy"><span className="section-kicker">پنل مدیریت</span><h1>مدیریت پیام‌ها،<br/>در یک فضای منظم.</h1>
+        <p>مخاطبان، کمپین‌ها و وضعیت پیام‌ها را از مرکز پیامک خونه‌نما مدیریت کنید.</p><small>دسترسی فقط برای مدیر مجاز است. از رمز مدیریت خونه‌نما استفاده کنید.</small></div>
       <AdminLoginForm redirectTo="/sms" keyLabel="رمز مدیریت خونه‌نما" title="ورود مرکز پیامک" />
     </section>
   </main>;

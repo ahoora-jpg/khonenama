@@ -4,6 +4,7 @@ const allowedPaths = new Set([
   "/favicon.ico", "/site.webmanifest",
 ]);
 const allowedPrefixes = ["/api/admin/sms/", "/_next/", "/assets/", "/fonts/"];
+const smsPages = new Set(["send","contacts","groups","campaigns","templates","inbox","history","reports","gateway","settings"].map(page=>"/sms/"+page));
 
 /** Keep the SMS subdomain scoped to its own interface and authentication endpoints. */
 export function routeSmsHost(request: Request): Request | Response {
@@ -20,7 +21,7 @@ export function routeSmsHost(request: Request): Request | Response {
   });
   if (url.pathname === "/") url.pathname = "/sms";
   else if (url.pathname === "/login") url.pathname = "/sms/login";
-  if (!allowedPaths.has(url.pathname) && url.pathname !== "/api/admin/sms" &&
+  if (!allowedPaths.has(url.pathname) && !smsPages.has(url.pathname) && url.pathname !== "/api/admin/sms" &&
       !allowedPrefixes.some(prefix => url.pathname.startsWith(prefix))) {
     return new Response("یافت نشد", { status: 404, headers: { "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow" } });
   }

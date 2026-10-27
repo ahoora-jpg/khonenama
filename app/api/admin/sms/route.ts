@@ -21,10 +21,11 @@ export async function GET(request: Request) {
       db().prepare("SELECT id,name,status,scheduled_at,max_recipients,created_at FROM sms_campaigns WHERE tenant_id=? ORDER BY created_at DESC LIMIT 50").bind(TENANT).all(),
       db().prepare("SELECT a.last_seen_at,a.last_error,a.enabled,g.enabled AS gateway_enabled,g.sim_number,g.inbound_enabled FROM sms_gateway_agents a JOIN sms_gateways g ON g.id=a.gateway_id WHERE a.id='khonenama-windows' AND a.tenant_id=?").bind(TENANT).first(),
       db().prepare(`SELECT
+        (SELECT COUNT(*) FROM sms_campaigns WHERE tenant_id=? AND status IN ('approved','running')) AS active_campaigns,
         (SELECT COUNT(*) FROM sms_opt_outs WHERE tenant_id=?) AS opt_outs,
         (SELECT COUNT(*) FROM sms_messages WHERE tenant_id=? AND status='queued' AND priority>0) AS priority_queued,
         (SELECT COUNT(*) FROM sms_contacts c WHERE c.tenant_id=? AND NOT EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=c.tenant_id AND o.contact_id=c.id)
-          AND (SELECT status FROM sms_consents s WHERE s.tenant_id=c.tenant_id AND s.contact_id=c.id ORDER BY s.created_at DESC,s.rowid DESC LIMIT 1)='granted') AS consented_contacts`).bind(TENANT,TENANT,TENANT).first(),
+          AND (SELECT status FROM sms_consents s WHERE s.tenant_id=c.tenant_id AND s.contact_id=c.id ORDER BY s.created_at DESC,s.rowid DESC LIMIT 1)='granted') AS consented_contacts`).bind(TENANT,TENANT,TENANT,TENANT).first(),
     ]);
     return noStore({ ok: true, counts: counts.results, contacts: contacts.results.map((c:any)=>({ ...c, phone_e164: maskPhone(c.phone_e164) })),
       messages: messages.results.map((m:any)=>({ ...m, phone_e164: maskPhone(m.phone_e164) })), campaigns: campaigns.results, agent,summary,
@@ -39,6 +40,15 @@ export async function POST(request: Request) {
   const input = await request.json().catch(()=>null);
   if (!input || typeof input !== "object") return noStore({ ok:false, error:"INVALID_JSON" },400);
   try {
+    if (input.action === "editContact") {
+      const id=str(input.id,64), name=str(input.name,120), kind=input.kind;
+      if(!["customer","seller","admin","other"].includes(kind))return noStore({ok:false,error:"INVALID_CONTACT"},400);
+      // Phone identity is immutable here: changing it must not carry old consent to a new recipient.
+      const row=await db().prepare("UPDATE sms_contacts SET display_name=?,kind=? WHERE id=? AND tenant_id=? RETURNING id").bind(name,kind,id,TENANT).first();
+      if(!row)return noStore({ok:false},404);
+      await audit("contact_edited",id);
+      return noStore({ok:true,id});
+    }
     if (input.action === "contact") {
       const phone = normalizePhone(input.phone);
       if (!phone) return noStore({ ok:false, error:"INVALID_PHONE" },400);
@@ -47,7 +57,7 @@ export async function POST(request: Request) {
         .bind(id,TENANT,phone,str(input.name,120),["customer","seller","admin","other"].includes(input.kind)?input.kind:"other","admin_manual").run();
       const row = await db().prepare("SELECT id FROM sms_contacts WHERE tenant_id=? AND phone_e164=?").bind(TENANT,phone).first();
       await audit("contact_upsert",row.id);
-      return noStore({ok:true,id:row.id});
+      return noStore({ok:true,id:row.id,duplicate:row.id!==id});
     }
     if (input.action === "consent") {
       const contactId = str(input.contactId,64);
