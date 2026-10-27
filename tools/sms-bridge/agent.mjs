@@ -24,14 +24,24 @@ async function saveJournal(journal) {
   await rename(journalPath+".tmp",journalPath);
 }
 
+export function parseExpiry(value) {
+  if(typeof value!=="string")return NaN;
+  // D1 datetime() values are UTC even when SQLite omits the timezone suffix.
+  return Date.parse(/^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d(?:\.\d+)?$/.test(value)?value.replace(" ","T")+"Z":value);
+}
 export function gatewayPayload(job) {
   if (job.simNumber!==2) throw Error("SIM 2 required");
   return { id: job.gatewayId, textMessage:{text:job.body}, phoneNumbers:[job.phone], simNumber:2, withDeliveryReport:true,
-    ttl:Math.max(1,Math.floor((Date.parse(job.expiresAt)-Date.now())/1000)) };
+    ttl:Math.max(5,Math.floor((parseExpiry(job.expiresAt)-Date.now())/1000)) };
 }
 
 export async function bridgeRequest(config,action,fields={}) {
-  const response=await fetch(new URL("/api/v1/sms/bridge",config.siteUrl),{method:"POST",headers:{"Authorization":"Bearer "+config.bridgeToken,"Content-Type":"application/json"},body:JSON.stringify({action,...fields}),signal:AbortSignal.timeout(15000)});
+  const attempts=["heartbeat","authorize","inboxSenders"].includes(action)?3:1;
+  let response;
+  for(let attempt=0;attempt<attempts;attempt++){
+    try{response=await fetch(new URL("/api/v1/sms/bridge",config.siteUrl),{method:"POST",headers:{"Authorization":"Bearer "+config.bridgeToken,"Content-Type":"application/json"},body:JSON.stringify({action,...fields}),signal:AbortSignal.timeout(15000)});break;}
+    catch(error){if(attempt===attempts-1 || !["TimeoutError","AbortError","TypeError"].includes(error.name))throw error;await delay(500);}
+  }
   const data=await response.json();
   if(!response.ok) throw Error("Bridge API rejected request: "+response.status+" "+(data.error||""));
   return data;
@@ -68,7 +78,7 @@ export async function syncInbox(config,seen,allowed) {
 }
 
 export async function processJob(config,job,journal) {
-  if (job.simNumber!==2 || !/^\+\d{8,15}$/.test(job.phone) || Date.parse(job.expiresAt)<=Date.now()) {
+  if (job.simNumber!==2 || !/^\+\d{8,15}$/.test(job.phone) || !Number.isFinite(parseExpiry(job.expiresAt)) || parseExpiry(job.expiresAt)<=Date.now()) {
     journal[job.id]={job,phase:"report_pending",report:{uncertain:true}}; await saveJournal(journal); return;
   }
   const permission=await bridgeRequest(config,"authorize",{messageId:job.id,leaseToken:job.leaseToken});
@@ -99,17 +109,23 @@ export async function main() {
   const seen={};
   let lastInboxPoll=0;
   while(true) {
+    let phase="site-heartbeat";
     try {
       await bridgeRequest(config,"heartbeat");
+      phase="journal-reconciliation";
       for (const entry of Object.values(journal)) {
         const report=entry.phase==="report_pending"?entry.report:await reconcileJob(config,entry.job);
         await bridgeRequest(config,"report",{messageId:entry.job.id,leaseToken:entry.job.leaseToken,gatewayMessageId:entry.job.gatewayId,...report});
         delete journal[entry.job.id]; await saveJournal(journal);
       }
+      phase="phone-health";
       const health=await gatewayRequest(config,"/health","GET");
       if(!health.ok) throw Error("Phone gateway is offline");
+      phase="queue-claim";
       const {job}=await bridgeRequest(config,"claim");
+      phase="message-processing";
       if(job) await processJob(config,job,journal);
+      phase="delivery-reconciliation";
       const reconciliation=await bridgeRequest(config,"reconcile");
       if(reconciliation.job){
         const pending=reconciliation.job;
@@ -117,11 +133,12 @@ export async function main() {
         if(!report.uncertain) await bridgeRequest(config,"report",{messageId:pending.id,leaseToken:pending.leaseToken,gatewayMessageId:pending.gatewayId,...report});
       }
       if(config.enableInbox===true&&Date.now()-lastInboxPoll>60_000){
+        phase="inbox-sync";
         const {phones}=await bridgeRequest(config,"inboxSenders");
         await syncInbox(config,seen,new Set(phones));
         await bridgeRequest(config,"inboxHealthy");lastInboxPoll=Date.now();
       }
-    } catch(e) { console.error("Bridge cycle failed:",e.message); }
+    } catch(e) { console.error("Bridge cycle failed at",phase+":",e.message); }
     await delay(15000);
   }
 }
