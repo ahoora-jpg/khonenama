@@ -187,3 +187,11 @@ test('bridge retries only safe preflight reads, never a potentially claimed or s
   await assert.rejects(()=>bridgeRequest({siteUrl:'https://khonenama.ir',bridgeToken:'mock'},'claim'));assert.equal(calls,1);
  }finally{globalThis.fetch=original;}
 });
+
+test('bridge accepts the dedicated SMS origin and rejects lookalike or untrusted hosts',async()=>{
+ const {validateConfig}=await import('./sms-bridge/agent.mjs');
+ const config={siteUrl:'https://sms.khonenama.ir',phoneUrl:'http://192.168.43.1:8080',sendPath:'/messages',statusPath:'/messages/{id}',bridgeToken:'mock',phoneUser:'mock',phonePassword:'mock',simNumber:'default'};
+ assert.equal(validateConfig(config).siteUrl,'https://sms.khonenama.ir');
+ assert.throws(()=>validateConfig({...config,siteUrl:'https://sms.khonenama.ir.attacker.invalid'}));
+ assert.throws(()=>validateConfig({...config,siteUrl:'http://sms.khonenama.ir'}));
+});
