@@ -132,3 +132,16 @@ test("all dedicated management screens render safely with no operational data", 
   assert.ok(gateway.includes("غیرفعال"));
   assert.ok(!gateway.includes("متصل است"));
 });
+
+test('live-enabled compose screen keeps both draft and queue actions',()=>{
+  const {SendPage}=load('components/sms/SmsMessages.tsx');
+  const html=render(SendPage,{...empty,liveSendingEnabled:true});
+  assert.ok(html.includes('value="draft"'));assert.ok(html.includes('value="queue"'));
+  assert.ok(html.includes('ذخیره پیش‌نویس'));assert.ok(html.includes('ثبت در صف ارسال'));
+});
+
+test('SMS shell uses its own uploaded logo asset',()=>{
+ const html=renderToStaticMarkup(React.createElement(shell.SmsAdminShell,{page:'dashboard',children:null}));
+ assert.ok(html.includes('src="/sms-assets/logo.webp"'));
+ assert.ok(!readFileSync(new URL('app/layout.tsx',root),'utf8').includes('/sms-assets/'));
+});

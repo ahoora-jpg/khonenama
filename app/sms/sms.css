@@ -1332,3 +1332,4 @@
     grid-template-columns: 1fr 1.2fr;
   }
 }
+.sms-brand-image{display:block;object-fit:contain;flex-shrink:0;border-radius:10px}.sms-collapsed .sms-brand{padding-inline:12px}.sms-login>header .sms-brand-image{width:72px;height:72px}

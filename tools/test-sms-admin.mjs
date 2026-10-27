@@ -181,3 +181,18 @@ test('UI bridge status never reports online from configuration or future heartbe
   assert.equal(ui.bridgeState({enabled:1,gateway_enabled:1,last_seen_at:'2026-10-28 09:55:00'},now),'offline');
   assert.equal(ui.bridgeState({enabled:1,gateway_enabled:1,last_seen_at:'invalid'},now),'offline');
 });
+
+test('authorized live mode queues messages but preserves optional drafts and consent checks',async()=>{
+  const f=await fixture();try{
+    f.env.SMS_LIVE_SEND_ENABLED='true';
+    const route=load('app/api/admin/sms/route.ts',f.imports);
+    const contact=await(await route.POST(f.request({action:'contact',phone:'09123456789',kind:'customer'}))).json();
+    const input={action:'queue',contactId:contact.id,body:'authorized local test only',reason:'test',category:'transactional',expiresAt:new Date(Date.now()+3600000).toISOString(),idempotencyKey:'live-queue'};
+    const queued=await(await route.POST(f.request(input))).json();assert.equal(queued.status,'queued');
+    const draft=await(await route.POST(f.request({...input,draftOnly:true,category:'promotional',idempotencyKey:'explicit-draft'}))).json();assert.equal(draft.status,'draft');
+    assert.equal((await route.POST(f.request({...input,category:'promotional',idempotencyKey:'no-consent'}))).status,403);
+    assert.equal(f.sql.prepare("SELECT COUNT(*) n FROM sms_messages WHERE status='queued'").get().n,1);
+    const repeated=await(await route.POST(f.request({...input,idempotencyKey:'explicit-draft',category:'promotional'}))).json();
+    assert.notEqual(repeated.status,'queued','a draft cannot be promoted by replaying its key');
+  }finally{f.sql.close();}
+});

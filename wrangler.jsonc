@@ -33,7 +33,7 @@
     { "pattern": "www.sms.khonenama.ir", "custom_domain": true }
   ],
   "vars": {
-    "SMS_LIVE_SEND_ENABLED": "false",
+    "SMS_LIVE_SEND_ENABLED": "true",
     "RECOVERY_EMAIL_FROM": "noreply@khonenama.ir",
     "IMAGEKIT_URL_ENDPOINT": "https://ik.imagekit.io/khonenama",
     "MEDIA_STORAGE_PROVIDER": "r2"
