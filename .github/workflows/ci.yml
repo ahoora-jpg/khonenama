@@ -24,7 +24,7 @@ jobs:
         run: npm audit --audit-level=high
       - run: npx tsc --noEmit
       - name: SMS center mock gateway and migration tests
-        run: node --experimental-strip-types --test tools/test-sms-center.mjs tools/test-sms-admin.mjs tools/test-sms-ui.mjs
+        run: node --experimental-strip-types --test tools/test-sms-center.mjs tools/test-sms-admin.mjs tools/test-sms-ui.mjs tools/test-sms-acquisition.mjs
       - run: node --test tools/test-build-glob.mjs
       - run: node --test tools/test-image-recovery.mjs
       - name: Seller acquisition aggregate event boundaries

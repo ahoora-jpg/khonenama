@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import { GATEWAY, TENANT, canTransition, gatewayState, isOptOut, noStore, normalizePhone, type SmsState } from "./domain";
 import { CLAIM_SQL } from "./queue";
 import {liveSmsEnabled,smsSimSelection} from "./config";
+import {campaignRecipientAllowed} from './acquisition';
 
 async function digest(value: string): Promise<Uint8Array> {
   return new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value)));
@@ -59,6 +60,7 @@ export async function handleBridge(request: Request): Promise<Response> {
     const token=typeof input.leaseToken==="string"?input.leaseToken:"";
     const permitted=await db.prepare(`SELECT 1 AS allowed FROM sms_messages m WHERE m.id=? AND m.tenant_id=?
       AND m.lease_token=? AND m.status='leased' AND m.lease_until>CURRENT_TIMESTAMP
+      AND m.body NOT LIKE '%{{%'
       AND julianday(m.expires_at)>julianday('now')
       AND (m.campaign_id IS NULL OR EXISTS(SELECT 1 FROM sms_campaigns c WHERE c.id=m.campaign_id AND c.status IN ('running','completed')))
       AND (m.category='transactional' OR (
@@ -67,7 +69,7 @@ export async function handleBridge(request: Request): Promise<Response> {
         NOT EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=m.tenant_id AND o.contact_id=m.contact_id)
         AND EXISTS(SELECT 1 FROM sms_gateway_agents a WHERE a.gateway_id=m.gateway_id AND a.last_inbox_at>=datetime('now','-5 minutes'))
       ))`).bind(id,TENANT,token).first();
-    return noStore({ok:true,allowed:Boolean(permitted)});
+    return noStore({ok:true,allowed:Boolean(permitted)&&await campaignRecipientAllowed(db,id)});
   }
   if (input.action==="reconcile") {
     const row=await db.prepare(`UPDATE sms_messages SET updated_at=CURRENT_TIMESTAMP WHERE id=(

@@ -150,3 +150,12 @@ test('everyday SMS screens do not ask for initial consent',()=>{
  const pages=[load('components/sms/SmsMessages.tsx').SendPage,load('components/sms/SmsContacts.tsx').ContactsPage,load('components/sms/SmsContacts.tsx').GroupsPage,load('components/sms/SmsCampaignWorkspace.tsx').CampaignsPage];
  for(const Page of pages){const html=render(Page,{...empty,liveSendingEnabled:true});assert.ok(!html.includes('رضایت'));}
 });
+test('acquisition and prospect screens render real empty reports in Persian without invented values',()=>{
+ const prior=shell.useSmsResource;
+ try{
+  shell.useSmsResource=()=>({resource:{rows:[],summary:{total:0,recipients:0,booths:null,clicks:null},daily:[],compare:[],variants:[],trades:[],cities:[],settings:{tracking_enabled:1},campaigns:[]},loading:false,error:null,reload(){}});
+  const pages=load('components/sms/SmsAcquisition.tsx');
+  const html=render(pages.AcquisitionPage),prospects=render(pages.ProspectsPage);
+  assert.ok(html.includes('تحلیل کمپین و جذب غرفه'));assert.ok(html.includes('داده موجود نیست'));assert.ok(html.includes('خروجی CSV'));assert.ok(prospects.includes('مخاطبان ثبت‌نام‌نکرده'));assert.ok(!html.includes('12 480'));
+ }finally{shell.useSmsResource=prior;}
+});
