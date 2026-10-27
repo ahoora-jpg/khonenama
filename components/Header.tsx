@@ -28,16 +28,7 @@ export default function Header() {
   return (
     <header className="site-header-wrap">
       <div className="site-header shell glass-panel premium-header">
-        <a className="brand" href="/" aria-label="خونه نما">
-          <img src="/khonenama-brand.webp" alt="خونه نما" width={660} height={203} style={{ width: "clamp(136px, 16vw, 200px)", height: "auto", display: "block" }} />
-          <span className="brand-tagline">بازار تخصصی پرده و دکوراسیون</span>
-        </a>
-
         <div className="header-actions">
-          <a className="pill-button dark desktop-cta premium-cta-button" href="/register-business">
-            <Store size={17} />
-            ثبت کسب‌وکار
-          </a>
           <button
             className="site-menu-button"
             aria-label={open ? "بستن منو" : "باز کردن منو"}
@@ -47,7 +38,16 @@ export default function Header() {
             {open ? <X size={21} /> : <Menu size={21} />}
             <span>{open ? "بستن" : "منو"}</span>
           </button>
+          <a className="pill-button dark desktop-cta premium-cta-button" href="/register-business">
+            <Store size={17} />
+            ثبت کسب‌وکار
+          </a>
         </div>
+
+        <a className="brand" href="/" aria-label="خونه نما">
+          <img src="/khonenama-brand.webp" alt="خونه نما" width={660} height={203} style={{ width: "clamp(136px, 16vw, 200px)", height: "auto", display: "block" }} />
+          <span className="brand-tagline">بازار تخصصی پرده و دکوراسیون</span>
+        </a>
       </div>
 
       {open && (

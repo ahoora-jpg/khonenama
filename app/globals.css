@@ -89,6 +89,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   border-radius: 22px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 9px 12px 9px 16px;
   gap: 28px;
 }
@@ -147,9 +148,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .pill-button.dark { background: var(--ink); color: #fff; box-shadow: 0 10px 24px rgba(0,0,0,.12); }
 .mobile-menu-button { display: none; }
 .site-menu-button {
-  position: relative; z-index: 91; min-height: 43px; padding: 0 13px; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  position: relative; z-index: 91; min-height: 54px; padding: 0 19px; display: inline-flex; align-items: center; justify-content: center; gap: 9px;
   border: 1px solid var(--line); border-radius: 14px; background: #fff; color: var(--ink); cursor: pointer;
-  font: inherit; font-size: 14px; font-weight: 900; transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
+  font: inherit; font-size: 16px; font-weight: 900; transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
 }
 .site-menu-button:hover,
 .site-menu-button[aria-expanded="true"] { background: var(--ink); color: #fff; border-color: var(--ink); transform: translateY(-1px); }
@@ -351,13 +352,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 650px) {
   .shell { width: min(100% - 20px, 1220px); }
   .site-header-wrap { top: 7px; }
-  .site-header { min-height: 60px; border-radius: 18px; padding: 8px 9px 8px 13px; }
+  .site-header { min-height: 66px; border-radius: 18px; padding: 7px 9px; }
   .brand { font-size: 19px; }
-  .header-actions { margin-inline-start: auto; }
   .app-download-button { min-height: 40px; padding: 0 10px; border-radius: 12px; font-size: 14px; }
   .desktop-cta { display: none; }
-  .site-menu-button { min-width: 43px; padding: 0 10px; }
-  .site-menu-button span { display: none; }
+  .site-menu-button { min-width: 76px; min-height: 50px; padding: 0 13px; font-size: 15px; }
   .site-menu-panel { position: static; width: min(100% - 20px, 1220px); margin: 8px auto 0; }
   .hero { padding: 105px 0 48px; min-height: auto; }
   .hero-grid { min-height: auto; }
