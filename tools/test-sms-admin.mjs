@@ -113,3 +113,71 @@ test('review-mode cron never expands even an already-approved campaign',async()=
     assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_messages').get().n,0);
   }finally{f.sql.close();}
 });
+
+test('workspace contacts use real pagination, consent suppression, masked numbers and tenant isolation',async()=>{
+  const f=await fixture();try{
+    const workspace=load('app/api/admin/sms/workspace/route.ts',f.imports);
+    assert.equal((await workspace.GET(f.get('/api/admin/sms/workspace?view=contacts',''))).status,401);
+    f.sql.exec("INSERT INTO sms_tenants(id,name) VALUES('other','Other');INSERT INTO sms_contacts(id,tenant_id,phone_e164,display_name,kind,source) VALUES('foreign','other','+989100000000','private foreign','other','test')");
+    const insert=f.sql.prepare("INSERT INTO sms_contacts(id,tenant_id,phone_e164,display_name,source) VALUES(?,'khonenama',?,?,'test')");
+    for(let i=0;i<25;i++)insert.run('contact-'+i,'+98912'+String(i).padStart(7,'0'),'person '+i);
+    f.sql.exec("INSERT INTO sms_consents(id,tenant_id,contact_id,status,method,text_version,evidence_ref) VALUES('consent','khonenama','contact-0','granted','form','v1','proof');INSERT INTO sms_opt_outs(tenant_id,contact_id,source) VALUES('khonenama','contact-0','inbound')");
+    const first=await(await workspace.GET(f.get('/api/admin/sms/workspace?view=contacts'))).json();
+    assert.equal(first.total,25);assert.equal(first.items.length,20);assert.ok(first.items.every(c=>c.phone_e164.includes('••••••')));
+    const second=await(await workspace.GET(f.get('/api/admin/sms/workspace?view=contacts&page=2'))).json();assert.equal(second.items.length,5);assert.ok(!second.items.some(c=>first.items.some(d=>d.id===c.id)));
+    const revoked=await(await workspace.GET(f.get('/api/admin/sms/workspace?view=contacts&filter=revoked'))).json();assert.equal(revoked.total,1);assert.equal(revoked.items[0].id,'contact-0');
+    const foreign=await workspace.GET(f.get('/api/admin/sms/workspace?view=contact&id=foreign'));assert.equal(foreign.status,404);
+    const injection=await(await workspace.GET(f.get('/api/admin/sms/workspace?view=contacts&q='+encodeURIComponent("' OR 1=1 --")))).json();assert.equal(injection.total,0);
+    assert.equal((await workspace.GET(f.get('/api/admin/sms/workspace?view=not-a-view'))).status,400);
+  }finally{f.sql.close();}
+});
+
+test('contact editing keeps recipient identity and consent intact; duplicate creation reports existing identity',async()=>{
+  const f=await fixture();try{
+    const route=load('app/api/admin/sms/route.ts',f.imports);
+    const first=await(await route.POST(f.request({action:'contact',phone:'09123456789',name:'original',kind:'customer'}))).json();
+    const again=await(await route.POST(f.request({action:'contact',phone:'09123456789',name:'replacement',kind:'seller'}))).json();assert.equal(again.id,first.id);assert.equal(again.duplicate,true);
+    const result=await route.POST(f.request({action:'editContact',id:first.id,name:'renamed',kind:'seller',phone:'09120000000'}));assert.equal(result.status,200);
+    const row=f.sql.prepare('SELECT * FROM sms_contacts WHERE id=?').get(first.id);assert.equal(row.display_name,'renamed');assert.equal(row.kind,'seller');assert.equal(row.phone_e164,'+989123456789');
+    assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_consents').get().n,0);
+    assert.equal((await route.POST(f.request({action:'editContact',id:first.id,name:'cross-site',kind:'other'},''))).status,401);
+    assert.equal((await route.POST(f.request({action:'editContact',id:'absent',name:'no',kind:'other'}))).status,404);
+    assert.equal((await route.POST(f.request({action:'editContact',id:first.id,name:'no',kind:'owner'}))).status,400);
+  }finally{f.sql.close();}
+});
+
+test('group summaries and membership changes preserve consent and enforce tenant boundaries',async()=>{
+  const f=await fixture();try{
+    const workspace=load('app/api/admin/sms/workspace/route.ts',f.imports),campaign=load('app/api/admin/sms/campaigns/route.ts',f.imports);
+    f.sql.exec("INSERT INTO sms_tenants(id,name) VALUES('other','Other');INSERT INTO sms_contact_groups(id,tenant_id,name) VALUES('g','khonenama','group'),('foreign','other','private');INSERT INTO sms_contacts(id,tenant_id,phone_e164,source) VALUES('c','khonenama','+989123456789','test');INSERT INTO sms_group_members(tenant_id,group_id,contact_id) VALUES('khonenama','g','c');INSERT INTO sms_consents(id,tenant_id,contact_id,status,method,text_version,evidence_ref) VALUES('s','khonenama','c','granted','form','v1','proof')");
+    const groups=await(await workspace.GET(f.get('/api/admin/sms/workspace?view=groups&id=g'))).json();assert.equal(groups.groups.length,1);assert.equal(groups.groups[0].eligible_count,1);assert.equal(groups.members.length,1);assert.ok(groups.members[0].phone_e164.includes('••••••'));
+    assert.equal((await campaign.POST(f.request({action:'renameGroup',groupId:'foreign',name:'bad'}))).status,404);
+    assert.equal((await campaign.POST(f.request({action:'renameGroup',groupId:'g',name:'renamed'}))).status,200);
+    assert.equal((await campaign.POST(f.request({action:'removeMember',groupId:'g',contactId:'c'}))).status,200);
+    assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_group_members').get().n,0);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_consents').get().n,1);
+    assert.equal(f.sql.prepare("SELECT COUNT(*) n FROM sms_audit_logs WHERE action IN ('renameGroup','removeMember')").get().n,2);
+  }finally{f.sql.close();}
+});
+
+test('reports are date-scoped, retain distinct message states, and never manufacture delivery data',async()=>{
+  const f=await fixture();try{
+    const workspace=load('app/api/admin/sms/workspace/route.ts',f.imports);
+    f.sql.exec("INSERT INTO sms_contacts(id,tenant_id,phone_e164,source) VALUES('c','khonenama','+989123456789','test');INSERT INTO sms_messages(id,tenant_id,contact_id,category,body,status,idempotency_key,expires_at,created_at) VALUES('m1','khonenama','c','transactional','test','submitted','k1','2030-01-01','2026-10-01 10:00:00'),('m2','khonenama','c','promotional','test','draft','k2','2030-01-01','2026-10-02 10:00:00'),('old','khonenama','c','transactional','old','delivered','k3','2030-01-01','2026-09-01 10:00:00')");
+    const report=await(await workspace.GET(f.get('/api/admin/sms/workspace?view=reports&from=2026-10-01&to=2026-10-02'))).json();assert.equal(report.daily.length,2);assert.equal(report.outcomes.find(s=>s.status==='submitted').count,1);assert.ok(!report.outcomes.some(s=>s.status==='delivered'));assert.equal(report.categories.length,2);assert.equal(report.optouts,0);
+    assert.equal((await workspace.GET(f.get('/api/admin/sms/workspace?view=reports&from=2026-10-03&to=2026-10-02'))).status,400);
+    assert.equal((await workspace.GET(f.get('/api/admin/sms/workspace?view=reports&from=2020-01-01&to=2026-10-02'))).status,400);
+    const messages=await(await workspace.GET(f.get('/api/admin/sms/workspace?view=history&filter=submitted'))).json();assert.equal(messages.total,1);assert.equal(messages.items[0].status,'submitted');assert.ok(messages.items[0].phone_e164.includes('••••••'));
+    const root=load('app/api/admin/sms/route.ts',f.imports);const dashboard=await(await root.GET(f.get('/api/admin/sms'))).json();assert.equal(dashboard.summary.active_campaigns,0);
+  }finally{f.sql.close();}
+});
+
+test('UI bridge status never reports online from configuration or future heartbeat alone',()=>{
+  const ui=load('lib/sms-admin-ui.ts');const now=Date.parse('2026-10-27T10:00:00Z');
+  assert.equal(ui.bridgeState(null,now),'unknown');
+  assert.equal(ui.bridgeState({enabled:1,gateway_enabled:1,last_seen_at:null},now),'unknown');
+  assert.equal(ui.bridgeState({enabled:0,gateway_enabled:1,last_seen_at:'2026-10-27 09:59:59'},now),'disabled');
+  assert.equal(ui.bridgeState({enabled:1,gateway_enabled:1,last_seen_at:'2026-10-27T09:59:59Z'},now),'online');
+  assert.equal(ui.bridgeState({enabled:1,gateway_enabled:1,last_seen_at:'2026-10-27 09:55:00'},now),'offline');
+  assert.equal(ui.bridgeState({enabled:1,gateway_enabled:1,last_seen_at:'2026-10-28 09:55:00'},now),'offline');
+  assert.equal(ui.bridgeState({enabled:1,gateway_enabled:1,last_seen_at:'invalid'},now),'offline');
+});
