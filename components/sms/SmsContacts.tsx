@@ -45,7 +45,7 @@ export function ContactsPage() {
   const { notify, refresh } = useSms();
   const params = useSearchParams();
   const [q, setQ] = useState(""),
-    [filter, setFilter] = useState(""),
+    [filter, setFilter] = useState(params.get('filter')||""),
     [page, setPage] = useState(1),
     [modal, setModal] = useState<"new" | "edit" | "detail" | null>(
       params.get("new") === "1" ? "new" : null,
@@ -164,6 +164,7 @@ export function ContactsPage() {
                       <td>{c.groups?.map((g) => g.name).join("، ") || "—"}</td>
                       <td>{smsDate(c.created_at)}</td>
                       <td>
+                        <button className="sms-quiet sms-danger-text" disabled={busy} onClick={()=>{if(window.confirm('این شماره و نام از مرکز پیامک پاک شود؟ پیام‌های در صف لغو و متن‌های مرتبط پاک می‌شوند. آمار بدون شماره باقی می‌ماند و این شماره دوباره وارد ارسال نمی‌شود.'))void run({action:'removeContact',id:c.id});}}>حذف مخاطب</button>
                         <button
                           className="sms-quiet"
                           onClick={() => {

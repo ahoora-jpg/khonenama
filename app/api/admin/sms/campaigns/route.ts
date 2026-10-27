@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { isSmsAdminRequest } from "@/lib/server/sms/admin-auth";
-import { TENANT, noStore, normalizePhone } from "@/lib/server/sms/domain";
+import { TENANT, noStore, normalizePhone,wasPhoneRemoved } from "@/lib/server/sms/domain";
 import { liveSmsEnabled } from "@/lib/server/sms/config";
 import {
   validDestination,
@@ -43,6 +43,17 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   if (!body || typeof body !== "object")
     return noStore({ ok: false, error: "INVALID_JSON" }, 400);
+  if(body.action==='remove'){
+    const id=String(body.id||'');
+    const row=await db.prepare('SELECT id FROM sms_campaigns WHERE id=? AND tenant_id=?').bind(id,TENANT).first();
+    if(!row)return noStore({ok:false},404);
+    await db.batch([
+     db.prepare("INSERT OR IGNORE INTO sms_removed_records(tenant_id,kind,record_id) VALUES(?,'campaign',?)").bind(TENANT,id),
+     db.prepare("UPDATE sms_campaigns SET status=CASE WHEN status IN('draft','approved','running','paused') THEN 'cancelled' ELSE status END WHERE id=? AND tenant_id=?").bind(id,TENANT),
+     db.prepare("UPDATE sms_messages SET status='cancelled',updated_at=CURRENT_TIMESTAMP WHERE campaign_id=? AND tenant_id=? AND status IN('draft','queued')").bind(id,TENANT),
+     db.prepare("INSERT INTO sms_audit_logs(tenant_id,actor,action,target_id) VALUES(?,'site_admin','campaign_removed',?)").bind(TENANT,id)
+    ]);return noStore({ok:true});
+  }
   if (body.action === "renameGroup" || body.action === "removeMember") {
     const groupId = String(body.groupId || "").slice(0, 64);
     const group = await db
@@ -149,6 +160,7 @@ export async function POST(request: Request) {
       invalid = 0;
     for (const row of rows) {
       const phone = normalizePhone(String(row[0] || "").replace(/^'/, ""));
+      if(phone&&await wasPhoneRemoved(db,phone)){invalid++;continue;}
       if (!phone) {
         invalid++;
         continue;
@@ -201,7 +213,7 @@ export async function POST(request: Request) {
     return noStore({ ok: true, imported, invalid, consentGranted: 0 });
   }
   if (body.action === "create") {
-    const name = String(body.name || "")
+    let name = String(body.name || "")
         .trim()
         .slice(0, 120),
       text = String(body.body || "")
@@ -228,7 +240,7 @@ export async function POST(request: Request) {
       destination = body.destination || "/register-business";
     const tariff =
       body.tariff == null || body.tariff === "" ? null : Number(body.tariff);
-    const variantB = String(body.variantB || "").trim(),
+    let variantB = String(body.variantB || "").trim(),
       cooldown =
         body.cooldownDays === undefined ? 7 : Number(body.cooldownDays);
     const expires = body.linkExpiresAt || null;
@@ -247,12 +259,7 @@ export async function POST(request: Request) {
             Math.max(Date.now(), scheduledAt ? Date.parse(scheduledAt) : 0)))
     )
       return noStore({ ok: false, error: "INVALID_TRACKING_OPTIONS" }, 400);
-    if (
-      tracking &&
-      (!text.includes("{{registration_link}}") ||
-        (variantB && !variantB.includes("{{registration_link}}")))
-    )
-      return noStore({ ok: false, error: "REGISTRATION_LINK_REQUIRED" }, 400);
+    if(tracking){if(!text.includes('{{registration_link}}'))text+='\n{{registration_link}}';if(variantB&&!variantB.includes('{{registration_link}}'))variantB+='\n{{registration_link}}';}
     try {
       renderCampaignMessage(text, tracking ? "a".repeat(40) : undefined);
       if (variantB) renderCampaignMessage(variantB, "a".repeat(40));
@@ -374,7 +381,7 @@ export async function GET(request: Request) {
         WHERE gm.group_id=c.group_id AND co.tenant_id=c.tenant_id
           AND NOT EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=co.tenant_id AND o.contact_id=co.id)) AS eligible_count,
       (SELECT COUNT(*) FROM sms_campaign_recipients cr WHERE cr.campaign_id=c.id) AS queued_count
-      FROM sms_campaigns c WHERE c.tenant_id=? ORDER BY c.created_at DESC LIMIT 50`,
+      FROM sms_campaigns c WHERE c.tenant_id=? AND NOT EXISTS(SELECT 1 FROM sms_removed_records r WHERE r.tenant_id=c.tenant_id AND r.kind='campaign' AND r.record_id=c.id) ORDER BY c.created_at DESC LIMIT 50`,
       )
       .bind(TENANT)
       .all(),

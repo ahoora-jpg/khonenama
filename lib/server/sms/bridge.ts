@@ -60,7 +60,7 @@ export async function handleBridge(request: Request): Promise<Response> {
     const token=typeof input.leaseToken==="string"?input.leaseToken:"";
     const permitted=await db.prepare(`SELECT 1 AS allowed FROM sms_messages m WHERE m.id=? AND m.tenant_id=?
       AND m.lease_token=? AND m.status='leased' AND m.lease_until>CURRENT_TIMESTAMP
-      AND m.body NOT LIKE '%{{%'
+      AND m.body NOT LIKE '%{{%' AND EXISTS(SELECT 1 FROM sms_contacts c WHERE c.id=m.contact_id AND c.tenant_id=m.tenant_id AND c.source<>'removed')
       AND julianday(m.expires_at)>julianday('now')
       AND (m.campaign_id IS NULL OR EXISTS(SELECT 1 FROM sms_campaigns c WHERE c.id=m.campaign_id AND c.status IN ('running','completed')))
       AND (m.category='transactional' OR (

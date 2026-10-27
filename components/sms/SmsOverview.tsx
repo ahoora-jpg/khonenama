@@ -79,23 +79,24 @@ export function DashboardPage() {
     <>
       <div className="sms-stats">
         {[
-          ["در صف", counts.queued || 0],
-          ["ارسال‌شده", counts.sent || 0],
-          ["تحویل‌شده", counts.delivered || 0],
-          ["ناموفق", counts.failed || 0],
-          ["مخاطبان قابل ارسال", data.summary.consented_contacts],
-          ["کمپین‌های فعال", data.summary.active_campaigns ?? null],
-        ].map(([title, value]) => (
+          ["در صف", counts.queued || 0,'/sms/history?status=queued'],
+          ["ارسال‌شده", counts.sent || 0,'/sms/history?status=sent'],
+          ["تحویل‌شده", counts.delivered || 0,'/sms/history?status=delivered'],
+          ["ناموفق", counts.failed || 0,'/sms/history?status=failed'],
+          ["مخاطبان قابل ارسال", data.summary.consented_contacts,'/sms/contacts?filter=active'],
+          ["کمپین‌های فعال", data.summary.active_campaigns ?? null,'/sms/campaigns?status=active'],
+        ].map(([title, value,href]) => (
           <StatCard
             key={String(title)}
             title={String(title)}
             value={value as number | null}
+            href={String(href)}
             hint={
               title === "کمپین‌های فعال"
                 ? "تأییدشده یا در حال ثبت در صف"
                 : title === "ارسال‌شده"
                   ? "وضعیت فعلی؛ تحویل جداگانه ثبت می‌شود"
-                  : undefined
+                  : title==='مخاطبان قابل ارسال'?'شماره‌های ثبت‌شده بدون لغو دریافت؛ تضمین رسیدن پیام نیست':undefined
             }
           />
         ))}

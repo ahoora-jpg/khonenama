@@ -1343,3 +1343,5 @@
 .sms-mini-bar{display:inline-block;height:8px;background:#2d9288;margin-inline-end:6px;border-radius:4px;max-width:100px}
 .sms-table-wrap{overflow-x:auto}.sms-table-wrap small{display:block;font-size:.7rem;max-width:180px;overflow-wrap:anywhere}
 @media(max-width:540px){.sms-acquisition-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.sms-acquisition-cards>div,.sms-acquisition-cards>button{padding:12px;font-size:.85rem}}
+.sms-stats>a{display:block;color:inherit;text-decoration:none}.sms-stats>a:hover .sms-stat{outline:2px solid #25877e}.sms-advanced-filters{grid-column:1/-1}.sms-advanced-filters>summary{cursor:pointer;padding:10px;font-weight:600}
+.sms-simple-audience :is(th,td):is(:nth-child(4),:nth-child(5),:nth-child(7),:nth-child(8),:nth-child(9),:nth-child(11),:nth-child(12)),.sms-simple-audience td:nth-child(2) small{display:none}

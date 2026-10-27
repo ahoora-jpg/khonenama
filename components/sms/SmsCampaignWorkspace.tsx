@@ -63,7 +63,7 @@ export function CampaignsPage() {
   const [wizard, setWizard] = useState(params.get("new") === "1"),
     [step, setStep] = useState(0),
     [q, setQ] = useState(""),
-    [status, setStatus] = useState(""),
+    [status, setStatus] = useState(params.get("status")||""),
     [name, setName] = useState(""),
     [groupId, setGroupId] = useState(""),
     [body, setBody] = useState(""),
@@ -78,16 +78,14 @@ export function CampaignsPage() {
   const { resource, error, loading, reload } = useSmsResource<CampaignData>(
     "/api/admin/sms/campaigns",
   );
+  const visibleCampaigns=resource?.campaigns.filter(c=>c.name.includes(q)&&(!status||(status==='active'?['approved','running'].includes(c.status):c.status===status)))||[];
   const groups = useSmsResource<GroupSummary>(
     "/api/admin/sms/workspace?view=groups",
   );
-  const group = groups.resource?.groups.find((g) => g.id === groupId),
-    estimate = estimateSms(
-      body.replaceAll(
-        "{{registration_link}}",
-        "https://khonenama.ir/s/" + "a".repeat(40),
-      ),
-    );
+  const group = groups.resource?.groups.find((g) => g.id === groupId);
+  const sampleLink='https://khonenama.ir/s/'+'a'.repeat(40);
+  const displayBody=tracking?(body.includes('{{registration_link}}')?body.replaceAll('{{registration_link}}',sampleLink):body+'\n'+sampleLink):body;
+  const estimate=estimateSms(displayBody);
   async function act(payload: Record<string, unknown>) {
     setBusy(true);
     try {
@@ -170,7 +168,7 @@ export function CampaignsPage() {
           <label className="sms-filter-label">
             وضعیت
             <select value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="">همه</option>
+              <option value="">همه</option><option value="active">کمپین‌های فعال</option>
               <option value="draft">پیش‌نویس</option>
               <option value="approved">تأییدشده</option>
               <option value="running">در حال ثبت</option>
@@ -184,7 +182,7 @@ export function CampaignsPage() {
           <LoadingSkeleton />
         ) : error ? (
           <ResourceError message={error} retry={reload} />
-        ) : resource?.campaigns.length ? (
+        ) : visibleCampaigns.length ? (
           <div className="sms-table-scroll">
             <table>
               <thead>
@@ -199,12 +197,7 @@ export function CampaignsPage() {
                 </tr>
               </thead>
               <tbody>
-                {resource.campaigns
-                  .filter(
-                    (c) =>
-                      c.name.includes(q) && (!status || c.status === status),
-                  )
-                  .map((c) => (
+                {visibleCampaigns.map((c) => (
                     <tr key={c.id}>
                       <td>
                         <details>
@@ -214,7 +207,7 @@ export function CampaignsPage() {
                         </details>
                       </td>
                       <td>
-                        <Badge state={c.status} />
+                        <Badge state={c.status} />{c.status==='completed'&&<small>ثبت صف پایان یافته؛ نتیجهٔ ارسال را در «تحلیل و گیرندگان» ببینید.</small>}
                       </td>
                       <td>{faNumber(c.group_count)}</td>
                       <td>{faNumber(c.eligible_count)}</td>
@@ -231,6 +224,7 @@ export function CampaignsPage() {
                         />
                       </td>
                       <td>
+                        <button className="sms-quiet sms-danger-text" disabled={busy} onClick={()=>{if(window.confirm('کمپین از فهرست حذف شود؟ پیام‌های در صف آن لغو می‌شوند؛ سابقه ارسال‌های انجام‌شده باقی می‌ماند.'))void act({action:'remove',id:c.id});}}>حذف کمپین</button>
                         <a href={"/sms/acquisition?campaign_id=" + c.id}>
                           تحلیل و گیرندگان
                         </a>
@@ -324,7 +318,7 @@ export function CampaignsPage() {
           </div>
         ) : (
           <EmptyState
-            title="هنوز کمپینی ساخته نشده"
+            title={q||status?"کمپینی با این فیلتر پیدا نشد":"هنوز کمپینی ساخته نشده"}
             text="گروه مخاطبان، متن و زمان‌بندی را انتخاب کنید و کمپین بسازید."
           />
         )}
@@ -418,21 +412,14 @@ export function CampaignsPage() {
                     onChange={(e) => setBody(e.target.value)}
                   />
                 </Field>
-                <MessagePreview body={body} parts={estimate.parts} />
+                <MessagePreview body={displayBody} parts={estimate.parts} />
                 <label>
                   <input
                     type="checkbox"
                     checked={tracking}
-                    onChange={(e) => {
-                      setTracking(e.target.checked);
-                      if (
-                        e.target.checked &&
-                        !body.includes("{{registration_link}}")
-                      )
-                        setBody(body + "\n{{registration_link}}");
-                    }}
+                    onChange={(e)=>setTracking(e.target.checked)}
                   />{" "}
-                  لینک اختصاصی هر گیرنده
+                  برای هر شماره، خودکار لینک جداگانه بساز و اضافه کن
                 </label>
                 {tracking && (
                   <>
@@ -447,12 +434,7 @@ export function CampaignsPage() {
                         </option>
                       </select>
                     </Field>
-                    <button
-                      className="sms-secondary"
-                      onClick={() => setBody(body + "\n{{registration_link}}")}
-                    >
-                      افزودن متغیر لینک
-                    </button>
+                    <p>شما فقط متن پیام را بنویسید. سامانه برای هر شماره یک لینک متفاوت می‌سازد و پایین پیام می‌گذارد؛ حتی برای ۵۰۰ نفر نیازی به واردکردن لینک ندارید.</p>
                     <Field label="نسخه دوم متن (اختیاری برای مقایسه)">
                       <textarea
                         maxLength={1000}
@@ -461,7 +443,7 @@ export function CampaignsPage() {
                       />
                     </Field>
                     <p>
-                      در هر نسخه از {"{{registration_link}}"} استفاده کنید. هر
+                      لینک به هر دو نسخه خودکار اضافه می‌شود. هر
                       گیرنده فقط یکی از نسخه‌ها را دریافت می‌کند.
                     </p>
                     <Field label="انقضای اختیاری لینک">
@@ -549,7 +531,7 @@ export function CampaignsPage() {
                   <dt>بخش پیامک برای هر نفر</dt>
                   <dd>{faNumber(estimate.parts)}</dd>
                 </dl>
-                <MessagePreview body={body} parts={estimate.parts} />
+                <MessagePreview body={displayBody} parts={estimate.parts} />
                 <p className="sms-alert">
                   ذخیرهٔ پیش‌نویس هیچ کمپینی را فعال نمی‌کند. فعال‌سازی نیازمند
                   اجازه و آماده‌بودن درگاه است.

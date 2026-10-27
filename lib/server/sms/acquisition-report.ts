@@ -36,7 +36,7 @@ export const audienceSql = `WITH events AS (
  LEFT JOIN events e ON e.link_id=l.id LEFT JOIN sms_click_totals t ON t.link_id=l.id
  LEFT JOIN conversions cv ON cv.link_id=l.id LEFT JOIN first_conversions fc ON fc.link_id=l.id
  LEFT JOIN sms_message_costs costs ON costs.message_id=m.id LEFT JOIN sms_campaign_options opts ON opts.campaign_id=m.campaign_id
- WHERE m.tenant_id=?
+ WHERE m.tenant_id=? AND c.source<>'removed' AND NOT EXISTS(SELECT 1 FROM sms_removed_records r WHERE r.tenant_id=m.tenant_id AND r.kind='campaign' AND r.record_id=m.campaign_id)
 )`;
 export const segmentConditions: Record<string, string> = {
   all: "1=1",
@@ -187,7 +187,7 @@ export async function acquisitionReport(db: any, url: URL) {
       .first(),
     db
       .prepare(
-        "SELECT id,name FROM sms_campaigns WHERE tenant_id=? ORDER BY created_at DESC LIMIT 100",
+        "SELECT id,name FROM sms_campaigns WHERE tenant_id=? AND NOT EXISTS(SELECT 1 FROM sms_removed_records r WHERE r.tenant_id=sms_campaigns.tenant_id AND r.kind='campaign' AND r.record_id=sms_campaigns.id) ORDER BY created_at DESC LIMIT 100",
       )
       .bind(TENANT)
       .all(),

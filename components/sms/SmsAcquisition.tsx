@@ -144,6 +144,7 @@ export function AcquisitionPage({
   prospects?: boolean;
 }) {
   const { notify } = useSms();
+  const [showColumns,setShowColumns]=useState(false);
   const searchParams = useSearchParams();
   const [filters, setFilters] = useState<Record<string, string>>({
       segment: prospects ? "unregistered" : "all",
@@ -222,10 +223,7 @@ export function AcquisitionPage({
         title={prospects ? "مخاطبان ثبت‌نام‌نکرده" : "تحلیل کمپین و جذب غرفه"}
       >
         <p>
-          گروه‌ها از اطلاعات واقعی و به‌صورت پویا محاسبه می‌شوند.
-          «ثبت‌نام‌نکرده» در این فهرست یعنی مخاطب هنوز غرفه ندارد. کلیک، اثبات
-          هویت صاحب شماره نیست؛ انتساب دستگاه دیگر بدون مدرک معتبر نامشخص
-          می‌ماند.
+          این صفحه نشان می‌دهد پیامک‌های شما چقدر به جذب غرفه کمک کرده‌اند: چند نفر پیام گرفته‌اند، چند نفر لینک را باز کرده‌اند و چند نفر غرفه ساخته‌اند. در فهرست بدون غرفه می‌توانید افراد مناسب پیگیری بعدی را انتخاب کنید.
         </p>
         <div className="sms-acquisition-filters">
           <Field label="گروه هوشمند">
@@ -240,7 +238,7 @@ export function AcquisitionPage({
               ))}
             </select>
           </Field>
-          <Field label="کمپین">
+          <Field label="کمپین مورد بررسی">
             <select
               value={filters.campaign_id || ""}
               onChange={(e) => update("campaign_id", e.target.value)}
@@ -253,7 +251,9 @@ export function AcquisitionPage({
               ))}
             </select>
           </Field>
-          {["city", "area", "trade", "q"].map((k, i) => (
+          <Field label="پیداکردن شماره یا نام"><input value={filters.q||''} onChange={e=>update('q',e.target.value)}/></Field>
+          <details className="sms-advanced-filters"><summary>فیلترهای بیشتر (اختیاری)</summary><p>برای شروع لازم نیست این گزینه‌ها را پر کنید.</p><div className="sms-acquisition-filters">
+          {["city", "area", "trade"].map((k, i) => (
             <Field
               key={k}
               label={["شهر", "منطقه", "گروه صنفی", "جست‌وجوی شماره یا نام"][i]}
@@ -333,7 +333,7 @@ export function AcquisitionPage({
               onChange={(e) => update("last_to", e.target.value)}
             />
           </Field>
-          <Field label="حداقل پیامک قبلی">
+          <Field label="قبلاً دست‌کم چند بار پیام فرستاده‌ایم؟">
             <input
               type="number"
               min="0"
@@ -341,7 +341,7 @@ export function AcquisitionPage({
               onChange={(e) => update("min_messages", e.target.value)}
             />
           </Field>
-          <Field label="مرتب‌سازی">
+          <Field label="فهرست را به چه ترتیبی نشان بده؟">
             <select
               value={filters.sort || "date"}
               onChange={(e) => update("sort", e.target.value)}
@@ -352,6 +352,7 @@ export function AcquisitionPage({
               <option value="messages">تعداد پیامک قبلی</option>
             </select>
           </Field>
+          </div></details>
         </div>
         <button
           className="sms-secondary"
@@ -372,6 +373,8 @@ export function AcquisitionPage({
           <>
             {!prospects && (
               <>
+                <Panel title="نتیجه پیامک‌ها به زبان ساده"><p>این عددها کمک می‌کنند بفهمید چند نفر از پیامک به ساخت غرفه رسیده‌اند. روی هر عدد بزنید تا فهرست همان افراد باز شود.</p><div className="sms-acquisition-cards">{cards.filter(([k])=>['sent','delivered','clicked','accounts','booths'].includes(k)).map(([k,l,segment])=><button key={k} className="sms-secondary" onClick={()=>update('segment',segment)}><span>{l}</span><strong>{number(k)}</strong></button>)}</div></Panel>
+                <details className="sms-advanced-filters"><summary>آمار بیشتر، مقایسه‌ها و تنظیمات هزینه (اختیاری)</summary>
                 <div className="sms-acquisition-cards">
                   {cards.map(([k, l, s]) => (
                     <button
@@ -573,6 +576,7 @@ export function AcquisitionPage({
                     <button disabled={busy}>ثبت هزینه واقعی</button>
                   </form>
                 </Panel>
+                </details>
               </>
             )}
             <Panel
@@ -589,7 +593,7 @@ export function AcquisitionPage({
                 برای کمپین بعدی، شماره‌های لغو دریافت و دارای غرفه کنار گذاشته
                 می‌شوند.
               </p>
-              <div className="sms-table-wrap">
+              <label><input type="checkbox" checked={showColumns} onChange={e=>setShowColumns(e.target.checked)}/> نمایش ستون‌های بیشتر</label><div className={"sms-table-wrap "+(showColumns?"":"sms-simple-audience")}>
                 <table>
                   <thead>
                     <tr>

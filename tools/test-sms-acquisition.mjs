@@ -8,7 +8,7 @@ import vm from 'node:vm';
 import ts from 'typescript';
 function fixture(){
  const sql=new DatabaseSync(':memory:');
- sql.exec(readFileSync('db/migrations/0012_sms_center.sql','utf8'));sql.exec(readFileSync('db/migrations/0013_sms_acquisition.sql','utf8'));
+ sql.exec(readFileSync('db/migrations/0012_sms_center.sql','utf8'));sql.exec(readFileSync('db/migrations/0013_sms_acquisition.sql','utf8'));sql.exec(readFileSync('db/migrations/0014_sms_removals.sql','utf8'));
  sql.exec('CREATE TABLE users(id TEXT PRIMARY KEY,phone TEXT);CREATE TABLE businesses(id INTEGER PRIMARY KEY,owner_user_id TEXT,status TEXT);');
  const db={prepare(query){return{values:[],bind(...v){this.values=v;return this;},async first(){return sql.prepare(query).get(...this.values)||null;},async all(){return{results:sql.prepare(query).all(...this.values)};},async run(){return {meta:{changes:sql.prepare(query).run(...this.values).changes}};}};},async batch(statements){sql.exec('BEGIN');try{const r=[];for(const s of statements)r.push(await s.run());sql.exec('COMMIT');return r;}catch(e){sql.exec('ROLLBACK');throw e;}}};
  const env={DB:db,SMS_LIVE_SEND_ENABLED:'false'},cache=new Map();
