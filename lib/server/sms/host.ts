@@ -8,6 +8,12 @@ const allowedPrefixes = ["/api/admin/sms/", "/_next/", "/assets/", "/fonts/"];
 /** Keep the SMS subdomain scoped to its own interface and authentication endpoints. */
 export function routeSmsHost(request: Request): Request | Response {
   const url = new URL(request.url);
+  if (url.hostname.toLowerCase() === "www.sms.khonenama.ir") {
+    url.hostname = SMS_HOST;
+    url.protocol = "https:";
+    url.port = "";
+    return new Response(null, { status: 308, headers: { Location: url.href, "Cache-Control": "no-store" } });
+  }
   if (url.hostname.toLowerCase() !== SMS_HOST) return request;
   if (url.pathname === "/robots.txt") return new Response("User-agent: *\nDisallow: /\n", {
     headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=3600" },

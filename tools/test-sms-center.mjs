@@ -22,6 +22,11 @@ test("Worker binding initializes additive schema once with sending disabled",asy
 });
 
 test("SMS subdomain maps its home and rejects unrelated site routes",()=>{
+  const alias=routeSmsHost(new Request("https://www.sms.khonenama.ir/login?return=sms"));
+  assert.equal(alias.status,308);
+  assert.equal(alias.headers.get("location"),"https://sms.khonenama.ir/login?return=sms");
+  const aliasHttp=routeSmsHost(new Request("http://www.sms.khonenama.ir/"));
+  assert.equal(aliasHttp.headers.get("location"),"https://sms.khonenama.ir/");
   const home=routeSmsHost(new Request("https://sms.khonenama.ir/"));
   assert.equal(home instanceof Request,true);
   assert.equal(new URL(home.url).pathname,"/sms");
