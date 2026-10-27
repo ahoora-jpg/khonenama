@@ -27,6 +27,7 @@
     { "binding": "BUSINESS_MEDIA", "bucket_name": "khonenama-business-media" }
   ],
   "routes": [
+    { "pattern": "khonenama.ir", "custom_domain": true },
     { "pattern": "www.khonenama.ir/*", "zone_name": "khonenama.ir" },
     { "pattern": "sms.khonenama.ir/*", "zone_name": "khonenama.ir" },
     { "pattern": "www.sms.khonenama.ir", "custom_domain": true }
