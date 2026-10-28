@@ -1,4 +1,5 @@
-export const WELCOME_TRIAL_END = '2026-11-21 20:30:00';
+// پایان روز ۱۵ بهمن ۱۴۰۵ به وقت ایران.
+export const WELCOME_TRIAL_END = '2027-02-04 20:30:00';
 export async function ensureWelcomeTrialSchema(db: any) {
   await db.batch([
     db.prepare("CREATE TABLE IF NOT EXISTS business_welcome_trials (business_id INTEGER PRIMARY KEY, claim_token TEXT NOT NULL, starts_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, ends_at TEXT NOT NULL, subscription_id INTEGER)"),

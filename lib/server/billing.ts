@@ -1,4 +1,4 @@
-import { businessPlans, customCapacityAvailable, discountedMonthlyPrice } from "@/lib/business-plans";
+import { businessPlans, customCapacityAvailable, discountedMonthlyPrice, launchFreeActive } from "@/lib/business-plans";
 import { ensureBilling } from "./billing-schema";
 import { activateSubscriptionFromVerifiedPayment } from "./billing-activation";
 import type { PaymentProvider } from "./payment-provider";
@@ -19,7 +19,8 @@ export async function billingCatalog(db: any, provider: PaymentProvider | null) 
     const amountToman = plan.code === "free" ? 0 : price?.enabled === 1 ? discountedMonthlyPrice(plan.code, Number(price.amount_toman) || null) : null;
     const annualPrice = annualRows.find((r: any) => r.plan_code === plan.code);
     const annualAmount = annualPrice?.enabled === 1 ? Number(annualPrice.amount_toman) : null;
-    return { ...plan, priceLabel: plan.code === "free" ? plan.priceLabel : amountToman ? `${amountToman.toLocaleString('fa-IR')} تومان برای ${Number(price?.duration_days || 30).toLocaleString('fa-IR')} روز` : "قیمت در دسترس نیست", amountToman, durationDays: plan.code === "free" ? null : Number(price?.duration_days || 30), purchasable: plan.code !== "free" && !!amountToman && !!provider, annual: annualPrice ? { amountToman: annualAmount, durationDays: 365, purchasable: ANNUAL_BILLING_ENABLED && !!annualAmount && !!provider } : null };
+    const complimentary = plan.code !== "free" && launchFreeActive();
+    return { ...plan, priceLabel: plan.code === "free" ? plan.priceLabel : complimentary ? "رایگان تا پایان ۱۵ بهمن ۱۴۰۵" : amountToman ? `${amountToman.toLocaleString('fa-IR')} تومان برای ${Number(price?.duration_days || 30).toLocaleString('fa-IR')} روز` : "قیمت در دسترس نیست", amountToman, durationDays: plan.code === "free" ? null : Number(price?.duration_days || 30), complimentary, purchasable: plan.code !== "free" && !!amountToman && !!provider, annual: annualPrice ? { amountToman: annualAmount, durationDays: 365, purchasable: ANNUAL_BILLING_ENABLED && !!annualAmount && !!provider } : null };
   });
 }
 async function hash(value: string) {

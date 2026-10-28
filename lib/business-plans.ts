@@ -1,12 +1,15 @@
-export const LEGACY_PROMOTION_QR_END_AT = "2026-11-21T20:30:00Z";
-export const CUSTOM_CAPACITY_AVAILABLE_AT = "2026-11-21T20:30:00Z";
-export const LAUNCH_DISCOUNT_END_AT = "2027-01-20T20:30:00Z";
-export function launchDiscountActive(now = Date.now()) { return now < Date.parse(LAUNCH_DISCOUNT_END_AT); }
+export const LEGACY_PROMOTION_QR_END_AT = "2027-02-04T20:30:00Z";
+export const LAUNCH_FREE_END_AT = "2027-02-04T20:30:00Z";
+export const LAUNCH_DISCOUNT_END_AT = LAUNCH_FREE_END_AT;
+// افزونهٔ ظرفیت نمایش داده می‌شود، اما تا اطلاع بعدی فعال نیست.
+export const CUSTOM_CAPACITY_AVAILABLE_AT = null;
+export function launchFreeActive(now = Date.now()) { return now < Date.parse(LAUNCH_FREE_END_AT); }
+export function launchDiscountActive(now = Date.now()) { return launchFreeActive(now); }
 export function discountedMonthlyPrice(code: string, normal: number | null, now = Date.now()) {
-  if (normal === null || !launchDiscountActive(now)) return normal;
-  return code === "pro" ? 150000 : code === "premium" ? 250000 : normal;
+  if (normal === null || !launchFreeActive(now)) return normal;
+  return code === "pro" || code === "premium" ? 0 : normal;
 }
-export function customCapacityAvailable(now = Date.now()) { return now >= Date.parse(CUSTOM_CAPACITY_AVAILABLE_AT); }
+export function customCapacityAvailable() { return false; }
 
 export const businessPlans = [
   {
@@ -29,8 +32,8 @@ export const businessPlans = [
   {
     code: "pro",
     name: "حرفه‌ای",
-    priceLabel: "۲۵۰ هزار تومان برای ۳۰ روز",
-    amountToman: 250000,
+    priceLabel: "۱۵۰ هزار تومان برای ۳۰ روز",
+    amountToman: 150000,
     description: "برای کسب‌وکارهایی که می‌خواهند مشتری بیشتری جذب کنند",
     badge: "پیشنهادی",
     features: [
@@ -47,8 +50,8 @@ export const businessPlans = [
   {
     code: "premium",
     name: "ویژه",
-    priceLabel: "۳۵۰ هزار تومان برای ۳۰ روز",
-    amountToman: 350000,
+    priceLabel: "۲۵۰ هزار تومان برای ۳۰ روز",
+    amountToman: 250000,
     description: "برای معرفی کامل‌تر و گزارش عملکرد پیشرفته",
     badge: "ظرفیت بیشتر نمونه‌کار",
     features: [
