@@ -331,6 +331,7 @@ type Group = {
 type Groups = { groups: Group[]; members: Contact[]; memberLimit: number };
 export function GroupsPage() {
   const { data, notify, refresh } = useSms();
+  const [memberPage,setMemberPage]=useState(1);
   const [groupId, setGroupId] = useState(""),
     [modal, setModal] = useState<"new" | "edit" | null>(null),
     [busy, setBusy] = useState(false),
@@ -338,7 +339,7 @@ export function GroupsPage() {
     [memberId, setMemberId] = useState(""),
     [result, setResult] = useState("");
   const { resource, error, loading, reload } = useSmsResource<Groups>(
-    "/api/admin/sms/workspace?view=groups&id=" + encodeURIComponent(groupId),
+    "/api/admin/sms/workspace?view=groups&id=" + encodeURIComponent(groupId)+'&page='+memberPage,
   );
   const current = resource?.groups.find((g) => g.id === groupId);
   async function act(payload: Record<string, unknown>) {
@@ -391,7 +392,7 @@ export function GroupsPage() {
                           className="sms-quiet"
                           aria-pressed={g.id === groupId}
                           onClick={() => {
-                            setGroupId(g.id);
+                            setGroupId(g.id);setMemberPage(1);
                             setResult("");
                           }}
                         >

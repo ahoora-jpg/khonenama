@@ -148,7 +148,7 @@ export async function POST(request: Request) {
     if (!campaign) return noStore({ ok: false }, 404);
     const contacts = await db
       .prepare(
-        "SELECT c.id,c.phone_e164 FROM sms_contacts c JOIN sms_group_members gm ON gm.contact_id=c.id WHERE gm.group_id=? AND c.tenant_id=? LIMIT 25",
+        "SELECT c.id,c.phone_e164,c.display_name FROM sms_contacts c JOIN sms_group_members gm ON gm.contact_id=c.id WHERE gm.group_id=? AND c.tenant_id=? LIMIT 25",
       )
       .bind(campaign.group_id, TENANT)
       .all();
@@ -160,6 +160,7 @@ export async function POST(request: Request) {
       const body = renderCampaignMessage(
         link?.variant === "B" ? options.variant_b : campaign.body,
         link?.token,
+        String(contact.display_name || ""),
       );
       rows.push({
         contactId: contact.id,

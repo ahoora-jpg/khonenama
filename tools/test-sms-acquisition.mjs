@@ -55,3 +55,30 @@ test('recipient preview creates stable links but neither queues nor activates a 
 test('retention removes old session associations but preserves contacts and campaign history',async()=>{const f=fixture();try{const c=f.contact(1),l=await linkFor(f,c);await f.core.handleAcquisitionLink(f.request(l.token),f.db);f.sql.exec("UPDATE sms_attribution_sessions SET last_clicked_at=datetime('now','-91 days');UPDATE sms_link_events SET created_at=datetime('now','-91 days');UPDATE sms_link_rate_buckets SET created_at=datetime('now','-2 days')");await f.core.reconcileAcquisition(f.db);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_attribution_sessions').get().n,0);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_contacts').get().n,1);assert.equal(f.sql.prepare('SELECT total FROM sms_click_totals').get().total,1);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_messages').get().n,1);}finally{f.close();}});
 test('public link handlers do not reveal phone, name, body or internal IDs',async()=>{const f=fixture();try{const c=f.contact(1),l=await linkFor(f,c),r=await f.core.handleAcquisitionLink(f.request(l.token),f.db);const text=await r.text(),headers=JSON.stringify([...r.headers]);assert.ok(!text.includes(c.phone));assert.ok(!headers.includes(c.phone));assert.ok(!headers.includes('contact_id'));assert.equal(text,'');}finally{f.close();}});
 test('registration conversion hooks are after real persistence and safely isolated from signup failure',()=>{const s=readFileSync('app/api/businesses/register/route.ts','utf8');assert.ok(s.indexOf('await recordAcquisitionConversion')>s.indexOf('stage = "session-create"'));assert.ok(s.includes('newAccount:!existingUser'));assert.ok(s.includes(".catch(()=>console.warn('SMS_CONVERSION_UNAVAILABLE'))"));const worker=readFileSync('worker.ts','utf8');assert.ok(worker.includes('ctx.waitUntil(recordAcquisitionStage'));});
+
+test('recipient names are personalized with stable links and accurate preview, without sending',async()=>{const f=fixture();try{
+ const a=f.contact(101),b=f.contact(102);
+ f.sql.prepare('UPDATE sms_contacts SET display_name=? WHERE id=?').run('علی رضایی',a.id);
+ f.sql.prepare('UPDATE sms_contacts SET display_name=? WHERE id=?').run('فروشگاه پرده سپید',b.id);
+ const body='{{name}} گرامی، ثبت غرفه: {{registration_link}}';
+ f.sql.prepare('UPDATE sms_campaigns SET body=? WHERE id=?').run(body,'ca');
+ const before=f.sql.prepare('SELECT COUNT(*) n FROM sms_messages').get().n;
+ const pa=await f.core.prepareRecipient(f.db,{id:'ca',body},a.id,'m101');
+ const pb=await f.core.prepareRecipient(f.db,{id:'ca',body},b.id,'m102');
+ assert.ok(pa.text.startsWith('علی رضایی گرامی'));assert.ok(pb.text.startsWith('فروشگاه پرده سپید گرامی'));assert.notEqual(pa.text.split('/s/')[1],pb.text.split('/s/')[1]);
+ const response=await f.api.POST(f.admin({action:'preview',id:'ca'}));const preview=await response.json();
+ assert.equal(response.status,200);assert.equal(preview.rows.find(r=>r.contactId===a.id).body,pa.text);
+ assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_messages').get().n,before);
+ f.sql.exec('UPDATE sms_campaign_options SET tracking_enabled=0');
+ const plain=await f.core.prepareRecipient(f.db,{id:'ca',body:'{{name}} گرامی'},a.id,'m101');assert.equal(plain.text,'علی رضایی گرامی');
+ f.sql.exec("UPDATE sms_campaign_options SET tracking_enabled=1,variant_b='{{name}} نسخه دوم {{registration_link}}'");
+ f.sql.exec("UPDATE sms_recipient_links SET variant='B'");
+ const variant=await f.core.prepareRecipient(f.db,{id:'ca',body},a.id,'m101');assert.ok(variant.text.startsWith('علی رضایی نسخه دوم'));
+}finally{f.close();}});
+test('name fallback, repeated placeholders, literal recipient data and message limits',()=>{const f=fixture();try{
+ assert.equal(f.core.renderCampaignMessage('{{name}} گرامی',undefined,'  '),'همکار گرامی');
+ assert.equal(f.core.renderCampaignMessage('{{name}} / {{name}}',undefined,'  علی\n رضایی  '),'علی رضایی / علی رضایی');
+ assert.equal(f.core.renderCampaignMessage('{{name}}',undefined,'$& {{other}}'),'$& {{other}}');
+ assert.throws(()=>f.core.renderCampaignMessage('{{other}}',undefined,'علی'),/UNRESOLVED_VARIABLE/);
+ assert.throws(()=>f.core.renderCampaignMessage('{{name}}',undefined,'ع'.repeat(1601)),/MESSAGE_TOO_LONG/);
+}finally{f.close();}});
