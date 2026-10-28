@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import {SmsCsvImport} from "./SmsCsvImport";
 import { useSearchParams } from "next/navigation";
 import { faNumber, kindLabels, smsDate } from "@/lib/sms-admin-ui";
 import {
@@ -92,6 +93,7 @@ export function ContactsPage() {
   }
   return (
     <>
+      <SmsCsvImport onImported={()=>{reload();}}/>
       <Panel>
         <div className="sms-filter-toolbar">
           <SearchBox
@@ -284,6 +286,7 @@ export function ContactsPage() {
               {busy ? "در حال ثبت…" : "ذخیره مخاطب"}
             </button>
           </form>
+          {modal==='new'&&<SmsCsvImport onImported={()=>{reload();setModal(null);}}/>}
         </Modal>
       )}
       {modal === "detail" && detail && (
@@ -420,6 +423,7 @@ export function GroupsPage() {
           کنار گذاشته می‌شوند.
         </p>
       </Panel>
+      {!current&&<SmsCsvImport onImported={id=>{setGroupId(id);reload();}}/>}
       {current && (
         <Panel title={"اعضای " + current.name}>
           <div className="sms-filter-toolbar">
@@ -445,57 +449,7 @@ export function GroupsPage() {
               افزودن به گروه
             </button>
           </div>
-          <div className="sms-import-box">
-            <h3>ورود مخاطبان از پرونده</h3>
-            <p>
-              پروندهٔ CSV با ستون‌های <bdi>phone,name</bdi>، حداکثر ۲۰۰ ردیف و
-              ۱۰۰ کیلوبایت. شماره‌های تکراری دوباره ساخته نمی‌شوند.
-            </p>
-            <p className="sms-muted">
-              در اکسل، ستون شماره را روی «متن» بگذارید و فایل را با گزینهٔ CSV
-              UTF-8 ذخیره کنید. فایل مستقیم اکسل (.xlsx) پذیرفته نمی‌شود.
-            </p>
-            <a
-              className="sms-button sms-secondary"
-              href="/sms-assets/contacts-template.csv"
-              download="نمونه-مخاطبان.csv"
-            >
-              دریافت قالب فایل مخاطبان
-            </a>
-            <label className="sms-file-label">
-              انتخاب پروندهٔ مخاطبان
-              <input
-                aria-label="انتخاب پروندهٔ مخاطبان"
-                type="file"
-                accept=".csv,text/csv"
-                disabled={busy}
-                onChange={async (e) => {
-                  const file = e.currentTarget.files?.[0];
-                  e.currentTarget.value = "";
-                  if (!file) return;
-                  if (file.size > 100000) {
-                    notify("حجم پرونده بیشتر از ۱۰۰ کیلوبایت است.");
-                    return;
-                  }
-                  try {
-                    const csv = await file.text();
-                    const value = await act({
-                      action: "importCsv",
-                      groupId,
-                      csv,
-                    });
-                    if (value)
-                      setResult(
-                        `${faNumber(value.imported)} ردیف پردازش شد؛ ${faNumber(value.invalid)} شماره نامعتبر.`,
-                      );
-                  } catch {
-                    notify("خواندن پرونده انجام نشد.");
-                  }
-                }}
-              />
-            </label>
-            {result && <p role="status">{result}</p>}
-          </div>
+          <SmsCsvImport groupId={groupId} onImported={()=>{reload();}}/>
           {resource?.members.length ? (
             <div className="sms-table-scroll">
               <table>

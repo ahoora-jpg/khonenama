@@ -31,6 +31,8 @@ function load(file) {
     if (name === "next/navigation")
       return { useSearchParams: () => new URLSearchParams() };
     if (name === "@/lib/sms-admin-ui") return load("lib/sms-admin-ui.ts");
+    if (name === "./SmsCsvImport") return load("components/sms/SmsCsvImport.tsx");
+    if (name === "@/lib/sms-csv") return load("lib/sms-csv.ts");
     if (name === "@/lib/sms-text") return load("lib/sms-text.ts");
     if (name === "./SmsAdminShell")
       return load("components/sms/SmsAdminShell.tsx");
@@ -150,6 +152,9 @@ test('SMS shell uses its own uploaded logo asset',()=>{
 test('everyday SMS screens do not ask for initial consent',()=>{
  const pages=[load('components/sms/SmsMessages.tsx').SendPage,load('components/sms/SmsContacts.tsx').ContactsPage,load('components/sms/SmsContacts.tsx').GroupsPage,load('components/sms/SmsCampaignWorkspace.tsx').CampaignsPage];
  for(const Page of pages){const html=render(Page,{...empty,liveSendingEnabled:true});assert.ok(!html.includes('رضایت'));}
+});
+test('CSV upload is available from contacts, groups and compose and wired into campaign recipient selection',()=>{
+ const people=load('components/sms/SmsContacts.tsx'),messages=load('components/sms/SmsMessages.tsx');for(const Page of [people.ContactsPage,people.GroupsPage,messages.SendPage]){const html=render(Page);assert.ok(html.includes('type="file"'));assert.ok(html.includes('.csv,text/csv'));assert.ok(html.includes('دریافت قالب CSV'));assert.ok(html.includes('پیامکی ارسال نمی‌شود'));}const campaign=readFileSync(new URL('components/sms/SmsCampaignWorkspace.tsx',root),'utf8');assert.ok(campaign.includes('<SmsCsvImport'));assert.ok(campaign.includes('setGroupId(id)'));
 });
 test('acquisition and prospect screens render real empty reports in Persian without invented values',()=>{
  const prior=shell.useSmsResource;
