@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
+import {SmsCsvImport} from "./SmsCsvImport";
 import { useSearchParams } from "next/navigation";
 import { estimateSms } from "@/lib/sms-text";
 import { faNumber, smsDate, stateLabels } from "@/lib/sms-admin-ui";
@@ -160,6 +161,7 @@ export function SendPage() {
             </button>
           </div>
         </form>
+        <SmsCsvImport/>
       </Panel>
       <div>
         <Panel>
