@@ -148,9 +148,9 @@ export async function GET(request: Request) {
       if (groupId) {
         const rows = await db
           .prepare(
-            `SELECT c.id,c.display_name,c.phone_e164,${consentSql} AS consent_status FROM sms_group_members gm JOIN sms_contacts c ON c.id=gm.contact_id AND c.tenant_id=gm.tenant_id WHERE gm.tenant_id=? AND gm.group_id=? ORDER BY c.display_name LIMIT 200`,
+            `SELECT c.id,c.display_name,c.phone_e164,${consentSql} AS consent_status FROM sms_group_members gm JOIN sms_contacts c ON c.id=gm.contact_id AND c.tenant_id=gm.tenant_id WHERE gm.tenant_id=? AND gm.group_id=? ORDER BY c.display_name,c.id LIMIT 50 OFFSET ?`,
           )
-          .bind(TENANT, groupId)
+          .bind(TENANT, groupId, (page-1)*50)
           .all();
         members = rows.results.map((c: any) => ({
           ...c,
@@ -161,7 +161,7 @@ export async function GET(request: Request) {
         ok: true,
         groups: groups.results,
         members,
-        memberLimit: 200,
+        memberLimit: 50,
       });
     }
     if (view === "reports") {
