@@ -33,7 +33,7 @@ export async function drainBusinessWebPush(db:any){
   try{
    if(!validPushEndpoint(row.endpoint))status=410;
    else{
-    const payload=await buildPushPayload({data:JSON.stringify({title:"درخواست جدید خونه‌نما",body:"یک درخواست مشتری در صندوق غرفه شما ثبت شد.",url:"/dashboard#leads",tag:`request-${row.lead_id}`}),options:{ttl:3600}},JSON.parse(row.subscription),{subject:"https://khonenama.ir/support",publicKey:keys.public_key,privateKey:keys.private_key});
+    const payload=await buildPushPayload({data:JSON.stringify({title:"درخواست جدید مشتری برای غرفهٔ شما",body:"یک مشتری از طریق خونه‌نما درخواست ثبت کرده است. برای پاسخ‌دادن، صندوق غرفه را باز کنید.",url:"/dashboard#leads",tag:`request-${row.lead_id}`}),options:{ttl:3600}},JSON.parse(row.subscription),{subject:"https://khonenama.ir/support",publicKey:keys.public_key,privateKey:keys.private_key});
     const response=await fetch(row.endpoint,{...payload,redirect:"manual",signal:AbortSignal.timeout(8000)});status=response.status;
    }
   }catch{/* Keep transient failures for the scheduled retry. */}
