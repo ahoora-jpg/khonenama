@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import {SmsCsvImport} from "./SmsCsvImport";
 import { useSearchParams } from "next/navigation";
 import { estimateSms } from "@/lib/sms-text";
 import { faNumber, smsDate } from "@/lib/sms-admin-ui";
@@ -65,7 +66,7 @@ export function CampaignsPage() {
     [q, setQ] = useState(""),
     [status, setStatus] = useState(params.get("status")||""),
     [name, setName] = useState(""),
-    [groupId, setGroupId] = useState(""),
+    [groupId, setGroupId] = useState(params.get("groupId")||""),
     [body, setBody] = useState(""),
     [limit, setLimit] = useState(10),
     [schedule, setSchedule] = useState(""),
@@ -371,6 +372,7 @@ export function CampaignsPage() {
             )}
             {step === 1 && (
               <>
+                <SmsCsvImport groupId={groupId||undefined} onImported={id=>{setGroupId(id);groups.reload();reload();}}/>
                 {groups.error ? (
                   <ResourceError message={groups.error} retry={groups.reload} />
                 ) : (
