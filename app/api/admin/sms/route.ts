@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { isSmsAdminRequest } from "@/lib/server/sms/admin-auth";
-import { GATEWAY, TENANT, canReceivePromotionalMessage, maskPhone, noStore, normalizePhone } from "@/lib/server/sms/domain";
+import { GATEWAY, TENANT, canReceivePromotionalMessage, maskPhone, noStore, normalizePhone,wasPhoneRemoved,removeSmsContact } from "@/lib/server/sms/domain";
 import {liveSmsEnabled,smsSimSelection} from "@/lib/server/sms/config";
 import {smsKeyConfigured} from "@/lib/server/sms/admin-auth";
 
@@ -16,15 +16,15 @@ export async function GET(request: Request) {
       db().prepare(`SELECT id,phone_e164,display_name,kind,source,created_at,
         CASE WHEN EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=sms_contacts.tenant_id AND o.contact_id=sms_contacts.id) THEN 'revoked'
         ELSE COALESCE((SELECT status FROM sms_consents s WHERE s.tenant_id=sms_contacts.tenant_id AND s.contact_id=sms_contacts.id ORDER BY s.created_at DESC,s.rowid DESC LIMIT 1),'none') END AS consent_status
-        FROM sms_contacts WHERE tenant_id=? ORDER BY created_at DESC LIMIT 100`).bind(TENANT).all(),
+        FROM sms_contacts WHERE tenant_id=? AND source<>'removed' ORDER BY created_at DESC LIMIT 100`).bind(TENANT).all(),
       db().prepare("SELECT m.id,m.category,m.status,m.body,m.created_at,m.updated_at,c.phone_e164 FROM sms_messages m JOIN sms_contacts c ON c.id=m.contact_id WHERE m.tenant_id=? ORDER BY m.created_at DESC LIMIT 100").bind(TENANT).all(),
-      db().prepare("SELECT id,name,status,scheduled_at,max_recipients,created_at FROM sms_campaigns WHERE tenant_id=? ORDER BY created_at DESC LIMIT 50").bind(TENANT).all(),
+      db().prepare("SELECT id,name,status,scheduled_at,max_recipients,created_at FROM sms_campaigns WHERE tenant_id=? AND NOT EXISTS(SELECT 1 FROM sms_removed_records r WHERE r.tenant_id=sms_campaigns.tenant_id AND r.kind='campaign' AND r.record_id=sms_campaigns.id) ORDER BY created_at DESC LIMIT 50").bind(TENANT).all(),
       db().prepare("SELECT a.last_seen_at,a.last_error,a.enabled,g.enabled AS gateway_enabled,g.sim_number,g.inbound_enabled FROM sms_gateway_agents a JOIN sms_gateways g ON g.id=a.gateway_id WHERE a.id='khonenama-windows' AND a.tenant_id=?").bind(TENANT).first(),
       db().prepare(`SELECT
         (SELECT COUNT(*) FROM sms_campaigns WHERE tenant_id=? AND status IN ('approved','running')) AS active_campaigns,
         (SELECT COUNT(*) FROM sms_opt_outs WHERE tenant_id=?) AS opt_outs,
         (SELECT COUNT(*) FROM sms_messages WHERE tenant_id=? AND status='queued' AND priority>0) AS priority_queued,
-        (SELECT COUNT(*) FROM sms_contacts c WHERE c.tenant_id=? AND NOT EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=c.tenant_id AND o.contact_id=c.id)) AS consented_contacts`).bind(TENANT,TENANT,TENANT,TENANT).first(),
+        (SELECT COUNT(*) FROM sms_contacts c WHERE c.tenant_id=? AND c.source<>'removed' AND NOT EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=c.tenant_id AND o.contact_id=c.id)) AS consented_contacts`).bind(TENANT,TENANT,TENANT,TENANT).first(),
     ]);
     return noStore({ ok: true, counts: counts.results, contacts: contacts.results.map((c:any)=>({ ...c, phone_e164: maskPhone(c.phone_e164) })),
       messages: messages.results.map((m:any)=>({ ...m, phone_e164: maskPhone(m.phone_e164) })), campaigns: campaigns.results, agent:agent?{...agent,sim_selection:smsSimSelection(env as any)}:null,summary,
@@ -48,9 +48,15 @@ export async function POST(request: Request) {
       await audit("contact_edited",id);
       return noStore({ok:true,id});
     }
+    if(input.action==='removeContact'){
+      const id=str(input.id,64);const result=await removeSmsContact(db(),id);
+      if(!result.ok)return noStore(result,result.error==='CONTACT_BUSY'?409:404);
+      await audit('contact_removed',id);return noStore(result);
+    }
     if (input.action === "contact") {
       const phone = normalizePhone(input.phone);
       if (!phone) return noStore({ ok:false, error:"INVALID_PHONE" },400);
+      if(await wasPhoneRemoved(db(),phone))return noStore({ok:false,error:'CONTACT_REMOVED'},409);
       const id = crypto.randomUUID();
       await db().prepare("INSERT OR IGNORE INTO sms_contacts(id,tenant_id,phone_e164,display_name,kind,source) VALUES(?,?,?,?,?,?)")
         .bind(id,TENANT,phone,str(input.name,120),["customer","seller","admin","other"].includes(input.kind)?input.kind:"other","admin_manual").run();
@@ -70,7 +76,7 @@ export async function POST(request: Request) {
       let synced = 0, skipped = 0;
       for (const business of rows.results || []) {
         const phone = normalizePhone(business.phone);
-        if (!phone) { skipped++; continue; }
+        if (!phone || await wasPhoneRemoved(db(),phone)) { skipped++; continue; }
         const contactId = crypto.randomUUID();
         await db().prepare(
           "INSERT INTO sms_contacts(id,tenant_id,phone_e164,display_name,kind,source) VALUES(?,?,?,?,?,'published_business_sync') " +

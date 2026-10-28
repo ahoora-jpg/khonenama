@@ -19,7 +19,7 @@ export async function GET(request: Request) {
   try {
     if (view === "contacts") {
       const values: unknown[] = [TENANT];
-      let where = "c.tenant_id=?";
+      let where = "c.tenant_id=? AND c.source<>'removed'";
       if (q) {
         where += " AND (c.display_name LIKE ? OR c.phone_e164 LIKE ?)";
         values.push("%" + q + "%", "%" + q + "%");
