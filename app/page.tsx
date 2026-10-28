@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import HomeBusinessShelf from "@/components/HomeBusinessShelf";
+import HomeTools from "@/components/HomeTools";
 import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 
 export const dynamic = "force-dynamic";
@@ -147,6 +148,7 @@ export default async function HomePage() {
       <Header />
       <Hero />
       <HomeBusinessShelf initialBusinesses={shelf} />
+      <HomeTools />
       <BusinessCTA />
       <Footer />
     </main>
