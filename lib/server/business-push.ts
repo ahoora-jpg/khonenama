@@ -29,7 +29,7 @@ export async function drainBusinessPush(db:any){
  }
  if(claimed.length){
   try{
-   const payload=await provider("send",claimed.map(row=>({to:row.expo_push_token,sound:"default",title:"درخواست جدید خونه‌نما",body:`درخواست شماره ${row.lead_id} در صندوق دریافتی شما ثبت شد.`,data:{url:`/owner/request/${row.lead_id}`,leadId:row.lead_id},channelId:"business-requests",priority:"high"})));
+   const payload=await provider("send",claimed.map(row=>({to:row.expo_push_token,sound:"default",title:"درخواست جدید مشتری برای غرفهٔ شما",body:"یک مشتری از طریق خونه‌نما درخواست ثبت کرده است. برای پاسخ‌دادن، صندوق غرفه را باز کنید.",data:{url:`/owner/request/${row.lead_id}`,leadId:row.lead_id},channelId:"business-requests",priority:"high"})));
    if(!Array.isArray(payload.data)||payload.data.length!==claimed.length)throw new Error("INVALID_RESPONSE");
    for(let index=0;index<claimed.length;index++){
     const result=payload.data[index] as PushResult,row=claimed[index];

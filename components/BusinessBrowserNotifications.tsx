@@ -15,6 +15,7 @@ export default function BusinessBrowserNotifications(){
   try{
    if(!("Notification" in window)||!("serviceWorker" in navigator)||!("PushManager" in window))throw Error("UNSUPPORTED");
    if(enabled){const reg=await navigator.serviceWorker.getRegistration("/");const sub=await reg?.pushManager.getSubscription();if(sub){const r=await fetch("/api/me/business/web-push",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({endpoint:sub.endpoint})});if(!r.ok)throw Error("SAVE");await sub.unsubscribe();}setEnabled(false);setStatus("اعلان این مرورگر غیرفعال شد.");return;}
+   if(!window.confirm("می‌خواهید اعلان درخواست مشتری را دریافت کنید؟\n\nاگر مشتری از طریق خونه‌نما برای غرفهٔ شما درخواست ثبت کند، یک اعلان واضح دریافت می‌کنید تا سریع‌تر پاسخ بدهید. این اجازه را هر زمان بخواهید می‌توانید غیرفعال کنید. اعلان تبلیغاتی ارسال نمی‌شود."))return;
    const permission=await Notification.requestPermission();if(permission!=="granted")throw Error("PERMISSION");
    const r=await fetch("/api/me/business/web-push",{cache:"no-store"});if(!r.ok)throw Error("SAVE");const {publicKey}=await r.json();
    const reg=await navigator.serviceWorker.register("/business-notifications-sw.js",{scope:"/"});await navigator.serviceWorker.ready;
