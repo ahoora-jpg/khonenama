@@ -85,7 +85,8 @@ export function CampaignsPage() {
   );
   const group = groups.resource?.groups.find((g) => g.id === groupId);
   const sampleLink='https://khonenama.ir/s/'+'a'.repeat(40);
-  const displayBody=tracking?(body.includes('{{registration_link}}')?body.replaceAll('{{registration_link}}',sampleLink):body+'\n'+sampleLink):body;
+  const previewBody=tracking?(body.includes('{{registration_link}}')?body.replaceAll('{{registration_link}}',sampleLink):body+'\n'+sampleLink):body;
+  const displayBody = previewBody.replaceAll("{{name}}", "علی رضایی");
   const estimate=estimateSms(displayBody);
   async function act(payload: Record<string, unknown>) {
     setBusy(true);
@@ -414,6 +415,8 @@ export function CampaignsPage() {
                     onChange={(e) => setBody(e.target.value)}
                   />
                 </Field>
+                <button type="button" className="sms-secondary" onClick={() => setBody(current => current + "{{name}}")}>افزودن نام مخاطب</button>
+                <p className="sms-muted">عبارت {'{{name}}'} برای هر نفر با نام ذخیره‌شدهٔ او جایگزین می‌شود؛ مثلاً {'{{name}}'} گرامی. «علی رضایی» در پیش‌نمایش نمونه است. برای مخاطب بی‌نام «همکار» قرار می‌گیرد. نام فروشگاه نیز همان‌طور که ذخیره شده استفاده می‌شود.</p>
                 <MessagePreview body={displayBody} parts={estimate.parts} />
                 <label>
                   <input

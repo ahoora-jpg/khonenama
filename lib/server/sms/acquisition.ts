@@ -1,3 +1,13 @@
+/** Resolve only supported placeholders; recipient data is never parsed as a template. */
+function personalizeSms(body: string, name: string = "", registrationLink?: string) {
+  const displayName = name.replace(/\s+/g, " ").trim() || "همکار";
+  return body.replace(/\{\{[^}]*\}\}/g, (placeholder) => {
+    if (placeholder === "{{name}}") return displayName;
+    if (placeholder === "{{registration_link}}" && registrationLink) return registrationLink;
+    throw Error("UNRESOLVED_VARIABLE");
+  });
+}
+
 import { TENANT, normalizePhone } from "./domain";
 import { estimateSms } from "../../sms-text";
 export const LINK_ORIGIN = "https://khonenama.ir";
@@ -11,16 +21,8 @@ export function secureToken() {
     crypto.randomUUID().replace(/-/g, "").slice(0, 8)
   );
 }
-export function renderCampaignMessage(body: string, token?: string) {
-  const rendered = body.replaceAll(
-    "{{registration_link}}",
-    token ? `${LINK_ORIGIN}/s/${token}` : "",
-  );
-  if (
-    /\{\{[^}]*\}\}/.test(rendered) ||
-    (!token && body.includes("{{registration_link}}"))
-  )
-    throw Error("UNRESOLVED_VARIABLE");
+export function renderCampaignMessage(body: string, token?: string, name: string = "") {
+  const rendered = personalizeSms(body, name, token ? `${LINK_ORIGIN}/s/${token}` : undefined);
   if (rendered.length > 1600) throw Error("MESSAGE_TOO_LONG");
   return rendered;
 }
@@ -68,13 +70,17 @@ export async function prepareRecipient(
     .bind(campaign.id)
     .first();
   let text = campaign.body;
+  const needsName = text.includes("{{name}}") || options?.variant_b?.includes("{{name}}");
+  const contact = needsName ? await db.prepare("SELECT display_name FROM sms_contacts WHERE id=? AND tenant_id=?").bind(contactId, TENANT).first() : null;
+  const recipientName = String(contact?.display_name || "");
   if (options?.tracking_enabled) {
     const link = await ensureRecipientLink(db, campaign.id, contactId, options);
     text = renderCampaignMessage(
       link.variant === "B" ? options.variant_b : campaign.body,
       link.token,
+      recipientName,
     );
-  } else text = renderCampaignMessage(text);
+  } else text = renderCampaignMessage(text, undefined, recipientName);
   const parts = estimateSms(text).parts;
   return { text, parts, tariff: options?.tariff ?? null, messageId };
 }

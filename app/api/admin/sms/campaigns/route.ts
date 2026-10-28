@@ -1,6 +1,7 @@
+import {importContactRows} from '@/lib/server/sms/contact-import';
 import { env } from "cloudflare:workers";
 import { isSmsAdminRequest } from "@/lib/server/sms/admin-auth";
-import { TENANT, noStore, normalizePhone,wasPhoneRemoved } from "@/lib/server/sms/domain";
+import { TENANT, noStore } from "@/lib/server/sms/domain";
 import { liveSmsEnabled } from "@/lib/server/sms/config";
 import {
   validDestination,
@@ -156,60 +157,7 @@ export async function POST(request: Request) {
     const header = rows.shift()?.map((v) => v.trim().toLowerCase());
     if (!header || header[0] !== "phone")
       return noStore({ ok: false, error: "PHONE_HEADER_REQUIRED" }, 400);
-    let imported = 0,
-      invalid = 0;
-    for (const row of rows) {
-      const phone = normalizePhone(String(row[0] || "").replace(/^'/, ""));
-      if(phone&&await wasPhoneRemoved(db,phone)){invalid++;continue;}
-      if (!phone) {
-        invalid++;
-        continue;
-      }
-      await db
-        .prepare(
-          "INSERT OR IGNORE INTO sms_contacts(id,tenant_id,phone_e164,display_name,source) VALUES(?,?,?,?,'csv_import')",
-        )
-        .bind(
-          crypto.randomUUID(),
-          TENANT,
-          phone,
-          String(row[1] || "")
-            .trim()
-            .slice(0, 120),
-        )
-        .run();
-      const contact = await db
-        .prepare(
-          "SELECT id FROM sms_contacts WHERE tenant_id=? AND phone_e164=?",
-        )
-        .bind(TENANT, phone)
-        .first();
-      const metadata = ["city", "area", "trade"].map((key) =>
-        String(row[header.indexOf(key)] || "")
-          .trim()
-          .slice(0, 100),
-      );
-      if (metadata.some(Boolean))
-        await db
-          .prepare(
-            "INSERT INTO sms_contact_profiles(contact_id,city,area,trade) VALUES(?,?,?,?) ON CONFLICT(contact_id) DO UPDATE SET city=excluded.city,area=excluded.area,trade=excluded.trade",
-          )
-          .bind(contact.id, ...metadata)
-          .run();
-      await db
-        .prepare(
-          "INSERT OR IGNORE INTO sms_group_members(tenant_id,group_id,contact_id) VALUES(?,?,?)",
-        )
-        .bind(TENANT, groupId, contact.id)
-        .run();
-      imported++;
-    }
-    await db
-      .prepare(
-        "INSERT INTO sms_audit_logs(tenant_id,actor,action,target_id,detail) VALUES(?,'site_admin','csv_import',?,?)",
-      )
-      .bind(TENANT, groupId, JSON.stringify({ imported, invalid }))
-      .run();
+    const {imported,invalid}=await importContactRows(db,groupId,header,rows,body.requireName===true);
     return noStore({ ok: true, imported, invalid, consentGranted: 0 });
   }
   if (body.action === "create") {

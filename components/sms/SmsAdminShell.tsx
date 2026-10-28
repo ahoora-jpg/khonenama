@@ -151,12 +151,13 @@ export async function smsApi(path: string, payload?: Record<string, unknown>) {
         "درخواست قبلی با همین شناسه متفاوت است. صفحه را تازه کنید.",
       INVALID_DATE_RANGE: "بازهٔ تاریخ باید معتبر و حداکثر یک سال باشد.",
     };
-    throw Error(
+    const failure=new Error(
       response.status === 401
         ? "نشست شما منقضی شده است؛ دوباره وارد شوید."
         : labels[result.error] ||
             "عملیات انجام نشد؛ اطلاعات را بررسی و دوباره تلاش کنید.",
     );
+    Object.assign(failure,{status:response.status});throw failure;
   }
   return result;
 }
