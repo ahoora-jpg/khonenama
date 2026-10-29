@@ -1,5 +1,4 @@
 import { installmentBusinessIds } from "@/lib/server/business-installments";
-import { customPacksForSubscription } from "@/lib/business-entitlements";
 import { normalizeServiceAreas } from "@/lib/service-area";
 import { matchingServiceNames, literalLike, normalizeServiceQuery } from "@/lib/service-search";
 import { ensureBusinessCoverage } from "@/lib/server/business-coverage";
@@ -70,62 +69,58 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
   await ensureBusinessCoverage(db);
 
   const installmentIds = await installmentBusinessIds(db,rows.map(r=>Number(r.id)));
+  // The list is capped at 100 businesses, within D1's bound-parameter limit.
+  // Fetch each relation once instead of issuing ten queries for every business.
+  const ids = rows.map(row => Number(row.id));
+  const placeholders = ids.map(() => "?").join(",");
+  const relationQueries = [
+    "SELECT bs.business_id, s.name FROM business_services bs JOIN services s ON s.id = bs.service_id WHERE bs.business_id IN (" + placeholders + ") ORDER BY s.id",
+    "SELECT bc.business_id, c.slug, c.name, bc.is_primary FROM business_categories bc JOIN categories c ON c.id = bc.category_id WHERE bc.business_id IN (" + placeholders + ") ORDER BY bc.is_primary DESC, c.sort_order, c.name",
+    "SELECT business_id, COUNT(*) AS review_count, COALESCE(AVG(rating),0) AS rating FROM reviews WHERE business_id IN (" + placeholders + ") AND status = 'published' GROUP BY business_id",
+    "SELECT business_id, code, name, id FROM (SELECT s.business_id, p.code, p.name, s.id, ROW_NUMBER() OVER (PARTITION BY s.business_id ORDER BY s.id DESC) AS position FROM subscriptions s JOIN plans p ON p.id = s.plan_id WHERE s.business_id IN (" + placeholders + ") AND s.status = 'active' AND (s.ends_at IS NULL OR julianday(s.ends_at) > julianday('now'))) WHERE position = 1",
+    "SELECT business_id, MIN(id) AS id FROM promotions WHERE business_id IN (" + placeholders + ") AND status = 'active' AND starts_at <= CURRENT_TIMESTAMP AND ends_at > CURRENT_TIMESTAMP GROUP BY business_id",
+    "SELECT business_id, id, kind, media_type, file_url, thumbnail_url, alt_text, sort_order FROM business_media WHERE business_id IN (" + placeholders + ") AND file_url IS NOT NULL AND file_url <> '' ORDER BY CASE kind WHEN 'cover' THEN 0 WHEN 'logo' THEN 1 ELSE 2 END, sort_order, id",
+    "SELECT business_id, weekday, opens_at, closes_at, is_closed FROM business_hours WHERE business_id IN (" + placeholders + ") ORDER BY weekday",
+    "SELECT business_id, id, rating, title, body, verified_interaction, created_at, reply FROM (SELECT business_id, id, rating, title, body, verified_interaction, created_at, (SELECT body FROM review_replies rr WHERE rr.review_id = reviews.id) AS reply, ROW_NUMBER() OVER (PARTITION BY business_id ORDER BY created_at DESC, id DESC) AS position FROM reviews WHERE business_id IN (" + placeholders + ") AND status = 'published') WHERE position <= 8 ORDER BY created_at DESC, id DESC",
+    "SELECT business_id, city, area FROM business_service_areas WHERE business_id IN (" + placeholders + ") ORDER BY area",
+    "SELECT business_id, note FROM business_coverage_notes WHERE business_id IN (" + placeholders + ")",
+  ];
+  const relations = (await db.batch(relationQueries.map(query => db.prepare(query).bind(...ids))))
+    .map((response: any) => {
+      const byBusiness = new Map<number, any[]>();
+      for (const item of response.results || []) {
+        const id = Number(item.business_id);
+        const items = byBusiness.get(id);
+        if (items) items.push(item);
+        else byBusiness.set(id, [item]);
+      }
+      return byBusiness;
+    });
+  // Older databases may not have custom-capacity billing enabled yet. Keep the
+  // public list available in that case, as the former per-business lookup did.
+  let customPacks = new Map<number, number>();
+  try {
+    const rows = await db
+      .prepare(
+        "SELECT scc.subscription_id, scc.packs FROM subscription_custom_capacity scc JOIN subscriptions s ON s.id=scc.subscription_id WHERE s.business_id IN (" + placeholders + ")"
+      )
+      .bind(...ids)
+      .all();
+    customPacks = new Map((rows?.results || []).map((item: any) => [Number(item.subscription_id), Number(item.packs) || 0]));
+  } catch {}
   const result: PublicBusiness[] = [];
   for (const row of rows) {
-    const [servicesResult, categoriesResult, reviewResult, planResult, promotionResult, mediaResult, hoursResult, reviewsResult, areasResult] = await Promise.all([
-      db
-        .prepare(
-          "SELECT s.name FROM business_services bs JOIN services s ON s.id = bs.service_id WHERE bs.business_id = ? ORDER BY s.id"
-        )
-        .bind(row.id)
-        .all(),
-      db
-        .prepare(
-          "SELECT c.slug, c.name, bc.is_primary FROM business_categories bc JOIN categories c ON c.id = bc.category_id WHERE bc.business_id = ? ORDER BY bc.is_primary DESC, c.sort_order, c.name"
-        )
-        .bind(row.id)
-        .all(),
-      db
-        .prepare(
-          "SELECT COUNT(*) AS review_count, COALESCE(AVG(rating),0) AS rating FROM reviews WHERE business_id = ? AND status = 'published'"
-        )
-        .bind(row.id)
-        .first(),
-      db
-        .prepare(
-          "SELECT p.code, p.name, s.id FROM subscriptions s JOIN plans p ON p.id = s.plan_id WHERE s.business_id = ? AND s.status = 'active' AND (s.ends_at IS NULL OR julianday(s.ends_at) > julianday('now')) ORDER BY s.id DESC LIMIT 1"
-        )
-        .bind(row.id)
-        .first(),
-      db
-        .prepare(
-          "SELECT id FROM promotions WHERE business_id = ? AND status = 'active' AND starts_at <= CURRENT_TIMESTAMP AND ends_at > CURRENT_TIMESTAMP LIMIT 1"
-        )
-        .bind(row.id)
-        .first(),
-      db
-        .prepare(
-          "SELECT id, kind, media_type, file_url, thumbnail_url, alt_text, sort_order FROM business_media WHERE business_id = ? AND file_url IS NOT NULL AND file_url <> '' ORDER BY CASE kind WHEN 'cover' THEN 0 WHEN 'logo' THEN 1 ELSE 2 END, sort_order, id"
-        )
-        .bind(row.id)
-        .all(),
-      db
-        .prepare(
-          "SELECT weekday, opens_at, closes_at, is_closed FROM business_hours WHERE business_id = ? ORDER BY weekday"
-        )
-        .bind(row.id)
-        .all(),
-      db
-        .prepare(
-          "SELECT id, rating, title, body, verified_interaction, created_at, (SELECT body FROM review_replies rr WHERE rr.review_id = reviews.id) AS reply FROM reviews " +
-          "WHERE business_id = ? AND status = 'published' ORDER BY created_at DESC, id DESC LIMIT 8"
-        )
-        .bind(row.id)
-        .all(),
-      db.prepare("SELECT city, area FROM business_service_areas WHERE business_id = ? ORDER BY area").bind(row.id).all(),
-    ]);
-
-    const coverage=await db.prepare("SELECT note FROM business_coverage_notes WHERE business_id=?").bind(row.id).first();
+    const related = (index: number): any[] => relations[index].get(Number(row.id)) || [];
+    const servicesResult = { results: related(0) };
+    const categoriesResult = { results: related(1) };
+    const reviewResult = related(2)[0];
+    const planResult = related(3)[0];
+    const promotionResult = related(4)[0];
+    const mediaResult = { results: related(5) };
+    const hoursResult = { results: related(6) };
+    const reviewsResult = { results: related(7) };
+    const areasResult = { results: related(8) };
+    const coverage = related(9)[0];
     result.push({
       id: Number(row.id),
       slug: row.slug,
@@ -159,7 +154,7 @@ async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
         thumbnailUrl: item.thumbnail_url || "",
         altText: item.alt_text || "",
         sortOrder: Number(item.sort_order || 0),
-      })), planResult?.code, await customPacksForSubscription(db,planResult)),
+      })), planResult?.code, customPacks.get(Number(planResult?.id)) || 0),
       hours: (hoursResult?.results || []).map((item: any) => ({
         weekday: Number(item.weekday),
         opensAt: item.opens_at || "",
