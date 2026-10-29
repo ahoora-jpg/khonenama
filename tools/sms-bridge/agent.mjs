@@ -35,16 +35,28 @@ export function gatewayPayload(job) {
     ttl:Math.max(5,Math.floor((parseExpiry(job.expiresAt)-Date.now())/1000)) };
 }
 
-export async function bridgeRequest(config,action,fields={}) {
-  const attempts=["heartbeat","authorize","inboxSenders"].includes(action)?3:1;
-  let response;
+export async function bridgeRequest(config,action,fields={},options={}) {
+  const safeRetry=["heartbeat","authorize","inboxSenders","inboxHealthy","report","inbound"].includes(action);
+  const attempts=safeRetry?3:1,send=options.fetch||fetch,sleep=options.sleep||delay;
+  const body=JSON.stringify({action,simNumber:config.simNumber,...fields});
+  const headers={"Authorization":"Bearer "+config.bridgeToken,"Content-Type":"application/json"};
+  if(config.durableEvents===true&&["report","inbound"].includes(action))headers["x-sms-event-protocol"]="1";
   for(let attempt=0;attempt<attempts;attempt++){
-    try{response=await fetch(new URL("/api/v1/sms/bridge",config.siteUrl),{method:"POST",headers:{"Authorization":"Bearer "+config.bridgeToken,"Content-Type":"application/json"},body:JSON.stringify({action,simNumber:config.simNumber,...fields}),signal:AbortSignal.timeout(15000)});break;}
-    catch(error){if(attempt===attempts-1 || !["TimeoutError","AbortError","TypeError"].includes(error.name))throw error;await delay(500);}
+    try{
+      const response=await send(new URL("/api/v1/sms/bridge",config.siteUrl),{method:"POST",headers,body,signal:AbortSignal.timeout(15000)});
+      const data=await response.json().catch(()=>({error:'INVALID_RESPONSE'}));
+      if(response.ok)return data;
+      const error=new Error("Bridge API rejected request: "+response.status+" "+String(data.error||""));
+      error.status=response.status;error.code=String(data.error||'BRIDGE_HTTP_ERROR');
+      error.permanent=response.status>=400&&response.status<500&&response.status!==429;
+      error.retryAfter=Math.min(300,Math.max(0,Number(response.headers.get('retry-after')||0)||0));
+      throw error;
+    }catch(error){
+      const transient=!error.permanent&&(error.status===429||error.status>=500||["TimeoutError","AbortError","TypeError"].includes(error.name));
+      if(!transient||attempt===attempts-1)throw error;
+      await sleep(Math.max(error.retryAfter*1000||0,Math.min(30000,1000*2**attempt)));
+    }
   }
-  const data=await response.json();
-  if(!response.ok) throw Error("Bridge API rejected request: "+response.status+" "+(data.error||""));
-  return data;
 }
 
 export async function gatewayRequest(config,path,method,body) {
@@ -107,13 +119,14 @@ export async function main() {
   if (process.env.SMS_ENABLE_SEND!=="YES") throw Error("Bridge is disarmed. SMS_ENABLE_SEND=YES is required after authorization.");
   const journal=await loadJournal();
   const seen={};
-  let lastInboxPoll=0;
+  let lastInboxPoll=0,failureStreak=0;
   while(true) {
-    let phase="site-heartbeat";
+    let phase="site-heartbeat",cycleDelay=15000;
     try {
       await bridgeRequest(config,"heartbeat");
       phase="journal-reconciliation";
       for (const entry of Object.values(journal)) {
+        if(entry.phase==="needs_review")continue;
         const report=entry.phase==="report_pending"?entry.report:await reconcileJob(config,entry.job);
         await bridgeRequest(config,"report",{messageId:entry.job.id,leaseToken:entry.job.leaseToken,gatewayMessageId:entry.job.gatewayId,...report});
         delete journal[entry.job.id]; await saveJournal(journal);

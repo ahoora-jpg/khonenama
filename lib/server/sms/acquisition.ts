@@ -1,3 +1,5 @@
+import {queueAcquisitionLink} from "./queued-acquisition";
+import {makeSmsEvent,persistSmsEvent,smsRequestId,type SmsEventQueue} from "./events";
 /** Resolve only supported placeholders; recipient data is never parsed as a template. */
 function personalizeSms(body: string, name: string = "", registrationLink?: string) {
   const displayName = name.replace(/\s+/g, " ").trim() || "همکار";
@@ -109,7 +111,9 @@ export function isSuspicious(request: Request) {
 export async function handleAcquisitionLink(
   request: Request,
   db: any,
+  options: {queue?:SmsEventQueue} = {},
 ): Promise<Response> {
+  if(options.queue)return queueAcquisitionLink(request,db,options.queue);
   const headers = new Headers({
     Location: LINK_ORIGIN + "/register-business",
     "Cache-Control": "no-store",
@@ -170,7 +174,7 @@ export async function handleAcquisitionLink(
       )
       .bind(bucket)
       .first();
-    if (Number(rate?.hits) > 30)
+    if (Number(rate?.hits) > 30 && isSuspicious(request))
       return new Response(null, { status: 302, headers });
     const suspicious = isSuspicious(request),
       session = attributionSession(request) || secureToken();
@@ -212,9 +216,11 @@ export async function recordAcquisitionStage(
   db: any,
   request: Request,
   kind: "registration_view" | "registration_start" | "booth_start",
+  options: {queue?:SmsEventQueue} = {},
 ) {
   const session = attributionSession(request);
   if (!session || isSuspicious(request)) return;
+  if(options.queue){const requestId=smsRequestId(request);await persistSmsEvent(db,options.queue,await makeSmsEvent("stage",{session,kind},requestId,requestId+":"+kind));return;}
   await db
     .prepare(
       `INSERT OR IGNORE INTO sms_link_events(id,link_id,kind,session_id)
@@ -237,9 +243,11 @@ export async function recordAcquisitionConversion(
     published: boolean;
     complete: boolean;
   },
+  options: {queue?:SmsEventQueue} = {},
 ) {
   const session = attributionSession(request);
   if (!session) return;
+  if(options.queue){await persistSmsEvent(db,options.queue,await makeSmsEvent("conversion",{session,input},smsRequestId(request)));return;}
   const attribution = await db
     .prepare(
       `SELECT s.first_link_id,s.last_link_id,c.phone_e164 FROM sms_attribution_sessions s
