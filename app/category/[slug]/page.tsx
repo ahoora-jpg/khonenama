@@ -75,7 +75,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     services: business.services,
     planCode: business.planCode,
     promoted: business.promoted,
-    coverUrl: business.media.find((item) => item.kind === "cover")?.url || business.media[0]?.url || "",
+    // Category cards use the upload-time thumbnail; full files remain available
+    // on the business page where visitors deliberately open the gallery.
+    coverUrl: business.media.find((item) => item.kind === "cover")?.thumbnailUrl || business.media.find((item) => item.kind === "cover")?.url || business.media.find((item) => item.kind === "image")?.thumbnailUrl || business.media[0]?.url || "",
   }));
   const contentPath = contentPaths.find((item) => item.id === slug);
   const guideSlugs = [...new Set([...(contentPath?.guideSlugs || []), ...seo.guides])];
