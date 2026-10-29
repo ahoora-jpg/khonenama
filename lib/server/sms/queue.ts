@@ -3,7 +3,7 @@ export const CLAIM_SQL = `UPDATE sms_messages SET status='leased',lease_token=?,
     SELECT m.id FROM sms_messages m JOIN sms_contacts c ON c.id=m.contact_id
     WHERE m.tenant_id=? AND m.status='queued' AND m.gateway_id=?
       AND m.body NOT LIKE '%{{%' AND c.source<>'removed'
-      AND (m.scheduled_at IS NULL OR julianday(m.scheduled_at)<=julianday('now'))
+      AND COALESCE(julianday(m.scheduled_at),0)<=julianday('now')
       AND julianday(m.expires_at)>julianday('now')
       AND (m.campaign_id IS NULL OR EXISTS(SELECT 1 FROM sms_campaigns campaign WHERE campaign.id=m.campaign_id AND campaign.status IN ('running','completed')))
       AND (m.category='transactional' OR (
