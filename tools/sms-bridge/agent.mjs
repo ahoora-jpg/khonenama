@@ -130,8 +130,14 @@ export async function main() {
       for (const entry of Object.values(journal)) {
         if(entry.phase==="needs_review")continue;
         const report=entry.phase==="report_pending"?entry.report:await reconcileJob(config,entry.job);
-        await bridgeRequest(config,"report",{messageId:entry.job.id,leaseToken:entry.job.leaseToken,gatewayMessageId:entry.job.gatewayId,...report});
-        delete journal[entry.job.id]; await saveJournal(journal);
+        try {
+          await bridgeRequest(config,"report",{messageId:entry.job.id,leaseToken:entry.job.leaseToken,gatewayMessageId:entry.job.gatewayId,...report});
+          delete journal[entry.job.id]; await saveJournal(journal);
+        } catch(error) {
+          if(!error.permanent)throw error;
+          entry.phase="needs_review";await saveJournal(journal);
+          console.error(JSON.stringify({component:"sms-bridge",phase:"journal-reconciliation",reason:"REPORT_REQUIRES_REVIEW"}));
+        }
       }
       phase="phone-health";
       const health=await gatewayRequest(config,"/health","GET");
@@ -153,8 +159,12 @@ export async function main() {
         await syncInbox(config,seen,new Set(phones));
         await bridgeRequest(config,"inboxHealthy");lastInboxPoll=Date.now();
       }
-    } catch(e) { console.error("Bridge cycle failed at",phase+":",e.message); }
-    await delay(15000);
+      failureStreak=0;
+    } catch(e) {
+      failureStreak++;cycleDelay=bridgeBackoff(failureStreak,e.permanent===true);
+      console.error(JSON.stringify({component:"sms-bridge",phase,reason:e.permanent?"PERMANENT_REQUEST_FAILURE":"DEPENDENCY_UNAVAILABLE",status:Number.isInteger(e.status)?e.status:undefined,retryInMs:cycleDelay}));
+    }
+    await delay(cycleDelay);
   }
 }
 
