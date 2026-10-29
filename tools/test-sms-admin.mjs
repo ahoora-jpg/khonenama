@@ -312,3 +312,16 @@ test('empty audiences pause instead of falsely completing; zero-send legacy camp
   assert.equal((await api.POST(f.request({action:'retryEmpty',id:campaign.id}))).status,409);
  }finally{f.sql.close();}
 });
+
+test('retired initial-consent action cannot clear opt-outs; dedicated opt-out cancels queued promotions',async()=>{const f=await fixture();try{
+ f.env.SMS_LIVE_SEND_ENABLED='true';const route=load('app/api/admin/sms/route.ts',f.imports);
+ const person=await(await route.POST(f.request({action:'contact',phone:'09123456789',name:'test'}))).json();
+ const queue={action:'queue',contactId:person.id,body:'mock only',category:'promotional',expiresAt:new Date(Date.now()+3600000).toISOString(),idempotencyKey:'optout-case'};
+ assert.equal((await route.POST(f.request(queue))).status,200);
+ assert.equal((await route.POST(f.request({action:'optOut',contactId:person.id}))).status,200);
+ assert.equal(f.sql.prepare('SELECT status FROM sms_messages').get().status,'cancelled');
+ assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_consents').get().n,0);
+ assert.equal((await route.POST(f.request({action:'consent',status:'granted',contactId:person.id,method:'form',textVersion:'v1',evidenceRef:'proof'}))).status,400);
+ assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_opt_outs').get().n,1);
+ assert.equal((await route.POST(f.request({...queue,idempotencyKey:'blocked-again'}))).status,403);
+}finally{f.sql.close();}});

@@ -304,12 +304,8 @@ export function ContactsPage() {
                 onClick={() => {
                   if (window.confirm("عضویت تبلیغاتی این مخاطب لغو شود؟"))
                     void run({
-                      action: "consent",
+                      action: "optOut",
                       contactId: detail.contact.id,
-                      status: "revoked",
-                      method: "admin_manual",
-                      textVersion: "optout-v1",
-                      evidenceRef: "admin_request:" + new Date().toISOString(),
                     });
                 }}
               >
