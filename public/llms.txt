@@ -43,7 +43,6 @@
 - Magazine: https://khonenama.ir/magazine
 - راهنماها تفاوت گزینه‌ها، نصب، نگهداری، خرید محلی و معیارهای انتخاب فروشگاه یا متخصص را توضیح می‌دهند.
 - امتیاز عمومی فقط از نظرهای منتشرشده ساخته می‌شود و نشان تأیید از پلن پولی جداست.
-- سیاست تحریریه: https://khonenama.ir/editorial-policy
 
 ## Useful tools
 - ابزارهای خونه نما: https://khonenama.ir/tools

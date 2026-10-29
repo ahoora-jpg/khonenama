@@ -25,7 +25,6 @@
 ## اعتماد و شفافیت
 
 - [خونه نما چیست؟](https://khonenama.ir/about)
-- [سیاست تحریریه](https://khonenama.ir/editorial-policy)
 - [حریم خصوصی](https://khonenama.ir/privacy)
 - [قوانین استفاده](https://khonenama.ir/terms)
 - [Sitemap](https://khonenama.ir/sitemap.xml)

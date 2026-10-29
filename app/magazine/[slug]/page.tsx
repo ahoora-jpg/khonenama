@@ -202,7 +202,6 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     mainEntityOfPage: "https://khonenama.ir/magazine/" + guide.slug,
     author: { "@id": "https://khonenama.ir/#organization" },
     publisher: { "@id": "https://khonenama.ir/#organization" },
-    publishingPrinciples: "https://khonenama.ir/editorial-policy",
     keywords: enhancedKeywords(guide.slug, guide.keywords).join(", "),
     articleSection: guide.category,
     abstract: quickAnswer || guide.excerpt,
@@ -264,7 +263,6 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               <span><Clock3 size={14} /> {guide.readTime}</span>
               <span>به‌روزرسانی: {guide.updated}</span>
               <a href="/about">درباره خونه نما</a>
-              <a href="/editorial-policy">سیاست تحریریه</a>
             </div>
           </header>
 
@@ -457,13 +455,6 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               <PreferredSourceCTA compact />
 
               {relatedServices.length > 0 && <div className="guide-side-card glass-panel"><h3>خدمات مرتبط با این راهنما</h3><p>انتخاب یک خدمت در غرفه، اعلام زمینه فعالیت است؛ موجودی و شرایط اجرا را با کسب‌وکار تأیید کنید.</p><ul>{relatedServices.map(item=><li key={servicePath(item)}><a href={servicePath(item)}>{item.name}</a></li>)}</ul></div>}
-
-              <div className="guide-side-card glass-panel">
-                <span className="section-kicker">شفافیت تحریریه</span>
-                <h3>این راهنما چطور تهیه می‌شود؟</h3>
-                <p>روش نگارش، استفاده از منابع، به‌روزرسانی محتوا و سیاست خونه نما درباره داده‌های واقعی را ببینید.</p>
-                <a href="/editorial-policy">مشاهده سیاست تحریریه <ArrowUpLeft size={15} /></a>
-              </div>
 
               <div className="guide-side-card glass-panel">
                 <Link2 size={18} />

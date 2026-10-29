@@ -36,7 +36,6 @@ const collectionJsonLd = {
   inLanguage: "fa-IR",
   isPartOf: { "@id": "https://khonenama.ir/#website" },
   publisher: { "@id": "https://khonenama.ir/#organization" },
-  publishingPrinciples: "https://khonenama.ir/editorial-policy",
   about: [
     { "@type": "Thing", name: "پرده و پوشش پنجره" },
     { "@type": "Thing", name: "کفپوش و پارکت" },
@@ -72,7 +71,7 @@ export default function MagazinePage() {
             <span className="section-kicker">مجله خونه نما</span>
             <h1>راهنمای انتخاب برای خانه</h1>
             <p>
-              قبل از خرید، فرق گزینه‌ها را بفهمید؛ بعد فروشگاه و متخصص مناسب را پیدا کنید. روش نگارش و به‌روزرسانی مطالب در <a href="/editorial-policy">سیاست تحریریه خونه نما</a> توضیح داده شده است.
+              قبل از خرید، فرق گزینه‌ها را بفهمید؛ بعد فروشگاه و متخصص مناسب را پیدا کنید.
             </p>
           </div>
 

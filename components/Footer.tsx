@@ -41,7 +41,6 @@ const groups = [
       ["خونه نما چیست؟", "/about"],
       ["راهنما و پشتیبانی", "/help"],
       ["ابزارهای خونه نما", "/tools"],
-      ["سیاست تحریریه", "/editorial-policy"],
       ["ثبت کسب‌وکار", "/register-business"],
       ["داشبورد فروشنده", "/dashboard"],
       ["جستجو", "/search"],
@@ -81,7 +80,6 @@ export default function Footer() {
               <a className="footer-admin-contact" href="mailto:info@khonenama.ir"><Mail size={17}/><span dir="ltr">info@khonenama.ir</span></a>
               <a href="/privacy">حریم خصوصی</a>
               <a href="/terms">قوانین استفاده</a>
-              <a href="/editorial-policy">سیاست تحریریه</a>
               <a href={preferredSourceUrl} target="_blank" rel="noopener noreferrer">
                 <Sparkles size={13} /> افزودن به منابع ترجیحی گوگل
               </a>

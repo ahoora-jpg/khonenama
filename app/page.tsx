@@ -107,7 +107,6 @@ const organizationJsonLd = {
     caption: "خونه نما",
   },
   mainEntityOfPage: "https://khonenama.ir/about",
-  publishingPrinciples: "https://khonenama.ir/editorial-policy",
   knowsAbout: [
     "فضای داخلی خانه",
     "دکوراسیون داخلی منزل",
