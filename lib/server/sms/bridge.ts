@@ -46,7 +46,7 @@ export async function handleBridge(request: Request): Promise<Response> {
     const id=crypto.randomUUID(), token=crypto.randomUUID();
     const rawInterval=Number((env as any).SMS_MIN_INTERVAL_SECONDS||15);
     const interval=Number.isFinite(rawInterval)?Math.max(15,Math.min(3600,Math.round(rawInterval))):15;
-    // The update, including the promotional consent re-check, is one SQLite statement.
+    // The update, including the promotional opt-out re-check, is one SQLite statement.
     const row=await db.prepare(CLAIM_SQL)
       .bind(token,TENANT,GATEWAY,`-${interval} seconds`).first();
     if (!row) return noStore({ok:true,job:null});
@@ -112,8 +112,6 @@ export async function handleBridge(request: Request): Promise<Response> {
     if(isOptOut(body)) {
       await db.prepare("INSERT OR IGNORE INTO sms_opt_outs(tenant_id,contact_id,source) VALUES(?,?,?)").bind(TENANT,contact.id,"inbound_sms").run();
       await db.prepare("UPDATE sms_messages SET status='cancelled',updated_at=CURRENT_TIMESTAMP WHERE tenant_id=? AND contact_id=? AND category='promotional' AND status='queued'").bind(TENANT,contact.id).run();
-      await db.prepare("INSERT OR IGNORE INTO sms_consents(id,tenant_id,contact_id,status,method,text_version,evidence_ref) VALUES(?,?,?,'revoked','inbound_sms','optout-v1',?)")
-        .bind(recordId,TENANT,contact.id,recordId).run();
     }
     return noStore({ok:true});
   }

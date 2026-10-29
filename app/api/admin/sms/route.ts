@@ -15,7 +15,7 @@ export async function GET(request: Request) {
       db().prepare("SELECT status,COUNT(*) AS count FROM sms_messages WHERE tenant_id=? GROUP BY status").bind(TENANT).all(),
       db().prepare(`SELECT id,phone_e164,display_name,kind,source,created_at,
         CASE WHEN EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=sms_contacts.tenant_id AND o.contact_id=sms_contacts.id) THEN 'revoked'
-        ELSE COALESCE((SELECT status FROM sms_consents s WHERE s.tenant_id=sms_contacts.tenant_id AND s.contact_id=sms_contacts.id ORDER BY s.created_at DESC,s.rowid DESC LIMIT 1),'none') END AS consent_status
+        ELSE 'active' END AS consent_status
         FROM sms_contacts WHERE tenant_id=? AND source<>'removed' ORDER BY created_at DESC LIMIT 100`).bind(TENANT).all(),
       db().prepare("SELECT m.id,m.category,m.status,m.body,m.created_at,m.updated_at,c.phone_e164 FROM sms_messages m JOIN sms_contacts c ON c.id=m.contact_id WHERE m.tenant_id=? ORDER BY m.created_at DESC LIMIT 100").bind(TENANT).all(),
       db().prepare("SELECT id,name,status,scheduled_at,max_recipients,created_at FROM sms_campaigns WHERE tenant_id=? AND NOT EXISTS(SELECT 1 FROM sms_removed_records r WHERE r.tenant_id=sms_campaigns.tenant_id AND r.kind='campaign' AND r.record_id=sms_campaigns.id) ORDER BY created_at DESC LIMIT 50").bind(TENANT).all(),
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
     if (input.action === "editContact") {
       const id=str(input.id,64), name=str(input.name,120), kind=input.kind;
       if(!["customer","seller","admin","other"].includes(kind))return noStore({ok:false,error:"INVALID_CONTACT"},400);
-      // Phone identity is immutable here: changing it must not carry old consent to a new recipient.
+      // Phone identity is immutable here: changing it must not carry delivery history to a new recipient.
       const row=await db().prepare("UPDATE sms_contacts SET display_name=?,kind=? WHERE id=? AND tenant_id=? RETURNING id").bind(name,kind,id,TENANT).first();
       if(!row)return noStore({ok:false},404);
       await audit("contact_edited",id);
@@ -90,18 +90,15 @@ export async function POST(request: Request) {
       await audit("published_business_contacts_synced", groupId);
       return noStore({ok:true,synced,skipped,groupId});
     }
-    if (input.action === "consent") {
+    if (input.action === "optOut") {
       const contactId = str(input.contactId,64);
       const contact = await db().prepare("SELECT id FROM sms_contacts WHERE id=? AND tenant_id=?").bind(contactId,TENANT).first();
-      if (!contact || !["granted","revoked"].includes(input.status)) return noStore({ok:false,error:"INVALID_CONSENT"},400);
-      const method = str(input.method,80), version = str(input.textVersion,80), evidence = str(input.evidenceRef,300);
-      if (!method || !version || !evidence) return noStore({ok:false,error:"EVIDENCE_REQUIRED"},400);
-      await db().prepare("INSERT INTO sms_consents(id,tenant_id,contact_id,status,method,text_version,evidence_ref) VALUES(?,?,?,?,?,?,?)")
-        .bind(crypto.randomUUID(),TENANT,contactId,input.status,method,version,evidence).run();
-      if (input.status === "revoked") await db().prepare("INSERT OR IGNORE INTO sms_opt_outs(tenant_id,contact_id,source) VALUES(?,?,?)").bind(TENANT,contactId,"admin").run();
-      if (input.status === "revoked") await db().prepare("UPDATE sms_messages SET status='cancelled',updated_at=CURRENT_TIMESTAMP WHERE tenant_id=? AND contact_id=? AND category='promotional' AND status='queued'").bind(TENANT,contactId).run();
-      if (input.status === "granted") await db().prepare("DELETE FROM sms_opt_outs WHERE tenant_id=? AND contact_id=?").bind(TENANT,contactId).run();
-      await audit("consent_"+input.status,contactId);
+      if (!contact) return noStore({ok:false,error:"CONTACT_NOT_FOUND"},404);
+      await db().batch([
+        db().prepare("INSERT OR IGNORE INTO sms_opt_outs(tenant_id,contact_id,source) VALUES(?,?,?)").bind(TENANT,contactId,"admin"),
+        db().prepare("UPDATE sms_messages SET status='cancelled',updated_at=CURRENT_TIMESTAMP WHERE tenant_id=? AND contact_id=? AND category='promotional' AND status='queued'").bind(TENANT,contactId),
+      ]);
+      await audit("contact_opted_out",contactId);
       return noStore({ok:true});
     }
     if (input.action === "queue") {
