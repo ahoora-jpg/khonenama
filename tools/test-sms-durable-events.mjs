@@ -132,3 +132,7 @@ test('admin inspection and replay require authorization and preserve the origina
  const replay=await api.POST(new Request('https://sms.khonenama.ir/api/admin/sms/events',{method:'POST',headers,body:JSON.stringify({action:'replay',id:event.id})}));assert.equal(replay.status,202);assert.equal(await f.consumer.drainSmsOutbox(f.db,f.queue),1);assert.equal(f.accepted.at(-1).id,event.id);
  await f.consume([f.message(f.accepted.at(-1))]);assert.equal(f.sql.prepare('SELECT total FROM sms_click_totals').get().total,1);assert.equal(f.sql.prepare('SELECT state FROM sms_event_receipts').get().state,'done');
 }finally{f.close();}});
+
+test('agent cycle backoff is bounded and permanent errors cannot create a tight loop',async()=>{
+ const {bridgeBackoff}=await import('../tools/sms-bridge/agent.mjs');assert.equal(bridgeBackoff(1),15000);assert.equal(bridgeBackoff(3),60000);assert.equal(bridgeBackoff(100),300000);assert.equal(bridgeBackoff(1,true),300000);
+});

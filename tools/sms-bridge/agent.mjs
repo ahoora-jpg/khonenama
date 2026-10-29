@@ -114,6 +114,8 @@ export async function processJob(config,job,journal) {
   delete journal[job.id]; await saveJournal(journal);
 }
 
+export function bridgeBackoff(streak,permanent=false) { return permanent?300000:Math.min(300000,15000*2**Math.min(5,Math.max(0,streak-1))); }
+
 export async function main() {
   const config=validateConfig(JSON.parse(await readFile(configPath,"utf8")));
   if (process.env.SMS_ENABLE_SEND!=="YES") throw Error("Bridge is disarmed. SMS_ENABLE_SEND=YES is required after authorization.");
