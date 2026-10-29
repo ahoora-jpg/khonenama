@@ -16,7 +16,7 @@ const {ensureSmsSchema}=schemaExports;
 
 test("Worker binding initializes additive schema once with sending disabled",async()=>{
   const sqlite=new DatabaseSync(':memory:');let batches=0;
-  const db={prepare:q=>q,batch:async statements=>{batches++;sqlite.exec('BEGIN');try{for(const q of statements)sqlite.exec(q);sqlite.exec('COMMIT');}catch(e){sqlite.exec('ROLLBACK');throw e;}}};
+  const db={prepare:q=>({sql:q,all:async()=>({results:sqlite.prepare(q).all()})}),batch:async statements=>{batches++;sqlite.exec('BEGIN');try{for(const q of statements)sqlite.exec(q.sql);sqlite.exec('COMMIT');}catch(e){sqlite.exec('ROLLBACK');throw e;}}};
   await Promise.all([ensureSmsSchema(db),ensureSmsSchema(db)]);
   assert.equal(batches,1);
   assert.equal(sqlite.prepare("SELECT enabled FROM sms_gateways").get().enabled,0);

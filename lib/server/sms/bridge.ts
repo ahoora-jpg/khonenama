@@ -87,14 +87,14 @@ export async function handleBridge(request: Request): Promise<Response> {
     if (!messageId || !leaseToken || !proposed || !gatewayId) return noStore({ok:false,error:"INVALID_REPORT"},400);
     const current=await db.prepare("SELECT status,gateway_message_id,lease_token FROM sms_messages WHERE id=? AND tenant_id=?").bind(messageId,TENANT).first();
     if (!current || current.lease_token!==leaseToken || (current.gateway_message_id && current.gateway_message_id!==gatewayId)) return noStore({ok:false,error:"REPORT_CONFLICT"},409);
-    if (current.status===proposed) return noStore({ok:true,status:current.status});
-    if (!canTransition(current.status as SmsState,proposed)) return noStore({ok:false,error:"INVALID_TRANSITION"},409);
-    const changed=await db.prepare("UPDATE sms_messages SET status=?,gateway_message_id=?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND tenant_id=? AND status=? AND lease_token=? RETURNING id")
-      .bind(proposed,gatewayId,messageId,TENANT,current.status,leaseToken).first();
-    if (!changed) return noStore({ok:false,error:"RACE_CONFLICT"},409);
-    await db.prepare("INSERT INTO sms_message_events(tenant_id,message_id,state,detail) VALUES(?,?,?,?)").bind(TENANT,messageId,proposed,"gateway_report").run();
-    await db.prepare("INSERT OR IGNORE INTO sms_delivery_attempts(tenant_id,message_id,attempt,gateway_message_id,result) SELECT tenant_id,id,attempts,?,? FROM sms_messages WHERE id=?")
-      .bind(gatewayId,proposed,messageId).run();
+    if (current.status!==proposed && !canTransition(current.status as SmsState,proposed)) return noStore({ok:false,error:"INVALID_TRANSITION"},409);
+    await db.batch([
+      db.prepare("UPDATE sms_messages SET status=?,gateway_message_id=?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND tenant_id=? AND status=? AND lease_token=?").bind(proposed,gatewayId,messageId,TENANT,current.status,leaseToken),
+      db.prepare("INSERT INTO sms_message_events(tenant_id,message_id,state,detail) SELECT tenant_id,id,?,'gateway_report' FROM sms_messages WHERE id=? AND tenant_id=? AND lease_token=? AND status=? AND NOT EXISTS(SELECT 1 FROM sms_message_events e WHERE e.message_id=sms_messages.id AND e.state=? AND e.detail='gateway_report')").bind(proposed,messageId,TENANT,leaseToken,proposed,proposed),
+      db.prepare("INSERT OR IGNORE INTO sms_delivery_attempts(tenant_id,message_id,attempt,gateway_message_id,result) SELECT tenant_id,id,attempts,?,? FROM sms_messages WHERE id=? AND tenant_id=? AND lease_token=? AND status=?").bind(gatewayId,proposed,messageId,TENANT,leaseToken,proposed),
+    ]);
+    const final=await db.prepare("SELECT status FROM sms_messages WHERE id=? AND tenant_id=?").bind(messageId,TENANT).first();
+    if(final?.status!==proposed)return noStore({ok:false,error:"RACE_CONFLICT"},409);
     return noStore({ok:true,status:proposed});
   }
   if (input.action==="inbound") {
