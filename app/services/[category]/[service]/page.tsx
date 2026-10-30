@@ -46,7 +46,7 @@ export default async function ServicePage({params}: {params: Params}) {
     "@type":"LocalBusiness",
     name:b.name,
     url:"https://khonenama.ir/business/"+b.slug,
-    address:{"@type":"PostalAddress",addressLocality:b.city,streetAddress:b.area||undefined,addressCountry:"IR"}
+    address:{"@type":"PostalAddress",addressLocality:b.city,addressCountry:"IR"}
    }
   }))
  };
