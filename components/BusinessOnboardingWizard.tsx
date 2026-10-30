@@ -29,9 +29,10 @@ import {
   servicesForCategories,
 } from "@/lib/business-taxonomy";
 import {
-  KARAJ_POPULAR_AREAS,
-  suggestKarajAreas,
-} from "@/lib/karaj-areas";
+  popularAreasForCity,
+  suggestCityAreas,
+  suggestIranCities,
+} from "@/lib/iran-locations";
 
 type FormState = {
   ownerName: string;
@@ -107,6 +108,7 @@ export default function BusinessOnboardingWizard() {
   const [saveError, setSaveError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [serviceAreaQuery, setServiceAreaQuery] = useState("");
+  const [cityOpen, setCityOpen] = useState(false);
   const [profileAreaOpen, setProfileAreaOpen] = useState(false);
   const [draftReady, setDraftReady] = useState(false);
   const [draftStatus, setDraftStatus] = useState("");
@@ -156,15 +158,19 @@ export default function BusinessOnboardingWizard() {
     [form.categories]
   );
 
+  const citySuggestions = useMemo(() => suggestIranCities(form.city, 12), [form.city]);
+
   const profileAreaSuggestions = useMemo(
-    () => suggestKarajAreas(form.area, 8),
-    [form.area]
+    () => suggestCityAreas(form.city, form.area, 8),
+    [form.city, form.area]
   );
 
   const serviceAreaSuggestions = useMemo(
-    () => suggestKarajAreas(serviceAreaQuery, 10),
-    [serviceAreaQuery]
+    () => suggestCityAreas(form.city, serviceAreaQuery, 10),
+    [form.city, serviceAreaQuery]
   );
+
+  const popularAreas = useMemo(() => popularAreasForCity(form.city), [form.city]);
 
   const canContinue = useMemo(() => {
     if (step === 0) {
@@ -511,15 +517,40 @@ export default function BusinessOnboardingWizard() {
             </div>
 
             <div className="form-row two-columns">
-              <label>
+              <label className="autocomplete-field">
                 <span>شهر</span>
                 <div className="form-input">
                   <MapPin size={17} />
                   <input
                     value={form.city}
-                    onChange={(e) => update("city", e.target.value)}
+                    onChange={(e) => {
+                      update("city", e.target.value);
+                      setCityOpen(true);
+                    }}
+                    onFocus={() => setCityOpen(true)}
+                    onBlur={() => window.setTimeout(() => setCityOpen(false), 120)}
+                    placeholder="نام شهر را جست‌وجو یا تایپ کنید؛ مثلاً اصفهان"
+                    autoComplete="address-level2"
                   />
                 </div>
+                {cityOpen && form.city.trim().length > 0 && citySuggestions.length > 0 && (
+                  <div className="area-suggestions">
+                    {citySuggestions.map((city) => (
+                      <button
+                        type="button"
+                        key={city}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => {
+                          update("city", city);
+                          setCityOpen(false);
+                        }}
+                      >
+                        <MapPin size={13} /> {city}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <small className="field-hint">همهٔ شهرهای ایران قابل جست‌وجو هستند. اگر نام شهر یا محل شما در پیشنهادها نبود، آن را همان‌جا تایپ کنید؛ ثبت آن محدود نمی‌شود.</small>
               </label>
 
               <label className="autocomplete-field">
@@ -534,7 +565,7 @@ export default function BusinessOnboardingWizard() {
                     }}
                     onFocus={() => setProfileAreaOpen(true)}
                     onBlur={() => window.setTimeout(() => setProfileAreaOpen(false), 120)}
-                    placeholder="مثلاً بر..."
+                    placeholder={form.city.trim() ? `محله یا محدوده در ${form.city}` : "ابتدا شهر را وارد کنید"}
                     autoComplete="off"
                   />
                 </div>
@@ -555,6 +586,7 @@ export default function BusinessOnboardingWizard() {
                     ))}
                   </div>
                 )}
+                <small className="field-hint">محلهٔ جدید را هم خودتان تایپ کنید؛ لازم نیست حتماً در پیشنهادها باشد.</small>
               </label>
             </div>
 
@@ -626,7 +658,7 @@ export default function BusinessOnboardingWizard() {
 
             <div className="choice-block">
               <strong>محدوده‌های فعالیت</strong>
-              <p>برای پوشش همه محله‌های شهر، تمام شهر را انتخاب کنید. شهر دیگری را با «تمام تهران» یا محله را با «تهران / سعادت‌آباد» اضافه کنید.</p>
+              <p>برای پوشش همه محله‌های شهر، تمام شهر را انتخاب کنید. شهر دیگری را با «تمام اصفهان» یا محله را با «اصفهان / نام محله» اضافه کنید. هر نام جدیدی هم با دکمه «افزودن» ذخیره می‌شود.</p>
               <button type="button" className="pill-button" onClick={() => addServiceArea("تمام " + form.city)}>+ تمام {form.city}</button>
 
               <div className="service-area-input-row">
@@ -642,7 +674,7 @@ export default function BusinessOnboardingWizard() {
                           addServiceArea(serviceAreaQuery);
                         }
                       }}
-                      placeholder="تمام تهران، یا تهران / سعادت‌آباد"
+                      placeholder={`تمام ${form.city || "اصفهان"}، یا ${form.city || "اصفهان"} / نام محله`}
                       autoComplete="off"
                     />
                   </div>
@@ -673,8 +705,8 @@ export default function BusinessOnboardingWizard() {
                 </button>
               </div>
 
-              <div className="choice-grid popular-area-grid">
-                {KARAJ_POPULAR_AREAS.map((area) => (
+              {popularAreas.length > 0 && <div className="choice-grid popular-area-grid">
+                {popularAreas.map((area) => (
                   <button
                     type="button"
                     className={
@@ -694,7 +726,7 @@ export default function BusinessOnboardingWizard() {
                     {area}
                   </button>
                 ))}
-              </div>
+              </div>}
 
               <label className="form-field">توضیح محدوده خدمات (اختیاری)<textarea value={form.coverageNote} onChange={e=>update("coverageNote",e.target.value)} maxLength={500} placeholder="مثلاً خدمات در سراسر ایران و عمان، با هماهنگی قبلی"/></label>
               {form.serviceAreas.length > 0 && (
