@@ -1,4 +1,5 @@
 import { minimalistCurtainGuide } from "./guide-minimalist-curtain";
+import { seismicWallcoveringGuide } from "./guide-seismic-wallpaper";
 import { newEditorialGuides } from "./guides-editorial-october-2026";
 import { catalogCoverageGuides } from "./guides-catalog-coverage";
 import { interiorLightingGuide } from "./guide-interior-lighting";
@@ -40,6 +41,7 @@ export const guides: Guide[] = [
   ...newEditorialGuides,
   ...catalogCoverageGuides,
   minimalistCurtainGuide,
+  seismicWallcoveringGuide,
   interiorLightingGuide,
   ...seoBatch12Guides,
   ...seoBatch11Guides,
