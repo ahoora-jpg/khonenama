@@ -97,3 +97,17 @@ test("initial hero image remains prioritized for LCP", async () => {
   assert.match(hero, /loading=\{index === 0 \? "eager" : "lazy"\}/);
   assert.match(hero, /fetchPriority=\{index === 0 \? "high" : "low"\}/);
 });
+
+
+test("content principles stay discoverable and machine linked", async () => {
+  const page = await source("app/content-principles/page.tsx");
+  const home = await source("app/page.tsx");
+  const guide = await source("app/magazine/[slug]/page.tsx");
+  const footer = await source("components/Footer.tsx");
+  const sitemap = await source("app/sitemap.ts");
+  assert.match(page, /اصول تحریریه و صحت اطلاعات خونه‌نما/);
+  assert.match(home, /publishingPrinciples:\s*"https:\/\/khonenama\.ir\/content-principles"/);
+  assert.match(guide, /publishingPrinciples:\s*"https:\/\/khonenama\.ir\/content-principles"/);
+  assert.match(footer, /\/content-principles/);
+  assert.match(sitemap, /\/content-principles/);
+});
