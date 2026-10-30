@@ -49,7 +49,8 @@
     "RECOVERY_EMAIL_FROM": "noreply@khonenama.ir",
     "IMAGEKIT_URL_ENDPOINT": "https://ik.imagekit.io/khonenama",
     "MEDIA_STORAGE_PROVIDER": "r2",
-    "SMS_ROLE": "site"
+    "SMS_ROLE": "site",
+    "SMS_MIGRATING": "false"
   },
   "queues": {
     "producers": [
