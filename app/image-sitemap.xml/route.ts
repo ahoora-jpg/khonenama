@@ -30,6 +30,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const categorySlugs = ["lighting", "curtain", "flooring", "carpet", "wallpaper", "interior-design", "smart-home"];
+  const localSlugs = ["curtain", "flooring", "carpet", "wallpaper", "interior-design", "smart-home"];
 
   const homeEntry = imageEntry(
     `${baseUrl}/`,
@@ -42,7 +43,7 @@ export async function GET() {
     return imageEntry(`${baseUrl}/category/${slug}`, visual.src, visual.alt);
   });
 
-  const localEntries = categorySlugs.map((slug) => {
+  const localEntries = localSlugs.map((slug) => {
     const visual = getLocalVisual(slug);
     return imageEntry(`${baseUrl}/karaj/${slug}`, visual.src, visual.alt);
   });
