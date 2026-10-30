@@ -29,6 +29,22 @@ const SEO_METADATA_OVERRIDES: Record<string, { title?: string; description?: str
   "parquet-vs-laminate": { title: "پارکت یا لمینت؟ | تفاوت و راهنمای انتخاب" },
   "choose-interior-designer": { title: "انتخاب طراح داخلی | ۷ معیار قبل از قرارداد" },
   "wallpaper-karaj-guide": { title: "کاغذ دیواری کرج | خرید، نصب و محاسبه رول" },
+  "wallpaper-guide": {
+    title: "کاغذ دیواری چیست؟ | انواع، جنس، نصب و محاسبه رول",
+    description: "انواع کاغذ دیواری، جنس وینیل و نانوون، قابلیت شست‌وشو، زیرسازی و نصب را مقایسه کنید و قبل از خرید تعداد رول موردنیاز را محاسبه کنید.",
+  },
+  "wall-mural-guide": {
+    title: "پوستر دیواری چیست؟ | ابعاد، نصب و تفاوت با کاغذ دیواری",
+    description: "پوستر دیواری و سه‌بعدی را از نظر ابعاد، کیفیت فایل و چاپ، زیرسازی، روش نصب و تفاوت با کاغذ دیواری بررسی کنید.",
+  },
+  "thermowall-guide": {
+    title: "ترمووال چیست؟ | دیوارپوش، اجرا و نکات نصب",
+    description: "ترمووال و دیوارپوش خطی را از نظر جنس، زیرسازی، روش اجرا، اتصالات، نورپردازی و نکات مهم قبل از سفارش بررسی کنید.",
+  },
+  "water-leak-sensor-guide": {
+    title: "سنسور نشت آب هوشمند | هشدار، هاب و شیر قطع‌کن",
+    description: "سنسور نشت آب چگونه کار می‌کند؟ هشدار، هاب، کنترل محلی، رفتار بدون اینترنت و تفاوت تشخیص نشتی با شیر قطع‌کن خودکار را بررسی کنید.",
+  },
   "washable-wallpaper-guide": { title: "کاغذ دیواری قابل شست‌وشو | راهنمای انتخاب" },
   "zebra-curtain-price-guide": {
     title: "قیمت پرده زبرا و انتخاب اقتصادی | چک‌لیست استعلام",
@@ -111,6 +127,42 @@ const PRIORITY_GUIDE_ACTIONS: Record<string, { title: string; text: string; link
       { label: "محاسبه متراژ موکت", href: "/tools/carpet-estimator" },
       { label: "موکت و خدمات موکت در کرج", href: "/karaj/carpet" },
       { label: "راهنمای جامع موکت", href: "/category/carpet" },
+    ],
+  },
+  "wallpaper-guide": {
+    title: "از انتخاب کاغذ دیواری به محاسبه رول و مجری برسید",
+    text: "بعد از انتخاب جنس و طرح، تعداد رول را با ابعاد واقعی محاسبه کنید و سپس فروشگاه یا مجری را بر اساس زیرسازی، نصب و نمونه‌کار مقایسه کنید.",
+    links: [
+      { label: "محاسبه تعداد رول کاغذ دیواری", href: "/tools/wallpaper-calculator" },
+      { label: "کاغذ دیواری و مجری در کرج", href: "/karaj/wallpaper" },
+      { label: "راهنمای کاغذ دیواری و دیوارپوش", href: "/category/wallpaper" },
+    ],
+  },
+  "wall-mural-guide": {
+    title: "قبل از سفارش پوستر، ابعاد و اجرای واقعی را مشخص کنید",
+    text: "ابعاد نهایی، کیفیت فایل، محل برش تصویر، جنس چاپ و وضعیت زیرسازی را قبل از استعلام یکسان کنید تا پیشنهادها قابل مقایسه باشند.",
+    links: [
+      { label: "کاغذ دیواری و دیوارپوش در کرج", href: "/karaj/wallpaper" },
+      { label: "راهنمای دیوارپوش‌ها", href: "/category/wallpaper" },
+      { label: "تفاوت پوستر و کاغذ دیواری", href: "/magazine/wallpaper-vs-wallpanel" },
+    ],
+  },
+  "thermowall-guide": {
+    title: "ترمووال را با زیرسازی و مجری واقعی مقایسه کنید",
+    text: "جنس پنل، ابعاد، زیرسازی، اتصال، گوشه‌ها و نورپردازی را در Scope سفارش مشخص کنید و بعد مجریان مرتبط را مقایسه کنید.",
+    links: [
+      { label: "دیوارپوش و مجری در کرج", href: "/karaj/wallpaper" },
+      { label: "راهنمای کاغذ دیواری و دیوارپوش", href: "/category/wallpaper" },
+      { label: "ترمووال یا دیوارپوش‌های دیگر", href: "/magazine/wallpaper-vs-wallpanel" },
+    ],
+  },
+  "water-leak-sensor-guide": {
+    title: "سنسور نشت آب را داخل Scope واقعی خانه هوشمند ببینید",
+    text: "قبل از خرید مشخص کنید فقط هشدار می‌خواهید یا قطع خودکار آب هم لازم است؛ هاب، برق، کنترل محلی و سناریوی قطعی اینترنت را هم در Scope ثبت کنید.",
+    links: [
+      { label: "سنسور نشت آب در فهرست خدمات", href: "/services/smart-home/سنسور-نشت-آب" },
+      { label: "برآورد Scope خانه هوشمند", href: "/tools/smart-home-scope" },
+      { label: "خانه هوشمند در کرج", href: "/karaj/smart-home" },
     ],
   },
   "carpet-types-guide": {
