@@ -95,8 +95,8 @@ const organizationJsonLd = {
   alternateName: ["خونه‌نما", "خونهنما", "KhonehNama", "Khoneh Nama", "Khonenama", "Khone Nama", "khonenama.ir"],
   url: "https://khonenama.ir/",
   disambiguatingDescription: "خونه نما یک مرجع فارسی برای فضای داخلی خانه و دکوراسیون داخلی است و به طراحی نمای بیرونی ساختمان یا خرید و فروش ملک مربوط نیست.",
-  sameAs: ["https://github.com/ahoora-jpg/khonenama"],
   subjectOf: [
+    { "@type": "WebPage", url: "https://github.com/ahoora-jpg/khonenama", name: "مخزن پروژه خونه نما در GitHub" },
     { "@type": "WebPage", url: "https://ahoora-studio.site/case-study/khonenama", name: "Khonenama case study — Ahoora Studio" },
     { "@type": "WebPage", url: "https://ahoora-studio.ir/case-study/khonenama", name: "معرفی پروژه خونه نما — Ahoora Studio" },
   ],
