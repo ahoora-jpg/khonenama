@@ -31,10 +31,6 @@
     {
       "binding": "BUSINESS_MEDIA",
       "bucket_name": "khonenama-business-media"
-    },
-    {
-      "binding": "SMS_EVENT_ARCHIVE",
-      "bucket_name": "khonenama-sms-events-private"
     }
   ],
   "routes": [
@@ -45,14 +41,6 @@
     {
       "pattern": "www.khonenama.ir/*",
       "zone_name": "khonenama.ir"
-    },
-    {
-      "pattern": "sms.khonenama.ir/*",
-      "zone_name": "khonenama.ir"
-    },
-    {
-      "pattern": "www.sms.khonenama.ir",
-      "custom_domain": true
     }
   ],
   "vars": {
@@ -60,28 +48,22 @@
     "SMS_SIM_MODE": "default",
     "RECOVERY_EMAIL_FROM": "noreply@khonenama.ir",
     "IMAGEKIT_URL_ENDPOINT": "https://ik.imagekit.io/khonenama",
-    "MEDIA_STORAGE_PROVIDER": "r2"
+    "MEDIA_STORAGE_PROVIDER": "r2",
+    "SMS_ROLE": "site"
   },
   "queues": {
     "producers": [
       {
         "binding": "SMS_EVENTS",
         "queue": "khonenama-sms-events"
-      },
-      {
-        "binding": "SMS_EVENTS_DLQ",
-        "queue": "khonenama-sms-events-dlq"
       }
     ],
-    "consumers": [
-      {
-        "queue": "khonenama-sms-events",
-        "max_batch_size": 20,
-        "max_batch_timeout": 1,
-        "max_concurrency": 2,
-        "max_retries": 5,
-        "dead_letter_queue": "khonenama-sms-events-dlq"
-      }
-    ]
-  }
+    "consumers": []
+  },
+  "services": [
+    {
+      "binding": "SMS_SERVICE",
+      "service": "khonenama-sms"
+    }
+  ]
 }

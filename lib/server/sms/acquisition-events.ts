@@ -5,7 +5,8 @@ import {recordAcquisitionConversion} from './acquisition';
 export async function applyAcquisitionEvent(db:any,event:SmsEvent,applied:any,leaseToken:string){
   const p=event.payload;
   if(event.type==='access_state'){
-    await db.batch([db.prepare('UPDATE sms_access_state_events SET processed_at=CURRENT_TIMESTAMP WHERE id=?').bind(p.id),applied]);return {atomicApplied:true};
+    if(!['link','lead'].includes(p.scope)||![0,1].includes(p.locked)||typeof p.id!=='string'||typeof p.subject_id!=='string')throw new SmsEventError('INVALID_ACCESS_STATE',false);
+    await db.batch([db.prepare('INSERT INTO sms_access_state_events(id,scope,subject_id,business_id,lead_id,link_id,previous_locked,locked,occurred_at,queued_at,processed_at) VALUES(?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP) ON CONFLICT(id) DO UPDATE SET processed_at=CURRENT_TIMESTAMP').bind(p.id,p.scope,p.subject_id,p.business_id??null,p.lead_id??null,p.link_id??null,p.previous_locked??null,p.locked,p.occurred_at),applied]);return {atomicApplied:true};
   }
   if(event.type==='click'){
     if(typeof p.token!=='string'||!/^([a-f0-9]{40})$/.test(p.token)||typeof p.session!=='string'||!/^[a-f0-9]{40}$/.test(p.session))throw new SmsEventError('INVALID_CLICK',false);
