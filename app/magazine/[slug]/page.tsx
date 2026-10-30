@@ -433,6 +433,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               <span><Clock3 size={14} /> {guide.readTime}</span>
               <span>به‌روزرسانی: {guide.updated}</span>
               <a href="/about">درباره خونه نما</a>
+              <a href="/content-principles">روش تهیه و صحت اطلاعات</a>
             </div>
           </header>
 
