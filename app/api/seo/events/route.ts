@@ -1,9 +1,9 @@
 import { env } from "cloudflare:workers";
 import { crossSiteMutation } from "@/lib/request-security";
 
-const allowedEvents = new Set(["page_view", "internal_click", "tool_interaction"]);
+const allowedEvents = new Set(["page_view", "internal_click", "tool_interaction", "contact_intent", "lead_submit"]);
 const allowedSources = new Set(["direct", "search", "ai", "social", "referral", "internal"]);
-const allowedTargets = new Set(["", "business", "tool", "local", "category", "magazine", "search", "register", "app", "other"]);
+const allowedTargets = new Set(["", "business", "tool", "local", "category", "magazine", "search", "register", "app", "contact", "other"]);
 
 function validPath(value: unknown) {
   return typeof value === "string"
