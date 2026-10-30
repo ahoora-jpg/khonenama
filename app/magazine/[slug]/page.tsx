@@ -21,6 +21,10 @@ const SEO_METADATA_OVERRIDES: Record<string, { title?: string; description?: str
   "carpet-karaj-guide": { title: "موکت کرج | خرید، متراژ و نصب" },
   "interior-design-karaj-cost-guide": { title: "هزینه طراحی داخلی در کرج | روش قیمت‌گذاری" },
   "curtain-buying-guide": { title: "راهنمای انتخاب پرده منزل | مدل، اندازه و نصب" },
+  "punch-curtain-guide": {
+    title: "پرده پانچ چیست؟ | مدل، پارچه، حلقه و اندازه‌گیری",
+    description: "مدل پرده پانچ، تعداد پنل، نوع پارچه و حلقه، ضریب جمع، اندازه‌گیری و تفاوت پرده آماده و سفارشی را قبل از خرید بررسی کنید.",
+  },
   "wallpaper-vs-wallpanel": {
     description: "کاغذ دیواری و دیوارپوش چسبی، فومی، چوبی و سنگی را از نظر جنس، زیرکار، اتصال، نگهداری و هزینه اجرا مقایسه کنید؛ نکات انتخاب تی‌وی وال را بخوانید.",
   },
@@ -99,6 +103,15 @@ const SEO_METADATA_OVERRIDES: Record<string, { title?: string; description?: str
 };
 
 const PRIORITY_GUIDE_ACTIONS: Record<string, { title: string; text: string; links: { label: string; href: string }[] }> = {
+  "punch-curtain-guide": {
+    title: "مدل پانچ را به اندازه‌گیری و فروشنده واقعی وصل کنید",
+    text: "برای پانچ، تعداد پنل، عرض پارچه در حالت صاف، حلقه و میله، ضریب جمع و ارتفاع نصب را قبل از سفارش مشخص کنید.",
+    links: [
+      { label: "غرفه‌های مرتبط با پرده پانچ", href: "/services/curtain/پرده-پانچ" },
+      { label: "محاسبه متراژ پارچه پرده", href: "/tools/curtain-fabric-calculator" },
+      { label: "پرده در کرج", href: "/karaj/curtain" },
+    ],
+  },
   "roman-curtain-guide": {
     title: "پرده رومن را با نمونه واقعی و فروشنده مقایسه کنید",
     text: "در رومن، فرم چین و ایستایی پارچه فقط از روی عکس مشخص نمی‌شود؛ نمونه اجرا، آستر، مکانیزم و ابعاد واقعی را قبل از سفارش بررسی کنید.",
