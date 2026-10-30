@@ -283,7 +283,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
                     <MessageCircle size={17} /> واتساپ
                   </a>
                 )}
-                {business.source !== "demo" && <a className="pill-button profile-secondary" href="#quote"><MessageCircle size={17} /> درخواست قیمت</a>}
+                {business.source !== "demo" && <a className="pill-button profile-secondary" data-analytics-event="quote_start" href="#quote"><MessageCircle size={17} /> درخواست قیمت</a>}
                 {business.source !== "demo" && <a className="pill-button profile-secondary" href="#reviews"><Star size={17} /> ثبت نظر و امتیاز</a>}
               </div>
               <a className="profile-album-link" href="#gallery">آلبوم عکس‌ها و فیلم‌ها — مشاهده نمونه‌کارها ↓</a>
