@@ -1328,6 +1328,12 @@ button.business-photo-avatar { cursor:pointer; }
   font-size:14px;
   line-height:1.8;
 }
+.profile-support-section { max-width:760px; margin-inline:auto; }
+.profile-support-section > p { margin:0 0 16px; color:var(--muted); line-height:1.9; }
+.profile-support-section > .marketplace-panel { display:block; padding:20px; border:1px solid var(--line); border-radius:20px; background:#fffdf8; box-shadow:0 8px 24px rgba(42,33,24,.08); }
+.profile-support-section > .marketplace-panel > summary { padding:5px 0; font-weight:800; font-size:17px; }
+.profile-support-section > .marketplace-panel form { width:min(100%,620px); margin:18px 0 0; }
+.profile-support-section > .marketplace-panel :is(input,textarea,select) { font-size:16px; }
 @media (max-width:760px) {
   .business-public-gallery {
     grid-template-columns:1fr;
@@ -1335,6 +1341,7 @@ button.business-photo-avatar { cursor:pointer; }
   .business-public-gallery figure.is-cover {
     grid-column:auto;
   }
+  .profile-support-section > .marketplace-panel { padding:16px; border-radius:16px; }
 }
 
 

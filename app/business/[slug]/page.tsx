@@ -247,7 +247,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
               <div className="profile-title-row">
                 <div>
                   <div className="profile-name-line">
-                    <h1>{business.name}</h1>{business.source !== "demo" && <><SavedBusinessButton slug={business.slug}/><SupportForm businessSlug={business.slug}/></>}
+                    <h1>{business.name}</h1>{business.source !== "demo" && <SavedBusinessButton slug={business.slug}/>}
                     {business.source === "demo" && <span className="demo-profile-pill">نمونه نمایشی</span>}
                     {business.verified && <span title="تأیید کسب‌وکار؛ مستقل از اشتراک و امتیاز مشتری" aria-label="کسب‌وکار تأییدشده"><BadgeCheck size={22} className="verified-icon" /></span>}
                     {business.planCode === "pro" && (
@@ -409,6 +409,13 @@ export default async function BusinessPage({ params, searchParams }: { params: P
             reviewCount={business.reviewCount}
             demo={business.source === "demo"}
           />
+
+          {business.source !== "demo" && <section className="profile-section profile-support-section" id="support">
+            <span className="section-kicker">پشتیبانی</span>
+            <h2>گزارش مشکل دربارهٔ این غرفه</h2>
+            <p>اگر مسئله‌ای دربارهٔ اطلاعات این غرفه دارید، درخواست خود را ثبت کنید. این فرم عمومی نیست و خارج از بخش اصلی معرفی غرفه نمایش داده می‌شود.</p>
+            <SupportForm businessSlug={business.slug}/>
+          </section>}
 
         </div>
       </section>
