@@ -371,7 +371,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     mainEntityOfPage: "https://khonenama.ir/magazine/" + guide.slug,
     author: { "@id": "https://khonenama.ir/#organization" },
     publisher: { "@id": "https://khonenama.ir/#organization" },
-    publishingPrinciples: "https://khonenama.ir/editorial-policy",
+    publishingPrinciples: "https://khonenama.ir/content-principles",
     keywords: enhancedKeywords(guide.slug, guide.keywords).join(", "),
     articleSection: guide.category,
     abstract: quickAnswer || guide.excerpt,
