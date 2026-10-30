@@ -5,7 +5,7 @@ import { modelCode } from "@/lib/model-quote";
 import BusinessPhotoHeader from "@/components/BusinessPhotoHeader";
 import BusinessModelNames from "@/components/BusinessModelNames";
 import BusinessAlbumManager from "@/components/BusinessAlbumManager";
-import { VIDEO_LIMITS } from "@/lib/business-video";
+import { videoLimitForPlan } from "@/lib/business-video";
 import { prepareBusinessImage } from "@/lib/prepare-business-image";
 import {
   ArrowDown,
@@ -32,9 +32,9 @@ type MediaItem = {
 };
 
 const limits: Record<string, number> = {
-  free: 10,
-  pro: 30,
-  premium: 70,
+  free: 1,
+  pro: 3,
+  premium: 5,
 };
 
 export default function BusinessMediaManager({ plan = "free" }: { plan?: string }) {
@@ -53,9 +53,10 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
 
   const [capacity,setCapacity]=useState<{photos:number;videos:number}|null>(null);
   const limit = capacity?.photos ?? (limits[plan] || limits.free);
-  const remaining = Math.max(0, limit - media.filter(item => item.kind === "image").length);
+  const usedPhotos = media.filter(item => item.kind === "image" || item.kind === "logo").length;
+  const remaining = Math.max(0, limit - usedPhotos);
 
-  const videoLimit = capacity?.videos ?? (VIDEO_LIMITS[plan] || 0);
+  const videoLimit = capacity?.videos ?? videoLimitForPlan(plan);
   const videoRemaining = Math.max(0, videoLimit - media.filter(item => item.kind === "video").length);
   const available = uploadKind === "video" ? videoRemaining : uploadKind === "image" ? remaining : 1;
   const cover = media.find(item => item.kind === "cover");
@@ -243,11 +244,11 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       </div>
       <p>تصاویر باید متعلق به کسب‌وکار یا با اجازه صاحب اثر باشند. تصویر الهام‌بخش را نمونه‌کار اجراشده معرفی نکنید؛ چهره، نشانی دقیق، شماره تماس و مدارک مشتری را پیش از انتشار حذف یا محو کنید.</p>
       <div className="media-capacity" aria-live="polite">
-        <div><strong>{number(media.filter(item => item.kind === "image").length)}</strong><span>عکس ذخیره‌شده</span></div>
+        <div><strong>{number(usedPhotos)}</strong><span>عکس ذخیره‌شده</span></div>
         <div><strong>{number(remaining)}</strong><span>جای خالی برای عکس</span></div>
 
       </div>
-      <p className="media-capacity-note">کاور و پروفایل جدا از این تعداد هستند. تعداد دسته‌های نمونه‌کار محدود نیست.</p>
+      <p className="media-capacity-note">عکس پروفایل جزو این تعداد است؛ کاور جدا از ظرفیت عکس است. تعداد دسته‌های نمونه‌کار محدود نیست.</p>
       <p>ویدیو: {number(media.filter(item => item.kind === "video").length)} ذخیره‌شده از {number(videoLimit)}؛ {number(videoRemaining)} جای خالی. MP4، حداکثر ۲۰ ثانیه و ۱۵ مگابایت.</p>
       {videoLimit > 0 && <button type="button" className="pill-button" disabled={uploading || !videoRemaining || !configured} onClick={() => pick("video")}>+ افزودن ویدیو</button>}
       <input ref={fileRef} type="file" accept={uploadKind === "video" ? "video/mp4" : "image/*"} multiple={uploadKind === "image" || uploadKind === "video"} hidden onChange={event => chooseFiles(event.target.files)} />

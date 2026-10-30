@@ -1,4 +1,5 @@
-import { normalizePlanCode, planPresentation, customPacksForSubscription } from "@/lib/business-entitlements";
+import { normalizePlanCode, planPresentation } from "@/lib/business-entitlements";
+import { videoLimitForPlan } from "@/lib/business-video";
 import { getOwnedBusiness, ensureBusinessMediaSchema } from "@/lib/server/business-media";
 import {
   getImageKitFileDetails,
@@ -30,7 +31,7 @@ async function getGalleryLimit(db: any, businessId: number) {
     .first();
 
   const planCode = normalizePlanCode(planRow?.code);
-  return planPresentation[planCode].galleryLimit + 20*await customPacksForSubscription(db,planRow);
+  return planPresentation[planCode].galleryLimit + 1;
 }
 
 export async function GET(request: Request) {
@@ -50,10 +51,9 @@ export async function GET(request: Request) {
     .all();
 
   const capacityPlan=await owned.db.prepare("SELECT p.code,s.id FROM subscriptions s JOIN plans p ON p.id=s.plan_id WHERE s.business_id=? AND s.status='active' AND (s.ends_at IS NULL OR julianday(s.ends_at)>julianday('now')) ORDER BY s.id DESC LIMIT 1").bind(owned.business.id).first();
-  const packs=await customPacksForSubscription(owned.db,capacityPlan);
   return Response.json({
     ok: true,
-    capacity:{photos:planPresentation[normalizePlanCode(capacityPlan?.code)].galleryLimit+20*packs,videos:capacityPlan?.code==='premium'?5+packs:capacityPlan?.code==='pro'?2:0},
+    capacity:{photos:planPresentation[normalizePlanCode(capacityPlan?.code)].galleryLimit+1,videos:videoLimitForPlan(normalizePlanCode(capacityPlan?.code))},
     configured: mediaStorageConfigured(),
     media: (rows?.results || []).map((row: any) => ({...row, kind: row.media_type === "video" ? "video" : row.kind})),
   });
@@ -81,7 +81,7 @@ export async function POST(request: Request) {
 
   const [countRow, galleryLimit] = await Promise.all([
     owned.db
-      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ? AND kind = 'image' AND media_type = 'image'")
+      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ? AND kind IN ('image','logo') AND media_type = 'image'")
       .bind(owned.business.id)
       .first(),
     getGalleryLimit(owned.db, Number(owned.business.id)),
@@ -141,7 +141,7 @@ export async function POST(request: Request) {
     .prepare(
       "INSERT INTO business_media " +
       "(business_id, kind, storage_key, alt_text, sort_order, provider, provider_file_id, file_url, file_path, thumbnail_url) " +
-      "SELECT ?, ?, ?, NULLIF(?, ''), ?, 'imagekit', ?, ?, ?, NULLIF(?, '') WHERE (SELECT COUNT(*) FROM business_media WHERE business_id = ? AND kind = 'image' AND media_type = 'image') < ? AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
+      "SELECT ?, ?, ?, NULLIF(?, ''), ?, 'imagekit', ?, ?, ?, NULLIF(?, '') WHERE (SELECT COUNT(*) FROM business_media WHERE business_id = ? AND kind IN ('image','logo') AND media_type = 'image') < ? AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
     )
     .bind(
       owned.business.id,

@@ -1,5 +1,5 @@
-import { VIDEO_LIMITS } from "@/lib/business-video";
-import { normalizePlanCode,customPacksForSubscription,planPresentation } from "@/lib/business-entitlements";
+import { videoLimitForPlan } from "@/lib/business-video";
+import { normalizePlanCode,planPresentation } from "@/lib/business-entitlements";
 import { env } from "cloudflare:workers";
 import { getBusinessSession } from "@/lib/server/business-session";
 
@@ -19,12 +19,12 @@ async function serve(request: Request, context: { params: Promise<{ businessId: 
   let isPublic = media.status === "published" && !Number(media.owner_paused);
   if (isPublic && fileName.endsWith(".mp4")) {
     const plan=await db.prepare("SELECT p.code, s.id FROM subscriptions s JOIN plans p ON p.id=s.plan_id WHERE s.business_id=? AND s.status='active' AND (s.ends_at IS NULL OR julianday(s.ends_at)>julianday('now')) ORDER BY s.id DESC LIMIT 1").bind(Number(businessId)).first();
-    const allowed=await db.prepare("SELECT storage_key FROM business_media WHERE business_id=? AND media_type='video' ORDER BY id LIMIT ?").bind(Number(businessId),VIDEO_LIMITS[normalizePlanCode(plan?.code)]+await customPacksForSubscription(db,plan)).all();
+    const allowed=await db.prepare("SELECT storage_key FROM business_media WHERE business_id=? AND media_type='video' ORDER BY id LIMIT ?").bind(Number(businessId),videoLimitForPlan(normalizePlanCode(plan?.code))).all();
     isPublic=(allowed.results||[]).some((row:any)=>row.storage_key===masterKey);
   }
   if(isPublic && !fileName.endsWith('.mp4') && media.kind==='image'){
     const plan=await db.prepare("SELECT p.code,s.id FROM subscriptions s JOIN plans p ON p.id=s.plan_id WHERE s.business_id=? AND s.status='active' AND (s.ends_at IS NULL OR julianday(s.ends_at)>julianday('now')) ORDER BY s.id DESC LIMIT 1").bind(Number(businessId)).first();
-    const limit=planPresentation[normalizePlanCode(plan?.code)].galleryLimit+20*await customPacksForSubscription(db,plan);
+    const limit=planPresentation[normalizePlanCode(plan?.code)].galleryLimit;
     const allowed=await db.prepare("SELECT storage_key FROM business_media WHERE business_id=? AND kind='image' AND media_type='image' ORDER BY id LIMIT ?").bind(Number(businessId),limit).all();
     isPublic=(allowed.results||[]).some((row:any)=>row.storage_key===masterKey);
   }

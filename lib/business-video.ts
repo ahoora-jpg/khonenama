@@ -1,6 +1,13 @@
 export const MAX_VIDEO_BYTES = 15 * 1024 * 1024;
 export const MAX_VIDEO_SECONDS = 20;
-export const VIDEO_LIMITS: Record<string, number> = { free: 0, pro: 2, premium: 5 };
+// Regular plans do not include video. During the launch offer every booth can
+// add one video; the helper keeps client, API and public delivery in sync.
+export const VIDEO_LIMITS: Record<string, number> = { free: 0, pro: 0, premium: 0 };
+
+export const FREE_VIDEO_OFFER_END_AT = "2027-02-04T20:30:00Z";
+export function videoLimitForPlan(plan: string, now = Date.now()) {
+  return now < Date.parse(FREE_VIDEO_OFFER_END_AT) ? 1 : (VIDEO_LIMITS[plan] || 0);
+}
 
 // Parse the ISO BMFF movie header rather than trusting client-supplied duration.
 export function mp4Duration(bytes: Uint8Array): number {

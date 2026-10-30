@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
-import { MAX_VIDEO_BYTES, VIDEO_LIMITS, mp4Duration } from "@/lib/business-video";
-import { normalizePlanCode, planPresentation, customPacksForSubscription } from "@/lib/business-entitlements";
+import { MAX_VIDEO_BYTES, mp4Duration, videoLimitForPlan } from "@/lib/business-video";
+import { normalizePlanCode, planPresentation } from "@/lib/business-entitlements";
 import { ensureBusinessMediaSchema, getOwnedBusiness } from "@/lib/server/business-media";
 import { readBusinessUploadForm } from "@/lib/server/business-upload-form";
 import {
@@ -35,7 +35,7 @@ async function getGalleryLimit(db: any, businessId: number) {
     .first();
 
   const planCode = normalizePlanCode(planRow?.code);
-  return planPresentation[planCode].galleryLimit + 20*await customPacksForSubscription(db,planRow);
+  return planPresentation[planCode].galleryLimit + 1;
 }
 
 export async function POST(request: Request) {
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     if (file.size > MAX_VIDEO_BYTES) return Response.json({ok:false,error:"FILE_TOO_LARGE"},{status:413});
     if (file.type !== "video/mp4") return Response.json({ok:false,error:"INVALID_FILE_TYPE"},{status:415});
     const plan = await owned.db.prepare("SELECT p.code, s.id FROM subscriptions s JOIN plans p ON p.id=s.plan_id WHERE s.business_id=? AND s.status='active' AND (s.ends_at IS NULL OR julianday(s.ends_at)>julianday('now')) ORDER BY s.id DESC LIMIT 1").bind(owned.business.id).first();
-    const limit = VIDEO_LIMITS[normalizePlanCode(plan?.code)] + await customPacksForSubscription(owned.db,plan);
+    const limit = videoLimitForPlan(normalizePlanCode(plan?.code));
     if (!limit) return Response.json({ok:false,error:"VIDEO_PLAN_REQUIRED"},{status:403});
     const bucket = (env as any).BUSINESS_MEDIA;
     if (!bucket?.put) return Response.json({ok:false,error:"MEDIA_STORAGE_NOT_CONFIGURED"},{status:503});
@@ -81,15 +81,15 @@ export async function POST(request: Request) {
   const kind = form.get("kind") === "cover" || form.get("kind") === "logo" ? String(form.get("kind")) : "image";
   const [countRow, galleryLimit] = await Promise.all([
     owned.db
-      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ? AND kind = ? AND media_type = 'image'")
-      .bind(owned.business.id, kind)
+      .prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id = ? AND kind IN ('image','logo') AND media_type = 'image'")
+      .bind(owned.business.id)
       .first(),
     getGalleryLimit(owned.db, Number(owned.business.id)),
   ]);
 
   const currentCount = Number(countRow?.count || 0);
-  const slotLimit = kind === "image" ? galleryLimit : 1;
-  if (kind === "image" && currentCount >= slotLimit) {
+  const slotLimit = kind === "cover" ? 1 : galleryLimit;
+  if (kind !== "cover" && currentCount >= slotLimit) {
     return Response.json(
       { ok: false, error: "GALLERY_LIMIT_REACHED", limit: galleryLimit },
       { status: 409 }
@@ -154,7 +154,7 @@ export async function POST(request: Request) {
       .prepare(
         "INSERT INTO business_media " +
           "(business_id, kind, storage_key, alt_text, sort_order, provider, provider_file_id, file_url, file_path, thumbnail_url) " +
-          "SELECT ?, ?, ?, NULL, ?, ?, ?, ?, ?, NULLIF(?, '') WHERE (SELECT COUNT(*) FROM business_media WHERE business_id = ? AND kind = ? AND media_type = 'image') < ? AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
+          "SELECT ?, ?, ?, NULL, ?, ?, ?, ?, ?, NULLIF(?, '') WHERE (? = 'cover' OR (SELECT COUNT(*) FROM business_media WHERE business_id = ? AND (kind IN ('image','logo')) AND media_type = 'image') < ?) AND NOT EXISTS (SELECT 1 FROM business_media WHERE business_id = ? AND provider_file_id = ?) RETURNING id"
       )
       .bind(
         owned.business.id,
@@ -166,8 +166,8 @@ export async function POST(request: Request) {
         verified.url,
         verified.filePath,
         verified.thumbnailUrl,
-        owned.business.id,
         kind,
+        owned.business.id,
         slotLimit,
         owned.business.id,
         verified.fileId

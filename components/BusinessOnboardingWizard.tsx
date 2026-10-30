@@ -113,6 +113,13 @@ export default function BusinessOnboardingWizard() {
   const [draftReady, setDraftReady] = useState(false);
   const [draftStatus, setDraftStatus] = useState("");
   const registrationStarted = useRef(false);
+  const recordedEvents = useRef(new Set<string>());
+  function recordFunnelEvent(event: import("@/lib/seller-acquisition-events").SellerAcquisitionEvent) {
+    if (navigator.doNotTrack === "1" || (navigator as Navigator & { globalPrivacyControl?: boolean }).globalPrivacyControl) return;
+    if (recordedEvents.current.has(event)) return;
+    recordedEvents.current.add(event);
+    fetch("/api/seller-acquisition", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event }), keepalive: true }).catch(() => {});
+  }
   function trackStart() {
     if (registrationStarted.current) return;
     registrationStarted.current = true;
@@ -140,6 +147,12 @@ export default function BusinessOnboardingWizard() {
       });
     } catch { setDraftStatus("پیش‌نویس قبلی قابل خواندن نیست؛ لطفاً اطلاعات را دوباره بررسی کنید."); } finally { setDraftReady(true); }
   }, []);
+
+  useEffect(() => {
+    const events = ["registration_account_step", "registration_business_step", "registration_service_step", "registration_media_step", "registration_review_step"] as const;
+    if (step === 0) recordFunnelEvent("registration_view");
+    recordFunnelEvent(events[step] || "registration_review_step");
+  }, [step]);
 
   useEffect(() => {
     if (!draftReady || saved) return;
@@ -222,6 +235,7 @@ export default function BusinessOnboardingWizard() {
   }
 
   async function finish() {
+    recordFunnelEvent("registration_submit_attempt");
     setSaving(true);
     setSaveError("");
 
@@ -300,6 +314,7 @@ export default function BusinessOnboardingWizard() {
       update("password", "");
       update("confirmPassword", "");
     } catch (error) {
+      recordFunnelEvent("registration_submit_failed");
       setSaveError(
         error instanceof Error ? error.message : "ذخیره اطلاعات انجام نشد."
       );

@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { businessPlans } from "@/lib/business-plans";
 
 const currentPlanArtwork: Record<string, string> = {
-  free: "/images/plans/free-20261028.png",
-  pro: "/images/plans/pro-20261028.png",
-  premium: "/images/plans/premium-20261028.png",
-  custom: "/images/plans/custom-20261028.png",
+  free: "/images/plans/free-20261030.png",
+  pro: "/images/plans/pro-20261030.png",
+  premium: "/images/plans/premium-20261030.png",
+  custom: "/images/plans/custom-20261030.png",
 };
 
 export function RegistrationGift() {
