@@ -111,3 +111,13 @@ test("content principles stay discoverable and machine linked", async () => {
   assert.match(footer, /\/content-principles/);
   assert.match(sitemap, /\/content-principles/);
 });
+
+
+test("robots keeps public discovery open while private APIs stay blocked", async () => {
+  const robots = await source("app/robots.txt/route.ts");
+  assert.match(robots, /User-agent: \*/);
+  assert.match(robots, /Allow: \/\n/);
+  assert.match(robots, /Disallow: \/api/);
+  assert.match(robots, /Sitemap: https:\/\/khonenama\.ir\/sitemap\.xml/);
+  assert.match(robots, /Sitemap: https:\/\/khonenama\.ir\/image-sitemap\.xml/);
+});
