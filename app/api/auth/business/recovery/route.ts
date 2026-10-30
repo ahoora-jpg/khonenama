@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { recoveryConfigured, requestRecovery, resetPassword } from "@/lib/server/password-recovery";
+import { recoveryConfigured, requestRecovery, requestRecoveryWithoutEmail, resetPassword } from "@/lib/server/password-recovery";
 const headers = {"Cache-Control":"no-store","Referrer-Policy":"no-referrer"};
 export async function GET() { return Response.json({ok:true,available:recoveryConfigured(env)},{headers}); }
 export async function POST(request: Request) {
@@ -10,8 +10,13 @@ export async function POST(request: Request) {
       if (typeof body.token !== "string" || typeof body.password !== "string") throw Error("INVALID_RESET");
       await resetPassword((env as any).DB,body.token,body.password);
     } else {
-      const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
       const phone = typeof body.phone === "string" ? body.phone.replace(/[۰-۹]/g,(c: string)=>String("۰۱۲۳۴۵۶۷۸۹".indexOf(c))).replace(/[٠-٩]/g,(c: string)=>String("٠١٢٣٤٥٦٧٨٩".indexOf(c))).replace(/[\s-]/g,"") : "";
+      if (body.action === "email_access_help") {
+        if (!/^09\d{9}$/.test(phone)) throw Error("INVALID_REQUEST");
+        await requestRecoveryWithoutEmail((env as any).DB,phone,request.headers.get("cf-connecting-ip")||"unknown");
+        return Response.json({ok:true},{headers});
+      }
+      const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
       if (email.length>160 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^09\d{9}$/.test(phone)) throw Error("INVALID_REQUEST");
       await requestRecovery((env as any).DB,env,email,phone,request.headers.get("cf-connecting-ip")||"unknown");
     }

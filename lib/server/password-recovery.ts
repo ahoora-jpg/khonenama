@@ -1,4 +1,7 @@
 import { hashPassword, validatePassword } from "./password";
+import { ensureSmsSchema } from "./sms/schema";
+import { queueTransactionalEvent } from "./sms/transactional";
+import { ensureSupportTickets } from "./support-tickets";
 export async function recoveryHash(value: string) {
   const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
   return Array.from(new Uint8Array(bytes), b => b.toString(16).padStart(2, "0")).join("");
@@ -44,6 +47,32 @@ export async function requestRecovery(db: any, settings: any, email: string, pho
     throw Error("EMAIL_SEND_FAILED");
   }
   await db.batch([db.prepare("DELETE FROM password_reset_tokens WHERE expires_at<datetime('now','-1 day')"),db.prepare("DELETE FROM password_recovery_limits WHERE window_started<datetime('now','-1 day')")]);
+}
+export async function requestRecoveryWithoutEmail(db: any, phone: string, ip: string) {
+  await ensureRecovery(db);
+  for (const value of ["ip:" + ip, "recovery-help:" + phone]) {
+    const key = await recoveryHash(value);
+    const row = await db.prepare("INSERT INTO password_recovery_limits(key_hash) VALUES(?) ON CONFLICT(key_hash) DO UPDATE SET attempts=CASE WHEN window_started<datetime('now','-1 hour') THEN 1 ELSE attempts+1 END,window_started=CASE WHEN window_started<datetime('now','-1 hour') THEN CURRENT_TIMESTAMP ELSE window_started END RETURNING attempts").bind(key).first();
+    if (row.attempts > 3) throw Error("TOO_MANY_ATTEMPTS");
+  }
+  // Never reveal whether a phone number owns an account. Only an existing active account creates a staff ticket.
+  const user = await db.prepare("SELECT id FROM users WHERE phone=? AND status='active'").bind(phone).first();
+  if (!user) return;
+  await ensureSupportTickets(db);
+  const token = crypto.randomUUID().replaceAll("-", "");
+  const ticket = await db.prepare("INSERT INTO support_tickets (contact,message,tracking_token) VALUES (?,?,?) RETURNING id")
+    .bind(phone, "درخواست بازیابی رمز بدون دسترسی به ایمیل؛ شماره همراه ثبت‌شده تأیید و رسیدگی دستی لازم است.", token).first();
+  await db.prepare("INSERT INTO support_ticket_details(ticket_id,topic,next_step) VALUES(?,?,?,?)")
+    .bind(ticket.id, "account_recovery", "بررسی مالکیت حساب و تماس یا پیامک به شمارهٔ ثبت‌شده").run();
+  try {
+    await ensureSmsSchema(db);
+    await db.prepare("INSERT OR IGNORE INTO sms_templates(id,tenant_id,code,category,body,enabled) VALUES(?,?,?,?,?,1)")
+      .bind("recovery-email-access-help", "khonenama", "recovery_email_access_help", "transactional", "خونه‌نما: درخواست پیگیری بازیابی حساب شما ثبت شد. این بررسی فوری نیست؛ پس از بررسی از همین شماره با شما تماس یا پیامک می‌دهیم.").run();
+    await queueTransactionalEvent(db, { code: "recovery_email_access_help", eventId: "recovery-help-" + ticket.id + "-" + crypto.randomUUID(), phone, variables: {} });
+  } catch {
+    // The support ticket is the durable source of truth; an unavailable SMS gateway must not lose the request.
+    console.warn("RECOVERY_HELP_SMS_UNAVAILABLE");
+  }
 }
 export async function resetPassword(db: any, token: string, password: string) {
   if (!/^[a-f0-9]{64}$/.test(token) || validatePassword(password)) throw Error("INVALID_RESET");

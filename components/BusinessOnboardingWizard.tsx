@@ -385,7 +385,7 @@ export default function BusinessOnboardingWizard() {
 
             <div className="form-row two-columns">
               <label>
-                <span>ایمیل بازیابی (اختیاری)</span>
+                <span>ایمیل بازیابی حساب</span>
                 <div className="form-input">
                   <Mail size={17} />
                   <input
@@ -393,8 +393,11 @@ export default function BusinessOnboardingWizard() {
                     value={form.email}
                     onChange={(e) => update("email", e.target.value)}
                     placeholder="name@example.com"
+                    autoComplete="email"
+                    required
                   />
                 </div>
+                <small className="form-help">ایمیل را دقیق وارد کنید؛ مطمئن‌ترین راه بازیابی رمز، دریافت لینک در همین ایمیل است. جیمیل هم یک ایمیل معتبر است.</small>
               </label>
 
               <label>
