@@ -35,5 +35,7 @@ jobs:
         run: node --test tools/test-customer-safeguards.mjs tools/test-marketplace-workflows.mjs tools/test-admin-offers.mjs
       - name: Booth publication and discovery
         run: node --test tools/test-service-discovery.mjs tools/test-business-sitemap.mjs tools/test-commercial-readiness.mjs tools/test-admin-business-lifecycle.mjs
+      - name: SEO indexation and discovery guardrails
+        run: node --test tools/test-seo-guardrails.mjs
       - run: npm run check:vinext
       - run: npm run build:vinext
