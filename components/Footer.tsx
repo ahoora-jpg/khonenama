@@ -22,6 +22,7 @@ const groups = [
       ["برآورد موکت", "/tools/carpet-estimator"],
       ["محاسبه کاغذ دیواری", "/tools/wallpaper-calculator"],
       ["برآورد خانه هوشمند", "/tools/smart-home-scope"],
+      ["محاسبه لومن نورپردازی", "/tools/lighting-estimator"],
     ],
   },
   {
