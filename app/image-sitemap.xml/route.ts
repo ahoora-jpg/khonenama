@@ -1,5 +1,6 @@
 import { guides } from "@/lib/guides";
 import { getCategoryVisual, getGuideVisual, getLocalVisual } from "@/lib/visuals";
+import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 
 const baseUrl = "https://khonenama.ir";
 
@@ -16,10 +17,19 @@ function imageEntry(pageUrl: string, imageUrl: string, caption: string) {
   return `  <url>\n    <loc>${escapeXml(pageUrl)}</loc>\n    <image:image>\n      <image:loc>${escapeXml(imageUrl)}</image:loc>\n      <image:caption>${escapeXml(caption)}</image:caption>\n    </image:image>\n  </url>`;
 }
 
-export const dynamic = "force-static";
+function multiImageEntry(pageUrl: string, images: { url: string; caption: string }[]) {
+  const imageXml = images
+    .filter((image) => image.url.startsWith("https://"))
+    .slice(0, 8)
+    .map((image) => `    <image:image>\n      <image:loc>${escapeXml(image.url)}</image:loc>\n      <image:caption>${escapeXml(image.caption)}</image:caption>\n    </image:image>`)
+    .join("\n");
+  return imageXml ? `  <url>\n    <loc>${escapeXml(pageUrl)}</loc>\n${imageXml}\n  </url>` : "";
+}
 
-export function GET() {
-  const categorySlugs = ["curtain", "flooring", "carpet", "wallpaper", "interior-design", "smart-home"];
+export const dynamic = "force-dynamic";
+
+export async function GET() {
+  const categorySlugs = ["lighting", "curtain", "flooring", "carpet", "wallpaper", "interior-design", "smart-home"];
 
   const homeEntry = imageEntry(
     `${baseUrl}/`,
@@ -42,11 +52,27 @@ export function GET() {
     return imageEntry(`${baseUrl}/magazine/${guide.slug}`, visual.src, visual.alt);
   });
 
+  const businesses = await listPublishedBusinesses({ requirePhoto: true, limit: 100 });
+  const businessEntries = businesses
+    .map((business) =>
+      multiImageEntry(
+        `${baseUrl}/business/${business.slug}`,
+        business.media
+          .filter((media) => media.kind !== "video" && Boolean(media.url))
+          .map((media) => ({
+            url: media.url,
+            caption: media.altText || `${business.name}؛ نمونه‌کار یا تصویر کسب‌وکار در ${business.city}${business.area ? "، " + business.area : ""}`,
+          }))
+      )
+    )
+    .filter(Boolean);
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${[
     homeEntry,
     ...categoryEntries,
     ...localEntries,
     ...guideEntries,
+    ...businessEntries,
   ].join("\n")}\n</urlset>\n`;
 
   return new Response(xml, {
