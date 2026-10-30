@@ -150,8 +150,9 @@ export default function BusinessDashboardContent() {
     const tasks = [
       { label: "تأیید شماره همراه", done: Boolean(profile.phoneVerified) },
       { label: "ثبت شهر و محدوده فعالیت", done: Boolean(profile.city && profile.serviceAreas?.length) },
-      { label: "افزودن تصاویر نمونه‌کار (تکمیل اختیاری)", done: Number(profile.mediaCount || 0) >= 1 },
-      { label: "ثبت خدمات اصلی", done: services.length > 0 },
+      { label: "نوشتن معرفی دقیق کسب‌وکار", done: String(profile.description || "").trim().length >= 80 },
+      { label: "افزودن حداقل ۳ تصویر واقعی از کار یا فروشگاه", done: Number(profile.mediaCount || 0) >= 3 },
+      { label: "ثبت خدمات اصلی و واقعی", done: services.length > 0 },
     ];
     return tasks;
   }, [profile, services.length]);
@@ -256,6 +257,9 @@ export default function BusinessDashboardContent() {
               {(services.length ? services : ["خدمات هنوز ثبت نشده"]).map((service) => <span key={service}>{service}</span>)}
             </div>
             <p>موقعیت فعلی: {location || "ثبت نشده"}</p>
+            {services.length > 60 && (
+              <p className="dashboard-source-note">تعداد خدمات انتخاب‌شده خیلی زیاد است. برای اینکه مشتری و موتور جست‌وجو تخصص واقعی غرفه را بهتر بفهمند، فقط خدماتی را نگه دارید که واقعاً ارائه می‌کنید و می‌توانید برایشان پاسخ، نمونه‌کار یا استعلام معتبر بدهید.</p>
+            )}
           </section>
 
           <p style={sectionStyle("settings")}><a href="/dashboard/campaigns">مدیریت کمپین و جشنواره</a> · <a href="/support">پشتیبانی و گزارش مشکل</a></p>
