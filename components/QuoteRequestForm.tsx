@@ -136,6 +136,7 @@ export default function QuoteRequestForm({
       }
 
       track(businessSlug, "quote_sent");
+      window.dispatchEvent(new CustomEvent("kn:seo-event", { detail: { event: "lead_submit", targetGroup: "contact" } }));
       setRequestCode(result.requestCode || "");
       setCustomerName("");
       setCustomerPhone("");
