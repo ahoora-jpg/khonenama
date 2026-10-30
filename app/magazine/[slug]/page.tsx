@@ -21,6 +21,10 @@ const SEO_METADATA_OVERRIDES: Record<string, { title?: string; description?: str
   "carpet-karaj-guide": { title: "موکت کرج | خرید، متراژ و نصب" },
   "interior-design-karaj-cost-guide": { title: "هزینه طراحی داخلی در کرج | روش قیمت‌گذاری" },
   "curtain-buying-guide": { title: "راهنمای انتخاب پرده منزل | مدل، اندازه و نصب" },
+  "minimalist-curtain-guide": {
+    title: "پرده مینیمال چیست؟ | مدل، ریل، دوخت و نصب",
+    description: "پرده مینیمال را برای پذیرایی و اتاق خواب از نظر مدل، ریل یا میل‌پرده، دوخت، نور، حریم خصوصی و هزینه نصب بررسی کنید.",
+  },
   "punch-curtain-guide": {
     title: "پرده پانچ چیست؟ | مدل، پارچه، حلقه و اندازه‌گیری",
     description: "مدل پرده پانچ، تعداد پنل، نوع پارچه و حلقه، ضریب جمع، اندازه‌گیری و تفاوت پرده آماده و سفارشی را قبل از خرید بررسی کنید.",
@@ -103,6 +107,15 @@ const SEO_METADATA_OVERRIDES: Record<string, { title?: string; description?: str
 };
 
 const PRIORITY_GUIDE_ACTIONS: Record<string, { title: string; text: string; links: { label: string; href: string }[] }> = {
+  "minimalist-curtain-guide": {
+    title: "مدل مینیمال را به ریل، متراژ و مجری واقعی وصل کنید",
+    text: "مینیمال نام یک سبک است، نه یک مکانیزم واحد؛ مدل دوخت، ریل یا میله، پارچه، لایه‌ها و ابعاد را مشخص کنید و بعد پیشنهاد فروشنده‌ها را مقایسه کنید.",
+    links: [
+      { label: "غرفه‌های مرتبط با پرده مینیمال", href: "/services/curtain/پرده-مینیمال" },
+      { label: "محاسبه متراژ پارچه پرده", href: "/tools/curtain-fabric-calculator" },
+      { label: "پرده و مجری در کرج", href: "/karaj/curtain" },
+    ],
+  },
   "punch-curtain-guide": {
     title: "مدل پانچ را به اندازه‌گیری و فروشنده واقعی وصل کنید",
     text: "برای پانچ، تعداد پنل، عرض پارچه در حالت صاف، حلقه و میله، ضریب جمع و ارتفاع نصب را قبل از سفارش مشخص کنید.",
