@@ -113,7 +113,7 @@ export const categorySeo: Record<string, CategorySeo> = {
       { question: "کاغذ دیواری برای فضای کوچک مناسب است؟", answer: "بله، اما طرح و رنگ باید با ابعاد و نور فضا هماهنگ شود تا فضا شلوغ یا کوچک‌تر دیده نشود." },
       { question: "چند رول کاغذ دیواری لازم دارم؟", answer: "به عرض کل دیوارها، ارتفاع، عرض و طول رول، Pattern Repeat و پرت بستگی دارد. برای برآورد سریع از محاسبه‌گر رول خونه نما استفاده کنید." }
     ],
-    guides: ["wall-moulding-decor-guide","wallpaper-primer-sizing-guide", "paste-the-wall-vs-paste-the-paper-guide", "peel-and-stick-vs-traditional-wallpaper", "wall-mural-guide", "marble-sheet-wallpanel-guide", "thermowall-guide", "pvc-mdf-wallpanel-guide", "wallpaper-guide", "wallpaper-vs-wallpanel", "washable-wallpaper-guide"]
+    guides: ["seismic-wallpaper-guide","wall-moulding-decor-guide","wallpaper-primer-sizing-guide", "paste-the-wall-vs-paste-the-paper-guide", "peel-and-stick-vs-traditional-wallpaper", "wall-mural-guide", "marble-sheet-wallpanel-guide", "thermowall-guide", "pvc-mdf-wallpanel-guide", "wallpaper-guide", "wallpaper-vs-wallpanel", "washable-wallpaper-guide"]
   },
   "interior-design": {
     slug: "interior-design",
