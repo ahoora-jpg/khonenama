@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import LocalSeoLanding from "@/components/LocalSeoLanding";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const title = "خانه هوشمند کرج | هوشمندسازی ساختمان و اجرا";
+  const title = "خانه هوشمند کرج | شرکت، اجرا و هزینه هوشمندسازی";
   const description =
-    "مجریان و شرکت‌های خانه هوشمند در کرج را برای طراحی و اجرای هوشمندسازی ساختمان، روشنایی، پرده برقی، امنیت، کنترل دما و زیرساخت مقایسه کنید.";
+    "شرکت‌ها و مجریان خانه هوشمند در کرج را برای اجرا و هزینه هوشمندسازی ساختمان، روشنایی، پرده برقی، امنیت، کنترل دما، زیرساخت و پشتیبانی مقایسه کنید.";
   const url = "https://khonenama.ir/karaj/smart-home";
 
   return {
