@@ -13,6 +13,7 @@ const sixDomainSeoRefreshDate = "2026-10-04";
 // Published PRs 36–39 changed guide discovery, the homepage and acquisition copy.
 // Keep this tied to the content publication date, not the current request date.
 const discoveryAndAcquisitionRefreshDate = "2026-10-18";
+const seoOpportunityBatchDate = "2026-10-31";
 
 // Business profiles change independently of code deploys. Generate the sitemap
 // at request time so search engines see newly publishable profiles without
@@ -27,7 +28,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/karaj/curtain/markets", lastModified: "2026-09-29", changeFrequency: "weekly", priority: 0.93 },
     { url: baseUrl + "/karaj/flooring", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.92 },
     { url: baseUrl + "/karaj/carpet", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.88 },
-    { url: baseUrl + "/karaj/wallpaper", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.88 },
+    { url: baseUrl + "/karaj/wallpaper", lastModified: seoOpportunityBatchDate, changeFrequency: "weekly", priority: 0.88 },
     { url: baseUrl + "/karaj/interior-design", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.9 },
     { url: baseUrl + "/karaj/smart-home", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.9 },
     { url: baseUrl + "/karaj/baraghan", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.92 },
@@ -40,10 +41,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/category/smart-home", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.86 },
     { url: baseUrl + "/magazine", lastModified: discoveryAndAcquisitionRefreshDate, changeFrequency: "weekly", priority: 0.86 },
     { url: baseUrl + "/tools", lastModified: discoveryAndAcquisitionRefreshDate, changeFrequency: "weekly", priority: 0.8 },
-    { url: baseUrl + "/tools/wallpaper-calculator", lastModified: "2026-10-15", changeFrequency: "monthly", priority: 0.84 },
+    { url: baseUrl + "/tools/wallpaper-calculator", lastModified: seoOpportunityBatchDate, changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/curtain-fabric-calculator", lastModified: "2026-10-15", changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/flooring-estimator", lastModified: "2026-10-15", changeFrequency: "monthly", priority: 0.86 },
-    { url: baseUrl + "/tools/smart-home-scope", lastModified: "2026-10-15", changeFrequency: "monthly", priority: 0.84 },
+    { url: baseUrl + "/tools/smart-home-scope", lastModified: seoOpportunityBatchDate, changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/carpet-estimator", lastModified: "2026-10-15", changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/for-business", lastModified: "2026-10-17", changeFrequency: "monthly", priority: 0.72 },
     { url: baseUrl + "/download-app", lastModified: "2026-10-04", changeFrequency: "monthly", priority: 0.64 },
@@ -55,6 +56,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/terms", changeFrequency: "monthly", priority: 0.3 },
   ];
 
+  const seoOpportunityGuides = new Set([
+    "wallpaper-guide",
+    "wall-mural-guide",
+    "thermowall-guide",
+    "water-leak-sensor-guide",
+    "roman-curtain-guide",
+    "zebra-vs-roman-shade",
+    "carpet-bedroom-guide",
+    "carpet-types-guide",
+    "zebra-curtain-guide",
+    "shade-curtain-guide",
+    "curtain-installation-guide",
+    "smart-home-without-internet-guide",
+  ]);
+
   const refreshedGuides = new Set([
     "curtain-installation-guide",
     "shade-curtain-guide",
@@ -65,9 +81,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const guidePages: MetadataRoute.Sitemap = guides.map((guide) => ({
     url: baseUrl + "/magazine/" + guide.slug,
-    lastModified: guide.relatedCategory
-      ? [sixDomainSeoRefreshDate, guide.modifiedAt || guide.publishedAt || "2026-09-19"].sort().at(-1)
-      : refreshedGuides.has(guide.slug)
+    lastModified: seoOpportunityGuides.has(guide.slug)
+      ? seoOpportunityBatchDate
+      : guide.relatedCategory
+        ? [sixDomainSeoRefreshDate, guide.modifiedAt || guide.publishedAt || "2026-09-19"].sort().at(-1)
+        : refreshedGuides.has(guide.slug)
         ? seoRefreshDate
         : guide.modifiedAt || guide.publishedAt || "2026-09-19",
     changeFrequency: guide.category === "راهنمای محلی" ? "weekly" : "monthly",
