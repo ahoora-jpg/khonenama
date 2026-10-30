@@ -45,6 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/tools/curtain-fabric-calculator", lastModified: "2026-10-15", changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/flooring-estimator", lastModified: "2026-10-15", changeFrequency: "monthly", priority: 0.86 },
     { url: baseUrl + "/tools/smart-home-scope", lastModified: seoOpportunityBatchDate, changeFrequency: "monthly", priority: 0.84 },
+    { url: baseUrl + "/tools/lighting-estimator", lastModified: seoOpportunityBatchDate, changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/tools/carpet-estimator", lastModified: seoOpportunityBatchDate, changeFrequency: "monthly", priority: 0.84 },
     { url: baseUrl + "/for-business", lastModified: "2026-10-17", changeFrequency: "monthly", priority: 0.72 },
     { url: baseUrl + "/download-app", lastModified: "2026-10-04", changeFrequency: "monthly", priority: 0.64 },
