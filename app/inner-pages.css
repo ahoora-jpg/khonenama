@@ -123,6 +123,12 @@
   .profile-featured { display: inline-block; margin-top: 10px; }
   .profile-meta-grid { grid-template-columns: 1fr; }
   .profile-actions { flex-direction: column; }
+  .business-profile-page .profile-name-line { align-items: flex-start; flex-wrap: wrap; }
+  .business-profile-page .profile-name-line h1 { flex: 1 1 100%; min-width: 0; max-width: 100%; white-space: normal; word-break: normal; overflow-wrap: break-word; letter-spacing: -1px; }
+  .business-profile-page .profile-title-row p { font-size: 16px; line-height: 1.9; }
+  .business-profile-page .profile-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .business-profile-page .profile-actions .pill-button { min-width: 0; justify-content: center; padding-inline: 10px; font-size: 13px; }
+  .business-profile-page .profile-actions .pill-button:first-child { grid-column: 1 / -1; }
   .portfolio-placeholder-grid { grid-template-columns: 1fr 1fr; min-height: 380px; }
   .portfolio-placeholder-grid div:first-child { grid-column: span 2; }
   .two-columns { grid-template-columns: 1fr; }

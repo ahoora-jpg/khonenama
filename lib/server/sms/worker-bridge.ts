@@ -7,7 +7,7 @@ let controlInFlight=0;
 let unavailableUntil=0;
 
 /** Dispatch the machine API before the HTML router, preserving its security boundary. */
-export async function handleWorkerBridge(request: Request, db: any,options:{queue?:SmsEventQueue;rateLimiter?:{limit(input:{key:string}):Promise<{success:boolean}>}}={}): Promise<Response> {
+export async function handleWorkerBridge(request: Request, db: any,options:{migrating?:boolean;queue?:SmsEventQueue;rateLimiter?:{limit(input:{key:string}):Promise<{success:boolean}>}}={}): Promise<Response> {
   const requestId=smsRequestId(request),started=Date.now();let action='unknown';
   const protect = (response: Response) => {
     for (const [key,value] of Object.entries(securityHeaders)) response.headers.set(key,value);
@@ -34,7 +34,7 @@ export async function handleWorkerBridge(request: Request, db: any,options:{queu
   action=String(input.action||'');
   if(!['heartbeat','inboxSenders','inboxHealthy','claim','authorize','reconcile','report','inbound'].includes(action))return fail(400,'UNKNOWN_ACTION');
   if(options.rateLimiter&&!(await options.rateLimiter.limit({key:'sms-bridge-agent'})).success){const r=fail(429,'RATE_LIMITED');r.headers.set('Retry-After','60');return r;}
-  const asyncEvents=options.queue&&request.headers.get('x-sms-event-protocol')==='1'&&['report','inbound'].includes(action);
+  const asyncEvents=options.queue&&(request.headers.get('x-sms-event-protocol')==='1'||options.migrating)&&['report','inbound'].includes(action);
   if(asyncEvents){
     const clean:Record<string,unknown>={action};
     if(action==='report'){
@@ -48,6 +48,7 @@ export async function handleWorkerBridge(request: Request, db: any,options:{queu
     try{await persistSmsEvent(db,options.queue!,event);return protect(Response.json({ok:true,accepted:true,eventId:event.id},{status:202}));}
     catch(error){const failure=smsFailure(error);smsLog('not_accepted',{requestId,eventType:action,eventId:event.id,reason:failure.code});const r=fail(failure.transient?503:409,failure.transient?'BRIDGE_UNAVAILABLE':failure.code);r.headers.set('Retry-After','30');return r;}
   }
+  if(options.migrating){const r=fail(429,'SMS_MIGRATION_RETRY');r.headers.set('Retry-After','30');return r;}
   if(Date.now()<unavailableUntil){const r=fail(503,'BRIDGE_UNAVAILABLE');r.headers.set('Retry-After',String(Math.max(1,Math.ceil((unavailableUntil-Date.now())/1000))));return r;}
   if(controlInFlight>=8){const r=fail(429,'BRIDGE_BUSY');r.headers.set('Retry-After','2');return r;}
   controlInFlight++;

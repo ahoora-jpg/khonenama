@@ -128,7 +128,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     ],
     mainEntity: { "@id": categoryUrl + "#businesses" },
     publisher: { "@id": "https://khonenama.ir/#organization" },
-    publishingPrinciples: "https://khonenama.ir/editorial-policy",
   };
 
   const breadcrumbJsonLd = {
@@ -171,7 +170,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               <span className="section-kicker">راهنمای تخصصی خونه نما</span>
               <h1>{seo.h1}</h1>
               <p>{seo.intro}</p>
-              <a href="/editorial-policy">روش تدوین و بررسی راهنماهای خونه نما</a>
             </div>
             <img src={visual.src} alt={visual.alt} width={visual.width} height={visual.height} loading="eager" fetchPriority="high" decoding="async" />
           </div>

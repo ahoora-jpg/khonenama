@@ -28,6 +28,8 @@ export async function createSmsCookie(){
   return `${COOKIE}=${expiry}.${signature}; Path=/api/admin/sms; HttpOnly; Secure; SameSite=Strict; Max-Age=${HOURS*3600}`;
 }
 export async function isSmsAdminRequest(request:Request){
+  const internal=String((env as any).SMS_INTERNAL_TOKEN||'');
+  if((env as any).SMS_ROLE==='panel'&&internal&&equal(request.headers.get('x-sms-internal-admin')||'',internal))return true;
   if(!await isAdminRequest(request))return false;
   const secret=String((env as any).SMS_ADMIN_ACCESS_KEY||"");
   if(!secret)return true; // The existing site administrator is the initial single-operator role.

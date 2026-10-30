@@ -1,7 +1,7 @@
-export type SmsEventType = 'click' | 'stage' | 'conversion' | 'bridge_report' | 'bridge_inbound' | 'access_state';
+export type SmsEventType = 'click' | 'stage' | 'conversion' | 'bridge_report' | 'bridge_inbound' | 'access_state' | 'site_sync';
 export type SmsEvent = {version:1;id:string;type:SmsEventType;requestId:string;occurredAt:string;payload:Record<string,any>};
 export type SmsEventQueue = {send(event:unknown):Promise<unknown>};
-const eventTypes = new Set(['click','stage','conversion','bridge_report','bridge_inbound','access_state']);
+const eventTypes = new Set(['click','stage','conversion','bridge_report','bridge_inbound','access_state','site_sync']);
 const recentAcceptances=new WeakMap<object,Map<string,{hash:string;expires:number}>>();
 export class SmsEventError extends Error {
   constructor(public code:string,public transient=true){super(code);}

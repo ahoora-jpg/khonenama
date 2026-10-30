@@ -67,6 +67,63 @@ const SEO_METADATA_OVERRIDES: Record<string, { title?: string; description?: str
   "interior-design-trends-2026": { title: "ترندهای طراحی داخلی ۲۰۲۶ | رنگ، بافت و فناوری" },
 };
 
+const PRIORITY_GUIDE_ACTIONS: Record<string, { title: string; text: string; links: { label: string; href: string }[] }> = {
+  "zebra-curtain-guide": {
+    title: "از راهنما به انتخاب فروشنده و استعلام برسید",
+    text: "اگر مدل زبرا را انتخاب کرده‌اید، مرحله بعد مقایسه کسب‌وکارهای مرتبط، بررسی نمونه‌کار و آماده‌کردن ابعاد برای استعلام است.",
+    links: [
+      { label: "غرفه‌های مرتبط با پرده زبرا", href: "/services/curtain/پرده-زبرا" },
+      { label: "پرده‌فروشی‌ها و خدمات پرده در کرج", href: "/karaj/curtain" },
+      { label: "محاسبه متراژ پارچه پرده", href: "/tools/curtain-fabric-calculator" },
+    ],
+  },
+  "shade-curtain-guide": {
+    title: "شید را با فروشنده، نصب و گزینه‌های جایگزین مقایسه کنید",
+    text: "بعد از انتخاب نوع شید، موجودی واقعی، مکانیزم، ابعاد، نصب و نمونه‌کار فروشنده را بررسی کنید و شید را با زبرا برای نیاز نور و حریم خصوصی مقایسه کنید.",
+    links: [
+      { label: "غرفه‌های مرتبط با پرده شید", href: "/services/curtain/پرده-شید" },
+      { label: "پرده و خدمات پرده در کرج", href: "/karaj/curtain" },
+      { label: "مقایسه زبرا و شید", href: "/magazine/zebra-vs-shade" },
+    ],
+  },
+  "curtain-installation-guide": {
+    title: "برای نصب واقعی، ابعاد و مجری را مشخص کنید",
+    text: "محل نصب سقفی یا دیواری را قبل از اندازه‌گیری نهایی تعیین کنید؛ سپس خدمات نصب و کسب‌وکارهای محلی را مقایسه کنید.",
+    links: [
+      { label: "خدمات نصب پرده", href: "/services/curtain/نصب-پرده" },
+      { label: "پرده و نصاب در کرج", href: "/karaj/curtain" },
+      { label: "محاسبه متراژ پارچه", href: "/tools/curtain-fabric-calculator" },
+    ],
+  },
+  "smart-home-without-internet-guide": {
+    title: "قبل از خرید، معماری کنترل خانه هوشمند را مشخص کنید",
+    text: "برای پروژه واقعی، مشخص کنید کدام سناریوها باید بدون اینترنت کار کنند و بعد Scope تجهیزات، مجری و روش کنترل محلی را مقایسه کنید.",
+    links: [
+      { label: "برآورد اولیه خانه هوشمند", href: "/tools/smart-home-scope" },
+      { label: "خانه هوشمند در کرج", href: "/karaj/smart-home" },
+      { label: "راهنمای جامع خانه هوشمند", href: "/category/smart-home" },
+    ],
+  },
+  "carpet-bedroom-guide": {
+    title: "متراژ و گزینه‌های واقعی موکت را مقایسه کنید",
+    text: "بعد از انتخاب پرز و جنس، مقدار خرید را برآورد کنید و فروشگاه یا مجری را بر اساس نمونه واقعی، نصب و شرایط فضا مقایسه کنید.",
+    links: [
+      { label: "محاسبه متراژ موکت", href: "/tools/carpet-estimator" },
+      { label: "موکت و خدمات موکت در کرج", href: "/karaj/carpet" },
+      { label: "راهنمای جامع موکت", href: "/category/carpet" },
+    ],
+  },
+  "carpet-types-guide": {
+    title: "نوع موکت را به مقدار خرید و فروشنده واقعی وصل کنید",
+    text: "برای رول یا تایل، فقط نوع موکت کافی نیست؛ متراژ، پرت، زیرسازی و خدمات نصب را هم در انتخاب نهایی وارد کنید.",
+    links: [
+      { label: "محاسبه متراژ موکت", href: "/tools/carpet-estimator" },
+      { label: "موکت در کرج", href: "/karaj/carpet" },
+      { label: "مقایسه رول و تایل", href: "/magazine/roll-carpet-vs-carpet-tile" },
+    ],
+  },
+};
+
 const curtainInstallationExtraFaqs = [
   {
     question: "نصب پرده دیواری چه زمانی مناسب‌تر است؟",
@@ -185,6 +242,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const quickAnswer = isCurtainInstallation
     ? "برای نصب پرده دیواری، پایه‌ها روی دیوار بالای قاب یا در محل مناسب اطراف پنجره بسته می‌شوند؛ برای نصب سقفی، پایه به سقف متصل می‌شود. انتخاب بین این دو به جنس سطح، فضای بازشو، عرض پوشش موردنیاز و مسیر تأسیسات بستگی دارد. قبل از سفارش زبرا یا شید، محل نصب را مشخص و عرض و ارتفاع را بر همان مبنا اندازه‌گیری کنید."
     : guide.quickAnswer || fallbackQuickAnswer || guide.excerpt;
+  const priorityActions = PRIORITY_GUIDE_ACTIONS[guide.slug];
   const relatedGuides = getRelatedGuides(guide);
   const relatedServices = [...new Map(serviceCatalog.filter(item=>item.guide===guide.slug).map(item=>[servicePath(item),item])).values()].slice(0,8);
   const visibleFaqs = isCurtainInstallation
@@ -202,7 +260,6 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     mainEntityOfPage: "https://khonenama.ir/magazine/" + guide.slug,
     author: { "@id": "https://khonenama.ir/#organization" },
     publisher: { "@id": "https://khonenama.ir/#organization" },
-    publishingPrinciples: "https://khonenama.ir/editorial-policy",
     keywords: enhancedKeywords(guide.slug, guide.keywords).join(", "),
     articleSection: guide.category,
     abstract: quickAnswer || guide.excerpt,
@@ -264,7 +321,6 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               <span><Clock3 size={14} /> {guide.readTime}</span>
               <span>به‌روزرسانی: {guide.updated}</span>
               <a href="/about">درباره خونه نما</a>
-              <a href="/editorial-policy">سیاست تحریریه</a>
             </div>
           </header>
 
@@ -272,6 +328,19 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             <section className="guide-quick-answer glass-panel" aria-label="پاسخ کوتاه">
               <span className="section-kicker">پاسخ کوتاه</span>
               <p>{quickAnswer}</p>
+            </section>
+          )}
+
+          {priorityActions && (
+            <section className="guide-quick-answer glass-panel" aria-label="مسیر اقدام بعد از مطالعه">
+              <span className="section-kicker">مرحله بعد</span>
+              <h2>{priorityActions.title}</h2>
+              <p>{priorityActions.text}</p>
+              <div className="guide-meta">
+                {priorityActions.links.map((link) => (
+                  <a key={link.href} href={link.href}>{link.label} <ArrowUpLeft size={14} /></a>
+                ))}
+              </div>
             </section>
           )}
 
@@ -457,13 +526,6 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               <PreferredSourceCTA compact />
 
               {relatedServices.length > 0 && <div className="guide-side-card glass-panel"><h3>خدمات مرتبط با این راهنما</h3><p>انتخاب یک خدمت در غرفه، اعلام زمینه فعالیت است؛ موجودی و شرایط اجرا را با کسب‌وکار تأیید کنید.</p><ul>{relatedServices.map(item=><li key={servicePath(item)}><a href={servicePath(item)}>{item.name}</a></li>)}</ul></div>}
-
-              <div className="guide-side-card glass-panel">
-                <span className="section-kicker">شفافیت تحریریه</span>
-                <h3>این راهنما چطور تهیه می‌شود؟</h3>
-                <p>روش نگارش، استفاده از منابع، به‌روزرسانی محتوا و سیاست خونه نما درباره داده‌های واقعی را ببینید.</p>
-                <a href="/editorial-policy">مشاهده سیاست تحریریه <ArrowUpLeft size={15} /></a>
-              </div>
 
               <div className="guide-side-card glass-panel">
                 <Link2 size={18} />
