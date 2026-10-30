@@ -1,4 +1,4 @@
-import { ArrowUpLeft, Calculator, Grid3X3, HousePlug, Layers3, Scissors } from "lucide-react";
+import { ArrowUpLeft, Calculator, Grid3X3, HousePlug, Layers3, Lightbulb, Scissors } from "lucide-react";
 
 const toolsList = [
   {
@@ -31,6 +31,13 @@ const toolsList = [
     text: "تعداد نقاط پروژه را مشخص کنید تا پیشنهاد مجری‌ها قابل مقایسه‌تر شود.",
     href: "/tools/smart-home-scope",
     icon: HousePlug,
+  },
+  {
+    eyebrow: "نورپردازی",
+    title: "محاسبه لومن و لوکس",
+    text: "مساحت و لوکس هدف را وارد کنید و لومن نظری روی سطح را برای برنامه‌ریزی اولیه ببینید.",
+    href: "/tools/lighting-estimator",
+    icon: Lightbulb,
   },
 ] as const;
 
