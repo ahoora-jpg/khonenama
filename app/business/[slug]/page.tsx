@@ -29,6 +29,7 @@ const categorySeoLabels: Record<string, string> = {
   wallpaper: "کاغذ دیواری و دیوارپوش",
   "interior-design": "طراحی و دکوراسیون داخلی",
   "smart-home": "خانه هوشمند و پرده برقی",
+  lighting: "نورپردازی داخلی منزل",
 };
 
 const resolveBusiness = cache(async (slug: string) => {
