@@ -1,5 +1,6 @@
 import { env } from "cloudflare:workers";
 import { isAdminRequest } from "@/lib/server/admin-session";
+import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 
 async function ensureTable(db: any) {
   await db.prepare(`CREATE TABLE IF NOT EXISTS seo_journey_daily (
@@ -20,7 +21,7 @@ export async function GET(request: Request) {
   const db = (env as any).DB;
   await ensureTable(db);
 
-  const [sources, pages, events, targets, daily] = await Promise.all([
+  const [sources, pages, events, targets, daily, businesses] = await Promise.all([
     db.prepare(`SELECT source,SUM(total) total FROM seo_journey_daily
       WHERE event='page_view' AND event_date>=date('now','-29 days')
       GROUP BY source ORDER BY total DESC`).all(),
@@ -35,7 +36,23 @@ export async function GET(request: Request) {
     db.prepare(`SELECT event_date,source,SUM(total) total FROM seo_journey_daily
       WHERE event='page_view' AND event_date>=date('now','-29 days')
       GROUP BY event_date,source ORDER BY event_date ASC`).all(),
+    listPublishedBusinesses({ limit: 200 }),
   ]);
+
+  const inventory = {
+    published: businesses.length,
+    withPhoto: businesses.filter((item: any) => item.media?.some((media: any) => media.kind !== "video" && media.url)).length,
+    withThreePhotos: businesses.filter((item: any) => item.media?.filter((media: any) => media.kind !== "video" && media.url).length >= 3).length,
+    withReviews: businesses.filter((item: any) => Number(item.reviewCount || 0) > 0).length,
+    withUsefulDescription: businesses.filter((item: any) => String(item.description || "").trim().length >= 80).length,
+    overlyBroadServices: businesses.filter((item: any) => Array.isArray(item.services) && item.services.length > 60).length,
+  };
+  const cityMap = new Map<string, number>();
+  for (const item of businesses as any[]) {
+    const city = String(item.city || "نامشخص");
+    cityMap.set(city, (cityMap.get(city) || 0) + 1);
+  }
+  const cities = [...cityMap.entries()].map(([city,total]) => ({ city, total })).sort((a,b) => b.total - a.total);
 
   return Response.json({
     ok: true,
@@ -45,5 +62,7 @@ export async function GET(request: Request) {
     events: events.results || [],
     targets: targets.results || [],
     daily: daily.results || [],
+    inventory,
+    cities,
   }, { headers: { "Cache-Control": "private, no-store" } });
 }
