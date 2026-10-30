@@ -81,6 +81,7 @@
 
 ## Trust
 - خونه نما چیست؟ https://khonenama.ir/about
+- اصول محتوا و صحت اطلاعات: https://khonenama.ir/content-principles
 - راهنما و پشتیبانی: https://khonenama.ir/help
 - حریم خصوصی: https://khonenama.ir/privacy
 - قوانین: https://khonenama.ir/terms
