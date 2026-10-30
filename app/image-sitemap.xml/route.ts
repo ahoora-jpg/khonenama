@@ -1,6 +1,6 @@
 import { guides } from "@/lib/guides";
 import { getCategoryVisual, getGuideVisual, getLocalVisual } from "@/lib/visuals";
-import { listPublishedBusinesses } from "@/lib/server/public-businesses";
+import { listPublishedBusinessImageSitemapEntries } from "@/lib/server/business-image-sitemap";
 
 const baseUrl = "https://khonenama.ir";
 
@@ -53,17 +53,12 @@ export async function GET() {
     return imageEntry(`${baseUrl}/magazine/${guide.slug}`, visual.src, visual.alt);
   });
 
-  const businesses = await listPublishedBusinesses({ requirePhoto: true, limit: 100 });
+  const businesses = await listPublishedBusinessImageSitemapEntries();
   const businessEntries = businesses
     .map((business) =>
       multiImageEntry(
         `${baseUrl}/business/${business.slug}`,
-        business.media
-          .filter((media) => media.kind !== "video" && Boolean(media.url))
-          .map((media) => ({
-            url: media.url,
-            caption: media.altText || `${business.name}؛ نمونه‌کار یا تصویر کسب‌وکار در ${business.city}${business.area ? "، " + business.area : ""}`,
-          }))
+        business.images
       )
     )
     .filter(Boolean);
