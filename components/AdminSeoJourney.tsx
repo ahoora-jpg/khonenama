@@ -54,6 +54,19 @@ export default function AdminSeoJourney() {
       {message && <p role="status">{message}</p>}
       {data && <>
         <article className="dashboard-panel glass-panel">
+          <h2>کیفیت موجودی واقعی بازار</h2>
+          <div className="analytics-mini-grid">
+            <div><strong>{Number(data.inventory?.published || 0).toLocaleString("fa-IR")}</strong><span>غرفه منتشرشده</span></div>
+            <div><strong>{Number(data.inventory?.withPhoto || 0).toLocaleString("fa-IR")}</strong><span>حداقل یک عکس</span></div>
+            <div><strong>{Number(data.inventory?.withThreePhotos || 0).toLocaleString("fa-IR")}</strong><span>حداقل ۳ عکس</span></div>
+            <div><strong>{Number(data.inventory?.withReviews || 0).toLocaleString("fa-IR")}</strong><span>دارای نظر واقعی</span></div>
+            <div><strong>{Number(data.inventory?.withUsefulDescription || 0).toLocaleString("fa-IR")}</strong><span>معرفی ۸۰+ نویسه</span></div>
+            <div><strong>{Number(data.inventory?.overlyBroadServices || 0).toLocaleString("fa-IR")}</strong><span>خدمات بیش‌ازحد گسترده</span></div>
+          </div>
+          <h3>توزیع شهرها</h3>
+          {table(data.cities || [], [["city","شهر"],["total","غرفه"]])}
+        </article>
+        <article className="dashboard-panel glass-panel">
           <h2>منبع ورود صفحه‌ها</h2>
           {table(data.sources, [["source","منبع"],["total","بازدید"]])}
         </article>
