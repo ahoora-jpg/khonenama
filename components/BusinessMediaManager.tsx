@@ -315,9 +315,11 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
                   <input
                     value={altDraft}
                     onChange={(event) => setAltDraft(event.target.value)}
-                    placeholder="نام و شرح کوتاه عکس"
+                    placeholder="مثلاً: پرده زبرا طوسی نصب‌شده در پذیرایی کرج"
+                    aria-describedby={"media-alt-help-" + item.id}
                     maxLength={300}
                   />
+                  <small id={"media-alt-help-" + item.id}>آنچه واقعاً در عکس دیده می‌شود را کوتاه و طبیعی بنویسید؛ نام خدمت، نوع اجرا یا محل پروژه را فقط اگر واقعی است اضافه کنید.</small>
                   <button
                     type="button"
                     onClick={async () => {
