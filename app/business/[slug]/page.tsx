@@ -217,7 +217,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
     address: {
       "@type": "PostalAddress",
       addressLocality: business.city,
-      streetAddress: business.address || business.area,
+      streetAddress: business.address || undefined,
       addressCountry: "IR",
     },
     areaServed: business.city,
