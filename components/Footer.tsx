@@ -40,6 +40,7 @@ const groups = [
     title: "خونه نما",
     links: [
       ["خونه نما چیست؟", "/about"],
+      ["اصول محتوا و صحت اطلاعات", "/content-principles"],
       ["راهنما و پشتیبانی", "/help"],
       ["ابزارهای خونه نما", "/tools"],
       ["ثبت کسب‌وکار", "/register-business"],
