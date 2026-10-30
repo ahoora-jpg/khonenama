@@ -65,6 +65,14 @@ export default function AdminSeoJourney() {
           </div>
           <h3>توزیع شهرها</h3>
           {table(data.cities || [], [["city","شهر"],["total","غرفه"]])}
+          <h3>غرفه‌های نیازمند تکمیل</h3>
+          {table(data.needsAttention || [], [
+            ["name","غرفه"],["city","شهر"],["photo_count","عکس"],
+            ["review_count","نظر"],["description_length","طول معرفی"],["service_count","خدمت"]
+          ])}
+          <h3>تراکم واقعی شهر × دسته</h3>
+          <p>این جدول مبنای تصمیم برای ساخت یا تقویت لندینگ‌های محلی است؛ صفحه شهری بدون موجودی واقعی ساخته نشود.</p>
+          {table(data.localDensity || [], [["city","شهر"],["category","دسته"],["total","غرفه"]])}
         </article>
         <article className="dashboard-panel glass-panel">
           <h2>منبع ورود صفحه‌ها</h2>
