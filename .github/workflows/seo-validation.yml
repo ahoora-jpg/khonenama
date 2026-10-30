@@ -1,0 +1,24 @@
+name: SEO Validation
+
+on:
+  push:
+    branches:
+      - seo-ci-validation-2026-10-31
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm audit --audit-level=high
+      - run: npx tsc --noEmit
+      - name: SEO guardrails
+        run: node --test tools/test-seo-guardrails.mjs tools/test-editorial-policy-removal.mjs
+      - name: Marketplace and SMS regression subset
+        run: node --experimental-strip-types --test tools/test-sms-isolation.mjs tools/test-service-discovery.mjs tools/test-business-sitemap.mjs
+      - run: npm run build
