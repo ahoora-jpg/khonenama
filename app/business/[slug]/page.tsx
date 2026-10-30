@@ -118,7 +118,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: { absolute: title },
     description,
     alternates: { canonical: "/business/" + slug },
-    robots: isInternalTestBusinessSlug(slug) ? { index: false, follow: false } : undefined,
+    robots: business.source === "demo" || isInternalTestBusinessSlug(slug) ? { index: false, follow: false } : undefined,
     openGraph: {
       title,
       description,
