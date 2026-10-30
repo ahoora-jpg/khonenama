@@ -22,7 +22,7 @@ export async function GET(request: Request) {
 
   await db.prepare("CREATE TABLE IF NOT EXISTS business_visibility_controls (business_id INTEGER PRIMARY KEY,owner_paused INTEGER NOT NULL DEFAULT 0,updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run();
 
-  const [sources, pages, events, targets, daily, inventoryRow, citiesResult] = await Promise.all([
+  const [sources, pages, events, targets, daily, inventoryRow, citiesResult, attentionResult, densityResult] = await Promise.all([
     db.prepare(`SELECT source,SUM(total) total FROM seo_journey_daily
       WHERE event='page_view' AND event_date>=date('now','-29 days')
       GROUP BY source ORDER BY total DESC`).all(),
@@ -73,6 +73,47 @@ export async function GET(request: Request) {
         )
       GROUP BY COALESCE(NULLIF(trim(b.city),''),'نامشخص')
       ORDER BY total DESC`).all(),
+    db.prepare(`SELECT b.slug,b.name,COALESCE(NULLIF(trim(b.city),''),'نامشخص') city,
+      length(trim(COALESCE(b.description,''))) description_length,
+      (SELECT COUNT(*) FROM business_media m
+        WHERE m.business_id=b.id AND m.kind IN ('cover','image')
+          AND COALESCE(m.media_type,'image')<>'video' AND length(trim(COALESCE(m.file_url,'')))>0) photo_count,
+      (SELECT COUNT(*) FROM reviews r WHERE r.business_id=b.id AND r.status='published') review_count,
+      (SELECT COUNT(*) FROM business_services bs WHERE bs.business_id=b.id) service_count
+      FROM businesses b
+      WHERE b.status='published'
+        AND b.slug NOT GLOB 'ghrfh-azmayshy-tbdyl-[0-9]*-thran'
+        AND b.slug <> 'alayy-dkvr-krj'
+        AND NOT EXISTS (
+          SELECT 1 FROM business_visibility_controls v WHERE v.business_id=b.id AND v.owner_paused=1
+        )
+        AND (
+          length(trim(COALESCE(b.description,'')))<80
+          OR (SELECT COUNT(*) FROM business_media m
+              WHERE m.business_id=b.id AND m.kind IN ('cover','image')
+                AND COALESCE(m.media_type,'image')<>'video' AND length(trim(COALESCE(m.file_url,'')))>0)<3
+          OR NOT EXISTS (SELECT 1 FROM reviews r WHERE r.business_id=b.id AND r.status='published')
+          OR (SELECT COUNT(*) FROM business_services bs WHERE bs.business_id=b.id)>60
+        )
+      ORDER BY
+        CASE WHEN (SELECT COUNT(*) FROM business_media m
+          WHERE m.business_id=b.id AND m.kind IN ('cover','image')
+            AND COALESCE(m.media_type,'image')<>'video' AND length(trim(COALESCE(m.file_url,'')))>0)<3 THEN 1 ELSE 0 END DESC,
+        CASE WHEN length(trim(COALESCE(b.description,'')))<80 THEN 1 ELSE 0 END DESC,
+        b.id DESC LIMIT 100`).all(),
+    db.prepare(`SELECT COALESCE(NULLIF(trim(b.city),''),'نامشخص') city,
+      COALESCE(c.slug,'uncategorized') category,COUNT(DISTINCT b.id) total
+      FROM businesses b
+      LEFT JOIN business_categories bc ON bc.business_id=b.id AND bc.is_primary=1
+      LEFT JOIN categories c ON c.id=bc.category_id
+      WHERE b.status='published'
+        AND b.slug NOT GLOB 'ghrfh-azmayshy-tbdyl-[0-9]*-thran'
+        AND b.slug <> 'alayy-dkvr-krj'
+        AND NOT EXISTS (
+          SELECT 1 FROM business_visibility_controls v WHERE v.business_id=b.id AND v.owner_paused=1
+        )
+      GROUP BY COALESCE(NULLIF(trim(b.city),''),'نامشخص'),COALESCE(c.slug,'uncategorized')
+      ORDER BY total DESC,city ASC,category ASC`).all(),
   ]);
 
   const inventory = {
@@ -84,6 +125,8 @@ export async function GET(request: Request) {
     overlyBroadServices: Number(inventoryRow?.overly_broad_services || 0),
   };
   const cities = citiesResult.results || [];
+  const needsAttention = attentionResult.results || [];
+  const localDensity = densityResult.results || [];
 
   return Response.json({
     ok: true,
@@ -95,5 +138,7 @@ export async function GET(request: Request) {
     daily: daily.results || [],
     inventory,
     cities,
+    needsAttention,
+    localDensity,
   }, { headers: { "Cache-Control": "private, no-store" } });
 }
