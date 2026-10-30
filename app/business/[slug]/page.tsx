@@ -11,7 +11,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import QuoteRequestForm from "@/components/QuoteRequestForm";
 import BusinessAnalyticsTracker from "@/components/BusinessAnalyticsTracker";
-import SavedBusinessButton from "@/components/SavedBusinessButton";
 import SupportForm from "@/components/SupportForm";
 import PublicCampaigns from "@/components/PublicCampaigns";
 import BusinessReviews from "@/components/BusinessReviews";
@@ -247,7 +246,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
               <div className="profile-title-row">
                 <div>
                   <div className="profile-name-line">
-                    <h1>{business.name}</h1>{business.source !== "demo" && <SavedBusinessButton slug={business.slug}/>}
+                    <h1>{business.name}</h1>
                     {business.source === "demo" && <span className="demo-profile-pill">نمونه نمایشی</span>}
                     {business.verified && <span title="تأیید کسب‌وکار؛ مستقل از اشتراک و امتیاز مشتری" aria-label="کسب‌وکار تأییدشده"><BadgeCheck size={22} className="verified-icon" /></span>}
                     {business.planCode === "pro" && (
