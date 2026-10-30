@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { ArrowUpLeft, Calculator, Grid3X3, HousePlug, Layers3, Scissors } from "lucide-react";
+import { ArrowUpLeft, Calculator, Grid3X3, HousePlug, Layers3, Lightbulb, Scissors } from "lucide-react";
 
 const url = "https://khonenama.ir/tools";
 const title = "ابزارهای خونه نما | محاسبه‌گرهای دکوراسیون و خانه";
 const description =
-  "ابزارهای رایگان خونه نما برای محاسبه کاغذ دیواری، پرده، پارکت و لمینت، موکت و ساخت Scope اولیه خانه هوشمند.";
+  "ابزارهای رایگان خونه نما برای محاسبه کاغذ دیواری، پرده، پارکت و لمینت، موکت، لومن نورپردازی و ساخت Scope اولیه خانه هوشمند.";
 
 export const metadata: Metadata = {
   title: { absolute: title },
@@ -41,6 +41,11 @@ const toolFaqs = [
     question: "برای پارکت و لمینت چطور تعداد بسته را حساب کنیم؟",
     answer:
       "مساحت فضا را با درصد پرت جمع کنید و حاصل را بر پوشش مترمربعی هر بسته تقسیم کنید. چون خرید معمولاً به بسته کامل انجام می‌شود، نتیجه باید رو به بالا گرد شود.",
+  },
+  {
+    question: "لومن، لوکس و وات چه تفاوتی دارند؟",
+    answer:
+      "لومن مقدار نور خروجی، لوکس روشنایی روی سطح و وات توان مصرفی را بیان می‌کند. ابزار نورپردازی خونه نما از مساحت و لوکس هدف، لومن نظری روی سطح را برای برآورد اولیه محاسبه می‌کند.",
   },
 ] as const;
 
@@ -80,6 +85,11 @@ const collectionJsonLd = {
       name: "محاسبه متراژ موکت رول و تایلی",
       url: "https://khonenama.ir/tools/carpet-estimator",
     },
+    {
+      "@type": "WebApplication",
+      name: "محاسبه لومن و لوکس نورپردازی",
+      url: "https://khonenama.ir/tools/lighting-estimator",
+    },
   ],
 };
 
@@ -111,7 +121,7 @@ export default function ToolsPage() {
             <h1>کمتر حدس بزن؛ دقیق‌تر اندازه بگیر.</h1>
             <p>
               ابزارهای کاربردی برای محاسبه، اندازه‌گیری و تصمیم‌گیری قبل از خرید یا اجرا؛
-              از کاغذ دیواری و پرده تا پارکت، لمینت، موکت و Scope اولیه خانه هوشمند.
+              از کاغذ دیواری و پرده تا پارکت، لمینت، موکت، نورپردازی و Scope اولیه خانه هوشمند.
             </p>
           </header>
 
@@ -138,6 +148,10 @@ export default function ToolsPage() {
               <article className="local-intent-card">
                 <h3>قبل از خرید موکت</h3>
                 <p>برای رول، عرض رول و جهت نوارها و برای تایلی، تعداد تایل و بسته را با پرت حساب کنید؛ سپس گزینه‌ها را در <a href="/category/carpet">راهنمای موکت</a> مقایسه کنید.</p>
+              </article>
+              <article className="local-intent-card">
+                <h3>قبل از طراحی نورپردازی</h3>
+                <p>مساحت و لوکس هدف را مشخص کنید تا لومن نظری روی سطح را برآورد کنید؛ سپس نوع چراغ، پخش نور و خیرگی را در <a href="/category/lighting">راهنمای نورپردازی داخلی</a> بررسی کنید.</p>
               </article>
               <article className="local-intent-card">
                 <h3>قبل از قیمت‌گیری خانه هوشمند</h3>
@@ -196,6 +210,16 @@ export default function ToolsPage() {
               </div>
               <ArrowUpLeft size={18} />
             </a>
+
+            <a className="tool-card glass-panel" href="/tools/lighting-estimator">
+              <span className="tool-card-icon"><Lightbulb size={24} /></span>
+              <div>
+                <span className="section-kicker">نورپردازی</span>
+                <h2>محاسبه لومن از روی لوکس و مساحت</h2>
+                <p>مساحت فضا و لوکس هدف را وارد کنید و لومن نظری روی سطح را برای برنامه‌ریزی اولیه به دست آورید.</p>
+              </div>
+              <ArrowUpLeft size={18} />
+            </a>
           </section>
 
           <section className="category-results" aria-labelledby="after-calculation-title">
@@ -212,9 +236,10 @@ export default function ToolsPage() {
                 <li><a href="/category/flooring">فروشگاه و نصاب پارکت، لمینت و کفپوش</a></li>
                 <li><a href="/category/wallpaper">فروش و اجرای کاغذ دیواری و دیوارپوش</a></li>
                 <li><a href="/category/smart-home">مجری و خدمات خانه هوشمند</a></li>
+                <li><a href="/category/lighting">طراحی و اجرای نورپردازی داخلی</a></li>
               </ul>
             </nav>
-            <p>برای <a href="/category/interior-design">طراحی و اجرای دکوراسیون داخلی</a> و <a href="/category/lighting">نورپردازی داخلی</a>، به‌جای تعمیم عدد یک محاسبه‌گر، شرح نیاز و خروجی موردانتظار را با مجری مشخص کنید. <a href="/magazine">راهنماهای انتخاب و مقایسه</a> به آماده‌کردن سؤال‌های پیش از تماس کمک می‌کنند.</p>
+            <p>برای <a href="/category/interior-design">طراحی و اجرای دکوراسیون داخلی</a>، شرح نیاز و خروجی موردانتظار را با مجری مشخص کنید. ابزار <a href="/tools/lighting-estimator">لومن و لوکس نورپردازی</a> فقط برآورد نظری اولیه است و جای طراحی واقعی پخش نور، خیرگی و سیم‌کشی را نمی‌گیرد. <a href="/magazine">راهنماهای انتخاب و مقایسه</a> به آماده‌کردن سؤال‌های پیش از تماس کمک می‌کنند.</p>
           </section>
 
           <section className="category-results category-faq-block">
