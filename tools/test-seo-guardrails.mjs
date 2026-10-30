@@ -35,11 +35,17 @@ test("SEO tools remain discoverable from sitemap and category hub", async () => 
   assert.match(homeTools, /\/tools\/lighting-estimator/);
 });
 
-test("image sitemap contains only published business media through the public-business query", async () => {
-  const text = await source("app/image-sitemap.xml/route.ts");
-  assert.match(text, /listPublishedBusinesses\(\{\s*requirePhoto:\s*true,\s*limit:\s*100\s*\}\)/);
-  assert.match(text, /force-dynamic/);
-  assert.doesNotMatch(text, /\/karaj\/lighting/);
+test("image sitemap uses the scalable published-media query and keeps local routes real", async () => {
+  const route = await source("app/image-sitemap.xml/route.ts");
+  const lookup = await source("lib/server/business-image-sitemap.ts");
+  assert.match(route, /listPublishedBusinessImageSitemapEntries/);
+  assert.match(route, /force-dynamic/);
+  assert.doesNotMatch(route, /\/karaj\/lighting/);
+  assert.match(lookup, /b\.status='published'/);
+  assert.match(lookup, /owner_paused=1/);
+  assert.match(lookup, /gallery_rank<=10/);
+  assert.match(lookup, /MAX_BUSINESSES = 5000/);
+  assert.doesNotMatch(lookup, /media_type[^\n]*video[^\n]*SELECT/i);
 });
 
 test("SEO changes do not collapse canonical host references back to www", async () => {
