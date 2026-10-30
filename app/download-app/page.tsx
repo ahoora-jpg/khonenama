@@ -14,6 +14,31 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+const softwareApplicationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": pageUrl + "#app",
+  name: "خونه نما",
+  alternateName: "Khonenama",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Android",
+  softwareVersion: "1.2.11",
+  downloadUrl: apkUrl,
+  url: pageUrl,
+  inLanguage: "fa-IR",
+  isAccessibleForFree: true,
+  publisher: { "@id": "https://khonenama.ir/#organization" },
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "خونه نما", item: "https://khonenama.ir/" },
+    { "@type": "ListItem", position: 2, name: "دانلود اپ اندروید خونه نما", item: pageUrl },
+  ],
+};
+
 const installSteps = [
   ["۱", "دانلود فایل", "روی دکمه دانلود مستقیم بزنید و اجازه دهید فایل APK کامل دریافت شود."],
   ["۲", "بازکردن فایل", "پس از پایان دانلود، فایل APK دانلودشده را از اعلان دانلود یا پوشه Downloads باز کنید."],
@@ -24,6 +49,8 @@ const installSteps = [
 export default function DownloadAppPage() {
   return (
     <main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <Header />
       <section className="app-download-page">
         <div className="shell app-download-layout">
