@@ -1,0 +1,80 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "khonenama-sms",
+  "compatibility_date": "2026-09-17",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "main": "worker.ts",
+  "triggers": {
+    "crons": [
+      "*/2 * * * *"
+    ]
+  },
+  "assets": {
+    "binding": "ASSETS",
+    "not_found_handling": "none"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "khonenama-sms-db",
+      "database_id": "ff54bead-c2cb-43ed-95c2-9fe69f727ea3"
+    }
+  ],
+  "keep_vars": true,
+  "r2_buckets": [
+    {
+      "binding": "SMS_EVENT_ARCHIVE",
+      "bucket_name": "khonenama-sms-events-private"
+    }
+  ],
+  "routes": [
+    {
+      "pattern": "sms.khonenama.ir/*",
+      "zone_name": "khonenama.ir"
+    },
+    {
+      "pattern": "www.sms.khonenama.ir",
+      "custom_domain": true
+    }
+  ],
+  "vars": {
+    "SMS_ROLE": "panel",
+    "SMS_LIVE_SEND_ENABLED": "true",
+    "SMS_SIM_MODE": "default"
+  },
+  "queues": {
+    "producers": [
+      {
+        "binding": "SMS_EVENTS",
+        "queue": "khonenama-sms-events"
+      },
+      {
+        "binding": "SMS_EVENTS_DLQ",
+        "queue": "khonenama-sms-events-dlq"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "khonenama-sms-events",
+        "max_batch_size": 20,
+        "max_batch_timeout": 1,
+        "max_concurrency": 2,
+        "max_retries": 5,
+        "dead_letter_queue": "khonenama-sms-events-dlq"
+      }
+    ]
+  },
+  "services": [
+    {
+      "binding": "AUTH_SERVICE",
+      "service": "khonenama"
+    }
+  ],
+  "workers_dev": false,
+  "preview_urls": false
+}

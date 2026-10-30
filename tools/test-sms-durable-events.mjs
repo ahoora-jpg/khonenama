@@ -136,3 +136,8 @@ test('admin inspection and replay require authorization and preserve the origina
 test('agent cycle backoff is bounded and permanent errors cannot create a tight loop',async()=>{
  const {bridgeBackoff}=await import('../tools/sms-bridge/agent.mjs');assert.equal(bridgeBackoff(1),15000);assert.equal(bridgeBackoff(3),60000);assert.equal(bridgeBackoff(100),300000);assert.equal(bridgeBackoff(1,true),300000);
 });
+
+test('customer access state arriving from the separate site database is retained locally',async()=>{const f=fixture();try{
+ const payload={id:'core-lead-access-probe',scope:'lead',subject_id:'10:20',business_id:20,lead_id:10,link_id:null,previous_locked:1,locked:0,occurred_at:new Date().toISOString()};const event=await f.events.makeSmsEvent('access_state',payload,'cross-database-access',payload.id);
+ await f.consume([f.message(event)]);await f.consume([f.message(event,2)]);const row=f.sql.prepare('SELECT locked,processed_at FROM sms_access_state_events WHERE id=?').get(payload.id);assert.equal(row.locked,0);assert.ok(row.processed_at);assert.equal(f.sql.prepare('SELECT count(*) n FROM sms_access_state_events WHERE id=?').get(payload.id).n,1);
+}finally{f.close();}});
