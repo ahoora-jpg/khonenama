@@ -27,6 +27,7 @@ const categoryPillars = [
 ];
 
 const categoryToolUrls: Record<string, string> = {
+  lighting: "https://khonenama.ir/tools/lighting-estimator",
   flooring: "https://khonenama.ir/tools/flooring-estimator",
   curtain: "https://khonenama.ir/tools/curtain-fabric-calculator",
   wallpaper: "https://khonenama.ir/tools/wallpaper-calculator",
