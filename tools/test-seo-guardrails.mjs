@@ -76,3 +76,18 @@ test("site layout activates SEO journey tracker without touching SMS infrastruct
   const security = await source("lib/request-security.ts");
   assert.match(security, /\/api\/seo\/events/);
 });
+
+
+test("seismic-wallpaper guide remains evidence based and avoids decorative-product safety claims", async () => {
+  const guide = await source("lib/guide-seismic-wallpaper.ts");
+  assert.match(guide, /kit\.edu\/kit\/pi_2010_897\.php/);
+  assert.match(guide, /publikationen\.bibliothek\.kit\.edu\/1000148218/);
+  assert.match(guide, /جای مقاوم‌سازی سازه‌ای را نمی‌گیرد|جای ارزیابی سازه و مقاوم‌سازی مهندسی/);
+  assert.match(guide, /کاغذ دیواری تزئینی معمولی/);
+});
+
+test("initial hero image remains prioritized for LCP", async () => {
+  const hero = await source("components/HeroCoverflow.tsx");
+  assert.match(hero, /loading=\{index === 0 \? "eager" : "lazy"\}/);
+  assert.match(hero, /fetchPriority=\{index === 0 \? "high" : "low"\}/);
+});
