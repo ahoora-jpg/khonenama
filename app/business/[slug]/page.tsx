@@ -203,6 +203,17 @@ export default async function BusinessPage({ params, searchParams }: { params: P
     publisher: { "@id": "https://khonenama.ir/#organization" },
   };
 
+  const schemaServices = business.services.slice(0, 60);
+  const schemaImages = business.media
+    .filter((item: any) => item.kind !== "video" && item.url)
+    .slice(0, 8)
+    .map((item: any) => ({
+      "@type": "ImageObject",
+      url: item.url,
+      contentUrl: item.url,
+      caption: item.altText || (business.name + "؛ نمونه‌کار یا تصویر کسب‌وکار"),
+    }));
+
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "HomeAndConstructionBusiness",
@@ -210,7 +221,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
     name: business.name,
     description: business.description,
     url: "https://khonenama.ir/business/" + business.slug,
-    image: business.media.filter((item: any) => item.kind !== "video").map((item: any) => item.url).filter(Boolean).slice(0, 8),
+    image: schemaImages,
     mainEntityOfPage: "https://khonenama.ir/business/" + business.slug,
     telephone: business.phone || undefined,
     sameAs: [business.website, business.instagram].filter(Boolean),
@@ -234,11 +245,11 @@ export default async function BusinessPage({ params, searchParams }: { params: P
       reviewRating: { "@type": "Rating", ratingValue: item.rating, bestRating: 5, worstRating: 1 },
       reviewBody: item.body,
     })),
-    knowsAbout: business.services,
-    hasOfferCatalog: business.services.length ? {
+    knowsAbout: schemaServices,
+    hasOfferCatalog: schemaServices.length ? {
       "@type": "OfferCatalog",
       name: "خدمات " + business.name,
-      itemListElement: business.services.map((service: string) => ({
+      itemListElement: schemaServices.map((service: string) => ({
         "@type": "Offer",
         itemOffered: { "@type": "Service", name: service },
       })),
