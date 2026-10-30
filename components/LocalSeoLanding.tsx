@@ -292,7 +292,6 @@ export default async function LocalSeoLanding({
     ],
     mainEntity: { "@id": localUrl + "#businesses" },
     publisher: { "@id": "https://khonenama.ir/#organization" },
-    publishingPrinciples: "https://khonenama.ir/editorial-policy",
   };
 
   const breadcrumbJsonLd = {
@@ -335,7 +334,6 @@ export default async function LocalSeoLanding({
               <h1>{h1}</h1>
               <p>{intro}</p>
               <a href={"/category/" + categorySlug}>راهنمای جامع این دسته</a>
-              <a href="/editorial-policy">روش تدوین و بررسی اطلاعات خونه نما</a>
             </div>
             <img
               src={visual.src}

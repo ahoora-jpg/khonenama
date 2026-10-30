@@ -134,7 +134,6 @@ export default function HelpPage() {
               <a className="pill-button" href="/privacy">حریم خصوصی</a>
               <a className="pill-button" href="/account-deletion">حذف حساب</a>
               <a className="pill-button" href="/terms">قوانین استفاده</a>
-              <a className="pill-button" href="/editorial-policy">سیاست تحریریه</a>
             </div>
 
             <h2>سؤال‌های پرتکرار</h2>
