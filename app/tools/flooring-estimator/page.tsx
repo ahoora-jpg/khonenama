@@ -6,9 +6,9 @@ import FlooringEstimator from "@/components/FlooringEstimator";
 import { ArrowUpLeft, Layers3, Ruler } from "lucide-react";
 
 const url = "https://khonenama.ir/tools/flooring-estimator";
-const title = "محاسبه متراژ پارکت و لمینت | تعداد بسته و پرت";
+const title = "چند بسته لمینت لازم است؟ | محاسبه متراژ پارکت و کفپوش";
 const description =
-  "متراژ پارکت، لمینت و کفپوش PVC را با ابعاد فضا، پوشش هر بسته، عرض رول و درصد پرت برآورد کنید و مقدار خرید اولیه را به دست آورید.";
+  "تعداد بسته لمینت و متراژ پارکت یا کفپوش PVC را با ابعاد فضا، پوشش هر بسته، عرض رول و درصد پرت محاسبه کنید و مقدار خرید اولیه را به دست آورید.";
 
 export const metadata: Metadata = {
   title: { absolute: title.includes("خونه") ? title : title + " | خونه‌نما" },
