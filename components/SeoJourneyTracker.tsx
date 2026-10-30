@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 type Source = "direct" | "search" | "ai" | "social" | "referral" | "internal";
-type EventName = "page_view" | "internal_click" | "tool_interaction";
+type EventName = "page_view" | "internal_click" | "tool_interaction" | "contact_intent" | "lead_submit";
 
 const sourceKey = "kn_seo_source";
 
@@ -44,7 +44,7 @@ function targetGroup(path: string) {
   if (path.startsWith("/magazine/")) return "magazine";
   if (path.startsWith("/search")) return "search";
   if (path.startsWith("/register-business")) return "register";
-  if (path.startsWith("/download-app")) return "app";
+  if (path.startsWith("/download-app") || path.startsWith("/downloads/")) return "app";
   return "other";
 }
 
@@ -87,9 +87,23 @@ export default function SeoJourneyTracker() {
       if (!anchor) return;
       try {
         const url = new URL(anchor.href, location.href);
+        if (url.protocol === "tel:" || url.protocol === "mailto:" || url.hostname === "wa.me") {
+          send("contact_intent", "contact");
+          return;
+        }
         if (url.origin !== location.origin) return;
+        if (url.hash === "#quote") {
+          send("contact_intent", "contact");
+          return;
+        }
         send("internal_click", targetGroup(url.pathname));
       } catch {}
+    }
+
+    function onSeoEvent(event: Event) {
+      const detail = (event as CustomEvent<{ event?: EventName; targetGroup?: string }>).detail;
+      if (!detail?.event) return;
+      send(detail.event, detail.targetGroup || "");
     }
 
     let toolInteracted = false;
@@ -103,9 +117,11 @@ export default function SeoJourneyTracker() {
 
     document.addEventListener("click", onClick, { capture: true });
     document.addEventListener("input", onInput, { capture: true });
+    window.addEventListener("kn:seo-event", onSeoEvent);
     return () => {
-      document.removeEventListener("click", onClick, { capture: true } as EventListenerOptions);
-      document.removeEventListener("input", onInput, { capture: true } as EventListenerOptions);
+      document.removeEventListener("click", onClick, true);
+      document.removeEventListener("input", onInput, true);
+      window.removeEventListener("kn:seo-event", onSeoEvent);
     };
   }, []);
 
