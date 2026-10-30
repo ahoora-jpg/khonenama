@@ -46,7 +46,7 @@ export async function handleBridge(request: Request): Promise<Response> {
     const id=crypto.randomUUID(), token=crypto.randomUUID();
     const rawInterval=Number((env as any).SMS_MIN_INTERVAL_SECONDS||15);
     const interval=Number.isFinite(rawInterval)?Math.max(15,Math.min(3600,Math.round(rawInterval))):15;
-    // The update, including the promotional consent re-check, is one SQLite statement.
+    // The update, including the promotional opt-out re-check, is one SQLite statement.
     const row=await db.prepare(CLAIM_SQL)
       .bind(token,TENANT,GATEWAY,`-${interval} seconds`).first();
     if (!row) return noStore({ok:true,job:null});
@@ -87,14 +87,14 @@ export async function handleBridge(request: Request): Promise<Response> {
     if (!messageId || !leaseToken || !proposed || !gatewayId) return noStore({ok:false,error:"INVALID_REPORT"},400);
     const current=await db.prepare("SELECT status,gateway_message_id,lease_token FROM sms_messages WHERE id=? AND tenant_id=?").bind(messageId,TENANT).first();
     if (!current || current.lease_token!==leaseToken || (current.gateway_message_id && current.gateway_message_id!==gatewayId)) return noStore({ok:false,error:"REPORT_CONFLICT"},409);
-    if (current.status===proposed) return noStore({ok:true,status:current.status});
-    if (!canTransition(current.status as SmsState,proposed)) return noStore({ok:false,error:"INVALID_TRANSITION"},409);
-    const changed=await db.prepare("UPDATE sms_messages SET status=?,gateway_message_id=?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND tenant_id=? AND status=? AND lease_token=? RETURNING id")
-      .bind(proposed,gatewayId,messageId,TENANT,current.status,leaseToken).first();
-    if (!changed) return noStore({ok:false,error:"RACE_CONFLICT"},409);
-    await db.prepare("INSERT INTO sms_message_events(tenant_id,message_id,state,detail) VALUES(?,?,?,?)").bind(TENANT,messageId,proposed,"gateway_report").run();
-    await db.prepare("INSERT OR IGNORE INTO sms_delivery_attempts(tenant_id,message_id,attempt,gateway_message_id,result) SELECT tenant_id,id,attempts,?,? FROM sms_messages WHERE id=?")
-      .bind(gatewayId,proposed,messageId).run();
+    if (current.status!==proposed && !canTransition(current.status as SmsState,proposed)) return noStore({ok:false,error:"INVALID_TRANSITION"},409);
+    await db.batch([
+      db.prepare("UPDATE sms_messages SET status=?,gateway_message_id=?,updated_at=CURRENT_TIMESTAMP WHERE id=? AND tenant_id=? AND status=? AND lease_token=?").bind(proposed,gatewayId,messageId,TENANT,current.status,leaseToken),
+      db.prepare("INSERT INTO sms_message_events(tenant_id,message_id,state,detail) SELECT tenant_id,id,?,'gateway_report' FROM sms_messages WHERE id=? AND tenant_id=? AND lease_token=? AND status=? AND NOT EXISTS(SELECT 1 FROM sms_message_events e WHERE e.message_id=sms_messages.id AND e.state=? AND e.detail='gateway_report')").bind(proposed,messageId,TENANT,leaseToken,proposed,proposed),
+      db.prepare("INSERT OR IGNORE INTO sms_delivery_attempts(tenant_id,message_id,attempt,gateway_message_id,result) SELECT tenant_id,id,attempts,?,? FROM sms_messages WHERE id=? AND tenant_id=? AND lease_token=? AND status=?").bind(gatewayId,proposed,messageId,TENANT,leaseToken,proposed),
+    ]);
+    const final=await db.prepare("SELECT status FROM sms_messages WHERE id=? AND tenant_id=?").bind(messageId,TENANT).first();
+    if(final?.status!==proposed)return noStore({ok:false,error:"RACE_CONFLICT"},409);
     return noStore({ok:true,status:proposed});
   }
   if (input.action==="inbound") {
@@ -112,8 +112,6 @@ export async function handleBridge(request: Request): Promise<Response> {
     if(isOptOut(body)) {
       await db.prepare("INSERT OR IGNORE INTO sms_opt_outs(tenant_id,contact_id,source) VALUES(?,?,?)").bind(TENANT,contact.id,"inbound_sms").run();
       await db.prepare("UPDATE sms_messages SET status='cancelled',updated_at=CURRENT_TIMESTAMP WHERE tenant_id=? AND contact_id=? AND category='promotional' AND status='queued'").bind(TENANT,contact.id).run();
-      await db.prepare("INSERT OR IGNORE INTO sms_consents(id,tenant_id,contact_id,status,method,text_version,evidence_ref) VALUES(?,?,?,'revoked','inbound_sms','optout-v1',?)")
-        .bind(recordId,TENANT,contact.id,recordId).run();
     }
     return noStore({ok:true});
   }

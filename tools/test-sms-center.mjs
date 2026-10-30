@@ -16,7 +16,7 @@ const {ensureSmsSchema}=schemaExports;
 
 test("Worker binding initializes additive schema once with sending disabled",async()=>{
   const sqlite=new DatabaseSync(':memory:');let batches=0;
-  const db={prepare:q=>q,batch:async statements=>{batches++;sqlite.exec('BEGIN');try{for(const q of statements)sqlite.exec(q);sqlite.exec('COMMIT');}catch(e){sqlite.exec('ROLLBACK');throw e;}}};
+  const db={prepare:q=>({sql:q,all:async()=>({results:sqlite.prepare(q).all()})}),batch:async statements=>{batches++;sqlite.exec('BEGIN');try{for(const q of statements)sqlite.exec(q.sql);sqlite.exec('COMMIT');}catch(e){sqlite.exec('ROLLBACK');throw e;}}};
   await Promise.all([ensureSmsSchema(db),ensureSmsSchema(db)]);
   assert.equal(batches,1);
   assert.equal(sqlite.prepare("SELECT enabled FROM sms_gateways").get().enabled,0);
@@ -197,4 +197,18 @@ test('bridge accepts the dedicated SMS origin and rejects lookalike or untrusted
  assert.equal(validateConfig(config).siteUrl,'https://sms.khonenama.ir');
  assert.throws(()=>validateConfig({...config,siteUrl:'https://sms.khonenama.ir.attacker.invalid'}));
  assert.throws(()=>validateConfig({...config,siteUrl:'http://sms.khonenama.ir'}));
+});
+
+test('large future queues use the due-time index and preserve timezone-aware claim semantics',async()=>{
+ const db=new DatabaseSync(':memory:');db.exec(await readFile('db/migrations/0012_sms_center.sql','utf8'));db.exec(await readFile('db/migrations/0017_sms_due_queue_index.sql','utf8'));
+ db.exec("INSERT INTO sms_contacts(id,tenant_id,phone_e164,source) VALUES('due-test','khonenama','+989123456789','test')");
+ const insert=db.prepare("INSERT INTO sms_messages(id,tenant_id,contact_id,category,body,status,idempotency_key,scheduled_at,expires_at) VALUES(?,'khonenama','due-test','transactional','mock','queued',?,?,datetime('now','+3 days'))");
+ db.exec('BEGIN');for(let i=0;i<11000;i++)insert.run('future-'+i,'future-'+i,new Date(Date.now()+86400000).toISOString());db.exec('COMMIT');
+ insert.run('due-null','due-null',null);insert.run('due-utc','due-utc',new Date(Date.now()-60000).toISOString());
+ const offset=new Date(Date.now()-60000+3.5*3600000).toISOString().replace('Z','+03:30');insert.run('due-tehran','due-tehran',offset);
+ const plan=db.prepare('EXPLAIN QUERY PLAN '+CLAIM_SQL).all('lease','khonenama','khonenama-android','-15 seconds').map(r=>r.detail).join('\n');
+ assert.match(plan,/idx_sms_due_dispatch/);assert.match(plan,/<expr></);
+ const seen=[];for(let i=0;i<3;i++){const row=db.prepare(CLAIM_SQL).get('lease-'+i,'khonenama','khonenama-android','-15 seconds');assert.ok(row);seen.push(row.id);db.prepare("UPDATE sms_messages SET updated_at=datetime('now','-1 minute') WHERE id=?").run(row.id);}
+ assert.deepEqual(seen.sort(),['due-null','due-tehran','due-utc'].sort());assert.equal(db.prepare(CLAIM_SQL).get('last','khonenama','khonenama-android','-15 seconds'),undefined);
+ assert.equal(db.prepare("SELECT count(*) n FROM sms_messages WHERE id LIKE 'future-%' AND attempts=0 AND status='queued'").get().n,11000);db.close();
 });

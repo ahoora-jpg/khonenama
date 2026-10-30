@@ -68,16 +68,11 @@ export async function GET(request: Request) {
         .bind(TENANT, id)
         .first();
       if (!contact) return noStore({ ok: false }, 404);
-      const history = await db
-        .prepare(
-          "SELECT status,method,text_version,evidence_ref,created_at FROM sms_consents WHERE tenant_id=? AND contact_id=? ORDER BY created_at DESC,rowid DESC LIMIT 100",
-        )
-        .bind(TENANT, id)
-        .all();
+      // Historical records are retained but no longer exposed as an active workflow.
       return noStore({
         ok: true,
         contact: { ...contact, phone_e164: maskPhone(contact.phone_e164) },
-        history: history.results,
+        history: [],
       });
     }
     if (view === "history" || view === "inbox") {
@@ -181,7 +176,7 @@ export async function GET(request: Request) {
         Date.parse(end) - Date.parse(start) > 366 * 86400000
       )
         return noStore({ ok: false, error: "INVALID_DATE_RANGE" }, 400);
-      const [daily, outcomes, categories, consents, optouts] =
+      const [daily, outcomes, categories, optouts] =
         await Promise.all([
           db
             .prepare(
@@ -201,13 +196,7 @@ export async function GET(request: Request) {
             )
             .bind(TENANT, start, end)
             .all(),
-          db
-            .prepare(
-              "SELECT status,COUNT(*) AS count FROM sms_consents WHERE tenant_id=? AND date(created_at) BETWEEN ? AND ? GROUP BY status",
-            )
-            .bind(TENANT, start, end)
-            .all(),
-          db
+db
             .prepare(
               "SELECT COUNT(*) AS count FROM sms_opt_outs WHERE tenant_id=? AND date(created_at) BETWEEN ? AND ?",
             )
@@ -221,7 +210,7 @@ export async function GET(request: Request) {
         daily: daily.results,
         outcomes: outcomes.results,
         categories: categories.results,
-        consents: consents.results,
+        consents: [],
         optouts: optouts.count,
       });
     }

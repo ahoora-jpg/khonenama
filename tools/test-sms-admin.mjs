@@ -9,7 +9,7 @@ import ts from 'typescript';
 function load(file,imports={}){
   const exports={};
   const code=ts.transpileModule(readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
-  vm.runInNewContext(code,{exports,require:name=>{assert.ok(name in imports,name);return imports[name];},crypto:webcrypto,TextEncoder,Uint8Array,Date,URL,Request,Response,Headers,btoa,console,setTimeout});
+  vm.runInNewContext(code,{exports,require:name=>{assert.ok(name in imports,name);return imports[name];},crypto:webcrypto,TextEncoder,TextDecoder,Uint8Array,Date,URL,Request,Response,Headers,btoa,console,setTimeout});
   return exports;
 }
 async function fixture(){
@@ -20,9 +20,11 @@ async function fixture(){
   const admin=load('lib/server/admin-session.ts',{'cloudflare:workers':{env}});
   const auth=load('lib/server/sms/admin-auth.ts',{'cloudflare:workers':{env},'@/lib/server/admin-session':admin});
   const domain=load('lib/server/sms/domain.ts'),config=load('lib/server/sms/config.ts');
-  const acquisition=load('lib/server/sms/acquisition.ts',{'./domain':domain,'../../sms-text':load('lib/sms-text.ts')});
+  const events=load('lib/server/sms/events.ts');
+  const queuedAcquisition=load('lib/server/sms/queued-acquisition.ts',{'./events':events});
+  const acquisition=load('lib/server/sms/acquisition.ts',{'./domain':domain,'../../sms-text':load('lib/sms-text.ts'),'./events':events,'./queued-acquisition':queuedAcquisition});
   const contactImport=load('lib/server/sms/contact-import.ts',{'./domain':domain});
-  const imports={'@/lib/server/sms/contact-import':contactImport,'@/lib/server/sms/acquisition':acquisition,'cloudflare:workers':{env},'@/lib/server/admin-session':admin,'@/lib/server/sms/admin-auth':auth,'@/lib/server/sms/domain':domain,'@/lib/server/sms/config':config};
+  const imports={'./events':events,'@/lib/server/sms/contact-import':contactImport,'@/lib/server/sms/acquisition':acquisition,'cloudflare:workers':{env},'@/lib/server/admin-session':admin,'@/lib/server/sms/admin-auth':auth,'@/lib/server/sms/domain':domain,'@/lib/server/sms/config':config};
   const cookie=(await admin.createAdminCookie()).split(';')[0];
   const request=(body,cookies=cookie)=>new Request('https://sms.khonenama.ir/api/admin/sms',{method:'POST',headers:{cookie:cookies,origin:'https://sms.khonenama.ir','content-type':'application/json'},body:JSON.stringify(body)});
   const get=(path,cookies=cookie)=>new Request('https://sms.khonenama.ir'+path,{headers:{cookie:cookies}});
@@ -259,7 +261,7 @@ test('Worker machine route preserves authentication, origin and body limits befo
  const f=await fixture();try{
   const queue=load('lib/server/sms/queue.ts');const bridge=load('lib/server/sms/bridge.ts',{'cloudflare:workers':{env:f.env},'./domain':f.domain,'./acquisition':f.imports['@/lib/server/sms/acquisition'],'./queue':queue,'./config':f.config});
   const security=load('lib/request-security.ts');let schemaCalls=0;
-  const handler=load('lib/server/sms/worker-bridge.ts',{'./bridge':bridge,'./schema':{ensureSmsSchema:async()=>{schemaCalls++;}},'../../request-security':security});
+  const handler=load('lib/server/sms/worker-bridge.ts',{'./bridge':bridge,'./schema':{ensureSmsSchema:async()=>{schemaCalls++;}},'../../request-security':security,'./events':f.imports['./events']});
   const make=(body,extra={})=>new Request('https://khonenama.ir/api/v1/sms/bridge',{method:'POST',headers:{authorization:'Bearer '+f.env.SMS_BRIDGE_TOKEN,'content-type':'application/json',...extra},body});
   assert.equal((await handler.handleWorkerBridge(new Request('https://khonenama.ir/api/v1/sms/bridge',{method:'POST',body:'{}'}),f.db)).status,401);assert.equal(schemaCalls,0);
   assert.equal((await handler.handleWorkerBridge(make('{}',{origin:'https://attacker.invalid'}),f.db)).status,403);
@@ -312,3 +314,16 @@ test('empty audiences pause instead of falsely completing; zero-send legacy camp
   assert.equal((await api.POST(f.request({action:'retryEmpty',id:campaign.id}))).status,409);
  }finally{f.sql.close();}
 });
+
+test('retired initial-consent action cannot clear opt-outs; dedicated opt-out cancels queued promotions',async()=>{const f=await fixture();try{
+ f.env.SMS_LIVE_SEND_ENABLED='true';const route=load('app/api/admin/sms/route.ts',f.imports);
+ const person=await(await route.POST(f.request({action:'contact',phone:'09123456789',name:'test'}))).json();
+ const queue={action:'queue',contactId:person.id,body:'mock only',category:'promotional',expiresAt:new Date(Date.now()+3600000).toISOString(),idempotencyKey:'optout-case'};
+ assert.equal((await route.POST(f.request(queue))).status,200);
+ assert.equal((await route.POST(f.request({action:'optOut',contactId:person.id}))).status,200);
+ assert.equal(f.sql.prepare('SELECT status FROM sms_messages').get().status,'cancelled');
+ assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_consents').get().n,0);
+ assert.equal((await route.POST(f.request({action:'consent',status:'granted',contactId:person.id,method:'form',textVersion:'v1',evidenceRef:'proof'}))).status,400);
+ assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM sms_opt_outs').get().n,1);
+ assert.equal((await route.POST(f.request({...queue,idempotencyKey:'blocked-again'}))).status,403);
+}finally{f.sql.close();}});

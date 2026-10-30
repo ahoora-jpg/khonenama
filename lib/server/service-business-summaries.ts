@@ -1,8 +1,20 @@
 import { env } from 'cloudflare:workers';
 export type ServiceBusinessSummary={id:number;slug:string;name:string;description:string;city:string;area:string};
+let visibilitySchemaReady: Promise<void> | undefined;
+
+async function ensureVisibilitySchema(db:any) {
+ if (!visibilitySchemaReady) {
+  visibilitySchemaReady = db.prepare("CREATE TABLE IF NOT EXISTS business_visibility_controls (business_id INTEGER PRIMARY KEY, owner_paused INTEGER NOT NULL DEFAULT 0, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)").run()
+   .then(() => undefined)
+   .catch((error:any) => { visibilitySchemaReady = undefined; throw error; });
+ }
+ await visibilitySchemaReady;
+}
+
 // Service result cards do not need galleries, albums, reviews or subscription hydration.
 export async function listServiceBusinessSummaries(serviceName:string,limit=50):Promise<ServiceBusinessSummary[]>{
  const db=(env as any).DB;if(!db)return [];
+ await ensureVisibilitySchema(db);
  const rows=await db.prepare(`SELECT b.id,b.slug,b.name,b.description,b.city,b.area FROM businesses b
  WHERE b.status='published' AND b.slug<>'alayy-dkvr-krj' AND b.slug NOT GLOB 'ghrfh-azmayshy-tbdyl-[0-9]*-thran'
  AND NOT EXISTS(SELECT 1 FROM business_visibility_controls v WHERE v.business_id=b.id AND v.owner_paused=1)

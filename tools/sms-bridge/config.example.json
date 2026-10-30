@@ -7,5 +7,6 @@
   "sendPath": "/message",
   "statusPath": "VERIFY_IN_PHONE_DOCS",
   "enableInbox": false,
-  "simNumber": "default"
+  "simNumber": "default",
+  "durableEvents": false
 }
