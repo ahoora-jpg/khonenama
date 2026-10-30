@@ -51,6 +51,7 @@
 - برآورد Scope خانه هوشمند: https://khonenama.ir/tools/smart-home-scope
 - محاسبه متراژ موکت رول و تایلی: https://khonenama.ir/tools/carpet-estimator
 - محاسبه متراژ و تعداد بسته کفپوش: https://khonenama.ir/tools/flooring-estimator
+- محاسبه لومن نظری نورپردازی: https://khonenama.ir/tools/lighting-estimator
 
 ## Priority answer-first guides
 - نصب پرده دیواری و سقفی: https://khonenama.ir/magazine/curtain-installation-guide
