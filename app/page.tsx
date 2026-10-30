@@ -122,6 +122,7 @@ const organizationJsonLd = {
   description:
     "خونه نما (Khonenama) مرجع سراسری فضای داخلی خانه و دکوراسیون داخلی برای پیدا کردن و مقایسه فروشگاه‌ها و متخصصان در شهرهای ایران است.",
   areaServed: { "@type": "Country", name: "ایران" },
+  publishingPrinciples: "https://khonenama.ir/editorial-policy",
 };
 
 export default async function HomePage() {
