@@ -14,6 +14,7 @@ const sixDomainSeoRefreshDate = "2026-10-04";
 // Keep this tied to the content publication date, not the current request date.
 const discoveryAndAcquisitionRefreshDate = "2026-10-18";
 const seoOpportunityBatchDate = "2026-10-31";
+const preSmsSeoBatchDate = "2026-10-30";
 
 // Business profiles change independently of code deploys. Generate the sitemap
 // at request time so search engines see newly publishable profiles without
@@ -24,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified: homepageBrandRefreshDate, changeFrequency: "daily", priority: 1 },
     { url: baseUrl + "/karaj", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.95 },
-    { url: baseUrl + "/karaj/curtain", lastModified: sixDomainSeoRefreshDate, changeFrequency: "daily", priority: 0.94 },
+    { url: baseUrl + "/karaj/curtain", lastModified: preSmsSeoBatchDate, changeFrequency: "daily", priority: 0.94 },
     { url: baseUrl + "/karaj/curtain/markets", lastModified: "2026-09-29", changeFrequency: "weekly", priority: 0.93 },
     { url: baseUrl + "/karaj/flooring", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.92 },
     { url: baseUrl + "/karaj/carpet", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.88 },
