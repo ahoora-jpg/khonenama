@@ -53,3 +53,26 @@ test("SEO changes do not collapse canonical host references back to www", async 
     assert.doesNotMatch(text, /https:\/\/www\.khonenama\.ir/i);
   }
 });
+
+
+test("SEO journey analytics stays aggregate and admin-protected", async () => {
+  const tracker = await source("components/SeoJourneyTracker.tsx");
+  const publicRoute = await source("app/api/seo/events/route.ts");
+  const adminRoute = await source("app/api/admin/seo-journey/route.ts");
+  const migration = await source("db/migrations/0022_seo_journey.sql");
+  assert.match(tracker, /search.*ai.*social.*referral/s);
+  assert.match(publicRoute, /seo_journey_daily/);
+  assert.match(publicRoute, /crossSiteMutation/);
+  assert.doesNotMatch(migration, /\b(ip|user_agent|email|phone|cookie|visitor_id)\b/i);
+  assert.match(adminRoute, /isAdminRequest/);
+  const authIndex = adminRoute.indexOf("isAdminRequest");
+  const dbIndex = adminRoute.indexOf("(env as any).DB");
+  assert.ok(authIndex >= 0 && dbIndex > authIndex, "admin auth must precede DB access");
+});
+
+test("site layout activates SEO journey tracker without touching SMS infrastructure", async () => {
+  const layout = await source("app/layout.tsx");
+  assert.match(layout, /SeoJourneyTracker/);
+  const security = await source("lib/request-security.ts");
+  assert.match(security, /\/api\/seo\/events/);
+});
