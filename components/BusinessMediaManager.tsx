@@ -37,7 +37,7 @@ const limits: Record<string, number> = {
   premium: 5,
 };
 
-export default function BusinessMediaManager({ plan = "free" }: { plan?: string }) {
+export default function BusinessMediaManager({ plan = "free", mode = "full" }: { plan?: string; mode?: "full" | "first-photo" }) {
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [configured, setConfigured] = useState(true);
@@ -219,6 +219,15 @@ export default function BusinessMediaManager({ plan = "free" }: { plan?: string 
       </section>
     );
   }
+
+  if (mode === "first-photo") return <section className="dashboard-panel glass-panel business-media-manager first-photo-manager" id="media">
+    <h3>انتخاب اولین عکس از گوشی</h3><p>یک عکس واقعی از کسب‌وکارتان انتخاب کنید.</p>
+    <button type="button" className="pill-button dark" disabled={uploading || !configured || !remaining} onClick={() => pick("image")}>+ انتخاب اولین عکس</button>
+    {pickerOpen && <div id="media-source-picker" className="media-source-picker"><button className="pill-button dark" type="button" onClick={()=>fileRef.current?.click()}>انتخاب از گالری</button><button className="pill-button" type="button" onClick={()=>cameraRef.current?.click()}>عکس گرفتن</button></div>}
+    {progress && <p>{progress}</p>}{message && <p className="business-media-message">{message}</p>}
+    <input ref={fileRef} type="file" accept="image/*" hidden onChange={event => chooseFiles(event.target.files)} />
+    <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={event => chooseFiles(event.target.files)} />
+  </section>;
 
   return (
     <section className="dashboard-panel glass-panel business-media-manager" id="media">

@@ -40,7 +40,7 @@ export default function Header() {
           </button>
           <a className="pill-button dark desktop-cta premium-cta-button" href="/register-business">
             <Store size={17} />
-            ثبت کسب‌وکار
+            ساخت رایگان غرفه
           </a>
         </div>
 
@@ -84,7 +84,7 @@ export default function Header() {
               <div className="site-menu-details-links">
                 <a href="/for-business" onClick={() => setOpen(false)}>راهنمای حضور در خونه‌نما</a>
                 <a href="/business/login" onClick={() => setOpen(false)}>ورود کسب‌وکار</a>
-                <a className="pill-button dark" href="/register-business" onClick={() => setOpen(false)}>ثبت کسب‌وکار</a>
+                <a className="pill-button dark" href="/register-business" onClick={() => setOpen(false)}>ساخت رایگان غرفه</a>
               </div>
             </details>
             <a className="site-menu-download" href={androidDownloadUrl} onClick={() => setOpen(false)}>

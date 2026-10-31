@@ -6,7 +6,7 @@ export default function HomeBoothInvitation() {
       <Store size={32} />
       <h3 id="booth-invitation-title">جای غرفه شما در این بازار آماده است.</h3>
       <p>با انتشار کسب‌وکار شما، اطلاعات و نمونه‌کارهایتان در ویترین غرفه‌ها در دسترس مشتریان قرار می‌گیرد.</p>
-      <a className="pill-button dark" href="/register-business">ثبت رایگان کسب‌وکار <ArrowUpLeft size={17} /></a>
+      <a className="pill-button dark" href="/register-business">ساخت رایگان غرفه <ArrowUpLeft size={17} /></a>
     </div></div>
   </section>;
 }

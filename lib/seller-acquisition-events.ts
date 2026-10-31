@@ -12,6 +12,7 @@ export const sellerAcquisitionEvents = [
   "registration_submit_failed",
 ] as const;
 export type SellerAcquisitionEvent = (typeof sellerAcquisitionEvents)[number];
+export type ConversionMetricEvent = SellerAcquisitionEvent | "first_media_added";
 export function sellerAcquisitionEvent(value: unknown): SellerAcquisitionEvent | null {
   return typeof value === "string" && sellerAcquisitionEvents.includes(value as SellerAcquisitionEvent)
     ? value as SellerAcquisitionEvent : null;
