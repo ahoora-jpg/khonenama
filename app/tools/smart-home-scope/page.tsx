@@ -121,8 +121,8 @@ export default function SmartHomeScopePage() {
               <a href="/magazine/smart-home-without-internet-guide">خانه هوشمند هنگام قطع اینترنت <ArrowUpLeft size={15} /></a>
               <a href="/magazine/matter-thread-zigbee-wifi-guide-2026">Matter، Thread و Zigbee <ArrowUpLeft size={15} /></a>
               <a href="/magazine/smart-curtain-daylight-guide">پرده برقی و سناریوی نور طبیعی <ArrowUpLeft size={15} /></a>
-              <a href="/category/smart-home">متخصصان خانه هوشمند <ArrowUpLeft size={15} /></a>
-              <a href="/category/smart-home">متخصصان خانه هوشمند <ArrowUpLeft size={15} /></a>
+              <a href="/category/smart-home">راهنمای جامع و متخصصان خانه هوشمند <ArrowUpLeft size={15} /></a>
+              <a href="/karaj/smart-home">شرکت‌ها و مجریان خانه هوشمند در کرج <ArrowUpLeft size={15} /></a>
             </div>
           </section>
         </div>

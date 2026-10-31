@@ -118,7 +118,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: { absolute: title },
     description,
     alternates: { canonical: "/business/" + slug },
-    robots: isInternalTestBusinessSlug(slug) ? { index: false, follow: false } : undefined,
+    robots: business.source === "demo" || isInternalTestBusinessSlug(slug) ? { index: false, follow: false } : undefined,
     openGraph: {
       title,
       description,
@@ -181,9 +181,31 @@ export default async function BusinessPage({ params, searchParams }: { params: P
     }));
   const relatedBusinesses = [...relatedLive, ...relatedDemo].slice(0, 4);
 
+  const businessBreadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "خونه نما", item: "https://khonenama.ir/" },
+      ...(business.category ? [{ "@type": "ListItem", position: 2, name: categorySeoLabels[business.category] || "خدمات دکوراسیون", item: "https://khonenama.ir/category/" + business.category }] : []),
+      { "@type": "ListItem", position: business.category ? 3 : 2, name: business.name, item: "https://khonenama.ir/business/" + business.slug },
+    ],
+  };
+
+  const businessWebPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "@id": "https://khonenama.ir/business/" + business.slug + "#profile",
+    url: "https://khonenama.ir/business/" + business.slug,
+    name: business.name,
+    mainEntity: { "@id": "https://khonenama.ir/business/" + business.slug + "#business" },
+    isPartOf: { "@id": "https://khonenama.ir/#website" },
+    publisher: { "@id": "https://khonenama.ir/#organization" },
+  };
+
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "HomeAndConstructionBusiness",
+    "@id": "https://khonenama.ir/business/" + business.slug + "#business",
     name: business.name,
     description: business.description,
     url: "https://khonenama.ir/business/" + business.slug,
@@ -236,10 +258,17 @@ export default async function BusinessPage({ params, searchParams }: { params: P
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd).replace(/</g, "\\u003c") }}
       />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(businessWebPageJsonLd).replace(/</g, "\\u003c") }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(businessBreadcrumbJsonLd).replace(/</g, "\\u003c") }} />
       {business.source === "d1" && <BusinessAnalyticsTracker slug={business.slug} />}
       <Header />
       <section className="inner-page business-profile-page">
         <div className="shell">
+          <nav className="guide-breadcrumb" aria-label="مسیر صفحه">
+            <a href="/">خونه نما</a><span>/</span>
+            {business.category && <><a href={"/category/" + business.category}>{categorySeoLabels[business.category] || "خدمات دکوراسیون"}</a><span>/</span></>}
+            <span>{business.name}</span>
+          </nav>
           <div className="business-profile-hero">
             <BusinessPhotoHeader showInstallments={business.showInstallments} name={business.name} cover={business.media.find((item: any) => item.kind === "cover")?.url} logo={business.media.find((item: any) => item.kind === "logo")?.url} />
             <div className={"profile-main-card glass-panel plan-" + business.planCode}>

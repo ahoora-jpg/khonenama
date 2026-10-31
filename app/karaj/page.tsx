@@ -119,6 +119,11 @@ export default function KarajPage() {
                 </a>
               ))}
             </div>
+            <div className="category-empty glass-panel">
+              <strong>غرفه‌های واقعی دکوراسیون در کرج را ببینید</strong>
+              <p>جستجو را با فیلتر شهر کرج باز کنید و خدمات، نمونه‌کارها و راه‌های ارتباطی غرفه‌های منتشرشده را مقایسه کنید. محدوده ارائه خدمت را پیش از سفارش از فروشنده بپرسید.</p>
+              <a className="pill-button dark" href="/search?location=%DA%A9%D8%B1%D8%AC">مشاهده غرفه‌های کرج</a>
+            </div>
           </section>
 
           <section className="category-results">
