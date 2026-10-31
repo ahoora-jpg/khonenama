@@ -31,7 +31,7 @@ test('Only event labels are accepted; identity and referrer payloads are rejecte
  assert.equal((await route.POST(request({event:'seller_landing_view',phone:'private'}))).status,400);
  assert.equal((await route.POST(request({event:'seller_landing_view',referrer:'private'}))).status,400);
  for(const event of events.sellerAcquisitionEvents) assert.equal((await route.POST(request({event}))).status,204);
- assert.equal(calls.length,3);
+ assert.equal(calls.length,events.sellerAcquisitionEvents.length);
  assert.deepEqual(Object.keys(calls[0]),['database','event']);
 });
 test('Cross-site events and missing storage fail closed; rate policy applies',async()=>{

@@ -3,6 +3,7 @@ import { MAX_VIDEO_BYTES, mp4Duration, videoLimitForPlan } from "@/lib/business-
 import { normalizePlanCode, planPresentation } from "@/lib/business-entitlements";
 import { ensureBusinessMediaSchema, getOwnedBusiness } from "@/lib/server/business-media";
 import { readBusinessUploadForm } from "@/lib/server/business-upload-form";
+import { recordConversion } from "@/lib/server/conversion-metrics";
 import {
   deleteStoredBusinessImage,
   mediaStorageConfigured,
@@ -75,6 +76,8 @@ export async function POST(request: Request) {
       const url="https://khonenama.ir/media/"+key;
       const inserted=await owned.db.prepare("INSERT INTO business_media (business_id,kind,media_type,storage_key,provider,provider_file_id,file_url,file_path,sort_order) SELECT ?,'image','video',?,'r2',?,?,?,0 WHERE (SELECT COUNT(*) FROM business_media WHERE business_id=? AND media_type='video') < ? RETURNING id").bind(owned.business.id,key,key,url,key,owned.business.id,limit).first();
       if (!inserted?.id) {await bucket.delete(key); return Response.json({ok:false,error:"VIDEO_LIMIT_REACHED"},{status:409});}
+      const total = await owned.db.prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id=?").bind(owned.business.id).first();
+      if (Number(total?.count) === 1) await recordConversion(owned.db, "first_media_added");
       return Response.json({ok:true,id:inserted.id,media:{id:inserted.id,kind:"video",fileUrl:url}},{status:201,headers:{"Cache-Control":"no-store"}});
     } catch {await bucket.delete(key).catch(()=>{});return Response.json({ok:false,error:"MEDIA_UPLOAD_FAILED"},{status:500});}
   }
@@ -178,6 +181,8 @@ export async function POST(request: Request) {
       await deleteStoredBusinessImage(uploadedProvider, uploadedFileId).catch(() => {});
       return Response.json({ ok: false, error: "GALLERY_LIMIT_REACHED", limit: galleryLimit }, { status: 409 });
     }
+    const total = await owned.db.prepare("SELECT COUNT(*) AS count FROM business_media WHERE business_id=?").bind(owned.business.id).first();
+    if (Number(total?.count) === 1) await recordConversion(owned.db, "first_media_added");
 
     return Response.json(
       {

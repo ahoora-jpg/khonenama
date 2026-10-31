@@ -59,7 +59,8 @@ export async function POST(request: Request) {
       return Response.json({ok:true});
     }
 
-    const ownerName = cleanText(body?.ownerName, 120);
+    const quickMode = body?.mode === "quick";
+    let ownerName = cleanText(body?.ownerName, 120);
     const phone = normalizeIranPhone(cleanText(body?.phone, 32));
     const email = cleanText(body?.email, 160).toLowerCase();
     const password = typeof body?.password === "string" ? body.password : "";
@@ -70,7 +71,7 @@ export async function POST(request: Request) {
     const address = cleanText(body?.address, 700);
     const instagram = cleanText(body?.instagram, 160);
     const website = cleanText(body?.website, 240);
-    const description = cleanText(body?.description, 2000);
+    let description = cleanText(body?.description, 2000);
 
     const requestedCategories: string[] = Array.isArray(body?.categories)
       ? body.categories.map((item: unknown) => cleanText(item, 80))
@@ -89,6 +90,7 @@ export async function POST(request: Request) {
       ? body.serviceAreas.map((item: unknown) => cleanText(item, 100))
       : [];
 
+    if (quickMode && ownerName.length < 2) ownerName = businessName;
     if (ownerName.length < 2 || businessName.length < 2 || city.length < 2) {
       return Response.json({ ok: false, error: "INVALID_REQUIRED_FIELDS" }, { status: 400 });
     }
@@ -112,7 +114,11 @@ export async function POST(request: Request) {
 
     const allowedServices = new Set(servicesForCategories(categories));
     const selectedServices = [...new Set(requestedServices.filter((item) => allowedServices.has(item)))];
-    const selectedAreas = [...new Set(requestedAreas.filter(Boolean))].slice(0, 30);
+    const selectedAreas = [...new Set((quickMode && !requestedAreas.length ? ["تمام " + city] : requestedAreas).filter(Boolean))].slice(0, 30);
+    if (quickMode && description.length < 20 && categories.length && selectedServices.length) {
+      const categoryName = BUSINESS_CATEGORIES.find((item) => item.slug === categories[0])?.label || "دکوراسیون داخلی";
+      description = `${businessName} در ${city} در زمینه ${categoryName} فعالیت می‌کند. خدمت اصلی ثبت‌شده: ${selectedServices[0]}. برای اطلاع از موجودی، قیمت، شرایط اجرا و زمان ارائه خدمت مستقیماً با کسب‌وکار هماهنگ کنید.`;
+    }
 
     if ((!selectedServices.length && !suggestions.length) || !selectedAreas.length || description.length < 20) {
       return Response.json({ ok: false, error: "INCOMPLETE_PROFILE" }, { status: 400 });

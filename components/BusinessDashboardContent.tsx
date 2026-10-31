@@ -148,10 +148,11 @@ export default function BusinessDashboardContent() {
 
   const nextTasks = useMemo(() => {
     const tasks = [
-      { label: "تأیید شماره همراه", done: Boolean(profile.phoneVerified) },
-      { label: "ثبت شهر و محدوده فعالیت", done: Boolean(profile.city && profile.serviceAreas?.length) },
-      { label: "افزودن تصاویر نمونه‌کار (تکمیل اختیاری)", done: Number(profile.mediaCount || 0) >= 1 },
+      { label: "افزودن اولین عکس", done: Number(profile.mediaCount || 0) >= 1 },
       { label: "ثبت خدمات اصلی", done: services.length > 0 },
+      { label: "ثبت شهر و محدوده فعالیت", done: Boolean(profile.city && profile.serviceAreas?.length) },
+      { label: "تکمیل معرفی غرفه", done: Boolean(profile.description && profile.description.length >= 80) },
+      { label: "اطلاعات تماس و شبکه اجتماعی (اختیاری)", done: false },
     ];
     return tasks;
   }, [profile, services.length]);

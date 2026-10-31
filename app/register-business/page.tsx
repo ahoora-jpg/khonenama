@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BusinessOnboardingWizard from "@/components/BusinessOnboardingWizard";
-import { RegistrationGift, RegistrationPlanImages } from "@/components/RegistrationOffers";
+import { RegistrationGift } from "@/components/RegistrationOffers";
 import { BadgeCheck, MapPin, ShieldCheck, Store } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function RegisterBusinessPage() {
               <span className="section-kicker">ثبت کسب‌وکار</span>
               <h1>پروفایل کسب‌وکارت را بساز.</h1>
               <p>
-                اطلاعات واقعی را مرحله‌به‌مرحله وارد کن؛ ثبت اولیه رایگان است. ذخیره اطلاعات با انتشار غرفه فرق دارد و نمایش عمومی پس از تکمیل و بررسی انجام می‌شود.
+                در کمتر از چند دقیقه غرفه‌ات را با اطلاعات واقعی بساز. با انتخاب دسته و خدمت معتبر، غرفه همان ابتدا قابل مشاهده است.
               </p>
             </div>
             <a className="text-link-arrow" href="/for-business">درباره خونه نما برای کسب‌وکارها</a>
@@ -41,15 +41,8 @@ export default function RegisterBusinessPage() {
 
           <details className="glass-panel" style={{ padding: "1rem", marginBottom: "1rem" }}>
             <summary>پیش از شروع ثبت‌نام چه اطلاعاتی آماده کنم؟</summary>
-            <p>فروشگاه، نصاب، مجری و متخصص نورپردازی و دیگر خدمات مرتبط می‌توانند غرفه بسازند. نام و توضیح واقعی کسب‌وکار، دسته و خدمات، شهر و محدوده فعالیت، راه تماس عمومی و تصاویر متعلق به خودتان را آماده کنید. مشخصات و عکس خصوصی مشتری را در غرفه عمومی وارد نکنید.</p>
+            <p>برای ساخت اولیه فقط شماره همراه، رمز، نام کسب‌وکار، شهر، دسته و یک خدمت اصلی لازم است. معرفی، آدرس، شبکه اجتماعی و نمونه‌کار را بعداً و در زمان دلخواه کامل کنید. مشخصات و عکس خصوصی مشتری را در غرفه عمومی وارد نکنید.</p>
             <a href="/for-business/online-discovery-guide#profile-checklist">چک‌لیست کامل آماده‌سازی غرفه در شش حوزه</a>
-          </details>
-          <details className="glass-panel" style={{padding:"1rem",marginBottom:"1rem"}}>
-            <summary>مقایسه ظرفیت و هزینه اشتراک‌ها</summary>
-            <RegistrationPlanImages />
-            <p>اشتراک‌ها تا پایان ۱۵ بهمن ۱۴۰۵ رایگان‌اند. پس از آن، حرفه‌ای ماهانه ۱۵۰ هزار تومان و ویژه ماهانه ۲۵۰ هزار تومان خواهد بود.</p>
-            <p>افزونه ویژه در تصویر فقط برای اطلاع‌رسانی نمایش داده می‌شود و فعلاً غیرفعال است.</p>
-            <p>ثبت‌نام با پایه رایگان شروع می‌شود. عکس پروفایل جزو ظرفیت عکس است و کاور جداست.</p>
           </details>
           <BusinessOnboardingWizard />
         </div>
