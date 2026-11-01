@@ -5,7 +5,7 @@ const allowedPaths = new Set([
   "/favicon.ico", "/site.webmanifest",
 ]);
 const allowedPrefixes = ["/api/admin/sms/", "/_next/", "/assets/", "/fonts/", "/sms-assets/"];
-const smsPages = new Set(["acquisition","prospects","send","contacts","groups","campaigns","templates","inbox","history","reports","gateway","settings"].map(page=>"/sms/"+page));
+const smsPages = new Set(["messages","acquisition","prospects","send","contacts","groups","campaigns","templates","inbox","history","reports","gateway","settings"].map(page=>"/sms/"+page));
 
 /** Keep the SMS subdomain scoped to its own interface and authentication endpoints. */
 export function routeSmsHost(request: Request): Request | Response {

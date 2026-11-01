@@ -36,6 +36,8 @@ function load(file) {
     if (name === "@/lib/sms-text") return load("lib/sms-text.ts");
     if (name === "./SmsAdminShell")
       return load("components/sms/SmsAdminShell.tsx");
+    if(name==='./SmsCommandCenter')return load('components/sms/SmsCommandCenter.tsx');
+    if(name==='./SmsAcquisition')return load('components/sms/SmsAcquisition.tsx');
     return require(name);
   };
   vm.runInNewContext(code, {
@@ -81,17 +83,17 @@ function render(Component, data = empty) {
 test("dashboard renders a real overview and all navigation links without any editing forms", () => {
   const { DashboardPage } = load("components/sms/SmsOverview.tsx");
   const html = render(DashboardPage);
-  assert.equal((html.match(/class="sms-stat"/g) || []).length, 6);
+  assert.equal((html.match(/class="sms-stat"/g) || []).length, 4);
   assert.ok(!html.includes("<form"));
   assert.ok(html.includes("هنوز کمپینی ندارید"));
   assert.ok(!html.includes("12 480"));
-  assert.ok(html.includes('/sms/history?status=delivered'));assert.ok(html.includes('/sms/contacts?filter=active'));assert.ok(html.includes('/sms/campaigns?status=active'));
+  assert.ok(html.includes('/sms/messages?tab=history&amp;status=delivered'));assert.ok(html.includes('/sms/contacts'));assert.ok(html.includes('توقف همه ارسال‌ها'));
   assert.ok(!html.includes("98.4"));
   for (const path of [
-    "/sms/send",
-    "/sms/contacts?new=1",
+    "/sms/messages?tab=send",
+    "/sms/contacts?import=1",
     "/sms/campaigns?new=1",
-    "/sms/history?status=queued",
+    "/sms/messages?tab=history&amp;status=queued",
   ])
     assert.ok(html.includes(path));
   const markup = renderToStaticMarkup(
@@ -100,7 +102,7 @@ test("dashboard renders a real overview and all navigation links without any edi
       children: null,
     }),
   );
-  for (const page of load("lib/sms-admin-ui.ts").smsPages)
+  for (const page of load("lib/sms-admin-ui.ts").smsPages.filter(p=>["dashboard","campaigns","contacts","messages","reports","gateway"].includes(p.key)))
     assert.ok(markup.includes('href="' + page.path + '"'));
   assert.ok(markup.includes('aria-current="page"'));
   assert.ok(markup.includes("بازکردن فهرست"));
@@ -153,8 +155,8 @@ test('everyday SMS screens do not ask for initial consent',()=>{
  const pages=[load('components/sms/SmsMessages.tsx').SendPage,load('components/sms/SmsContacts.tsx').ContactsPage,load('components/sms/SmsContacts.tsx').GroupsPage,load('components/sms/SmsCampaignWorkspace.tsx').CampaignsPage];
  for(const Page of pages){const html=render(Page,{...empty,liveSendingEnabled:true});assert.ok(!html.includes('رضایت'));}
 });
-test('CSV upload is available from contacts, groups and compose and wired into campaign recipient selection',()=>{
- const people=load('components/sms/SmsContacts.tsx'),messages=load('components/sms/SmsMessages.tsx');for(const Page of [people.ContactsPage,people.GroupsPage,messages.SendPage]){const html=render(Page);assert.ok(html.includes('type="file"'));assert.ok(html.includes('.csv,text/csv'));assert.ok(html.includes('دریافت قالب CSV'));assert.ok(html.includes('پیامکی ارسال نمی‌شود'));}const campaign=readFileSync(new URL('components/sms/SmsCampaignWorkspace.tsx',root),'utf8');assert.ok(campaign.includes('<SmsCsvImport'));assert.ok(campaign.includes('setGroupId(id)'));
+test('CSV upload is available from contacts and groups, removed from single send, and preserved for campaigns',()=>{
+ const people=load('components/sms/SmsContacts.tsx'),messages=load('components/sms/SmsMessages.tsx');for(const Page of [people.ContactsPage,people.GroupsPage]){const html=render(Page);assert.ok(html.includes('type="file"'));assert.ok(html.includes('.csv,text/csv'));assert.ok(html.includes('دریافت قالب CSV'));assert.ok(html.includes('پیامکی ارسال نمی‌شود'));}const campaign=readFileSync(new URL('components/sms/SmsCampaignWorkspace.tsx',root),'utf8');assert.ok(campaign.includes('<SmsCsvImport'));assert.ok(campaign.includes('setGroupId(id)'));
 });
 test('acquisition and prospect screens render real empty reports in Persian without invented values',()=>{
  const prior=shell.useSmsResource;

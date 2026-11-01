@@ -1,4 +1,5 @@
 "use client";
+import {CommandDashboard} from './SmsCommandCenter';
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -67,173 +68,7 @@ export function ActivityChart({ daily }: { daily: Report["daily"] }) {
     </>
   );
 }
-export function DashboardPage() {
-  const { data } = useSms();
-  const { resource, error, loading, reload } = useSmsResource<Report>(
-    "/api/admin/sms/workspace?view=reports",
-  );
-  const counts = Object.fromEntries(
-    data.counts.map((v) => [v.status, v.count]),
-  );
-  return (
-    <>
-      <div className="sms-stats">
-        {[
-          ["در صف", counts.queued || 0,'/sms/history?status=queued'],
-          ["ارسال‌شده", counts.sent || 0,'/sms/history?status=sent'],
-          ["تحویل‌شده", counts.delivered || 0,'/sms/history?status=delivered'],
-          ["ناموفق", counts.failed || 0,'/sms/history?status=failed'],
-          ["مخاطبان قابل ارسال", data.summary.consented_contacts,'/sms/contacts?filter=active'],
-          ["کمپین‌های فعال", data.summary.active_campaigns ?? null,'/sms/campaigns?status=active'],
-        ].map(([title, value,href]) => (
-          <StatCard
-            key={String(title)}
-            title={String(title)}
-            value={value as number | null}
-            href={String(href)}
-            hint={
-              title === "کمپین‌های فعال"
-                ? "تأییدشده یا در حال ثبت در صف"
-                : title === "ارسال‌شده"
-                  ? "وضعیت فعلی؛ تحویل جداگانه ثبت می‌شود"
-                  : title==='مخاطبان قابل ارسال'?'شماره‌های ثبت‌شده بدون لغو دریافت؛ تضمین رسیدن پیام نیست':undefined
-            }
-          />
-        ))}
-      </div>
-      <div className="sms-quick-actions">
-        <Link href="/sms/send">پیامک جدید</Link>
-        <Link href="/sms/contacts?new=1">افزودن مخاطب</Link>
-        <Link href="/sms/campaigns?new=1">ساخت کمپین</Link>
-        <Link href="/sms/history?status=queued">مشاهده صف ارسال</Link>
-      </div>
-      <div className="sms-two-columns">
-        <Panel
-          title="فعالیت ۳۰ روز اخیر"
-          action={<Link href="/sms/reports">گزارش کامل</Link>}
-        >
-          {loading ? (
-            <LoadingSkeleton />
-          ) : error ? (
-            <ResourceError message={error} retry={reload} />
-          ) : (
-            resource && <ActivityChart daily={resource.daily} />
-          )}
-        </Panel>
-        <Panel
-          title="آخرین کمپین‌ها"
-          action={<Link href="/sms/campaigns">مشاهده همه</Link>}
-        >
-          {data.campaigns.length ? (
-            <div className="sms-table-scroll">
-              <table>
-                <thead>
-                  <tr>
-                    <th>کمپین</th>
-                    <th>وضعیت</th>
-                    <th>زمان شروع</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.campaigns.slice(0, 5).map((c) => (
-                    <tr key={c.id}>
-                      <td>{c.name}</td>
-                      <td>
-                        <Badge state={c.status} />
-                      </td>
-                      <td>{smsDate(c.scheduled_at)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <EmptyState
-              title="هنوز کمپینی ندارید"
-              text="مخاطبان را وارد کنید، گروه بسازید و متن کمپین را آماده کنید."
-              href="/sms/campaigns?new=1"
-              action="ساخت کمپین"
-            />
-          )}
-        </Panel>
-      </div>
-      <Panel
-        title="آخرین پیام‌ها"
-        action={<Link href="/sms/history">مشاهده همه</Link>}
-      >
-        {data.messages.length ? (
-          <div className="sms-table-scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th>گیرنده</th>
-                  <th>متن پیام</th>
-                  <th>نوع</th>
-                  <th>زمان ثبت</th>
-                  <th>وضعیت</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.messages.slice(0, 5).map((m) => (
-                  <tr key={m.id}>
-                    <td>
-                      <bdi>{m.phone_e164}</bdi>
-                    </td>
-                    <td className="sms-excerpt">{m.body}</td>
-                    <td>
-                      {m.category === "transactional" ? "عملیاتی" : "تبلیغاتی"}
-                    </td>
-                    <td>{smsDate(m.created_at)}</td>
-                    <td>
-                      <Badge state={m.status} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <EmptyState
-            title="اولین پیش‌نویس را بسازید"
-            text="وضعیت پذیرش گوشی، ارسال و تحویل هر پیام جداگانه ثبت می‌شود."
-            href="/sms/send"
-            action="نگارش پیام"
-          />
-        )}
-      </Panel>
-      <div className="sms-two-columns">
-        <Panel
-          title="وضعیت اتصال"
-          action={<Link href="/sms/gateway">جزئیات اتصال</Link>}
-        >
-          <GatewayStatus />
-        </Panel>
-        <Panel title="نیازمند بررسی">
-          {data.messages.filter((m) => ["failed", "unknown"].includes(m.status))
-            .length ? (
-            <ul className="sms-recent-list">
-              {data.messages
-                .filter((m) => ["failed", "unknown"].includes(m.status))
-                .slice(0, 4)
-                .map((m) => (
-                  <li key={m.id}>
-                    <bdi>{m.phone_e164}</bdi>
-                    <Badge state={m.status} />
-                  </li>
-                ))}
-            </ul>
-          ) : (
-            <p className="sms-muted">
-              در ۱۰۰ پیام آخر، پیام ناموفق یا نامشخص ثبت نشده است.
-            </p>
-          )}
-          <p className="sms-muted">پیام نامشخص خودکار دوباره ارسال نمی‌شود.</p>
-          <Link href="/sms/history?status=unknown">بررسی پیام‌های نامشخص</Link>
-        </Panel>
-      </div>
-    </>
-  );
-}
+export function DashboardPage() { return <CommandDashboard/>; }
 export function ReportsPage() {
   const today = new Date().toISOString().slice(0, 10);
   const [from, setFrom] = useState(
@@ -366,20 +201,21 @@ export function ReportsPage() {
 }
 export function GatewayPage() {
   const { data } = useSms();
+  const seen=data.agent?.last_inbox_at;
+  const fresh=seen && Date.now()-Date.parse(seen.replace(' ','T')+(/Z|[+]\d\d:\d\d$/.test(seen)?'':'Z'))<300000;
   return (
     <div className="sms-two-columns">
       <Panel title="درگاه اندروید و عامل ویندوز">
-        <GatewayStatus />
+        <p>گوشی: {fresh?"ارتباط اخیر دریافت تأیید شده":"نیازمند بررسی"}</p><p>آخرین ارتباط دریافت: {smsDate(seen)}</p><GatewayStatus />
         <p>
           دریافت پیام از گوشی:{" "}
           {data.agent?.inbound_enabled ? "فعال" : "غیرفعال"}
         </p>
         <p className="sms-muted">
-          ارتباط اخیر عامل، اتصال موفق به خود گوشی را اثبات نمی‌کند. زمان آخرین
-          ارتباط موفق گوشی به‌صورت مستقل در سامانه موجود نیست.
+          ارتباط اخیر عامل، اتصال موفق به خود گوشی را اثبات نمی‌کند. تأیید ارتباط دریافت گوشی به معنی سلامت ارسال سیم‌کارت نیست.
         </p>
       </Panel>
-      <Panel title="مراحل اتصال امن">
+      <details className="sms-panel"><summary>جزئیات فنی و راهنمای اتصال</summary>
         <ol className="sms-checklist">
           <li>
             کلید عامل ارتباطی:{" "}
@@ -405,7 +241,7 @@ export function GatewayPage() {
           متن فنی خطا و مقادیر اتصال برای جلوگیری از افشای اطلاعات حساس نمایش
           داده نمی‌شود.
         </p>
-      </Panel>
+      </details>
     </div>
   );
 }
@@ -438,7 +274,7 @@ export function SettingsPage() {
       <Panel title="محدودیت‌ها و نگهداری داده">
         <ul className="sms-checklist">
           <li>متن پیام و قالب: حداکثر ۱۰۰۰ نویسه</li>
-          <li>ورود پرونده: حداکثر ۲۰۰ ردیف در هر بار</li>
+          <li>ورود CSV: پردازش مرحله‌ای با امکان ادامه پس از قطع ارتباط</li>
           <li>سقف گیرندگان هر کمپین: حداکثر ۱۰٬۰۰۰ مخاطب</li>
           <li>
             سرعت ارسال توسط عامل ارتباطی کنترل می‌شود؛ از این صفحه قابل افزایش

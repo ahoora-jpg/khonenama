@@ -2,6 +2,7 @@ export const CLAIM_SQL = `UPDATE sms_messages SET status='leased',lease_token=?,
   attempts=attempts+1,updated_at=CURRENT_TIMESTAMP WHERE id=(
     SELECT m.id FROM sms_messages m JOIN sms_contacts c ON c.id=m.contact_id
     WHERE m.tenant_id=? AND m.status='queued' AND m.gateway_id=?
+      AND NOT EXISTS(SELECT 1 FROM sms_dispatch_control control WHERE control.tenant_id=m.tenant_id AND control.paused=1)
       AND m.body NOT LIKE '%{{%' AND c.source<>'removed'
       AND COALESCE(julianday(m.scheduled_at),0)<=julianday('now')
       AND julianday(m.expires_at)>julianday('now')

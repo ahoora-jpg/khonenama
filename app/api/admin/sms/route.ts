@@ -1,3 +1,4 @@
+import { dispatchControl } from '@/lib/server/sms/dispatch-control';
 import { env } from "cloudflare:workers";
 import { isSmsAdminRequest } from "@/lib/server/sms/admin-auth";
 import { GATEWAY, TENANT, canReceivePromotionalMessage, maskPhone, noStore, normalizePhone,wasPhoneRemoved,removeSmsContact } from "@/lib/server/sms/domain";
@@ -11,24 +12,33 @@ export async function GET(request: Request) {
   if (!await isSmsAdminRequest(request)) return noStore({ ok: false }, 401);
   if (!db()) return noStore({ ok: false, error: "DB_UNAVAILABLE" }, 503);
   try {
-    const [counts, contacts, messages, campaigns, agent, summary] = await Promise.all([
+    const [counts, contacts, messages, campaigns, agent, summary, control] = await Promise.all([
       db().prepare("SELECT status,COUNT(*) AS count FROM sms_messages WHERE tenant_id=? GROUP BY status").bind(TENANT).all(),
       db().prepare(`SELECT id,phone_e164,display_name,kind,source,created_at,
         CASE WHEN EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=sms_contacts.tenant_id AND o.contact_id=sms_contacts.id) THEN 'revoked'
         ELSE 'active' END AS consent_status
         FROM sms_contacts WHERE tenant_id=? AND source<>'removed' ORDER BY created_at DESC LIMIT 100`).bind(TENANT).all(),
       db().prepare("SELECT m.id,m.category,m.status,m.body,m.created_at,m.updated_at,c.phone_e164 FROM sms_messages m JOIN sms_contacts c ON c.id=m.contact_id WHERE m.tenant_id=? ORDER BY m.created_at DESC LIMIT 100").bind(TENANT).all(),
-      db().prepare("SELECT id,name,status,scheduled_at,max_recipients,created_at FROM sms_campaigns WHERE tenant_id=? AND NOT EXISTS(SELECT 1 FROM sms_removed_records r WHERE r.tenant_id=sms_campaigns.tenant_id AND r.kind='campaign' AND r.record_id=sms_campaigns.id) ORDER BY created_at DESC LIMIT 50").bind(TENANT).all(),
-      db().prepare("SELECT a.last_seen_at,a.last_error,a.enabled,g.enabled AS gateway_enabled,g.sim_number,g.inbound_enabled FROM sms_gateway_agents a JOIN sms_gateways g ON g.id=a.gateway_id WHERE a.id='khonenama-windows' AND a.tenant_id=?").bind(TENANT).first(),
+      db().prepare(`SELECT id,name,status,scheduled_at,max_recipients,created_at,
+        (SELECT COUNT(*) FROM sms_messages m WHERE m.campaign_id=sms_campaigns.id AND m.tenant_id=sms_campaigns.tenant_id) total,
+        (SELECT COUNT(DISTINCT contact_id) FROM sms_messages m WHERE m.campaign_id=sms_campaigns.id AND m.tenant_id=sms_campaigns.tenant_id) audience,
+        (SELECT COUNT(*) FROM sms_messages m WHERE m.campaign_id=sms_campaigns.id AND m.tenant_id=sms_campaigns.tenant_id AND m.status='queued') queued,
+        (SELECT COUNT(*) FROM sms_messages m WHERE m.campaign_id=sms_campaigns.id AND m.tenant_id=sms_campaigns.tenant_id AND m.status='delivered') delivered,
+        (SELECT COUNT(*) FROM sms_messages m WHERE m.campaign_id=sms_campaigns.id AND m.tenant_id=sms_campaigns.tenant_id AND m.status='failed') failed,
+        (SELECT COUNT(*) FROM sms_messages m WHERE m.campaign_id=sms_campaigns.id AND m.tenant_id=sms_campaigns.tenant_id AND m.status IN ('sent','submitted','processed','leased')) sending
+        FROM sms_campaigns WHERE tenant_id=? AND NOT EXISTS(SELECT 1 FROM sms_removed_records r WHERE r.tenant_id=sms_campaigns.tenant_id AND r.kind='campaign' AND r.record_id=sms_campaigns.id) ORDER BY created_at DESC LIMIT 50`).bind(TENANT).all(),
+      db().prepare("SELECT a.last_seen_at,a.last_inbox_at,a.last_error,a.enabled,g.enabled AS gateway_enabled,g.sim_number,g.inbound_enabled FROM sms_gateway_agents a JOIN sms_gateways g ON g.id=a.gateway_id WHERE a.id='khonenama-windows' AND a.tenant_id=?").bind(TENANT).first(),
       db().prepare(`SELECT
+        (SELECT COUNT(*) FROM sms_contacts WHERE tenant_id=? AND source<>'removed') AS contact_count,
         (SELECT COUNT(*) FROM sms_campaigns WHERE tenant_id=? AND status IN ('approved','running')) AS active_campaigns,
         (SELECT COUNT(*) FROM sms_opt_outs WHERE tenant_id=?) AS opt_outs,
         (SELECT COUNT(*) FROM sms_messages WHERE tenant_id=? AND status='queued' AND priority>0) AS priority_queued,
-        (SELECT COUNT(*) FROM sms_contacts c WHERE c.tenant_id=? AND c.source<>'removed' AND NOT EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=c.tenant_id AND o.contact_id=c.id)) AS consented_contacts`).bind(TENANT,TENANT,TENANT,TENANT).first(),
+        (SELECT COUNT(*) FROM sms_contacts c WHERE c.tenant_id=? AND c.source<>'removed' AND NOT EXISTS(SELECT 1 FROM sms_opt_outs o WHERE o.tenant_id=c.tenant_id AND o.contact_id=c.id)) AS consented_contacts`).bind(TENANT,TENANT,TENANT,TENANT,TENANT).first(),
+      dispatchControl(db()),
     ]);
     return noStore({ ok: true, counts: counts.results, contacts: contacts.results.map((c:any)=>({ ...c, phone_e164: maskPhone(c.phone_e164) })),
       messages: messages.results.map((m:any)=>({ ...m, phone_e164: maskPhone(m.phone_e164) })), campaigns: campaigns.results, agent:agent?{...agent,sim_selection:smsSimSelection(env as any)}:null,summary,
-      liveSendingEnabled:liveSmsEnabled(env as any),setup:{separateKeyConfigured:smsKeyConfigured(),bridgeCredentialConfigured:Boolean((env as any).SMS_BRIDGE_TOKEN)} });
+      liveSendingEnabled:liveSmsEnabled(env as any),control,setup:{separateKeyConfigured:smsKeyConfigured(),bridgeCredentialConfigured:Boolean((env as any).SMS_BRIDGE_TOKEN)} });
   } catch { return noStore({ ok: false, error: "SMS_SCHEMA_UNAVAILABLE" }, 503); }
 }
 

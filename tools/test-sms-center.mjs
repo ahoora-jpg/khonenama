@@ -86,7 +86,7 @@ test("promotional recipients need no initial consent and are suppressed after op
   sqlite.close();
 });
 test("dispatch prioritizes transactional messages and rechecks opt-out",async()=>{
-  const sqlite=new DatabaseSync(":memory:");sqlite.exec(await readFile(new URL("../db/migrations/0012_sms_center.sql",import.meta.url),"utf8"));
+  const sqlite=new DatabaseSync(":memory:");sqlite.exec(await readFile(new URL("../db/migrations/0012_sms_center.sql",import.meta.url),"utf8"));sqlite.exec(await readFile(new URL("../db/sms-migrations/0001_dispatch_control.sql",import.meta.url),"utf8"));
   sqlite.prepare("INSERT INTO sms_contacts(id,tenant_id,phone_e164,source) VALUES('c1','khonenama','+989123456789','test'),('c2','khonenama','+989111111111','test')").run();
   const insert=sqlite.prepare(`INSERT INTO sms_messages(id,tenant_id,contact_id,category,body,status,priority,idempotency_key,expires_at)
     VALUES(?,'khonenama',?,?,?,'queued',?,?,datetime('now','+1 day'))`);
@@ -200,7 +200,7 @@ test('bridge accepts the dedicated SMS origin and rejects lookalike or untrusted
 });
 
 test('large future queues use the due-time index and preserve timezone-aware claim semantics',async()=>{
- const db=new DatabaseSync(':memory:');db.exec(await readFile('db/migrations/0012_sms_center.sql','utf8'));db.exec(await readFile('db/migrations/0017_sms_due_queue_index.sql','utf8'));
+ const db=new DatabaseSync(':memory:');db.exec(await readFile('db/migrations/0012_sms_center.sql','utf8'));db.exec(await readFile('db/migrations/0017_sms_due_queue_index.sql','utf8'));db.exec(await readFile('db/sms-migrations/0001_dispatch_control.sql','utf8'));
  db.exec("INSERT INTO sms_contacts(id,tenant_id,phone_e164,source) VALUES('due-test','khonenama','+989123456789','test')");
  const insert=db.prepare("INSERT INTO sms_messages(id,tenant_id,contact_id,category,body,status,idempotency_key,scheduled_at,expires_at) VALUES(?,'khonenama','due-test','transactional','mock','queued',?,?,datetime('now','+3 days'))");
  db.exec('BEGIN');for(let i=0;i<11000;i++)insert.run('future-'+i,'future-'+i,new Date(Date.now()+86400000).toISOString());db.exec('COMMIT');

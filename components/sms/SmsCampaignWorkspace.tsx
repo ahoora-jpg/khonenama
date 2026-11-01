@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import {RetryAction} from "./SmsCommandCenter";
+import {AcquisitionPage} from "./SmsAcquisition";
 import {SmsCsvImport} from "./SmsCsvImport";
 import { useSearchParams } from "next/navigation";
 import { estimateSms } from "@/lib/sms-text";
@@ -30,6 +32,7 @@ type Campaign = {
   group_count: number;
   eligible_count: number;
   queued_count: number;
+  total_messages:number; delivered_count:number; failed_count:number;
 };
 type CampaignData = {
   groups: { id: string; name: string }[];
@@ -43,14 +46,7 @@ type GroupSummary = {
     eligible_count: number;
   }[];
 };
-const steps = [
-  "مشخصات",
-  "مخاطبان",
-  "متن پیام",
-  "زمان و محدودیت",
-  "بازبینی",
-  "ذخیره",
-];
+const steps = ["مخاطبان", "پیام", "بازبینی و شروع"];
 export function CampaignsPage() {
   const { data, notify, refresh } = useSms();
   const [tracking, setTracking] = useState(false),
@@ -60,6 +56,7 @@ export function CampaignsPage() {
     [cooldownDays, setCooldownDays] = useState(7),
     [linkExpires, setLinkExpires] = useState(""),
     [preview, setPreview] = useState<any[] | null>(null);
+  const [startPreview,setStartPreview]=useState<any>(null);
   const params = useSearchParams();
   const [wizard, setWizard] = useState(params.get("new") === "1"),
     [step, setStep] = useState(0),
@@ -89,6 +86,7 @@ export function CampaignsPage() {
   const displayBody = previewBody.replaceAll("{{name}}", "علی رضایی");
   const estimate=estimateSms(displayBody);
   async function act(payload: Record<string, unknown>) {
+    if(payload.action==='pause' && !window.confirm('توقف کمپین مانع برداشت پیام‌های بعدی این کمپین از صف می‌شود؛ پیام در حال پردازش ممکن است نتیجه نهایی خود را ثبت کند.'))return null;
     setBusy(true);
     try {
       const value = await smsApi("/api/admin/sms/campaigns", payload);
@@ -111,24 +109,25 @@ export function CampaignsPage() {
     const message =
       step === 0 && !name.trim()
         ? "نام کمپین را وارد کنید."
-        : step === 1 && !groupId
+        : step === 0 && !groupId
           ? "یک گروه مخاطب انتخاب کنید."
-          : step === 2 && !body.trim()
+          : step === 1 && !body.trim()
             ? "متن پیام را وارد کنید."
-            : step === 3 &&
+            : step === 2 &&
                 (!Number.isInteger(limit) || limit < 1 || limit > 10000)
               ? "سقف گیرندگان باید بین ۱ و ۱۰٬۰۰۰ باشد."
-              : step === 3 &&
+              : step === 2 &&
                   schedule &&
                   (!Number.isFinite(Date.parse(schedule)) ||
                     Date.parse(schedule) <= Date.now())
                 ? "زمان شروع باید در آینده باشد."
                 : "";
     setFormError(message);
-    if (!message) setStep((v) => Math.min(5, v + 1));
+    if (!message) setStep((v) => Math.min(2, v + 1));
   }
   return (
     <>
+      {params.get("campaign_id") && <section className="sms-panel"><h2>جزئیات و عملکرد کمپین</h2><AcquisitionPage /></section>}
       {preview && (
         <Modal
           title="پیش‌نمایش نهایی ۲۵ گیرنده اول؛ بدون ارسال"
@@ -173,7 +172,7 @@ export function CampaignsPage() {
               <option value="">همه</option><option value="active">کمپین‌های فعال</option>
               <option value="draft">پیش‌نویس</option>
               <option value="approved">تأییدشده</option>
-              <option value="running">در حال ثبت</option>
+              <option value="running">در حال اجرا</option>
               <option value="paused">متوقف</option>
               <option value="completed">پایان‌یافته</option>
               <option value="cancelled">لغوشده</option>
@@ -185,53 +184,115 @@ export function CampaignsPage() {
         ) : error ? (
           <ResourceError message={error} retry={reload} />
         ) : visibleCampaigns.length ? (
-          <div className="sms-table-scroll">
+          <div className="sms-table-scroll sms-campaign-table">
             <table>
               <thead>
                 <tr>
                   <th>کمپین و متن</th>
                   <th>وضعیت</th>
-                  <th>مخاطبان گروه</th>
-                  <th>قابل ارسال</th>
-                  <th>شروع</th>
-                  <th>پیشرفت ثبت در صف</th>
+                  <th>مخاطبان</th>
+                  <th>پیشرفت نتیجه</th>
                   <th>عملیات</th>
                 </tr>
               </thead>
               <tbody>
                 {visibleCampaigns.map((c) => (
                     <tr key={c.id}>
-                      <td>
+                      <td data-label="کمپین">
                         <details>
                           <summary>{c.name}</summary>
                           <p className="sms-message-body">{c.body}</p>
                           {[c.body,c.variant_b].map((text,index)=>text&&<button key={index} className="sms-secondary" onClick={()=>{setName(c.name+' — '+(index?'نسخه دوم':'نسخه اول'));setBody(text);setGroupId(c.group_id);setTracking(text.includes('{{registration_link}}'));setVariantB('');setSchedule('');setStep(0);setWizard(true);}}>انتخاب {index?'نسخه دوم':'نسخه اول'} برای کمپین جدید</button>)}
                         </details>
                       </td>
-                      <td>
-                        <Badge state={c.status} />{c.status==='completed'&&<small>ثبت صف پایان یافته؛ نتیجهٔ ارسال را در «تحلیل و گیرندگان» ببینید.</small>}
+                      <td data-label="وضعیت">
+                        <Badge state={c.status} />{c.status==='completed'&&<small>ثبت صف پایان یافته؛ نتیجهٔ ارسال را در «گزارش و جزئیات» ببینید.</small>}
                       </td>
-                      <td>{faNumber(c.group_count)}</td>
-                      <td>{faNumber(c.eligible_count)}</td>
-                      <td>{smsDate(c.scheduled_at)}</td>
-                      <td>
+                      <td data-label="مخاطبان">{faNumber(c.queued_count)} مخاطب ثبت‌شده<br/><small>سقف: {faNumber(c.max_recipients)} · {smsDate(c.scheduled_at)}</small></td>
+                      <td data-label="پیشرفت">
                         <span>
-                          {faNumber(c.queued_count)} از سقف{" "}
-                          {faNumber(c.max_recipients)}
+                          {faNumber(c.delivered_count||0)} تحویل‌شده · {faNumber(c.failed_count||0)} ناموفق
                         </span>
                         <progress
-                          max={c.max_recipients}
-                          value={c.queued_count}
+                          max={Math.max(c.total_messages||0,1)}
+                          value={(c.delivered_count||0)+(c.failed_count||0)}
                           aria-label={"پیام‌های ثبت‌شده در صف کمپین " + c.name}
                         />
                       </td>
-                      <td>
-                        <button className="sms-quiet sms-danger-text" disabled={busy} onClick={()=>{if(window.confirm('کمپین از فهرست حذف شود؟ پیام‌های در صف آن لغو می‌شوند؛ سابقه ارسال‌های انجام‌شده باقی می‌ماند.'))void act({action:'remove',id:c.id});}}>حذف کمپین</button>
-                        <a href={"/sms/acquisition?campaign_id=" + c.id}>
-                          تحلیل و گیرندگان
+                      <td data-label="عملیات" className="sms-campaign-operations">
+                        {c.status === "completed" && c.queued_count === 0 && (
+                          <button
+                            className="sms-secondary"
+                            disabled={busy || !data.liveSendingEnabled}
+                            onClick={() =>
+                              setConfirmation({
+                                action: "retryEmpty",
+                                id: c.id,
+                              })
+                            }
+                          >
+                            اجرای مجدد
+                          </button>
+                        )}
+                        {c.status === "draft" && (
+                          <button
+                            className="sms-secondary"
+                            disabled={busy || !data.liveSendingEnabled}
+                            title={
+                              !data.liveSendingEnabled
+                                ? "ارسال واقعی خاموش است"
+                                : undefined
+                            }
+                            onClick={() =>
+                              setConfirmation({ action: "approve", id: c.id })
+                            }
+                          >
+                            شروع کمپین
+                          </button>
+                        )}
+                        {["running","approved"].includes(c.status) && (
+                          <button
+                            className="sms-secondary"
+                            disabled={busy}
+                            onClick={() =>
+                              void act({ action: "pause", id: c.id })
+                            }
+                          >
+                            توقف
+                          </button>
+                        )}
+                        {c.status === "paused" && (
+                          <button
+                            className="sms-secondary"
+                            disabled={busy || !data.liveSendingEnabled}
+                            onClick={() =>
+                              setConfirmation({ action: "resume", id: c.id })
+                            }
+                          >
+                            ادامه
+                          </button>
+                        )}
+                        {["draft", "approved", "running", "paused"].includes(
+                          c.status,
+                        ) && (
+                          <button
+                            className="sms-danger"
+                            disabled={busy}
+                            onClick={() =>
+                              setConfirmation({ action: "cancel", id: c.id })
+                            }
+                          >
+                            لغو
+                          </button>
+                        )}
+                        <RetryAction campaignId={c.id} onDone={reload}>تلاش مجدد پیام‌های ناموفق این کمپین</RetryAction>
+                        <a className="sms-button sms-secondary" href={"/sms/messages?tab=failed&campaignId="+c.id}>پیام‌های ناموفق</a>
+                        <button className="sms-secondary sms-danger-text" disabled={busy} onClick={()=>{if(window.confirm('کمپین از فهرست حذف شود؟ پیام‌های در صف آن لغو می‌شوند؛ سابقه ارسال‌های انجام‌شده باقی می‌ماند.'))void act({action:'remove',id:c.id});}}>حذف کمپین</button>
+                        <a className="sms-button sms-secondary" href={"/sms/campaigns?campaign_id=" + c.id + "&tab=performance"}>
+                          گزارش
                         </a>
                         <button
-                          className="sms-quiet"
+                          className="sms-secondary"
                           disabled={busy}
                           onClick={async () => {
                             try {
@@ -247,71 +308,6 @@ export function CampaignsPage() {
                         >
                           پیش‌نمایش گیرندگان
                         </button>
-                        {c.status === "completed" && c.queued_count === 0 && (
-                          <button
-                            className="sms-quiet"
-                            disabled={busy || !data.liveSendingEnabled}
-                            onClick={() =>
-                              setConfirmation({
-                                action: "retryEmpty",
-                                id: c.id,
-                              })
-                            }
-                          >
-                            اجرای مجدد
-                          </button>
-                        )}
-                        {c.status === "draft" && (
-                          <button
-                            className="sms-quiet"
-                            disabled={busy || !data.liveSendingEnabled}
-                            title={
-                              !data.liveSendingEnabled
-                                ? "ارسال واقعی خاموش است"
-                                : undefined
-                            }
-                            onClick={() =>
-                              setConfirmation({ action: "approve", id: c.id })
-                            }
-                          >
-                            درخواست فعال‌سازی
-                          </button>
-                        )}
-                        {c.status === "running" && (
-                          <button
-                            className="sms-quiet"
-                            disabled={busy}
-                            onClick={() =>
-                              void act({ action: "pause", id: c.id })
-                            }
-                          >
-                            توقف
-                          </button>
-                        )}
-                        {c.status === "paused" && (
-                          <button
-                            className="sms-quiet"
-                            disabled={busy || !data.liveSendingEnabled}
-                            onClick={() =>
-                              setConfirmation({ action: "resume", id: c.id })
-                            }
-                          >
-                            ادامه
-                          </button>
-                        )}
-                        {["draft", "approved", "running", "paused"].includes(
-                          c.status,
-                        ) && (
-                          <button
-                            className="sms-quiet sms-danger-text"
-                            disabled={busy}
-                            onClick={() =>
-                              setConfirmation({ action: "cancel", id: c.id })
-                            }
-                          >
-                            لغو
-                          </button>
-                        )}
                       </td>
                     </tr>
                   ))}
@@ -325,8 +321,7 @@ export function CampaignsPage() {
           />
         )}
         <p className="sms-muted">
-          ۵۰ کمپین آخر نمایش داده می‌شود. پیشرفت جدول، ثبت در صف است و به معنی
-          ارسال یا تحویل نیست.
+          ۵۰ کمپین آخر نمایش داده می‌شود. پیشرفت بر اساس نتایج قطعی پیام‌هاست؛ «در حال ارسال» به معنی تحویل نیست.
         </p>
       </Panel>
       {wizard && (
@@ -371,7 +366,7 @@ export function CampaignsPage() {
                 </p>
               </>
             )}
-            {step === 1 && (
+            {step === 0 && (
               <>
                 <SmsCsvImport groupId={groupId||undefined} onImported={id=>{setGroupId(id);groups.reload();reload();}}/>
                 {groups.error ? (
@@ -404,7 +399,7 @@ export function CampaignsPage() {
                 </p>
               </>
             )}
-            {step === 2 && (
+            {step === 1 && (
               <>
                 <Field label="متن کمپین">
                   <textarea
@@ -418,6 +413,7 @@ export function CampaignsPage() {
                 <button type="button" className="sms-secondary" onClick={() => setBody(current => current + "{{name}}")}>افزودن نام مخاطب</button>
                 <p className="sms-muted">عبارت {'{{name}}'} برای هر نفر با نام ذخیره‌شدهٔ او جایگزین می‌شود؛ مثلاً {'{{name}}'} گرامی. «علی رضایی» در پیش‌نمایش نمونه است. برای مخاطب بی‌نام «همکار» قرار می‌گیرد. نام فروشگاه نیز همان‌طور که ذخیره شده استفاده می‌شود.</p>
                 <MessagePreview body={displayBody} parts={estimate.parts} />
+                <details><summary>تنظیمات پیشرفته</summary>
                 <label>
                   <input
                     type="checkbox"
@@ -474,11 +470,12 @@ export function CampaignsPage() {
                     ? `هزینه تخمینی هر گیرنده: ${faNumber(estimate.parts * Number(tariff))} تومان`
                     : "هزینه: داده موجود نیست"}
                 </p>
+                </details>
               </>
             )}
-            {step === 3 && (
+            {step === 2 && (
               <>
-                <Field label="حداقل فاصله تبلیغ به یک مخاطب (روز)">
+                <details><summary>تنظیمات پیشرفته</summary><Field label="حداقل فاصله تبلیغ به یک مخاطب (روز)">
                   <input
                     type="number"
                     min="0"
@@ -491,7 +488,7 @@ export function CampaignsPage() {
                   دارندگان غرفه و شماره‌های لغو دریافت از دعوت به ساخت اولین
                   غرفه کنار گذاشته می‌شوند.
                 </p>
-                <Field label="زمان شروع اختیاری">
+                </details><Field label="زمان شروع اختیاری">
                   <input
                     type="datetime-local"
                     value={schedule}
@@ -514,7 +511,7 @@ export function CampaignsPage() {
                 </p>
               </>
             )}
-            {step >= 4 && (
+            {step === 2 && (
               <>
                 <dl className="sms-definition">
                   <dt>نام</dt>
@@ -537,10 +534,7 @@ export function CampaignsPage() {
                   <dd>{faNumber(estimate.parts)}</dd>
                 </dl>
                 <MessagePreview body={displayBody} parts={estimate.parts} />
-                <p className="sms-alert">
-                  ذخیرهٔ پیش‌نویس هیچ کمپینی را فعال نمی‌کند. فعال‌سازی نیازمند
-                  اجازه و آماده‌بودن درگاه است.
-                </p>
+                <p className="sms-alert">تا بازبینی و تأیید نهایی، کمپین شروع نمی‌شود.</p>
               </>
             )}
             <div className="sms-modal-actions">
@@ -556,7 +550,7 @@ export function CampaignsPage() {
                   مرحلهٔ قبل
                 </button>
               )}
-              {step < 5 ? (
+              {step < 2 ? (
                 <button onClick={advance}>ادامه</button>
               ) : (
                 <button
@@ -581,6 +575,7 @@ export function CampaignsPage() {
                         : null,
                     });
                     if (value) {
+                      setConfirmation({action:"approve",id:value.id});
                       setWizard(false);
                       setName("");
                       setBody("");
@@ -589,7 +584,7 @@ export function CampaignsPage() {
                     }
                   }}
                 >
-                  {busy ? "در حال ذخیره…" : "ذخیره پیش‌نویس"}
+                  {busy ? "در حال ذخیره…" : "بازبینی نهایی و شروع"}
                 </button>
               )}
             </div>
@@ -610,20 +605,22 @@ export function CampaignsPage() {
               ? "این کمپین و پیام‌های باقی‌ماندهٔ آن در صف لغو شوند؟"
               : "این عملیات می‌تواند کمپین را وارد صف ارسال کند. شماره‌های لغو دریافت کنار گذاشته می‌شوند."}
           </p>
+          {startPreview && <dl className="sms-definition"><dt>کمپین</dt><dd>{startPreview.name}</dd><dt>مخاطب واجد شرایط</dt><dd>{faNumber(startPreview.eligible)}</dd><dt>برآورد حداکثر بخش‌های پیامک</dt><dd>{faNumber(startPreview.parts)}</dd><dt>زمان شروع</dt><dd>{startPreview.scheduledAt?smsDate(startPreview.scheduledAt):"پس از تأیید"}</dd><dt>برآورد حداکثر هزینه</dt><dd>{startPreview.cost==null?"تعرفه ثبت نشده":faNumber(startPreview.cost)+" تومان"}</dd></dl>}
           <div className="sms-modal-actions">
             <button
               className="sms-secondary"
-              onClick={() => setConfirmation(null)}
+              onClick={() => {setConfirmation(null);setStartPreview(null);}}
             >
               بازگشت
             </button>
             <button
-              disabled={busy}
+              disabled={busy || (startPreview && startPreview.eligible===0 && ["approve","resume"].includes(confirmation.action))}
               onClick={async () => {
-                if (await act(confirmation)) setConfirmation(null);
+                if(["approve","resume"].includes(confirmation.action) && !startPreview){setBusy(true);try{setStartPreview(await smsApi("/api/admin/sms/campaigns",{action:"startPreview",id:confirmation.id}));}catch(e){notify((e as Error).message);}finally{setBusy(false);}return;}
+                if (await act(confirmation)) {setConfirmation(null);setStartPreview(null); }
               }}
             >
-              تأیید
+              {["approve","resume"].includes(confirmation.action)?startPreview?"تأیید و شروع کمپین":"بازبینی شروع کمپین":"تأیید"}
             </button>
           </div>
         </Modal>

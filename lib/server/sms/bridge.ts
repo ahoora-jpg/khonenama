@@ -1,3 +1,4 @@
+import { ensureDispatchSchema } from './dispatch-control';
 import { env } from "cloudflare:workers";
 import { GATEWAY, TENANT, canTransition, gatewayState, isOptOut, noStore, normalizePhone, type SmsState } from "./domain";
 import { CLAIM_SQL } from "./queue";
@@ -41,6 +42,7 @@ export async function handleBridge(request: Request): Promise<Response> {
     return noStore({ok:true});
   }
   if (input.action==="claim") {
+    await ensureDispatchSchema(db);
     if((input.simNumber??2)!==selectedSim)return noStore({ok:false,error:"SIM_SELECTION_MISMATCH"},409);
     if(!liveSmsEnabled(env as any))return noStore({ok:false,error:"LIVE_SEND_DISABLED"},403);
     const id=crypto.randomUUID(), token=crypto.randomUUID();
