@@ -106,6 +106,7 @@ export default function KarajCurtainMarketsPage() {
               <a href="/karaj/curtain">پرده در کرج</a>
               <a href="/category/curtain">راهنمای جامع پرده</a>
               <a href="/tools/curtain-fabric-calculator">محاسبه متراژ پارچه پرده</a>
+              <a href="/search?q=%D9%BE%D8%B1%D8%AF%D9%87&location=%DA%A9%D8%B1%D8%AC">جستجوی غرفه‌های واقعی پرده در کرج</a>
             </div>
           </article>
         </div>
