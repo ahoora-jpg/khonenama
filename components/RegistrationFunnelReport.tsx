@@ -25,7 +25,7 @@ export default function RegistrationFunnelReport() {
   return <section className="inner-page"><div className="shell">
     <span className="section-kicker">ارزیابی ثبت‌نام</span>
     <h1>قیف ساخت غرفه</h1>
-    <p>این گزارش، جمع ۳۰ روز اخیر را نشان می‌دهد و مشخص می‌کند افراد تا کدام مرحلهٔ فرم پیش رفته‌اند.</p>
+    <p>این گزارش، جمع ۳۰ روز اخیر را نشان می‌دهد و مشخص می‌کند افراد تا کدام مرحلهٔ فرم کوتاه پیش رفته‌اند. رویدادهای مراحل جدید از امروز جمع می‌شوند؛ آمار قدیمی با فرم قبلی هم‌سنخ نیست.</p>
     <div className="dashboard-panel glass-panel" style={{ overflowX: "auto" }}>
       <table style={{ width: "100%" }}>
         <thead><tr><th>مرحله</th><th>تعداد</th><th>ریزش از مرحله قبل</th></tr></thead>
