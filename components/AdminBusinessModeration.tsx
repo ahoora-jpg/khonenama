@@ -29,6 +29,7 @@ type BusinessRow = {
   last_payment_reference?: string;
   owner_paused?: number;
   media_count?: number;
+  is_internal_test?: number;
 };
 
 type Summary = { total?: number; pending?: number; published?: number; visible_public?: number; active_subscriptions?: number; paid_count?: number; revenue?: number };
@@ -195,6 +196,7 @@ export default function AdminBusinessModeration() {
   }
 
   const filteredItems = items.filter((item) => {
+    if (item.is_internal_test) return false;
     if ((item.status === "suspended") !== showRemoved) return false;
     const needle = query.trim().toLowerCase();
     return !needle || [item.name, item.owner_name, item.owner_phone, item.phone].filter(Boolean).join(" ").toLowerCase().includes(needle);

@@ -21,6 +21,7 @@ export async function GET(request: Request) {
           CASE WHEN u.password_hash IS NOT NULL AND u.password_hash <> '' THEN 1 ELSE 0 END AS has_password,
           c.name AS category_name, vr.id AS review_request_id, vr.status AS review_status, vr.requested_at,
           COALESCE(v.owner_paused, 0) AS owner_paused,
+          CASE WHEN b.slug = 'alayy-dkvr-krj' OR b.slug LIKE 'ghrfh-azmayshy-%' THEN 1 ELSE 0 END AS is_internal_test,
           (SELECT COUNT(*) FROM business_media m WHERE m.business_id = b.id) AS media_count,
           COALESCE((SELECT p.code FROM subscriptions s JOIN plans p ON p.id = s.plan_id
             WHERE s.business_id = b.id AND s.status = 'active' AND (s.ends_at IS NULL OR julianday(s.ends_at) > julianday('now'))
@@ -49,11 +50,12 @@ export async function GET(request: Request) {
       `).all(),
       db.prepare(`
         SELECT
-          COUNT(*) AS total,
-          SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pending,
-          SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END) AS published,
+          SUM(CASE WHEN slug <> 'alayy-dkvr-krj' AND slug NOT LIKE 'ghrfh-azmayshy-%' THEN 1 ELSE 0 END) AS total,
+          SUM(CASE WHEN status = 'pending' AND slug <> 'alayy-dkvr-krj' AND slug NOT LIKE 'ghrfh-azmayshy-%' THEN 1 ELSE 0 END) AS pending,
+          SUM(CASE WHEN status = 'published' AND slug <> 'alayy-dkvr-krj' AND slug NOT LIKE 'ghrfh-azmayshy-%' THEN 1 ELSE 0 END) AS published,
           (SELECT COUNT(*) FROM businesses b LEFT JOIN business_visibility_controls v ON v.business_id = b.id
-            WHERE b.status = 'published' AND COALESCE(v.owner_paused, 0) = 0) AS visible_public,
+            WHERE b.status = 'published' AND COALESCE(v.owner_paused, 0) = 0
+              AND b.slug <> 'alayy-dkvr-krj' AND b.slug NOT LIKE 'ghrfh-azmayshy-%') AS visible_public,
           (SELECT COUNT(*) FROM subscriptions WHERE status = 'active' AND (ends_at IS NULL OR julianday(ends_at) > julianday('now'))) AS active_subscriptions,
           (SELECT COUNT(*) FROM payments WHERE status = 'verified') AS paid_count,
           (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'verified') AS revenue
