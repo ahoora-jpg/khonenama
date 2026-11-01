@@ -1,30 +1,27 @@
+import { CommandDashboard } from './SmsCommandCenter';
+import {ContactsWorkspace,MessagesWorkspace,ConnectionWorkspace,PerformanceWorkspace} from './SmsWorkspaces';
 import { Suspense } from "react";
-import {AcquisitionPage,ProspectsPage} from './SmsAcquisition';
 import { SmsAdminShell, LoadingSkeleton } from "./SmsAdminShell";
 import {
-  DashboardPage,
-  GatewayPage,
   ReportsPage,
-  SettingsPage,
 } from "./SmsOverview";
-import { SendPage, HistoryPage } from "./SmsMessages";
-import { ContactsPage, GroupsPage } from "./SmsContacts";
-import { CampaignsPage, TemplatesPage } from "./SmsCampaignWorkspace";
+import { CampaignsPage } from "./SmsCampaignWorkspace";
 import type { SmsPageKey } from "@/lib/sms-admin-ui";
 const pages = {
-  acquisition:AcquisitionPage,
-  prospects:ProspectsPage,
-  dashboard: DashboardPage,
-  send: SendPage,
-  contacts: ContactsPage,
-  groups: GroupsPage,
+  messages:MessagesWorkspace,
+  acquisition:PerformanceWorkspace,
+  prospects:()=> <ContactsWorkspace initial="prospects"/>,
+  dashboard: CommandDashboard,
+  send: ()=> <MessagesWorkspace initial="send"/>,
+  contacts: ContactsWorkspace,
+  groups: ()=> <ContactsWorkspace initial="groups"/>,
   campaigns: CampaignsPage,
-  templates: TemplatesPage,
-  inbox: () => <HistoryPage inbound />,
-  history: HistoryPage,
+  templates: ()=> <MessagesWorkspace initial="templates"/>,
+  inbox: ()=> <MessagesWorkspace initial="inbox"/>,
+  history: ()=> <MessagesWorkspace initial="history"/>,
   reports: ReportsPage,
-  gateway: GatewayPage,
-  settings: SettingsPage,
+  gateway: ConnectionWorkspace,
+  settings: ConnectionWorkspace,
 };
 export default function SmsApplication({ page }: { page: SmsPageKey }) {
   const Page = pages[page];

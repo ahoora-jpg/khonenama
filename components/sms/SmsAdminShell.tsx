@@ -65,14 +65,17 @@ export type Dashboard = {
   counts: { status: string; count: number }[];
   contacts: Contact[];
   messages: SmsMessage[];
+  control?: {paused:number;revision:number;updated_at:string|null};
   campaigns: {
     id: string;
     name: string;
     status: string;
     scheduled_at: string | null;
+    audience?:number; total?:number; queued?:number; delivered?:number; failed?:number; sending?:number;
   }[];
   agent: {
     last_seen_at: string | null;
+    last_inbox_at?:string|null;
     last_error: string | null;
     enabled: number;
     gateway_enabled: number;
@@ -81,6 +84,7 @@ export type Dashboard = {
     inbound_enabled: number;
   } | null;
   summary: {
+    contact_count?: number;
     active_campaigns: number;
     opt_outs: number;
     priority_queued: number;
@@ -134,6 +138,9 @@ export async function smsApi(path: string, payload?: Record<string, unknown>) {
   const result = await response.json();
   if (!response.ok) {
     const labels: Record<string, string> = {
+      RETRY_PREVIEW_CHANGED:'شرایط پیام‌ها تغییر کرده؛ دوباره بازبینی کنید.',
+      RETRY_BATCH_LIMIT:'در هر نوبت حداکثر ۵۰ پیام انتخاب کنید.',
+      CONTROL_UNAVAILABLE:'کنترل ارسال در دسترس نیست؛ وضعیت قبلی حفظ شده است.',
       CONTACT_REMOVED:'این شماره حذف شده است و دوباره برای ارسال اضافه نمی‌شود.',
       CONTACT_BUSY:'پیامی در اختیار گوشی است؛ پس از مشخص‌شدن نتیجه دوباره حذف کنید.',
       INVALID_TRACKING_OPTIONS:'مقصد، انقضا، تعرفه یا فاصله ارسال معتبر نیست.',
@@ -180,7 +187,8 @@ export function SmsAdminShell({
   const drawerRef = useRef<HTMLElement>(null),
     menuRef = useRef<HTMLButtonElement>(null);
   const accountRef = useRef<HTMLDetailsElement>(null);
-  const current = smsPages.find((item) => item.key === page)!;
+  const activePage = ['groups','prospects'].includes(page)?'contacts':['send','history','inbox','templates'].includes(page)?'messages':page==='settings'?'gateway':page==='acquisition'?'campaigns':page;
+  const current = smsPages.find((item) => item.key === activePage)!;
   const refresh = useCallback(async () => {
     setBusy(true);
     try {
@@ -215,6 +223,8 @@ export function SmsAdminShell({
   }, []);
   useEffect(() => {
     void refresh();
+    const poll=setInterval(()=>{if(document.visibilityState==='visible')void refresh();},30000);
+    return ()=>clearInterval(poll);
   }, [refresh]);
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 30000);
@@ -321,14 +331,14 @@ export function SmsAdminShell({
           </button>
         </div>
         <nav aria-label="بخش‌های پنل">
-          {smsPages.map((item, index) => {
-            const Icon = icons[index];
+          {smsPages.filter(item=>['dashboard','campaigns','contacts','messages'].includes(item.key)).sort((a,b)=>['dashboard','campaigns','contacts','messages'].indexOf(a.key)-['dashboard','campaigns','contacts','messages'].indexOf(b.key)).map((item) => {
+            const Icon = {dashboard:LayoutDashboard,campaigns:Megaphone,contacts:Users,messages:MessageSquare}[item.key as 'dashboard'|'campaigns'|'contacts'|'messages'];
             return (
               <Link
                 key={item.key}
                 href={item.path}
-                className={page === item.key ? "is-active" : ""}
-                aria-current={page === item.key ? "page" : undefined}
+                className={activePage === item.key ? "is-active" : ""}
+                aria-current={activePage === item.key ? "page" : undefined}
                 title={item.title}
                 onClick={() => setDrawer(false)}
               >
@@ -339,6 +349,7 @@ export function SmsAdminShell({
           })}
         </nav>
         <div className="sms-sidebar-bottom">
+          <nav aria-label="گزارش و تنظیمات"><Link href="/sms/reports">گزارش‌ها</Link><Link href="/sms/gateway">اتصال و تنظیمات</Link></nav>
           <div className="sms-account">
             <span>م</span>
             <div>
@@ -431,7 +442,7 @@ export function SmsAdminShell({
               <h1>{current.title}</h1>
               <p>{current.description}</p>
             </div>
-            {page !== "send" && (
+            {activePage !== "dashboard" && activePage !== "messages" && (
               <Link href="/sms/send" className="sms-button">
                 <Plus size={17} /> پیامک جدید
               </Link>

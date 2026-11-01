@@ -13,6 +13,40 @@
   min-height: 100dvh;
   isolation: isolate;
 }
+/* Command surfaces stay readable and operable down to 320px. */
+.sms-main, .sms-content, .sms-panel, .sms-command-banner > div { min-width: 0; }
+.sms-command-banner { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; padding:24px; border:1px solid #b9d9cb; border-radius:18px; background:#e9f5ee; margin-bottom:20px; }
+.sms-command-banner.is-paused { background:#fff4e3; border-color:#e2bf88; }
+.sms-command-actions, .sms-campaign-numbers { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-block:14px; }
+.sms-app .sms-danger { background:#a52d35; color:#fff; border-color:#a52d35; }
+.sms-four-stats { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.sms-workspace-tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+.sms-workspace-tabs a { border:1px solid var(--sms-border); padding:10px 16px; border-radius:12px; text-decoration:none; color:var(--sms-text); background:white; }
+.sms-workspace-tabs a.is-active { background:var(--sms-primary); color:#fff; }
+.sms-app progress { width:100%; max-width:100%; accent-color:var(--sms-primary); }
+.sms-app button, .sms-app .sms-button { min-height:44px; white-space:normal; overflow-wrap:anywhere; }
+.sms-app small, .sms-app p, .sms-app td { overflow-wrap:anywhere; }
+.sms-app input[type=checkbox] { min-width:20px; min-height:20px; }
+.sms-sidebar-bottom > nav { display:grid; gap:4px; }
+@media(max-width:767px) {
+  .sms-app .sms-campaign-table table, .sms-app .sms-campaign-table tbody,
+  .sms-app .sms-campaign-table tr, .sms-app .sms-campaign-table td,
+  .sms-app .sms-history-table table, .sms-app .sms-history-table tbody,
+  .sms-app .sms-history-table tr, .sms-app .sms-history-table td { display:block; width:100%; min-width:0; }
+  .sms-campaign-table thead, .sms-history-table thead { display:none; }
+  .sms-campaign-table tr, .sms-history-table tr { padding:12px; border:1px solid var(--sms-border); border-radius:12px; margin-bottom:14px; }
+  .sms-app .sms-campaign-table td, .sms-app .sms-history-table td { border:0; padding:6px 0; white-space:normal; }
+  .sms-campaign-table td[data-label]::before, .sms-history-table td[data-label]::before { content:attr(data-label) ' : '; color:var(--sms-muted); }
+  .sms-app .sms-campaign-operations { display:flex; flex-wrap:wrap; gap:8px; }
+  .sms-campaign-operations > * { flex:1 1 130px; text-align:center; }
+  .sms-four-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .sms-command-banner { padding:16px; }
+  .sms-command-banner > button { width:100%; }
+  .sms-command-actions > * { flex:1 1 130px; text-align:center; }
+  .sms-app .sms-table-scroll { max-width:100%; overflow-x:auto; overscroll-behavior-inline:contain; }
+  .sms-workspace-tabs a { flex:1 1 100px; text-align:center; }
+  .sms-app .sms-steps { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
 .sms-app *,
 .sms-login * {
   box-sizing: border-box;

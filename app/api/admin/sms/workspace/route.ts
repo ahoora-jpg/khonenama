@@ -97,6 +97,8 @@ export async function GET(request: Request) {
         "unknown",
         "cancelled",
       ];
+      if (!inbound && url.searchParams.get('campaignId')) { where += ' AND m.campaign_id=?'; values.push(url.searchParams.get('campaignId')); }
+      if (!inbound && filter==='sending') where += " AND m.status IN ('leased','submitted','processed','sent')";
       if (!inbound && states.includes(filter)) {
         where += " AND m.status=?";
         values.push(filter);

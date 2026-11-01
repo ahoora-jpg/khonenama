@@ -1,11 +1,12 @@
 export const smsPages = [
+ {key:'messages',path:'/sms/messages',title:'پیام‌ها',description:'ارسال، صف، تلاش مجدد و پیام‌های دریافتی'},
   {key:'acquisition',path:'/sms/acquisition',title:'تحلیل کمپین و جذب غرفه',description:'کلیک، ثبت‌نام و غرفه‌های واقعی منتسب به پیامک'},
   {key:'prospects',path:'/sms/prospects',title:'مخاطبان ثبت‌نام‌نکرده',description:'گروه‌های پویا و انتخاب مخاطبان کمپین بعدی'},
   {
     key: "dashboard",
     path: "/sms",
     title: "داشبورد",
-    description: "خلاصهٔ واقعی فعالیت مرکز پیامک",
+    description: "کنترل ارسال، کمپین فعال و کارهای نیازمند اقدام",
   },
   {
     key: "send",
@@ -58,7 +59,7 @@ export const smsPages = [
   {
     key: "gateway",
     path: "/sms/gateway",
-    title: "اتصال گوشی",
+    title: "اتصال و تنظیمات",
     description: "وضعیت درگاه اندروید و عامل ویندوز",
   },
   {
@@ -72,16 +73,16 @@ export type SmsPageKey = (typeof smsPages)[number]["key"];
 export const stateLabels: Record<string, string> = {
   draft: "پیش‌نویس",
   queued: "در صف",
-  leased: "در اختیار عامل",
-  submitted: "پذیرفته‌شده توسط گوشی",
-  processed: "پردازش‌شده",
-  sent: "ارسال‌شده",
+  leased: "در حال ارسال",
+  submitted: "در حال ارسال",
+  processed: "در حال ارسال",
+  sent: "در حال ارسال",
   delivered: "تحویل‌شده",
   failed: "ناموفق",
   unknown: "نامشخص",
   cancelled: "لغوشده",
   approved: "تأییدشده",
-  running: "در حال ثبت",
+  running: "در حال اجرا",
   paused: "متوقف",
   completed: "پایان‌یافته",
 };

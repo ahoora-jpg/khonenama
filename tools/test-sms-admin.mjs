@@ -9,7 +9,7 @@ import ts from 'typescript';
 function load(file,imports={}){
   const exports={};
   const code=ts.transpileModule(readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
-  vm.runInNewContext(code,{exports,require:name=>{assert.ok(name in imports,name);return imports[name];},crypto:webcrypto,TextEncoder,TextDecoder,Uint8Array,Date,URL,Request,Response,Headers,btoa,console,setTimeout});
+  vm.runInNewContext(code,{exports,require:name=>{if(name.endsWith('/dispatch-control'))return load('lib/server/sms/dispatch-control.ts',{'./domain':{TENANT:'khonenama'}});if(name.endsWith('/campaign-preview'))return load('lib/server/sms/campaign-preview.ts',{'./domain':{TENANT:'khonenama'},'../../sms-text':load('lib/sms-text.ts'),'./acquisition':imports['@/lib/server/sms/acquisition']||imports['./acquisition']});assert.ok(name in imports,name);return imports[name];},crypto:webcrypto,TextEncoder,TextDecoder,Uint8Array,Date,URL,Request,Response,Headers,btoa,console,setTimeout});
   return exports;
 }
 async function fixture(){

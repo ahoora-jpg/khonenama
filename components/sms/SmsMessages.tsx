@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
-import {SmsCsvImport} from "./SmsCsvImport";
+import {RetryAction} from "./SmsCommandCenter";
 import { useSearchParams } from "next/navigation";
 import { estimateSms } from "@/lib/sms-text";
 import { faNumber, smsDate, stateLabels } from "@/lib/sms-admin-ui";
@@ -161,7 +161,7 @@ export function SendPage() {
             </button>
           </div>
         </form>
-        <SmsCsvImport/>
+
       </Panel>
       <div>
         <Panel>
@@ -198,19 +198,21 @@ type Detail = {
   message: SmsMessage;
   events: { state: string; detail: string; created_at: string }[];
 };
-export function HistoryPage({ inbound = false }: { inbound?: boolean }) {
+export function HistoryPage({ inbound = false, failed = false }: { inbound?: boolean; failed?:boolean }) {
   const { notify, refresh } = useSms();
   const params = useSearchParams();
   const [q, setQ] = useState(""),
-    [filter, setFilter] = useState(params.get("status") || ""),
+    [filter, setFilter] = useState(failed?"failed":params.get("status") || ""),
     [page, setPage] = useState(1),
     [detail, setDetail] = useState<Detail | null>(null),
     [busy, setBusy] = useState(false);
+  const [selected,setSelected]=useState<string[]>([]);
   const query = new URLSearchParams({
     view: inbound ? "inbox" : "history",
     q,
     filter,
     page: String(page),
+    ...(params.get("campaignId")?{campaignId:params.get("campaignId")!}:{}),
   });
   const { resource, error, loading, reload } = useSmsResource<PageData>(
     "/api/admin/sms/workspace?" + query,
@@ -227,7 +229,7 @@ export function HistoryPage({ inbound = false }: { inbound?: boolean }) {
             }}
             placeholder="جست‌وجوی شماره یا متن پیام"
           />
-          {!inbound && (
+          {!inbound && !failed && (
             <label className="sms-filter-label">
               وضعیت
               <select
@@ -238,10 +240,10 @@ export function HistoryPage({ inbound = false }: { inbound?: boolean }) {
                 }}
               >
                 <option value="">همه وضعیت‌ها</option>
-                {Object.entries(stateLabels)
+                {Object.entries({...stateLabels,sending:"در حال ارسال"})
                   .filter(
                     ([s]) =>
-                      !["approved", "running", "paused", "completed"].includes(
+                      !["approved", "running", "paused", "completed","leased","submitted","processed","sent"].includes(
                         s,
                       ),
                   )
@@ -254,23 +256,23 @@ export function HistoryPage({ inbound = false }: { inbound?: boolean }) {
             </label>
           )}
         </div>
+        {failed && <div className="sms-command-actions"><label><input type="checkbox" checked={Boolean(resource?.items.length) && resource!.items.every(m=>selected.includes(m.id))} onChange={e=>setSelected(e.target.checked?(resource?.items||[]).map(m=>m.id):[])} /> انتخاب این صفحه</label><RetryAction ids={selected} onDone={()=>{setSelected([]);reload();}}>تلاش مجدد موارد انتخاب‌شده</RetryAction></div>}
         {loading ? (
           <LoadingSkeleton />
         ) : error ? (
           <ResourceError message={error} retry={reload} />
         ) : resource?.items.length ? (
           <>
-            <div className="sms-table-scroll">
+            <div className="sms-table-scroll sms-history-table">
               <table>
                 <thead>
                   <tr>
-                    <th>{inbound ? "فرستنده" : "گیرنده"}</th>
+                    {failed && <th>انتخاب</th>}<th>{inbound ? "فرستنده" : "گیرنده"}</th>
                     <th>متن</th>
                     {!inbound && (
                       <>
                         <th>نوع</th>
                         <th>وضعیت</th>
-                        <th>شناسهٔ درگاه</th>
                       </>
                     )}
                     <th>زمان ثبت</th>
@@ -285,10 +287,11 @@ export function HistoryPage({ inbound = false }: { inbound?: boolean }) {
                 <tbody>
                   {resource.items.map((m) => (
                     <tr key={m.id}>
-                      <td>
+                      {failed && <td><input aria-label={"انتخاب پیام " + m.id} type="checkbox" checked={selected.includes(m.id)} onChange={e=>setSelected(v=>e.target.checked?[...v,m.id]:v.filter(id=>id!==m.id))}/></td>}
+                      <td data-label={inbound?"فرستنده":"گیرنده"}>
                         <bdi>{inbound ? m.sender_e164 : m.phone_e164}</bdi>
                       </td>
-                      <td className="sms-excerpt">
+                      <td data-label="متن" className="sms-excerpt">
                         {m.body || "محتوا پاک‌سازی شده است"}
                       </td>
                       {!inbound && (
@@ -298,19 +301,16 @@ export function HistoryPage({ inbound = false }: { inbound?: boolean }) {
                               ? "تبلیغاتی"
                               : "عملیاتی"}
                           </td>
-                          <td>
+                          <td data-label="وضعیت">
                             <Badge state={m.status} />
-                          </td>
-                          <td>
-                            <bdi>{m.gateway_message_id || "—"}</bdi>
                           </td>
                         </>
                       )}
-                      <td>{smsDate(inbound ? m.received_at : m.created_at)}</td>
+                      <td data-label="زمان ثبت">{smsDate(inbound ? m.received_at : m.created_at)}</td>
                       {!inbound && (
                         <>
                           <td>{smsDate(m.updated_at)}</td>
-                          <td>
+                          <td data-label="عملیات">
                             <button
                               className="sms-quiet"
                               disabled={busy}
@@ -329,6 +329,8 @@ export function HistoryPage({ inbound = false }: { inbound?: boolean }) {
                             >
                               جزئیات
                             </button>
+                            {m.status==='failed' && <RetryAction ids={[m.id]} onDone={reload}/> }
+                            {m.status==='unknown' && <small>وضعیت ارسال قطعی نیست؛ ارسال دوباره ممکن است باعث دریافت تکراری شود.</small>}
                             {["draft", "queued"].includes(m.status) && (
                               <button
                                 className="sms-quiet sms-danger-text"
@@ -401,6 +403,7 @@ export function HistoryPage({ inbound = false }: { inbound?: boolean }) {
             <dd>
               <bdi>{detail.message.phone_e164}</bdi>
             </dd>
+            <dt>وضعیت دقیق فنی</dt><dd><bdi>{detail.message.status}</bdi></dd>
             <dt>وضعیت فعلی</dt>
             <dd>
               <Badge state={detail.message.status} />

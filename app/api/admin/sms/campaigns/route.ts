@@ -1,3 +1,4 @@
+import {campaignStartPreview} from '@/lib/server/sms/campaign-preview';
 import {importContactRows} from '@/lib/server/sms/contact-import';
 import { env } from "cloudflare:workers";
 import { isSmsAdminRequest } from "@/lib/server/sms/admin-auth";
@@ -44,6 +45,7 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   if (!body || typeof body !== "object")
     return noStore({ ok: false, error: "INVALID_JSON" }, 400);
+  if(body.action==='startPreview'){const preview=await campaignStartPreview(db,String(body.id||''));return preview?noStore({ok:true,...preview}):noStore({ok:false},404);}
   if(body.action==='remove'){
     const id=String(body.id||'');
     const row=await db.prepare('SELECT id FROM sms_campaigns WHERE id=? AND tenant_id=?').bind(id,TENANT).first();
@@ -284,6 +286,7 @@ export async function POST(request: Request) {
         )
         .bind(id, TENANT)
         .first();
+    else if(body.action==='pause') row=await db.prepare("UPDATE sms_campaigns SET status='paused' WHERE id=? AND tenant_id=? AND status IN ('approved','running') RETURNING id").bind(id,TENANT).first();
     else
       row = await db
         .prepare(
@@ -323,6 +326,9 @@ export async function GET(request: Request) {
     db
       .prepare(
         `SELECT c.id,c.name,c.body,c.status,c.max_recipients,c.scheduled_at,c.group_id,
+      (SELECT COUNT(*) FROM sms_messages m WHERE m.campaign_id=c.id AND m.tenant_id=c.tenant_id) total_messages,
+      (SELECT COUNT(*) FROM sms_messages m WHERE m.campaign_id=c.id AND m.tenant_id=c.tenant_id AND m.status='delivered') delivered_count,
+      (SELECT COUNT(*) FROM sms_messages m WHERE m.campaign_id=c.id AND m.tenant_id=c.tenant_id AND m.status='failed') failed_count,
       (SELECT variant_b FROM sms_campaign_options WHERE campaign_id=c.id) AS variant_b,
       (SELECT COUNT(*) FROM sms_group_members gm JOIN sms_contacts co ON co.id=gm.contact_id WHERE gm.group_id=c.group_id AND co.tenant_id=c.tenant_id) AS group_count,
       (SELECT COUNT(*) FROM sms_group_members gm JOIN sms_contacts co ON co.id=gm.contact_id
