@@ -26,13 +26,19 @@ export default function BusinessOnboardingWizard() {
   const validPhone = /^09\d{9}$/.test(digits(form.phone));
   const ready = validPhone && form.password.length >= 8 && form.businessName.trim().length >= 2 && form.city.trim().length >= 2 && Boolean(form.category) && Boolean(form.service);
 
-  function track(event: "registration_view" | "registration_submit_attempt" | "registration_submit_failed") {
+  function track(event: "registration_view" | "registration_form_started" | "registration_identity_ready" | "registration_category_selected" | "registration_service_selected" | "registration_submit_attempt" | "registration_submit_failed") {
     if (tracked.current.has(event) || navigator.doNotTrack === "1") return;
     tracked.current.add(event);
     fetch("/api/seller-acquisition", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event }), keepalive: true }).catch(() => undefined);
   }
   useEffect(() => { track("registration_view"); }, []);
-  function update<Key extends keyof Form>(key: Key, value: Form[Key]) { setForm((current) => ({ ...current, [key]: value })); }
+  useEffect(() => {
+    if (validPhone && form.password.length >= 8 && form.businessName.trim().length >= 2 && form.city.trim().length >= 2) track("registration_identity_ready");
+  }, [validPhone, form.password, form.businessName, form.city]);
+  function update<Key extends keyof Form>(key: Key, value: Form[Key]) {
+    if (value) track("registration_form_started");
+    setForm((current) => ({ ...current, [key]: value }));
+  }
   function invalidMessage() {
     if (!validPhone) return "شماره همراه را به‌صورت ۰۹xxxxxxxxx وارد کنید.";
     if (form.password.length < 8) return "رمز عبور باید حداقل ۸ کاراکتر باشد.";
@@ -67,8 +73,8 @@ export default function BusinessOnboardingWizard() {
     <div className="form-row"><label><span>نام کسب‌وکار</span><div className="form-input"><Building2 size={17} /><input autoComplete="organization" value={form.businessName} onChange={(e) => update("businessName", e.target.value)} placeholder="مثلاً پرده‌سرای ..." /></div></label></div>
     <div className="form-row"><label><span>شهر</span><div className="form-input"><MapPin size={17} /><input autoComplete="address-level2" value={form.city} onChange={(e) => update("city", e.target.value)} placeholder="مثلاً اصفهان" /></div></label></div>
     <div className="choice-block"><strong>نوع فعالیت</strong><div className="category-choice-grid">{([ ["store", "فروشگاه"], ["company", "شرکت طراحی و اجرا"], ["individual", "نصاب یا متخصص"] ] as const).map(([value, label]) => <button type="button" key={value} className={form.businessType === value ? "category-choice-card is-selected" : "category-choice-card"} onClick={() => update("businessType", value)}>{label}</button>)}</div></div>
-    <div className="choice-block"><strong>دسته فعالیت</strong><div className="category-choice-grid">{BUSINESS_CATEGORIES.map((item) => <button type="button" key={item.slug} className={form.category === item.slug ? "category-choice-card is-selected" : "category-choice-card"} onClick={() => { update("category", item.slug); update("service", ""); }}>{item.label}</button>)}</div></div>
-    {category && <div className="choice-block"><strong>خدمت اصلی در {category.label}</strong><div className="service-chips">{services.map((service) => <button type="button" className={form.service === service ? "is-selected" : ""} key={service} onClick={() => update("service", service)}>{service}</button>)}</div></div>}
+    <div className="choice-block"><strong>دسته فعالیت</strong><div className="category-choice-grid">{BUSINESS_CATEGORIES.map((item) => <button type="button" key={item.slug} className={form.category === item.slug ? "category-choice-card is-selected" : "category-choice-card"} onClick={() => { track("registration_category_selected"); update("category", item.slug); update("service", ""); }}>{item.label}</button>)}</div></div>
+    {category && <div className="choice-block"><strong>خدمت اصلی در {category.label}</strong><div className="service-chips">{services.map((service) => <button type="button" className={form.service === service ? "is-selected" : ""} key={service} onClick={() => { track("registration_service_selected"); update("service", service); }}>{service}</button>)}</div></div>}
     <p className="field-hint">با ساخت غرفه، محدوده فعالیت شما «تمام {form.city || "شهر"}» ثبت می‌شود و بعداً قابل ویرایش است.</p>
     {error && <p className="onboarding-error" role="alert">{error}</p>}
     <button type="button" className="pill-button dark" disabled={busy} onClick={submit}>{busy ? "در حال ساخت غرفه…" : "ساخت رایگان غرفه"}<Store size={17} /></button>

@@ -27,9 +27,12 @@ type BusinessRow = {
   last_payment_status?: string;
   last_payment_amount?: number;
   last_payment_reference?: string;
+  owner_paused?: number;
+  media_count?: number;
+  is_internal_test?: number;
 };
 
-type Summary = { total?: number; pending?: number; published?: number; active_subscriptions?: number; paid_count?: number; revenue?: number };
+type Summary = { total?: number; pending?: number; published?: number; visible_public?: number; active_subscriptions?: number; paid_count?: number; revenue?: number };
 const statusLabels: Record<string,string> = {published:'منتشرشده',pending:'در انتظار بررسی',draft:'پیش‌نویس',suspended:'تعلیق‌شده',verified:'تأییدشده',unverified:'تأییدنشده',created:'ایجادشده',redirected:'ارجاع به درگاه',failed:'ناموفق',cancelled:'لغوشده',refunded:'بازپرداخت‌شده'};
 
 export default function AdminBusinessModeration() {
@@ -50,11 +53,14 @@ export default function AdminBusinessModeration() {
         return;
       }
       const result = await response.json();
-      if (!response.ok || !result?.ok) throw new Error("LOAD_FAILED");
+      if (!response.ok || !result?.ok) throw new Error(result?.error || "LOAD_FAILED");
       setItems(result.businesses || []);
       setSummary(result.summary || {});
-    } catch {
-      setMessage("دریافت فهرست کسب‌وکارها انجام نشد.");
+    } catch (reason) {
+      const detail = reason instanceof Error && reason.message === "BUSINESS_LIST_UNAVAILABLE"
+        ? "اتصال دادهٔ مدیریت در دسترس نیست؛ دوباره تلاش کنید."
+        : "لطفاً دوباره تلاش کنید.";
+      setMessage("دریافت فهرست کسب‌وکارها انجام نشد. " + detail);
     } finally {
       setLoading(false);
     }
@@ -190,6 +196,7 @@ export default function AdminBusinessModeration() {
   }
 
   const filteredItems = items.filter((item) => {
+    if (item.is_internal_test) return false;
     if ((item.status === "suspended") !== showRemoved) return false;
     const needle = query.trim().toLowerCase();
     return !needle || [item.name, item.owner_name, item.owner_phone, item.phone].filter(Boolean).join(" ").toLowerCase().includes(needle);
@@ -201,7 +208,7 @@ export default function AdminBusinessModeration() {
         <div>
           <span className="section-kicker">مدیریت داخلی خونه نما</span>
           <h1>بررسی کسب‌وکارها</h1>
-          <p>پروفایل‌های در انتظار بررسی را تأیید، رد یا برای اصلاح برگردان.</p>
+          <p>همهٔ غرفه‌ها اینجا دیده می‌شوند؛ نمایش عمومی فقط برای غرفهٔ منتشرشده و فعال است.</p>
         </div>
         <div className="dashboard-heading-actions">
           <a className="pill-button" href="/admin/reviews">مدیریت نظرها</a>
@@ -219,6 +226,7 @@ export default function AdminBusinessModeration() {
       <div className="admin-summary-grid">
         <div><strong>{Number(summary.total || 0).toLocaleString("fa-IR")}</strong><span>کل کسب‌وکارها</span></div>
         <div><strong>{Number(summary.pending || 0).toLocaleString("fa-IR")}</strong><span>منتظر بررسی</span></div>
+        <div><strong>{Number(summary.visible_public || 0).toLocaleString("fa-IR")}</strong><span>قابل مشاهده برای مردم</span></div>
         <div><strong>{Number(summary.active_subscriptions || 0).toLocaleString("fa-IR")}</strong><span>اشتراک فعال</span></div>
         <div><strong>{Number(summary.paid_count || 0).toLocaleString("fa-IR")}</strong><span>پرداخت موفق</span></div>
         <div><strong>{Number(summary.revenue || 0).toLocaleString("fa-IR")}</strong><span>درآمد ثبت‌شده (تومان)</span></div>
@@ -258,6 +266,8 @@ export default function AdminBusinessModeration() {
                 <span>مالک: {item.owner_name || "—"}</span>
                 <span>موبایل: {item.owner_phone || item.phone || "—"}</span>
                 <span>وضعیت تأیید: {statusLabels[item.verification_status] || item.verification_status}</span>
+                <span>نمایش عمومی: {item.status === "published" && !item.owner_paused ? "فعال" : item.owner_paused ? "مالک موقتاً متوقف کرده" : "غیرفعال"}</span>
+                <span>رسانه: {Number(item.media_count || 0).toLocaleString("fa-IR")} فایل</span>
                 <span className={item.has_password ? "admin-auth-chip has-password" : "admin-auth-chip"}>
                   <KeyRound size={12} /> {item.has_password ? "رمز فعال" : "حساب قدیمی بدون رمز"}
                 </span>
