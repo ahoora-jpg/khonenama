@@ -10,5 +10,5 @@ export async function listServiceSitemapEntries() {
  const unique = new Map<string, {url: string; changeFrequency: "weekly"; priority: number}>();
  for (const entry of entries) unique.set(entry.url, entry);
  return [...unique.values()];
- } catch(error) {console.warn("service sitemap lookup failed",error);return [];}
+ } catch(error) {console.warn("service sitemap lookup failed");return [];}
 }

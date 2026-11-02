@@ -9,5 +9,8 @@ export async function allowAdminLogin(request: Request) {
   const key = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, "0")).join("");
   await db.prepare("CREATE TABLE IF NOT EXISTS admin_login_rate_limits (key_hash TEXT PRIMARY KEY, attempts INTEGER NOT NULL, window_started TEXT NOT NULL)").run();
   const row = await db.prepare("INSERT INTO admin_login_rate_limits (key_hash, attempts, window_started) VALUES (?, 1, CURRENT_TIMESTAMP) ON CONFLICT(key_hash) DO UPDATE SET attempts = CASE WHEN julianday(window_started) <= julianday('now', '-15 minutes') THEN 1 ELSE attempts + 1 END, window_started = CASE WHEN julianday(window_started) <= julianday('now', '-15 minutes') THEN CURRENT_TIMESTAMP ELSE window_started END RETURNING attempts").bind(key).first();
-  return Number(row?.attempts) <= 10;
+  // One shared administrator account: cap distributed attempts as well as each IP.
+  const globalKey = "admin-login-distributed-v1";
+  const global = await db.prepare("INSERT INTO admin_login_rate_limits (key_hash, attempts, window_started) VALUES (?, 1, CURRENT_TIMESTAMP) ON CONFLICT(key_hash) DO UPDATE SET attempts = CASE WHEN julianday(window_started) <= julianday('now', '-15 minutes') THEN 1 ELSE attempts + 1 END, window_started = CASE WHEN julianday(window_started) <= julianday('now', '-15 minutes') THEN CURRENT_TIMESTAMP ELSE window_started END RETURNING attempts").bind(globalKey).first();
+  return Number(row?.attempts) <= 10 && Number(global?.attempts) <= 100;
 }

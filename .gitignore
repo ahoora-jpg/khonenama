@@ -10,3 +10,11 @@ dist/
 .DS_Store
 tools/sms-bridge/sms-bridge.config.json
 tools/sms-bridge/sms-bridge.journal.json*
+
+# Private exports and locally generated security evidence
+security-private/
+*.sql.gpg
+*.pem
+*.key
+*.p12
+*.pfx

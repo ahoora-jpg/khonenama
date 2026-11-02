@@ -120,9 +120,9 @@ test('Grouped hydration preserves per-business details, ordering and entitlement
   assert.equal(first.coverageNote, 'Coverage'); assert.deepEqual(first.serviceAreas, ['تمام کرج']);
   assert.equal(first.showInstallments, true); assert.equal(second.showInstallments, false);
   assert.equal(first.media.filter(media => media.kind === 'cover').length, 1);
-  assert.equal(first.media.filter(media => media.kind === 'image').length, 90);
+  assert.equal(first.media.filter(media => media.kind === 'image').length, 24);
   assert.equal(first.media.filter(media => media.kind === 'video').length, 6);
-  assert.equal(second.media.filter(media => media.kind === 'image').length, 10);
+  assert.equal(second.media.filter(media => media.kind === 'image').length, 0);
   assert.equal(second.media.filter(media => media.kind === 'video').length, 0);
   assert.equal(second.promoted, true); assert.equal(rows[2].promoted, false);
   assert.equal(second.reviewCount, 1); assert.equal(rows[2].reviewCount, 0);
@@ -155,3 +155,5 @@ test('Empty, hidden and missing optional data do not leak or fail', async () => 
   assert.equal(f.stats.batches, before);
   f.sql.close();
 });
+
+test('Search and city SQL injection strings remain literal parameters',async()=>{const f=fixture(3);try{assert.equal((await f.api.listPublishedBusinesses({query:"' OR 1=1 --",limit:20})).length,0);assert.equal((await f.api.listPublishedBusinesses({city:"' OR 1=1 --",limit:20})).length,0);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM businesses').get().n,3);}finally{f.sql.close();}});

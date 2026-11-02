@@ -24,7 +24,7 @@ export async function POST(request: Request) {
   } catch(error) {
     const code = error instanceof Error ? error.message : "UNAVAILABLE";
     const allowed = ["EMAIL_NOT_CONFIGURED","EMAIL_SEND_FAILED","TOO_MANY_ATTEMPTS","INVALID_REQUEST","INVALID_RESET","RESET_EXPIRED"];
-    return Response.json({ok:false,error:allowed.includes(code)?code:"UNAVAILABLE"},{status:code==="TOO_MANY_ATTEMPTS"?429:code.startsWith("EMAIL_")||!allowed.includes(code)?503:400,headers});
+    return Response.json({ok:false,error:allowed.includes(code)?code:"UNAVAILABLE"},{status:code==="TOO_MANY_ATTEMPTS"?429:code.startsWith("EMAIL_")||!allowed.includes(code)?503:400,headers:code==="TOO_MANY_ATTEMPTS"?{...headers,"Retry-After":"3600"}:headers});
   }
 }
 

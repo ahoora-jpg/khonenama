@@ -1,3 +1,4 @@
+import { imageSignatureMatches } from "@/lib/server/image-signature";
 import { env } from "cloudflare:workers";
 import { MAX_VIDEO_BYTES, mp4Duration, videoLimitForPlan } from "@/lib/business-video";
 import { normalizePlanCode, planPresentation } from "@/lib/business-entitlements";
@@ -92,7 +93,8 @@ export async function POST(request: Request) {
 
   const currentCount = Number(countRow?.count || 0);
   const slotLimit = kind === "cover" ? 1 : galleryLimit;
-  if (kind !== "cover" && currentCount >= slotLimit) {
+  const replacingLogo = kind === "logo" && await owned.db.prepare("SELECT id FROM business_media WHERE business_id = ? AND kind = 'logo' AND media_type = 'image' LIMIT 1").bind(owned.business.id).first();
+  if (kind !== "cover" && !replacingLogo && currentCount >= slotLimit) {
     return Response.json(
       { ok: false, error: "GALLERY_LIMIT_REACHED", limit: galleryLimit },
       { status: 409 }
@@ -111,6 +113,10 @@ export async function POST(request: Request) {
     return Response.json({ ok: false, error: "INVALID_FILE_TYPE" }, { status: 415 });
   }
 
+  if (!imageSignatureMatches(new Uint8Array(await file.arrayBuffer()), file.type)) {
+    console.warn("security:upload:invalid_signature");
+    return Response.json({ ok: false, error: "INVALID_FILE_TYPE" }, { status: 415 });
+  }
   const folder = "/khonenama/businesses/" + owned.business.id;
   let uploadedFileId = "";
   let uploadedProvider = "imagekit";
@@ -135,7 +141,7 @@ export async function POST(request: Request) {
           await deleteStoredBusinessImage(uploadedProvider, uploadedFileId);
           return Response.json({ ok: false, error: "MEDIA_CHANGED_RETRY" }, { status: 409 });
         }
-        await deleteStoredBusinessImage(String(previous.provider || "imagekit"), String(previous.provider_file_id || previous.storage_key)).catch(error => console.error("old profile media cleanup failed", error));
+        await deleteStoredBusinessImage(String(previous.provider || "imagekit"), String(previous.provider_file_id || previous.storage_key)).catch(error => console.error("old profile media cleanup failed"));
         return Response.json({ ok: true, id: previous.id, media: { id: previous.id, kind, fileUrl: verified.url, thumbnailUrl: verified.thumbnailUrl } }, { status: 201, headers: { "Cache-Control": "no-store" } });
       }
     }
@@ -208,7 +214,7 @@ export async function POST(request: Request) {
     const category = text.includes("header") ? "invalid_header" : text.includes("btoa") || text.includes("character") ? "invalid_character" : text.includes("fetch") || text.includes("network") ? "network_fetch" : text.includes("r2") ? "r2_storage" : text.includes("d1") || text.includes("sql") ? "database" : text.includes("file") || text.includes("formdata") || text.includes("blob") ? "multipart_runtime" : "unknown";
     const frame = (typeof detail?.stack === "string" ? detail.stack : "").match(/uploadImageKitFile|getImageKitFileDetails|downloadProcessedImage|uploadStoredBusinessImage|readBusinessUploadForm/)?.[0] || "unknown";
     console.warn("MEDIA_PROVIDER_FAILURE", category, frame, error instanceof Error ? error.name : "unknown");
-    console.error("server media upload failed", error);
+    console.error("security:upload:provider_failure", category);
 
     if (message.startsWith("IMAGEKIT_UPLOAD_FAILED:")) {
       return Response.json({ ok: false, error: "IMAGEKIT_UPLOAD_FAILED" }, { status: 502 });

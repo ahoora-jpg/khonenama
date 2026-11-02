@@ -1,3 +1,4 @@
+import { safeJsonLd } from "@/lib/safe-json-ld";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -97,8 +98,8 @@ export default function OnlineBusinessDiscoveryGuide() {
   return (
     <main>
       <SellerAcquisitionTracker page="guide" />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(articleJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }} />
       <Header />
 
       <article className="inner-page guide-page">

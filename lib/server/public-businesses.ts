@@ -198,7 +198,7 @@ export async function getPublishedBusiness(slug: string): Promise<PublicBusiness
     const items = await hydrate([row]);
     return items[0] || null;
   } catch (error) {
-    console.warn("public business lookup failed", error);
+    console.warn("public business lookup failed");
     return null;
   }
 }
@@ -298,7 +298,7 @@ export async function listPublishedBusinesses(options: {
     const rows = await db.prepare(sql).bind(...binds).all();
     return hydrate(rows?.results || []);
   } catch (error) {
-    console.warn("public business list failed", error);
+    console.warn("public business list failed");
     return [];
   }
 }
