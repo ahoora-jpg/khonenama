@@ -15,9 +15,8 @@ export async function getAlbumLimit(db: any, businessId: number) {
   return planPresentation[normalizePlanCode(plan?.code)].albumLimit;
 }
 
-export async function listBusinessAlbums(db: any, businessId: number) {
-  await ensureBusinessMediaSchema(db);
-  await ensureAlbumSchema(db);
+export async function listBusinessAlbums(db: any, businessId: number, schemaReady = false) {
+  if (!schemaReady) { await ensureBusinessMediaSchema(db); await ensureAlbumSchema(db); }
   const rows = await db.prepare("SELECT a.id, a.title, a.description, d.service, d.materials, d.area, m.id AS media_id, m.file_url, m.alt_text, m.media_type FROM business_albums a LEFT JOIN album_project_details d ON d.album_id=a.id LEFT JOIN business_album_media am ON am.album_id = a.id LEFT JOIN business_media m ON m.id = am.media_id AND m.business_id = a.business_id WHERE a.business_id = ? ORDER BY a.id DESC, m.sort_order, m.id").bind(businessId).all();
   const albums = new Map<number, { id: number; title: string; description: string; project: {service:string;materials:string;area:string}|null; media: { id: number; url: string; altText: string; kind: string }[] }>();
   for (const row of rows.results || []) {
@@ -30,6 +29,6 @@ export async function listBusinessAlbums(db: any, businessId: number) {
 export async function listPublicBusinessAlbums(db:any,businessId:number,planCode:unknown,mediaIds:number[]){
  if(!mediaIds.length)return [];
  const plan=planPresentation[normalizePlanCode(planCode)];if(plan.albumLimit===0)return [];
- const allowed=new Set(mediaIds);const albums=await listBusinessAlbums(db,businessId);
+ const allowed=new Set(mediaIds);const albums=await listBusinessAlbums(db,businessId,true);
  return (plan.albumLimit===null?albums:albums.slice(0,plan.albumLimit)).map(a=>({...a,media:a.media.filter(m=>allowed.has(m.id))})).filter(a=>a.media.length>0);
 }

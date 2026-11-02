@@ -15,8 +15,8 @@ export async function mediaRetentionStatus(db:any,businessId:number){
  const row=await db.prepare("SELECT "+retentionDeadlineSql+" deadline FROM businesses b WHERE b.id=? AND "+expiredPaid+" AND "+noCurrentPaid).bind(businessId).first();
  return {retentionEndsAt:row?.deadline?String(row.deadline).replace(' ','T')+'Z':null,retentionDays:30};
 }
-export async function cleanExpiredMedia(db:any){
- await ensureMediaRetention(db);
+export async function cleanExpiredMedia(db:any,schemaReady=false){
+ if(!schemaReady) await ensureMediaRetention(db);
  const eligible="m.provider IN ('r2','imagekit') AND "+expiredPaid+" AND "+noCurrentPaid+" AND julianday('now')>=julianday("+retentionDeadlineSql+") AND (m.media_type='video' OR (m.kind='image' AND m.media_type='image' AND m.id NOT IN (SELECT keep.id FROM business_media keep WHERE keep.business_id=b.id AND keep.kind='image' AND keep.media_type='image' ORDER BY keep.id LIMIT 10)))";
  const candidates=(await db.prepare("SELECT m.id FROM business_media m JOIN businesses b ON b.id=m.business_id WHERE "+eligible+" ORDER BY m.id LIMIT 50").all()).results||[];
  for(const row of candidates){

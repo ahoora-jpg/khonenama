@@ -17,8 +17,8 @@ async function retryOrFail(db:any,row:any,code:string){
  const delay=Math.min(3600,60*Math.pow(2,Math.max(0,Number(row.attempts)-1)));
  await db.prepare("UPDATE business_push_outbox SET state=?,error_code=?,ticket_id=NULL,next_attempt=datetime('now',?),updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(again?"pending":"failed",code,`+${delay} seconds`,row.id).run();
 }
-export async function drainBusinessPush(db:any){
- await ensurePushSchema(db);
+export async function drainBusinessPush(db:any,schemaReady=false){
+ if(!schemaReady) await ensurePushSchema(db);
  // Cancel delivery after logout, token transfer, or membership removal.
  await db.prepare("UPDATE business_push_outbox SET state='cancelled',updated_at=CURRENT_TIMESTAMP WHERE state IN ('pending','sending','ticketed') AND NOT EXISTS (SELECT 1 FROM business_push_tokens p JOIN business_members bm ON bm.business_id=p.business_id AND bm.user_id=p.user_id AND bm.status='active' WHERE p.id=business_push_outbox.token_id AND p.business_id=business_push_outbox.business_id AND p.active=1)").run();
  const due=await db.prepare("SELECT o.*,p.expo_push_token FROM business_push_outbox o JOIN business_push_tokens p ON p.id=o.token_id WHERE o.state IN ('pending','sending') AND o.next_attempt<=CURRENT_TIMESTAMP ORDER BY o.id LIMIT 100").all();

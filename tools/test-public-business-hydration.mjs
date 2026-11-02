@@ -1,3 +1,4 @@
+import {planMediaColumns} from './plan-cpu-media-migration.mjs';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -28,9 +29,12 @@ export function fixture(count = 3, source) {
   for (let id = 1; id <= count; id++) {
     sql.prepare("INSERT INTO businesses(id,slug,name,city,status) VALUES(?,?,?,'کرج','published')").run(id, `booth-${id}`, `Booth ${id}`);
   }
+  for(const statement of planMediaColumns(sql.prepare('PRAGMA table_info(business_media)').all().map(c=>c.name)))sql.exec(statement);
+  sql.exec(fs.readFileSync('db/migrations/0022_cpu_runtime_tables.sql','utf8'));
   const stats = {statements: 0, calls: 0, batches: 0, maxBinds: 0};
   const db = {
     prepare(query) {
+      assert.ok(!/CREATE\s+TABLE|ALTER\s+TABLE|PRAGMA\s+table_info/i.test(query), "Public read attempted schema work: "+query);
       let values = [];
       return {
         bind(...args) {
@@ -120,9 +124,9 @@ test('Grouped hydration preserves per-business details, ordering and entitlement
   assert.equal(first.coverageNote, 'Coverage'); assert.deepEqual(first.serviceAreas, ['تمام کرج']);
   assert.equal(first.showInstallments, true); assert.equal(second.showInstallments, false);
   assert.equal(first.media.filter(media => media.kind === 'cover').length, 1);
-  assert.equal(first.media.filter(media => media.kind === 'image').length, 90);
+  assert.equal(first.media.filter(media => media.kind === 'image').length, 24);
   assert.equal(first.media.filter(media => media.kind === 'video').length, 6);
-  assert.equal(second.media.filter(media => media.kind === 'image').length, 10);
+  assert.equal(second.media.filter(media => media.kind === 'image').length, 0);
   assert.equal(second.media.filter(media => media.kind === 'video').length, 0);
   assert.equal(second.promoted, true); assert.equal(rows[2].promoted, false);
   assert.equal(second.reviewCount, 1); assert.equal(rows[2].reviewCount, 0);
@@ -135,8 +139,8 @@ test('50 and 100 business lists have constant relation-query count and bounded p
     const f = fixture(count);
     const rows = await f.api.listPublishedBusinesses({limit: count});
     assert.equal(rows.length, count);
-    assert.equal(f.stats.statements, 17);
-    assert.equal(f.stats.calls, 8);
+    assert.equal(f.stats.statements, 13);
+    assert.equal(f.stats.calls, 4);
     assert.equal(f.stats.batches, 1);
     assert.equal(f.stats.maxBinds, count);
     f.sql.close();
