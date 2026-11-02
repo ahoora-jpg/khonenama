@@ -19,7 +19,9 @@ function imageEntry(pageUrl: string, imageUrl: string, caption: string) {
 export const dynamic = "force-static";
 
 export function GET() {
-  const categorySlugs = ["curtain", "flooring", "carpet", "wallpaper", "interior-design", "smart-home"];
+  const categorySlugs = ["lighting", "curtain", "flooring", "carpet", "wallpaper", "interior-design", "smart-home"];
+  // There is no /karaj/lighting landing page. Never add a non-existent local URL.
+  const localSlugs = ["curtain", "flooring", "carpet", "wallpaper", "interior-design", "smart-home"];
 
   const homeEntry = imageEntry(
     `${baseUrl}/`,
@@ -32,7 +34,7 @@ export function GET() {
     return imageEntry(`${baseUrl}/category/${slug}`, visual.src, visual.alt);
   });
 
-  const localEntries = categorySlugs.map((slug) => {
+  const localEntries = localSlugs.map((slug) => {
     const visual = getLocalVisual(slug);
     return imageEntry(`${baseUrl}/karaj/${slug}`, visual.src, visual.alt);
   });
