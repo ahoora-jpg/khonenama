@@ -4,12 +4,15 @@ import { crossSiteMutation, publicRequestLimit, securityHeaders } from "./reques
 
 export async function requestSecurityGate(request: NextRequest) {
   const path = new URL(request.url).pathname;
+  const isCspReport = path === "/api/security/csp-report";
   const protect = (response: Response) => {
     for (const [key, value] of Object.entries(securityHeaders)) response.headers.set(key, value);
     if (path.startsWith("/api/") || /^\/(admin|dashboard)(\/|$)/.test(path)) response.headers.set("Cache-Control", "private, no-store");
     return response;
   };
-  if (path.startsWith("/api/") && crossSiteMutation(request)) {
+  // CSP reports are sent without a user session and can use a cross-site
+  // reporting context. This dedicated endpoint retains no report URLs.
+  if (path.startsWith("/api/") && !isCspReport && crossSiteMutation(request)) {
     return protect(NextResponse.json({ ok: false, error: "FORBIDDEN" }, { status: 403 }));
   }
   if (path.startsWith("/api/") && !["GET", "HEAD", "OPTIONS"].includes(request.method) && request.headers.get("content-type")?.includes("application/json")) {
