@@ -131,8 +131,8 @@ export default function HeroCoverflow() {
                 alt={isActive ? slide.alt : ""}
                 width={1200}
                 height={675}
-                loading="lazy"
-                fetchPriority="low"
+                loading={index === 0 ? "eager" : "lazy"}
+                fetchPriority={index === 0 ? "high" : "low"}
                 decoding="async"
                 draggable={false}
               />}
