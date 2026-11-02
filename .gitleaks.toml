@@ -1,0 +1,12 @@
+title = "Khonenama secret scanning"
+[extend]
+useDefault = true
+
+[[rules]]
+id = "generic-api-key"
+[[rules.allowlists]]
+description = "Public IndexNow domain proof, published verbatim at the site root; not a credential"
+condition = "AND"
+regexTarget = "secret"
+paths = ['''^tools/submit-indexnow\.mjs$''']
+regexes = ['''^7f4b2a9d8c1e3f6075ab4d9e2c6f81a3$''']

@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 concurrency:
   group: khonenama-ci-${{ github.ref }}
   cancel-in-progress: true
@@ -16,13 +19,26 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Scan reachable history and working tree for secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz --output "$RUNNER_TEMP/gitleaks.tar.gz"
+          echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  $RUNNER_TEMP/gitleaks.tar.gz" | sha256sum --check --status
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" git . --log-opts=--all --redact=100 --no-banner
+          "$RUNNER_TEMP/gitleaks" dir . --redact=100 --no-banner
       - run: npm ci
       - name: Security audit
         run: npm audit --audit-level=high
       - run: npx tsc --noEmit
+      - name: Authentication, upload and browser security regression
+        run: node --test tools/test-auth-hardening.mjs tools/test-security-hardening.mjs tools/test-password-recovery.mjs tools/test-request-security.mjs tools/test-business-upload.mjs tools/test-image-upload-processing.mjs tools/test-gallery-security.mjs tools/test-r2-media.mjs
       - name: SMS center mock gateway and migration tests
         run: node --experimental-strip-types --test tools/test-sms-center.mjs tools/test-sms-admin.mjs tools/test-sms-ui.mjs tools/test-sms-acquisition.mjs tools/test-sms-durable-events.mjs tools/test-sms-isolation.mjs tools/test-sms-command-center.mjs
       - run: node --test tools/test-build-glob.mjs

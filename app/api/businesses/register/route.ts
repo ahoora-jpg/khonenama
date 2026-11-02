@@ -368,7 +368,7 @@ export async function POST(request: Request) {
       }
     );
   } catch (error) {
-    console.error("business registration failed", error);
+    console.error("business registration failed");
     const message = error instanceof Error ? error.message : String(error);
 
     try {

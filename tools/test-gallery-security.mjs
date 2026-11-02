@@ -10,7 +10,7 @@ import QRCode from 'qrcode';
 function load(path, imports = {}) {
   const exports = {};
   const code = ts.transpileModule(readFileSync(path, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true } }).outputText;
-  vm.runInNewContext(code, { exports, require: name => { assert.ok(name in imports, name); return imports[name]; }, Response, Request, File, URL, TransformStream, crypto: webcrypto, console, Date, Set, Map, TextEncoder });
+  vm.runInNewContext(code, { exports, require: name => { if (name === '@/lib/server/image-signature') return load('lib/server/image-signature.ts'); assert.ok(name in imports, name); return imports[name]; }, Response, Request, File, URL, Uint8Array, DataView, TransformStream, crypto: webcrypto, console, Date, Set, Map, TextEncoder });
   return exports;
 }
 function fixture(plan = 'pro') {
@@ -33,8 +33,8 @@ test('One album can contain all seventy premium photos and five videos',async()=
   const mediaIds=[1,...Array.from({length:74},(_,index)=>index+3)];
   const response=await route.POST(request({title:'آلبوم کامل',description:'نمونه‌کار',mediaIds}));assert.equal(response.status,201);assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM business_album_media').get().n,75);
 });
-test('Free plan keeps ten photo slots and blocks paid album organization', async () => {
-  const entitlements = load('lib/business-entitlements.ts'); assert.equal(entitlements.planPresentation.free.galleryLimit, 10);
+test('Current free plan has no portfolio slots and blocks paid album organization', async () => {
+  const entitlements = load('lib/business-entitlements.ts'); assert.equal(entitlements.planPresentation.free.galleryLimit, 0);
   const { route } = fixture('free'); assert.equal((await route.POST(request({ title: 'Project', description: '', mediaIds: [1] }))).status, 403);
 });
 test('Album rejects another business photo without creating data', async () => {
@@ -87,7 +87,7 @@ test('Cookie mutations from another origin fail before any database access', asy
 test('ISO session expiry expires at its actual time, not at the end of the day', () => {
   const sqlite = new DatabaseSync(':memory:'); assert.equal(sqlite.prepare("SELECT julianday('2026-10-01T01:00:00.000Z') > julianday('2026-10-01 02:00:00') AS valid").get().valid, 0);
 });
-test('Concurrent photo uploads cannot exceed ten portfolio photos and rejected uploads are removed', async () => {
+test('Concurrent photo uploads respect explicit fixture capacity and clean rejected provider objects', async () => {
   const { db, sqlite } = fixture('free');
   sqlite.exec("ALTER TABLE business_media ADD COLUMN kind TEXT; ALTER TABLE business_media ADD COLUMN storage_key TEXT; ALTER TABLE business_media ADD COLUMN provider TEXT; ALTER TABLE business_media ADD COLUMN provider_file_id TEXT; ALTER TABLE business_media ADD COLUMN file_path TEXT; ALTER TABLE business_media ADD COLUMN thumbnail_url TEXT; INSERT INTO business_media(id,business_id,file_url,sort_order) VALUES(3,1,'a',2),(4,1,'b',3),(5,1,'c',4),(6,1,'d',5)");
   sqlite.exec("UPDATE business_media SET kind='image'; INSERT INTO business_media(id,business_id,kind,file_url,sort_order) VALUES(7,1,'image','e',6),(8,1,'image','f',7),(9,1,'image','g',8),(10,1,'image','h',9),(11,1,'cover','cover',10),(12,1,'logo','logo',11)");
@@ -95,12 +95,13 @@ test('Concurrent photo uploads cannot exceed ten portfolio photos and rejected u
   const route = load('app/api/me/business/media/upload/route.ts', {
     'cloudflare:workers': {env:{}},
     '@/lib/business-video': {VIDEO_LIMITS:{free:0,pro:2,premium:5}},
-    '@/lib/business-entitlements': load('lib/business-entitlements.ts'),
+    '@/lib/business-entitlements': { ...load('lib/business-entitlements.ts'), planPresentation: { ...load('lib/business-entitlements.ts').planPresentation, free: { galleryLimit: 10 } } },
     '@/lib/server/business-upload-form': load('lib/server/business-upload-form.ts'),
+    '@/lib/server/conversion-metrics': { recordConversion: async()=>{} },
     '@/lib/server/business-media': { getOwnedBusiness: async () => ({ db, business: { id: 1 } }), ensureBusinessMediaSchema:async()=>{if(!sqlite.prepare('PRAGMA table_info(business_media)').all().some(c=>c.name==='media_type')) sqlite.exec("ALTER TABLE business_media ADD COLUMN media_type TEXT NOT NULL DEFAULT 'image'");} },
     '@/lib/server/business-media-storage': { mediaStorageConfigured: () => true, uploadStoredBusinessImage: async () => { const id = 'new' + (++sequence); return { provider: 'imagekit', fileId: id, filePath: '/khonenama/businesses/1/' + id, fileType: 'image', mime: 'image/jpeg', size: 4, url: 'https://example.test/' + id, thumbnailUrl: '' }; }, deleteStoredBusinessImage: async (_provider, id) => removed.push(id) },
   });
-  const upload = (kind = "image") => { const form = new FormData(); form.set("kind", kind); form.set('file', new File(['test'], 'test.jpg', { type: 'image/jpeg' })); return route.POST(new Request('https://khonenama.ir/api/me/business/media/upload', { method: 'POST', body: form })); };
+  const upload = (kind = "image") => { const form = new FormData(); form.set("kind", kind); form.set('file', new File([new Uint8Array([255,216,255,224,0,0,0,0,0,0,0,0])], 'test.jpg', { type: 'image/jpeg' })); return route.POST(new Request('https://khonenama.ir/api/me/business/media/upload', { method: 'POST', body: form })); };
   const responses = await Promise.all([upload(), upload()]);
   assert.deepEqual(responses.map(r => r.status).sort(), [201, 409]); assert.equal(sqlite.prepare("SELECT COUNT(*) n FROM business_media WHERE business_id=1 AND kind='image'").get().n, 10); assert.equal(removed.length, 1);
   // Cover and profile have independent single slots even with all ten portfolio slots used.

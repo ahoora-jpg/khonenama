@@ -17,7 +17,7 @@ export async function GET() {
       database: "connected",
     }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    console.error("D1 health check failed", error);
+    console.error("D1 health check failed");
     return Response.json({ ok: false, database: "error" }, { status: 500 });
   }
 }

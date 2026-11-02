@@ -42,7 +42,7 @@ export async function GET(request: Request) {
         business.slug = newSlug;
       }
     } catch (error) {
-      console.warn("automatic business slug cleanup failed", error);
+      console.warn("automatic business slug cleanup failed");
     }
   }
 

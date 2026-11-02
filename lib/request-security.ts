@@ -5,6 +5,8 @@ export function crossSiteMutation(request: Request) {
 }
 
 export function publicRequestLimit(path: string): number | null {
+  if (path === "/api/admin/sms/control") return 60;
+  if (path.startsWith("/api/admin/")) return 120;
   if (path === "/api/seller-acquisition") return 30;
   if (["/api/billing/checkout", "/api/billing/reconcile"].includes(path)) return 20;
   if (path === "/api/me/business/media/upload") return 120;
@@ -28,3 +30,23 @@ export const securityHeaders = {
   // Enforce the directives that do not require inline-script exceptions.
   "Content-Security-Policy": "object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'",
 };
+
+// Report-only rollout: per-response nonce; no script unsafe-inline or unsafe-eval.
+export function reportOnlyCsp(nonce: string) {
+  if (!/^[a-f0-9]{32}$/.test(nonce)) throw new Error("INVALID_CSP_NONCE");
+  return [
+    "default-src 'self'",
+    "script-src 'self' 'nonce-" + nonce + "' 'strict-dynamic' https://static.cloudflareinsights.com",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob: https://ik.imagekit.io",
+    "font-src 'self'",
+    "connect-src 'self' https://cloudflareinsights.com",
+    "media-src 'self' blob:",
+    "frame-src 'none'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    "worker-src 'self' blob:"
+  ].join("; ");
+}

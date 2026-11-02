@@ -118,7 +118,7 @@ export async function getBusinessSession(request: Request, options: {readSuspend
 
     return row;
   } catch (error) {
-    console.warn("business session lookup unavailable", error);
+    console.warn("security:business_session:unavailable");
     return null;
   }
 }

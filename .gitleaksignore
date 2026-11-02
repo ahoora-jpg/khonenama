@@ -1,0 +1,3 @@
+# Verified empty env placeholders incorrectly spanning a newline in historical commits only.
+5dc496ff5cff0fb8f5f6ed800b87372e8bcd0a09:docs/sms-center-env.example:generic-api-key:6
+2646566c0aa350f7e3c460d45e71e29eb6fc8387:docs/sms-center-env.example:generic-api-key:6

@@ -12,8 +12,22 @@ concurrency:
 
 jobs:
   backup:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - database: khonenama-db
+            config: wrangler.jsonc
+            required_table: businesses
+          - database: khonenama-sms-db
+            config: wrangler.sms.jsonc
+            required_table: sms_messages
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      BACKUP_DATABASE: ${{ matrix.database }}
+      BACKUP_CONFIG: ${{ matrix.config }}
+      BACKUP_REQUIRED_TABLE: ${{ matrix.required_table }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -37,17 +51,21 @@ jobs:
           set -euo pipefail
           backup_dir="$(mktemp -d)"
           trap 'rm -rf "$backup_dir"' EXIT
-          npx --no-install wrangler d1 export khonenama-db --remote --output "$backup_dir/database.sql"
+          # Export output can contain a signed download URL: never print it in CI.
+          if ! npx --no-install wrangler d1 export "$BACKUP_DATABASE" --config "$BACKUP_CONFIG" --remote --output "$backup_dir/database.sql" > "$backup_dir/export.log" 2>&1; then
+            echo "D1 export failed; inspect provider diagnostics privately."
+            exit 1
+          fi
           test -s "$backup_dir/database.sql"
           mkdir -p encrypted-backup
           printf '%s' "$D1_BACKUP_PASSPHRASE" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --symmetric --cipher-algo AES256 --output encrypted-backup/database.sql.gpg "$backup_dir/database.sql"
           printf '%s' "$D1_BACKUP_PASSPHRASE" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --decrypt --output "$backup_dir/roundtrip.sql" encrypted-backup/database.sql.gpg
           cmp "$backup_dir/database.sql" "$backup_dir/roundtrip.sql"
-          BACKUP_RESTORE_FILE="$backup_dir/roundtrip.sql" node --input-type=module -e "import { DatabaseSync } from 'node:sqlite'; import { readFileSync } from 'node:fs'; const db=new DatabaseSync(':memory:'); db.exec(readFileSync(process.env.BACKUP_RESTORE_FILE,'utf8')); const checks=db.prepare('PRAGMA quick_check').all(); if(checks.length!==1 || checks[0].quick_check!=='ok') throw new Error('Backup restore integrity failed'); if(!db.prepare(\"SELECT name FROM sqlite_master WHERE name='businesses'\").get()) throw new Error('Business schema missing from backup'); db.close(); console.log('Encrypted backup decrypts and restores into isolated SQLite successfully');"
+          BACKUP_RESTORE_FILE="$backup_dir/roundtrip.sql" node tools/verify-backup-restore.mjs
           (cd encrypted-backup && sha256sum database.sql.gpg > SHA256SUMS)
       - uses: actions/upload-artifact@v4
         with:
-          name: encrypted-d1-${{ github.run_id }}
+          name: encrypted-d1-${{ matrix.database }}-${{ github.run_id }}
           path: encrypted-backup/
           retention-days: 7
           if-no-files-found: error

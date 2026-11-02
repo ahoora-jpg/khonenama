@@ -119,7 +119,7 @@ export async function listPublishedBusinessSitemapEntries(): Promise<BusinessSit
 
     return entries;
   } catch (error) {
-    console.warn("business sitemap lookup failed", error);
+    console.warn("business sitemap lookup failed");
     return [];
   }
 }

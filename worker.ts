@@ -1,3 +1,4 @@
+import { secureWorkerResponse } from "./lib/server/response-security";
 import {routeSmsIsolation,smsPanel,smsIsolated} from './lib/server/sms/isolation';
 import {drainSiteProjection,applySiteProjection} from './lib/server/sms/site-projection';
 import {consumeSmsEvents,drainAccessEvents,drainSmsOutbox} from "./lib/server/sms/event-consumer";
@@ -17,6 +18,7 @@ import { handleWorkerBridge } from "./lib/server/sms/worker-bridge";
 import { handleAcquisitionLink,recordAcquisitionStage,reconcileAcquisition } from './lib/server/sms/acquisition';
 export default {
  async fetch(request:Request, env:any, ctx:any){
+  return secureWorkerResponse(request, async () => {
   const isolated=await routeSmsIsolation(request,env);if(isolated)return isolated;
   const routed=routeSmsHost(request);
   const url=new URL(request.url);
@@ -34,6 +36,7 @@ export default {
   const result=routed instanceof Response?routed:await app.fetch(routed,env,ctx);
   if(smsPanel(env)){const response=new Response(result.body,result);response.headers.set('X-Khonenama-Runtime','sms');return response;}
   return result;
+  });
  },
  async queue(batch:any,env:any){
   if(!smsPanel(env)&&(smsIsolated(env)||env.SMS_MIGRATING==='true')){for(const message of batch.messages)message.retry({delaySeconds:120});return;}

@@ -3,18 +3,34 @@ name: Deploy Cloudflare
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: read
+
 concurrency:
   group: khonenama-cloudflare-production
   cancel-in-progress: true
 
 jobs:
   deploy:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.sha }}
+      - name: Require successful CI for this exact main commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          current_main=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq '.object.sha')
+          test "$current_main" = "$RELEASE_SHA"
+          status=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?head_sha=$RELEASE_SHA&event=push" --jq '.workflow_runs[0].conclusion')
+          test "$status" = "success"
       - uses: actions/setup-node@v4
         with:
           node-version: 22

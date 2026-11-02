@@ -62,7 +62,7 @@ export async function requestRecoveryWithoutEmail(db: any, phone: string, ip: st
   const token = crypto.randomUUID().replaceAll("-", "");
   const ticket = await db.prepare("INSERT INTO support_tickets (contact,message,tracking_token) VALUES (?,?,?) RETURNING id")
     .bind(phone, "درخواست بازیابی رمز بدون دسترسی به ایمیل؛ شماره همراه ثبت‌شده تأیید و رسیدگی دستی لازم است.", token).first();
-  await db.prepare("INSERT INTO support_ticket_details(ticket_id,topic,next_step) VALUES(?,?,?,?)")
+  await db.prepare("INSERT INTO support_ticket_details(ticket_id,topic,next_step) VALUES(?,?,?)")
     .bind(ticket.id, "account_recovery", "بررسی مالکیت حساب و تماس یا پیامک به شمارهٔ ثبت‌شده").run();
   try {
     await ensureSmsSchema(db);

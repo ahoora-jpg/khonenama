@@ -22,11 +22,11 @@ function normalizeIranPhone(value: string) {
 const LOGIN_WINDOW_MINUTES = 15;
 const LOGIN_MAX_FAILURES = 10;
 
-async function rateLimitKey(request: Request) {
+async function rateLimitKey(request: Request, account?: string) {
   const forwarded = request.headers.get("cf-connecting-ip")
 
     || "unknown";
-  const bytes = new TextEncoder().encode("business-login:" + forwarded);
+  const bytes = new TextEncoder().encode(account ? "business-login-account:" + account : "business-login-ip:" + forwarded);
   const digest = await crypto.subtle.digest("SHA-256", bytes);
   return Array.from(new Uint8Array(digest))
     .map((byte) => byte.toString(16).padStart(2, "0"))
@@ -61,31 +61,16 @@ async function loginRateLimitState(db: any, keyHash: string) {
 }
 
 async function recordLoginFailure(db: any, keyHash: string) {
-  const current = await db.prepare(
-    "SELECT failures, window_started FROM auth_rate_limits WHERE key_hash = ? LIMIT 1"
-  ).bind(keyHash).first();
-
-  const windowStartedMs = Date.parse(String(current?.window_started || ""));
-  const stale =
-    !Number.isFinite(windowStartedMs) ||
-    Date.now() - windowStartedMs > LOGIN_WINDOW_MINUTES * 60 * 1000;
-
-  const failures = stale ? 1 : Number(current?.failures || 0) + 1;
-  const blockedUntil = failures >= LOGIN_MAX_FAILURES
-    ? new Date(Date.now() + LOGIN_WINDOW_MINUTES * 60 * 1000).toISOString()
-    : null;
-
-  await db.prepare(
+  const row = await db.prepare(
     "INSERT INTO auth_rate_limits (key_hash, failures, window_started, blocked_until, updated_at) " +
-    "VALUES (?, ?, CURRENT_TIMESTAMP, ?, CURRENT_TIMESTAMP) " +
+    "VALUES (?, 1, CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP) " +
     "ON CONFLICT(key_hash) DO UPDATE SET " +
-      "failures = excluded.failures, " +
-      "window_started = CASE WHEN ? = 1 THEN CURRENT_TIMESTAMP ELSE auth_rate_limits.window_started END, " +
-      "blocked_until = excluded.blocked_until, " +
-      "updated_at = CURRENT_TIMESTAMP"
-  ).bind(keyHash, failures, blockedUntil, stale ? 1 : 0).run();
-
-  return failures;
+    "failures = CASE WHEN julianday(window_started) <= julianday('now', '-15 minutes') THEN 1 ELSE failures + 1 END, " +
+    "blocked_until = CASE WHEN julianday(window_started) > julianday('now', '-15 minutes') AND failures + 1 >= 10 THEN datetime('now', '+15 minutes') ELSE NULL END, " +
+    "window_started = CASE WHEN julianday(window_started) <= julianday('now', '-15 minutes') THEN CURRENT_TIMESTAMP ELSE window_started END, " +
+    "updated_at = CURRENT_TIMESTAMP RETURNING failures"
+  ).bind(keyHash).first();
+  return Number(row?.failures || 0);
 }
 
 async function clearLoginFailures(db: any, keyHash: string) {
@@ -108,8 +93,10 @@ export async function POST(request: Request) {
     }
 
     const loginKey = await rateLimitKey(request);
+    const accountKey = await rateLimitKey(request, phone);
     const rateState = await loginRateLimitState(db, loginKey);
-    if (rateState.blocked) {
+    const accountState = await loginRateLimitState(db, accountKey);
+    if (rateState.blocked || accountState.blocked) {
       return Response.json(
         { ok: false, error: "TOO_MANY_ATTEMPTS" },
         { status: 429, headers: { "Retry-After": String(LOGIN_WINDOW_MINUTES * 60), "Cache-Control": "no-store" } }
@@ -125,6 +112,7 @@ export async function POST(request: Request) {
 
     if (!user?.id || user.status !== "active" || !user.password_hash) {
       await recordLoginFailure(db, loginKey);
+      await recordLoginFailure(db, accountKey);
       return Response.json({ ok: false, error: "INVALID_CREDENTIALS" }, { status: 401 });
     }
 
@@ -140,17 +128,19 @@ export async function POST(request: Request) {
       );
     } catch (error) {
       verifyRuntimeError = true;
-      console.warn("password verification runtime error", error);
+      console.warn("security:business_login:verification_unavailable");
     }
 
     if (verifyRuntimeError) return Response.json({ ok: false, error: "AUTH_UNAVAILABLE" }, { status: 503 });
 
     if (!valid) {
       await recordLoginFailure(db, loginKey);
+      await recordLoginFailure(db, accountKey);
       return Response.json({ ok: false, error: "INVALID_CREDENTIALS" }, { status: 401 });
     }
 
-    await clearLoginFailures(db, loginKey);
+    // A successful account login must not reset the shared IP attack budget.
+    await clearLoginFailures(db, accountKey);
 
     let membership = await db
       .prepare(
@@ -199,7 +189,7 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    console.error("business login failed", error);
+    console.error("security:business_login:unavailable");
 
     if (/no such column:.*password_/i.test(message)) {
       return Response.json({ ok: false, error: "PASSWORD_SCHEMA_REQUIRED" }, { status: 503 });

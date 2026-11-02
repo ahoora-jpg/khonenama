@@ -9,7 +9,7 @@ import ts from 'typescript';
 function load(path, imports = {}) {
   const exports = {};
   vm.runInNewContext(ts.transpileModule(readFileSync(path, 'utf8'), {compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText, {
-    exports, require:name=>{assert.ok(name in imports,name);return imports[name];}, Response, Request, File, Headers, URL, TransformStream, Uint8Array, DataView, BigInt, crypto:webcrypto, console,
+    exports, require:name=>{if(name==='@/lib/server/image-signature')return load('lib/server/image-signature.ts');if(name==='@/lib/server/conversion-metrics')return {recordConversion:async()=>{}};assert.ok(name in imports,name);return imports[name];}, Response, Request, File, Headers, URL, TransformStream, Uint8Array, DataView, BigInt, crypto:webcrypto, console,
   });
   return exports;
 }
@@ -27,10 +27,10 @@ test('Video validates movie and track duration independently, rejects malformed 
   assert.throws(()=>video.mp4Duration(Buffer.from('not a video')),/INVALID_VIDEO/);
   const broken=sample();broken.writeUInt32BE(999999);assert.throws(()=>video.mp4Duration(broken),/INVALID_VIDEO/);
 });
-test('Premium retains seventy photos, independent video allowance; downgrade hides videos without deleting',()=>{
+test('Current gallery policy and independent video allowance hide excess without deleting',()=>{
   const life=load('lib/subscription-lifecycle.ts',{'./business-entitlements':plans});
   const media=[...Array.from({length:80},(_,i)=>({id:i+1,kind:'image'})),...Array.from({length:8},(_,i)=>({id:100+i,kind:'video'})),{id:200,kind:'cover'},{id:201,kind:'logo'}];
-  for(const [code,photos,videos] of [['free',10,0],['pro',30,2],['premium',70,5]]){
+  for(const [code,photos,videos] of [['free',plans.planPresentation.free.galleryLimit,0],['pro',plans.planPresentation.pro.galleryLimit,2],['premium',plans.planPresentation.premium.galleryLimit,5]]){
     const result=life.selectPublicMedia(media,code);assert.equal(result.filter(m=>m.kind==='image').length,photos);assert.equal(result.filter(m=>m.kind==='video').length,videos);assert.equal(result.length,photos+videos+2);
   }
   assert.equal(media.length,90);
@@ -41,7 +41,7 @@ function fixture(code='pro') {
   const db={prepare(sql){return {values:[],bind(...v){this.values=v;return this;},async first(){return sqlite.prepare(sql).get(...this.values)||null;}};}};
   const objects=new Map(); const bucket={async put(key,bytes){objects.set(key,bytes);},async delete(key){objects.delete(key);}};
   const route=load('app/api/me/business/media/upload/route.ts',{
-    'cloudflare:workers':{env:{BUSINESS_MEDIA:bucket}},'@/lib/business-video':video,'@/lib/business-entitlements':plans,
+    'cloudflare:workers':{env:{BUSINESS_MEDIA:bucket}},'@/lib/business-video':{...video,videoLimitForPlan:code=>({free:0,pro:2,premium:5}[code]||0)},'@/lib/business-entitlements':plans,
     '@/lib/server/business-media':{getOwnedBusiness:async()=>({db,business:{id:1}}),ensureBusinessMediaSchema:async()=>{}},
     '@/lib/server/business-upload-form':load('lib/server/business-upload-form.ts'),
     '@/lib/server/business-media-storage':{mediaStorageConfigured:()=>true},
@@ -49,11 +49,11 @@ function fixture(code='pro') {
   const upload=(bytes=sample(),mime='video/mp4')=>{const form=new FormData();form.set('kind','video');form.set('file',new File([bytes],'clip.mp4',{type:mime}));return route.POST(new Request('https://khonenama.ir/upload',{method:'POST',body:form}));};
   return {upload,sqlite,objects};
 }
-test('Free rejects video; malformed, long and oversized paid uploads never enter storage',async()=>{
+test('Explicit zero-quota fixture rejects video; malformed, long and oversized uploads never enter storage',async()=>{
   const free=fixture('free');assert.equal((await free.upload()).status,403);assert.equal(free.objects.size,0);
   const paid=fixture();assert.equal((await paid.upload(sample(25))).status,422);assert.equal((await paid.upload(Buffer.from('bad'))).status,422);assert.equal((await paid.upload(sample(),'image/jpeg')).status,415);assert.equal((await paid.upload(Buffer.alloc(15*1024*1024+1))).status,413);assert.equal(paid.objects.size,0);
 });
-test('Concurrent paid video uploads enforce separate quota and clean rejected objects',async()=>{
+test('Explicit two-video fixture enforces quota concurrently and cleans rejected objects',async()=>{
   const f=fixture();const responses=await Promise.all([f.upload(),f.upload(),f.upload()]);assert.deepEqual(responses.map(r=>r.status).sort(),[201,201,409]);assert.equal(f.objects.size,2);assert.equal(f.sqlite.prepare("SELECT COUNT(*) n FROM business_media WHERE media_type='video'").get().n,2);
 });
 test('Whole-city and cross-city coverage are preserved independently of shop city',()=>{
@@ -85,3 +85,5 @@ test('Video serving supports mobile byte ranges and hides expired videos from vi
   assert.equal((await serve('bytes=-2')).headers.get('content-range'),'bytes 4-5/6');assert.equal((await serve('bytes=100-')).status,416);assert.equal((await serve('bytes=-')).status,416);
   assert.equal((await serve(null,'HEAD')).headers.get('content-type'),'video/mp4');code='free';assert.equal((await serve()).status,404);owner=true;assert.equal((await serve()).headers.get('cache-control'),'private, no-store');
 });
+
+test("Actual launch policy allows one video until its configured deadline",()=>{assert.equal(video.videoLimitForPlan("free",Date.parse(video.FREE_VIDEO_OFFER_END_AT)-1),1);assert.equal(video.videoLimitForPlan("free",Date.parse(video.FREE_VIDEO_OFFER_END_AT)),0);});

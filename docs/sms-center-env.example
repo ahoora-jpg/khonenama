@@ -1,10 +1,9 @@
 # Optional extra SMS administrator key; leave absent to use the existing site administrator role.
-SMS_ADMIN_ACCESS_KEY=
+SMS_ADMIN_ACCESS_KEY=""
 # Bridge secret is configured only during the later phone integration phase.
-SMS_BRIDGE_TOKEN=
+SMS_BRIDGE_TOKEN=""
 
 # Existing site secret used by its administrator session.
-ADMIN_ACCESS_KEY=
 SMS_MIN_INTERVAL_SECONDS=15
 SMS_LIVE_SEND_ENABLED=false
 
@@ -12,3 +11,6 @@ SMS_LIVE_SEND_ENABLED=false
 SMS_BRIDGE_CONFIG=tools/sms-bridge/sms-bridge.config.json
 SMS_BRIDGE_JOURNAL=tools/sms-bridge/sms-bridge.journal.json
 SMS_ENABLE_SEND=NO
+
+# Site session signing key is set in Cloudflare Secrets, never in this example.
+ADMIN_ACCESS_KEY=""

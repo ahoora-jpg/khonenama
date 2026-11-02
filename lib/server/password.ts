@@ -63,7 +63,10 @@ export async function verifyPassword(
   storedSalt: string,
   iterations: number
 ) {
-  if (!storedHash || !storedSalt || !iterations) return false;
+  // Reject corrupt parameters before invoking expensive runtime cryptography.
+  if (validatePassword(password) || !/^[0-9a-f]{64}$/i.test(storedHash)
+      || !/^[0-9a-f]{32}$/i.test(storedSalt)
+      || !Number.isSafeInteger(iterations) || iterations < 1 || iterations > DEFAULT_ITERATIONS) return false;
 
   const salt = fromHex(storedSalt);
   if (!salt.length) return false;
