@@ -29,6 +29,8 @@ jobs:
       - run: node --test tools/test-image-recovery.mjs
       - name: Seller acquisition aggregate event boundaries
         run: node --test tools/test-seller-acquisition.mjs
+      - name: Core security controls
+        run: node --test tools/test-request-security.mjs tools/test-password-recovery.mjs tools/test-gallery-security.mjs tools/test-security-hardening.mjs
       - name: Payment activation and callback security
         run: node --test tools/test-billing.mjs
       - name: Customer safeguards and private support
