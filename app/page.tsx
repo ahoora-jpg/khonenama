@@ -1,3 +1,4 @@
+import { safeJsonLd } from "@/lib/safe-json-ld";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import HomeBusinessShelf from "@/components/HomeBusinessShelf";
@@ -130,19 +131,19 @@ export default async function HomePage() {
     <main className="home-compact">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(homePageJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(homePageJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(organizationJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryListJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(categoryListJsonLd) }}
       />
       <Header />
       <Hero />

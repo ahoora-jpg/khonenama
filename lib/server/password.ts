@@ -1,4 +1,8 @@
-const DEFAULT_ITERATIONS = 100_000;
+// OWASP's current PBKDF2-HMAC-SHA-256 guidance is 600k iterations. Existing
+// hashes remain valid and are upgraded only after a successful login.
+export const PASSWORD_ITERATIONS = 600_000;
+const MIN_STORED_ITERATIONS = 10_000;
+const MAX_STORED_ITERATIONS = 1_000_000;
 
 function toHex(bytes: Uint8Array) {
   return Array.from(bytes).map((byte) => byte.toString(16).padStart(2, "0")).join("");
@@ -48,12 +52,12 @@ export async function hashPassword(password: string) {
 
   const salt = new Uint8Array(16);
   crypto.getRandomValues(salt);
-  const hash = await derive(password, salt, DEFAULT_ITERATIONS);
+  const hash = await derive(password, salt, PASSWORD_ITERATIONS);
 
   return {
     hash: toHex(hash),
     salt: toHex(salt),
-    iterations: DEFAULT_ITERATIONS,
+    iterations: PASSWORD_ITERATIONS,
   };
 }
 
@@ -63,7 +67,7 @@ export async function verifyPassword(
   storedSalt: string,
   iterations: number
 ) {
-  if (!storedHash || !storedSalt || !iterations) return false;
+  if (!storedHash || !storedSalt || !Number.isInteger(iterations) || iterations < MIN_STORED_ITERATIONS || iterations > MAX_STORED_ITERATIONS) return false;
 
   const salt = fromHex(storedSalt);
   if (!salt.length) return false;
@@ -75,4 +79,8 @@ export async function verifyPassword(
   let diff = 0;
   for (let i = 0; i < derived.length; i += 1) diff |= derived[i] ^ expected[i];
   return diff === 0;
+}
+
+export function passwordNeedsRehash(iterations: number) {
+  return Number.isInteger(iterations) && iterations < PASSWORD_ITERATIONS;
 }

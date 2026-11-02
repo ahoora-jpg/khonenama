@@ -41,6 +41,12 @@ export function adminConfigured() {
   return Boolean((env as any).ADMIN_ACCESS_KEY);
 }
 
+function adminSessionSecret() {
+  // New deployments use a distinct signing secret. Falling back preserves
+  // existing signed cookies until they naturally expire during migration.
+  return String((env as any).ADMIN_SESSION_SECRET || (env as any).ADMIN_ACCESS_KEY || "");
+}
+
 export async function verifyAdminAccessKey(value: string) {
   const secret = String((env as any).ADMIN_ACCESS_KEY || "");
   if (!secret || !value) return false;
@@ -50,7 +56,7 @@ export async function verifyAdminAccessKey(value: string) {
 }
 
 export async function createAdminCookie() {
-  const secret = String((env as any).ADMIN_ACCESS_KEY || "");
+  const secret = adminSessionSecret();
   if (!secret) throw new Error("ADMIN_NOT_CONFIGURED");
 
   const expiresAt = Date.now() + SESSION_HOURS * 60 * 60 * 1000;
@@ -73,8 +79,9 @@ export async function isAdminRequest(request: Request) {
     const origin = request.headers.get("origin");
     if (request.headers.get("sec-fetch-site") === "cross-site" || (origin && origin !== new URL(request.url).origin)) return false;
   }
-  const secret = String((env as any).ADMIN_ACCESS_KEY || "");
-  if (!secret) return false;
+  const secret = adminSessionSecret();
+  const legacySecret = String((env as any).ADMIN_ACCESS_KEY || "");
+  if (!secret || !legacySecret) return false;
 
   let token = "";
   try { token = cookieValue(request, COOKIE_NAME); } catch { return false; }
@@ -85,7 +92,11 @@ export async function isAdminRequest(request: Request) {
   if (!payload || !signature || !Number.isFinite(expiresAt) || expiresAt <= Date.now()) return false;
 
   const expected = await hmac(secret, payload);
-  return safeEqual(signature, expected);
+  if (safeEqual(signature, expected)) return true;
+  // Accept the legacy signature only while an independent session secret is
+  // being introduced; cookies are still short-lived and HttpOnly/Strict.
+  if (secret === legacySecret) return false;
+  return safeEqual(signature, await hmac(legacySecret, payload));
 }
 
 export function clearAdminCookie() {

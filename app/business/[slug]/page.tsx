@@ -1,3 +1,4 @@
+import { safeJsonLd } from "@/lib/safe-json-ld";
 import { businessModelNames } from "@/lib/server/business-models";
 import GalleryModelChoice from "@/components/GalleryModelChoice";
 import { groupServices } from "@/lib/service-groups";
@@ -234,7 +235,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
     <main>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd).replace(/</g, "\\u003c") }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(localBusinessJsonLd) }}
       />
       {business.source === "d1" && <BusinessAnalyticsTracker slug={business.slug} />}
       <Header />

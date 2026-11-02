@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { createBusinessSession } from "@/lib/server/business-session";
-import { verifyPassword } from "@/lib/server/password";
+import { hashPassword, passwordNeedsRehash, verifyPassword } from "@/lib/server/password";
 
 
 function normalizeDigits(value: string) {
@@ -22,15 +22,22 @@ function normalizeIranPhone(value: string) {
 const LOGIN_WINDOW_MINUTES = 15;
 const LOGIN_MAX_FAILURES = 10;
 
-async function rateLimitKey(request: Request) {
-  const forwarded = request.headers.get("cf-connecting-ip")
-
-    || "unknown";
-  const bytes = new TextEncoder().encode("business-login:" + forwarded);
+async function rateLimitHash(value: string) {
+  const bytes = new TextEncoder().encode(value);
   const digest = await crypto.subtle.digest("SHA-256", bytes);
   return Array.from(new Uint8Array(digest))
     .map((byte) => byte.toString(16).padStart(2, "0"))
     .join("");
+}
+
+async function rateLimitKeys(request: Request, phone: string) {
+  const forwarded = request.headers.get("cf-connecting-ip")
+
+    || "unknown";
+  return Promise.all([
+    rateLimitHash("business-login:ip:" + forwarded),
+    rateLimitHash("business-login:account:" + phone),
+  ]);
 }
 
 async function ensureLoginRateLimitSchema(db: any) {
@@ -107,9 +114,9 @@ export async function POST(request: Request) {
       return Response.json({ ok: false, error: "D1_BINDING_NOT_AVAILABLE" }, { status: 503 });
     }
 
-    const loginKey = await rateLimitKey(request);
-    const rateState = await loginRateLimitState(db, loginKey);
-    if (rateState.blocked) {
+    const loginKeys = await rateLimitKeys(request, phone);
+    const rateStates = await Promise.all(loginKeys.map((key) => loginRateLimitState(db, key)));
+    if (rateStates.some((state) => state.blocked)) {
       return Response.json(
         { ok: false, error: "TOO_MANY_ATTEMPTS" },
         { status: 429, headers: { "Retry-After": String(LOGIN_WINDOW_MINUTES * 60), "Cache-Control": "no-store" } }
@@ -124,7 +131,7 @@ export async function POST(request: Request) {
       .first();
 
     if (!user?.id || user.status !== "active" || !user.password_hash) {
-      await recordLoginFailure(db, loginKey);
+      await Promise.all(loginKeys.map((key) => recordLoginFailure(db, key)));
       return Response.json({ ok: false, error: "INVALID_CREDENTIALS" }, { status: 401 });
     }
 
@@ -146,11 +153,25 @@ export async function POST(request: Request) {
     if (verifyRuntimeError) return Response.json({ ok: false, error: "AUTH_UNAVAILABLE" }, { status: 503 });
 
     if (!valid) {
-      await recordLoginFailure(db, loginKey);
+      await Promise.all(loginKeys.map((key) => recordLoginFailure(db, key)));
       return Response.json({ ok: false, error: "INVALID_CREDENTIALS" }, { status: 401 });
     }
 
-    await clearLoginFailures(db, loginKey);
+    await Promise.all(loginKeys.map((key) => clearLoginFailures(db, key)));
+
+    const storedIterations = Number(user.password_iterations || 0);
+    if (passwordNeedsRehash(storedIterations)) {
+      try {
+        const upgraded = await hashPassword(password);
+        await db.prepare(
+          "UPDATE users SET password_hash=?, password_salt=?, password_iterations=?, password_set_at=CURRENT_TIMESTAMP, updated_at=CURRENT_TIMESTAMP WHERE id=?"
+        ).bind(upgraded.hash, upgraded.salt, upgraded.iterations, user.id).run();
+      } catch {
+        // A successful authentication must not be denied solely because an
+        // opportunistic strength upgrade could not be persisted.
+        console.warn("PASSWORD_REHASH_DEFERRED");
+      }
+    }
 
     let membership = await db
       .prepare(
