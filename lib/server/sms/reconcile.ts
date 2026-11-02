@@ -2,7 +2,7 @@ import { ensureDispatchSchema } from './dispatch-control';
 import { TENANT } from "./domain";
 import {prepareRecipient} from './acquisition';
 
-export async function reconcileSms(db:any,options:{liveSendingEnabled:boolean}={liveSendingEnabled:false}):Promise<void> {
+export async function reconcileSms(db:any,options:{liveSendingEnabled:boolean;schemaReady?:boolean;skipRetention?:boolean}={liveSendingEnabled:false}):Promise<void> {
   // A claimed task may already have reached Android. Never requeue it automatically.
   const uncertain=await db.prepare(`UPDATE sms_messages SET status='unknown',updated_at=CURRENT_TIMESTAMP
     WHERE id IN (SELECT id FROM sms_messages WHERE tenant_id=? AND status='leased' AND lease_until<CURRENT_TIMESTAMP LIMIT 100)
@@ -12,14 +12,9 @@ export async function reconcileSms(db:any,options:{liveSendingEnabled:boolean}={
     WHERE id IN (SELECT id FROM sms_messages WHERE tenant_id=? AND status='queued' AND julianday(expires_at)<=julianday('now') LIMIT 100)
       AND status='queued' RETURNING id`).bind(TENANT).all();
   for(const row of expired.results||[]) await db.prepare("INSERT INTO sms_message_events(tenant_id,message_id,state,detail) VALUES(?,?,'failed','expired_before_submission')").bind(TENANT,row.id).run();
-  // Retain operational metadata; erase sensitive payloads after 90 days.
-  await db.prepare(`UPDATE sms_messages SET body='[حذف‌شده طبق سیاست نگهداری]'
-    WHERE tenant_id=? AND created_at<datetime('now','-90 days')
-      AND status IN ('draft','sent','delivered','failed','cancelled','unknown')
-      AND body<>'[حذف‌شده طبق سیاست نگهداری]'`).bind(TENANT).run();
-  await db.prepare(`DELETE FROM sms_inbound_messages WHERE tenant_id=? AND created_at<datetime('now','-90 days')`).bind(TENANT).run();
+  if(!options.skipRetention) await pruneSmsHistory(db);
   if(!options.liveSendingEnabled)return;
-  await ensureDispatchSchema(db);
+  if(!options.schemaReady) await ensureDispatchSchema(db);
   if(await db.prepare('SELECT 1 FROM sms_dispatch_control WHERE tenant_id=? AND paused=1').bind(TENANT).first())return;
   const campaigns=await db.prepare(`SELECT id,group_id,body,max_recipients FROM sms_campaigns
     WHERE tenant_id=? AND NOT EXISTS(SELECT 1 FROM sms_dispatch_control control WHERE control.tenant_id=sms_campaigns.tenant_id AND control.paused=1) AND status IN ('approved','running') AND (scheduled_at IS NULL OR julianday(scheduled_at)<=julianday('now'))
@@ -61,4 +56,13 @@ export async function reconcileSms(db:any,options:{liveSendingEnabled:boolean}={
     if((contacts.results||[]).length<remaining) await db.prepare(`UPDATE sms_campaigns SET status='completed' WHERE id=? AND status='running'
       AND NOT EXISTS(SELECT 1 FROM sms_messages WHERE campaign_id=? AND status IN ('queued','leased','submitted','processed','unknown'))`).bind(campaign.id,campaign.id).run();
   }
+}
+
+export async function pruneSmsHistory(db:any):Promise<void> {
+  // Retain operational metadata; erase sensitive payloads after 90 days.
+  await db.prepare(`UPDATE sms_messages SET body='[حذف‌شده طبق سیاست نگهداری]'
+    WHERE tenant_id=? AND created_at<datetime('now','-90 days')
+      AND status IN ('draft','sent','delivered','failed','cancelled','unknown')
+      AND body<>'[حذف‌شده طبق سیاست نگهداری]'`).bind(TENANT).run();
+  await db.prepare(`DELETE FROM sms_inbound_messages WHERE tenant_id=? AND created_at<datetime('now','-90 days')`).bind(TENANT).run();
 }

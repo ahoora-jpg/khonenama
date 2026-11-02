@@ -7,8 +7,8 @@ export async function ensureWebPushSchema(db:any){
  await db.prepare("CREATE TABLE IF NOT EXISTS business_web_push_outbox (id INTEGER PRIMARY KEY AUTOINCREMENT,business_id INTEGER NOT NULL,lead_id INTEGER NOT NULL,subscription_id INTEGER NOT NULL,state TEXT NOT NULL DEFAULT 'pending',attempts INTEGER NOT NULL DEFAULT 0,next_attempt TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,UNIQUE(business_id,lead_id,subscription_id))").run();
  await db.prepare("CREATE INDEX IF NOT EXISTS idx_web_push_due ON business_web_push_outbox(state,next_attempt)").run();
 }
-export async function getWebPushKeys(db:any){
- await ensureWebPushSchema(db);
+export async function getWebPushKeys(db:any,schemaReady=false){
+ if(!schemaReady) await ensureWebPushSchema(db);
  let keys=await db.prepare("SELECT public_key,private_key FROM web_push_keys WHERE id=1").first();
  if(!keys){
   const pair=await crypto.subtle.generateKey({name:"ECDSA",namedCurve:"P-256"},true,["sign","verify"]);
@@ -20,12 +20,12 @@ export async function getWebPushKeys(db:any){
  }
  return keys;
 }
-export async function drainBusinessWebPush(db:any){
- await ensureWebPushSchema(db);
+export async function drainBusinessWebPush(db:any,schemaReady=false){
+ if(!schemaReady) await ensureWebPushSchema(db);
  await db.prepare("UPDATE business_web_push_outbox SET state='cancelled' WHERE state IN ('pending','sending') AND NOT EXISTS (SELECT 1 FROM business_web_push p JOIN business_members m ON m.business_id=p.business_id AND m.user_id=p.user_id AND m.status='active' WHERE p.id=business_web_push_outbox.subscription_id AND p.business_id=business_web_push_outbox.business_id AND p.active=1)").run();
  const rows=await db.prepare("SELECT o.*,p.endpoint,p.subscription FROM business_web_push_outbox o JOIN business_web_push p ON p.id=o.subscription_id WHERE o.state IN ('pending','sending') AND o.next_attempt<=CURRENT_TIMESTAMP ORDER BY o.id LIMIT 30").all();
  if(!rows.results?.length)return;
- const keys=await getWebPushKeys(db);
+ const keys=await getWebPushKeys(db,schemaReady);
  await Promise.all(rows.results.map(async(row:any)=>{
   const claim=await db.prepare("UPDATE business_web_push_outbox SET state='sending',attempts=attempts+1,next_attempt=datetime('now','+2 minutes') WHERE id=? AND state IN ('pending','sending') AND next_attempt<=CURRENT_TIMESTAMP RETURNING attempts").bind(row.id).first();
   if(!claim)return;

@@ -1,12 +1,9 @@
 import { installmentBusinessIds } from "@/lib/server/business-installments";
 import { normalizeServiceAreas } from "@/lib/service-area";
 import { matchingServiceNames, literalLike, normalizeServiceQuery } from "@/lib/service-search";
-import { ensureBusinessCoverage } from "@/lib/server/business-coverage";
 import { KARAJ_AREAS } from "@/lib/karaj-areas";
 import {selectPublicMedia} from "@/lib/subscription-lifecycle";
 import { env } from "cloudflare:workers";
-import { ensureBusinessMediaSchema } from "@/lib/server/business-media";
-import { ensureReviewReplies } from "@/lib/server/review-replies";
 
 export type PublicBusiness = {
   id: number;
@@ -50,23 +47,10 @@ function getDb() {
   return (env as any).DB;
 }
 
-async function ensureVisibilitySchema(db: any) {
-  await db.prepare(
-    "CREATE TABLE IF NOT EXISTS business_visibility_controls (" +
-      "business_id INTEGER PRIMARY KEY," +
-      "owner_paused INTEGER NOT NULL DEFAULT 0," +
-      "updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP" +
-    ")"
-  ).run();
-}
 
 async function hydrate(rows: any[]): Promise<PublicBusiness[]> {
   const db = getDb();
   if (!db || !rows.length) return [];
-
-  await ensureBusinessMediaSchema(db);
-  await ensureReviewReplies(db);
-  await ensureBusinessCoverage(db);
 
   const installmentIds = await installmentBusinessIds(db,rows.map(r=>Number(r.id)));
   // The list is capped at 100 businesses, within D1's bound-parameter limit.
@@ -185,8 +169,6 @@ export async function getPublishedBusiness(slug: string): Promise<PublicBusiness
   try {
     const db = getDb();
     if (!db) return null;
-
-    await ensureVisibilitySchema(db);
     const row = await db
       .prepare(
         "SELECT b.*, c.slug AS category_slug, c.name AS category_name FROM businesses b LEFT JOIN business_categories bc ON bc.business_id = b.id AND bc.is_primary = 1 LEFT JOIN categories c ON c.id = bc.category_id WHERE b.slug = ? AND b.status = 'published' AND NOT EXISTS (SELECT 1 FROM business_visibility_controls bvc WHERE bvc.business_id = b.id AND bvc.owner_paused = 1) LIMIT 1"
@@ -216,8 +198,6 @@ export async function listPublishedBusinesses(options: {
   try {
     const db = getDb();
     if (!db) return [];
-
-    await ensureVisibilitySchema(db);
     const where = [
       "b.status = 'published'",
       "b.slug NOT GLOB 'ghrfh-azmayshy-tbdyl-[0-9]*-thran'",

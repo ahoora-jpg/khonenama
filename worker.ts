@@ -9,7 +9,7 @@ import app from "vinext/server/app-router-entry";
 import { drainBusinessPush } from "./lib/server/business-push";
 import { drainBusinessWebPush } from "./lib/server/business-web-push";
 import { cleanExpiredMedia } from "./lib/server/media-retention";
-import { reconcileSms } from "./lib/server/sms/reconcile";
+import { reconcileSms,pruneSmsHistory } from "./lib/server/sms/reconcile";
 import { routeSmsHost } from "./lib/server/sms/host";
 import { ensureSmsSchema } from "./lib/server/sms/schema";
 import { liveSmsEnabled } from "./lib/server/sms/config";
@@ -47,18 +47,23 @@ export default {
     return applyAcquisitionEvent(env.DB,event,applied,lease);
   });
  },
- scheduled(_event:unknown, env:any, ctx:{waitUntil:(promise:Promise<unknown>)=>void}){
-  ctx.waitUntil(ensureSmsSchema(env.DB).then(()=>Promise.all([drainSmsOutbox(env.DB,env.SMS_EVENTS),drainAccessEvents(env.DB,env.SMS_EVENTS)])).catch(error=>smsLog('outbox_deferred',{requestId:'scheduled',reason:smsFailure(error).code})));
+ scheduled(event:{scheduledTime:number}, env:any, ctx:{waitUntil:(promise:Promise<unknown>)=>void}){
+  const minute=Math.floor(event.scheduledTime/60000);
+  const run=(name:string,job:Promise<unknown>)=>ctx.waitUntil(job.catch(error=>smsLog(name,{requestId:'scheduled',reason:smsFailure(error).code})));
+  // Schemas are installed before deployment, never by a recurring cron invocation.
+  run('outbox_deferred',Promise.all([drainSmsOutbox(env.DB,env.SMS_EVENTS),drainAccessEvents(env.DB,env.SMS_EVENTS)]));
   if(!smsPanel(env)){
-  if(smsIsolated(env))ctx.waitUntil(drainSiteProjection(env.DB,env.SMS_EVENTS).catch(error=>smsLog('site_projection_pending',{requestId:'scheduled',reason:smsFailure(error).code})));
-  ctx.waitUntil(drainBusinessPush(env.DB));
-  ctx.waitUntil(drainBusinessWebPush(env.DB));
-  ctx.waitUntil(cleanExpiredMedia(env.DB));
-  ctx.waitUntil(drainProfileReminders(env.DB, env).catch(()=>console.warn("PROFILE_REMINDER_JOB_FAILED")));
+   if(smsIsolated(env))run('site_projection_pending',drainSiteProjection(env.DB,env.SMS_EVENTS));
+   run('business_push_deferred',drainBusinessPush(env.DB,true));
+   run('web_push_deferred',drainBusinessWebPush(env.DB,true));
+   if(minute%30===0)run('profile_reminder_deferred',drainProfileReminders(env.DB,env,undefined,true));
+   if(minute%1440===0)run('media_cleanup_deferred',cleanExpiredMedia(env.DB,true));
   }
   if(smsPanel(env)||(!smsIsolated(env)&&env.SMS_MIGRATING!=='true')){
-  ctx.waitUntil(ensureSmsSchema(env.DB).then(()=>reconcileSms(env.DB,{liveSendingEnabled:liveSmsEnabled(env)})).catch(()=>console.warn("SMS_RECONCILE_JOB_FAILED")));
-  ctx.waitUntil(ensureSmsSchema(env.DB).then(()=>reconcileAcquisition(env.DB)).catch(()=>console.warn('SMS_ACQUISITION_JOB_FAILED')));
+   // Keep due campaigns, lease safety and opt-out checks on the two-minute cycle.
+   run('sms_reconcile_deferred',reconcileSms(env.DB,{liveSendingEnabled:liveSmsEnabled(env),schemaReady:true,skipRetention:true}));
+   if(minute%10===0)run('acquisition_reconcile_deferred',reconcileAcquisition(env.DB));
+   if(minute%1440===0)run('sms_retention_deferred',pruneSmsHistory(env.DB));
   }
  },
 };
