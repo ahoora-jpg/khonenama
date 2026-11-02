@@ -9,8 +9,8 @@ export async function ensureProfileReminders(db:any){
   db.prepare("CREATE INDEX IF NOT EXISTS profile_reminders_due ON profile_photo_reminders(state,next_attempt)"),
  ]);
 }
-export async function queueProfileReminders(db:any){
- await ensureProfileReminders(db);
+export async function queueProfileReminders(db:any,schemaReady=false){
+ if(!schemaReady) await ensureProfileReminders(db);
  return db.prepare("INSERT OR IGNORE INTO profile_photo_reminders(user_id,business_id) SELECT u.id,MIN(b.id) "+ownerJoin+" WHERE "+eligible+" AND NOT EXISTS(SELECT 1 FROM profile_photo_reminders r WHERE r.user_id=u.id) GROUP BY u.id ORDER BY MIN(b.created_at) LIMIT 50").run();
 }
 function escapeHtml(v:string){return v.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));}
@@ -20,9 +20,9 @@ export function profileReminderMessage(from:string,email:string,name:string){
  const help='چند عکس از محصولات، فضای کار یا نمونه‌کارهایتان اضافه کنید و اطلاعات پروفایل را کامل کنید تا مشتریان راحت‌تر با کسب‌وکارتان آشنا شوند.';
  return {from,to:[email],reply_to:'info@khonenama.ir',subject:'عکس غرفه‌تان را در خونه‌نما تکمیل کنید',text:`سلام،\n${intro}\n${help}\n\nافزودن عکس: ${dashboard}\nتکمیل پروفایل: ${profile}\n\nاین یادآور فقط یک‌بار ارسال می‌شود. برای راهنمایی می‌توانید به همین ایمیل پاسخ دهید.`,html:`<!doctype html><html lang="fa" dir="rtl"><body style="direction:rtl;text-align:right;background:#faf7f2;color:#292820;padding:24px;line-height:1.9"><main style="max-width:560px;margin:auto;background:white;padding:24px;border-radius:16px"><h1 style="font-size:22px">غرفه‌تان را با چند عکس معرفی کنید</h1><p>سلام،</p><p>${escapeHtml(intro)}</p><p>${help}</p><p><a href="${dashboard}" style="display:inline-block;padding:10px 20px;background:#85502d;color:white;text-decoration:none;border-radius:10px">افزودن عکس به غرفه</a></p><p><a href="${profile}">تکمیل اطلاعات پروفایل</a></p><p style="font-size:14px">این یادآور فقط یک‌بار ارسال می‌شود. برای راهنمایی می‌توانید به همین ایمیل پاسخ دهید.</p></main></body></html>`};
 }
-export async function drainProfileReminders(db:any,settings:any,send:typeof fetch=fetch){
+export async function drainProfileReminders(db:any,settings:any,send:typeof fetch=fetch,schemaReady=false){
  if(!db||typeof settings?.RESEND_API_KEY!=='string'||settings.RESEND_API_KEY.length<10||!validEmail(settings.RECOVERY_EMAIL_FROM))return {configured:false,accepted:0};
- await queueProfileReminders(db);
+ await queueProfileReminders(db,schemaReady);
  // Do not retry uncertain deliveries beyond the provider's 24-hour deduplication window.
  await db.prepare("UPDATE profile_photo_reminders SET state='failed',error_code='RETRY_WINDOW_EXPIRED' WHERE state IN ('pending','sending') AND first_attempt_at IS NOT NULL AND julianday(first_attempt_at)<=julianday('now','-20 hours')").run();
  const rows=(await db.prepare("SELECT user_id FROM profile_photo_reminders WHERE attempts<6 AND ((state='pending' AND next_attempt<=CURRENT_TIMESTAMP) OR (state='sending' AND lease_until<=CURRENT_TIMESTAMP)) ORDER BY created_at LIMIT 5").all()).results||[];
