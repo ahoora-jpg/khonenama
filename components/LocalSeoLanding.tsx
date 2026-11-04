@@ -227,7 +227,9 @@ export default async function LocalSeoLanding({
     reviewCount: business.reviewCount,
     planCode: business.planCode,
     coverUrl:
+      business.media.find((item) => item.kind === "cover")?.thumbnailUrl ||
       business.media.find((item) => item.kind === "cover")?.url ||
+      business.media[0]?.thumbnailUrl ||
       business.media[0]?.url ||
       "",
   }));
