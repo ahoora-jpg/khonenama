@@ -13,6 +13,7 @@ import {
   servicesForCategories,
 } from "@/lib/business-taxonomy";
 import { hashPassword, validatePassword, verifyPassword } from "@/lib/server/password";
+import { storeClientPasswordHash, validateClientPasswordCredential } from "@/lib/server/client-password-verifier";
 import { createUniqueBusinessSlug } from "@/lib/business-slug";
 import { taxonomySuggestions } from "@/lib/taxonomy-suggestions";
 import { saveTaxonomySuggestions } from "@/lib/server/taxonomy-suggestions";
@@ -64,6 +65,9 @@ export async function POST(request: Request) {
     const phone = normalizeIranPhone(cleanText(body?.phone, 32));
     const email = cleanText(body?.email, 160).toLowerCase();
     const password = typeof body?.password === "string" ? body.password : "";
+    const passwordVerifier = body?.passwordVerifier;
+    const passwordSalt = body?.passwordSalt;
+    const passwordIterations = body?.passwordIterations;
     const businessName = cleanText(body?.businessName, 180);
     const businessType = ["store", "company", "individual"].includes(body?.businessType) ? body.businessType : "store";
     const city = cleanText(body?.city, 100);
@@ -103,9 +107,13 @@ export async function POST(request: Request) {
       return Response.json({ ok: false, error: "INVALID_EMAIL" }, { status: 400 });
     }
 
-    const passwordError = validatePassword(password);
-    if (passwordError) {
-      return Response.json({ ok: false, error: passwordError }, { status: 400 });
+    const clientPassword = validateClientPasswordCredential(passwordVerifier, passwordSalt, passwordIterations);
+    if (!clientPassword && !password) {
+      return Response.json({ ok: false, error: "PASSWORD_PROOF_REQUIRED" }, { status: 400 });
+    }
+    if (password) {
+      const passwordError = validatePassword(password);
+      if (passwordError) return Response.json({ ok: false, error: passwordError }, { status: 400 });
     }
 
     if (!categories.length && !suggestions.some(item => item.kind === "category")) {
@@ -215,7 +223,12 @@ export async function POST(request: Request) {
     stage = "user-save";
     if (!userId) {
       userId = "usr_" + crypto.randomUUID();
-      const credentials = await hashPassword(password);
+      if (!clientPassword) return Response.json({ ok: false, error: "PASSWORD_PROOF_REQUIRED" }, { status: 400 });
+      const credentials = {
+        hash: await storeClientPasswordHash(env, passwordVerifier),
+        salt: passwordSalt,
+        iterations: Number(passwordIterations),
+      };
 
       await db
         .prepare(
@@ -232,7 +245,12 @@ export async function POST(request: Request) {
         )
         .run();
     } else if (!existingUser?.password_hash) {
-      const credentials = await hashPassword(password);
+      if (!clientPassword) return Response.json({ ok: false, error: "PASSWORD_PROOF_REQUIRED" }, { status: 400 });
+      const credentials = {
+        hash: await storeClientPasswordHash(env, passwordVerifier),
+        salt: passwordSalt,
+        iterations: Number(passwordIterations),
+      };
       await db
         .prepare(
           "UPDATE users SET full_name = ?, email = COALESCE(NULLIF(?, ''), email), password_hash = ?, password_salt = ?, password_iterations = ?, password_set_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?"

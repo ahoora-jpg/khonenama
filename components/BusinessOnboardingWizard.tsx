@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Building2, CheckCircle2, LockKeyhole, MapPin, Phone, Store } from "lucide-react";
 import { BUSINESS_CATEGORIES, servicesForCategories } from "@/lib/business-taxonomy";
 import BusinessMediaManager from "@/components/BusinessMediaManager";
+import { createPasswordVerifier } from "@/lib/password-verifier-client";
 
 type Form = { phone: string; password: string; businessName: string; city: string; category: string; service: string; businessType: "store" | "company" | "individual" };
 const initial: Form = { phone: "", password: "", businessName: "", city: "", category: "", service: "", businessType: "store" };
@@ -45,7 +46,8 @@ export default function BusinessOnboardingWizard() {
     if (!ready) { setError(invalidMessage()); return; }
     setBusy(true);
     try {
-      const response = await fetch("/api/businesses/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, mode: "quick", categories: [form.category], services: [form.service] }) });
+      const credential = await createPasswordVerifier(form.password, form.phone);
+      const response = await fetch("/api/businesses/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, ...credential, password: "", mode: "quick", categories: [form.category], services: [form.service] }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok) throw new Error(apiErrors[result.error] || "ساخت غرفه انجام نشد؛ کمی بعد دوباره تلاش کنید.");
       setSaved({ slug: result.business.slug, status: result.business.status });
