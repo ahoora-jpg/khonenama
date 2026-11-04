@@ -1,6 +1,7 @@
 import { safeJsonLd } from "@/lib/safe-json-ld";
 import { businessModelNames } from "@/lib/server/business-models";
 import GalleryModelChoice from "@/components/GalleryModelChoice";
+import BusinessGalleryImage from "@/components/BusinessGalleryImage";
 import { groupServices } from "@/lib/service-groups";
 import type { Metadata } from "next";
 import { cache } from "react";
@@ -332,7 +333,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
             {albums.map(album => (
               <details key={album.id} className="glass-panel" style={{ padding: "1rem", marginBottom: "1rem" }}>
                 <summary style={{ cursor: "pointer", fontWeight: 700 }}>
-                  {album.media[0] && album.media[0].kind !== "video" && <img src={album.media[0].url} alt={album.title} width={96} height={72} loading="lazy" style={{ objectFit: "cover", borderRadius: 8, verticalAlign: "middle", marginInlineEnd: 12 }} />}
+                  {album.media[0] && album.media[0].kind !== "video" && <img src={album.media[0].thumbnailUrl || album.media[0].url} alt={album.title} width={96} height={72} loading="lazy" decoding="async" style={{ objectFit: "cover", borderRadius: 8, verticalAlign: "middle", marginInlineEnd: 12 }} />}
                   {album.title} — {album.media.length.toLocaleString("fa-IR")} عکس / ویدیو
                 </summary>
                 {album.project && <dl>
@@ -342,7 +343,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
                 </dl>}
                 {album.description && <p style={{ whiteSpace: "pre-wrap" }}>{album.description}</p>}
                 <div className="business-public-gallery">
-                  {album.media.map(item => <figure key={item.id}>{item.kind === "video" ? <video src={item.url} controls playsInline preload="metadata" style={{width:"100%"}} /> : <img src={item.url} alt={item.altText || album.title} loading="lazy" />}{item.altText && <figcaption>{item.altText}</figcaption>}{business.source === "d1" && item.kind === "image" && <GalleryModelChoice businessSlug={business.slug} mediaId={item.id} />}</figure>)}
+                  {album.media.map(item => <figure key={item.id}>{item.kind === "video" ? <video src={item.url} controls playsInline preload="metadata" style={{width:"100%"}} /> : <BusinessGalleryImage thumbnailUrl={item.thumbnailUrl} fullUrl={item.url} alt={item.altText || album.title} />}{item.altText && <figcaption>{item.altText}</figcaption>}{business.source === "d1" && item.kind === "image" && <GalleryModelChoice businessSlug={business.slug} mediaId={item.id} />}</figure>)}
                 </div>
               </details>
             ))}
@@ -350,7 +351,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
               <div className="business-public-gallery">
                 {business.media.map((item: any) => (
                   <figure className={item.kind === "cover" ? "is-cover" : ""} key={item.id}>
-                    {item.kind === "video" ? <video src={item.url} controls playsInline preload="metadata" style={{width:"100%"}} /> : <img src={item.url} alt={item.altText || business.name + " نمونه‌کار"} loading="lazy" />}
+                    {item.kind === "video" ? <video src={item.url} controls playsInline preload="metadata" style={{width:"100%"}} /> : <BusinessGalleryImage thumbnailUrl={item.thumbnailUrl} fullUrl={item.url} alt={item.altText || business.name + " نمونه‌کار"} />}
                     {item.altText && <figcaption>{item.altText}</figcaption>}
                     {business.source === "d1" && item.kind === "image" && <GalleryModelChoice businessSlug={business.slug} mediaId={item.id} />}
                   </figure>
