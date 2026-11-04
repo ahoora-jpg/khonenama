@@ -17,6 +17,10 @@ export function thumbnailKey(key: string) {
   return key.replace(/\.webp$/, "-thumb.webp");
 }
 
+export function mediumKey(key: string) {
+  return key.replace(/\.webp$/, "-medium.webp");
+}
+
 async function downloadProcessedImage(url: string): Promise<Uint8Array> {
   const parsed = new URL(url);
   const endpoint = new URL(String((env as any).IMAGEKIT_URL_ENDPOINT));
@@ -62,7 +66,7 @@ export async function deleteStoredBusinessImage(provider: string, fileId: string
   if (!KEY_PATTERN.test(fileId)) throw new Error("INVALID_MEDIA_KEY");
   const bucket = (env as any).BUSINESS_MEDIA;
   if (!bucket) throw new Error("MEDIA_STORAGE_NOT_CONFIGURED");
-  await bucket.delete(fileId.endsWith(".mp4") ? [fileId] : [fileId, thumbnailKey(fileId)]);
+  await bucket.delete(fileId.endsWith(".mp4") ? [fileId] : [fileId, thumbnailKey(fileId), mediumKey(fileId)]);
 }
 
 export async function uploadStoredBusinessImage(file: File, options: { fileName: string; folder: string; tags?: string; businessId: number }) {
@@ -88,9 +92,13 @@ export async function uploadStoredBusinessImage(file: File, options: { fileName:
     const thumbUrl = new URL(verified.url);
     thumbUrl.searchParams.set("tr", "w-480,h-480,c-at_max,f-webp,q-85");
     const thumbnail = await downloadProcessedImage(thumbUrl.toString());
+    const mediumUrl = new URL(verified.url);
+    mediumUrl.searchParams.set("tr", "w-1280,h-1280,c-at_max,f-webp,q-88");
+    const medium = await downloadProcessedImage(mediumUrl.toString());
     const metadata = { httpMetadata: { contentType: "image/webp", cacheControl: "public, max-age=300" }, customMetadata: { businessId: String(options.businessId) } };
     await bucket.put(r2Key, master, metadata);
     await bucket.put(thumbnailKey(r2Key), thumbnail, metadata);
+    await bucket.put(mediumKey(r2Key), medium, metadata);
     return { ...verified, provider: "r2", fileId: r2Key, filePath: r2Key, url: "https://khonenama.ir/media/" + r2Key, thumbnailUrl: "https://khonenama.ir/media/" + thumbnailKey(r2Key), size: master.byteLength };
   } catch (error) {
     if (r2Key) await deleteStoredBusinessImage("r2", r2Key).catch(() => console.error("R2 orphan cleanup failed"));
