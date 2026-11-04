@@ -1349,6 +1349,11 @@ button.business-photo-avatar { cursor:pointer; }
   object-fit:cover;
   display:block;
 }
+.business-gallery-preview { display:block; width:100%; padding:0; border:0; background:transparent; cursor:zoom-in; }
+.business-gallery-preview:focus-visible { outline:3px solid var(--accent); outline-offset:-3px; }
+.business-gallery-lightbox { position:fixed; inset:0; z-index:1000; display:grid; place-items:center; padding:24px; background:rgba(18,16,13,.86); cursor:zoom-out; }
+.business-gallery-lightbox img { width:auto; max-width:100%; height:auto; max-height:calc(100vh - 48px); aspect-ratio:auto; object-fit:contain; border-radius:12px; cursor:default; }
+.business-gallery-close { position:fixed; top:18px; inset-inline-end:20px; width:44px; height:44px; border:0; border-radius:50%; background:#fff; color:#171717; font-size:32px; line-height:1; cursor:pointer; }
 .business-public-gallery figcaption {
   padding:8px 10px;
   color:var(--muted);
