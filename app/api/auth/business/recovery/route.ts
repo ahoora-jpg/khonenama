@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   try {
     if (body.action === "reset") {
       if (typeof body.token !== "string" || typeof body.password !== "string") throw Error("INVALID_RESET");
-      await resetPassword((env as any).DB,body.token,body.password);
+      await resetPassword((env as any).DB,env,body.token,body.password,{verifier:body.passwordVerifier,salt:body.passwordSalt,iterations:body.passwordIterations});
     } else {
       const phone = typeof body.phone === "string" ? body.phone.replace(/[۰-۹]/g,(c: string)=>String("۰۱۲۳۴۵۶۷۸۹".indexOf(c))).replace(/[٠-٩]/g,(c: string)=>String("٠١٢٣٤٥٦٧٨٩".indexOf(c))).replace(/[\s-]/g,"") : "";
       if (body.action === "email_access_help") {

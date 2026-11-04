@@ -1,4 +1,5 @@
 import { hashPassword, validatePassword } from "./password";
+import { storeClientPasswordHash, validateClientPasswordCredential } from "./client-password-verifier";
 import { ensureSmsSchema } from "./sms/schema";
 import { queueTransactionalEvent } from "./sms/transactional";
 import { ensureSupportTickets } from "./support-tickets";
@@ -74,10 +75,14 @@ export async function requestRecoveryWithoutEmail(db: any, phone: string, ip: st
     console.warn("RECOVERY_HELP_SMS_UNAVAILABLE");
   }
 }
-export async function resetPassword(db: any, token: string, password: string) {
-  if (!/^[a-f0-9]{64}$/.test(token) || validatePassword(password)) throw Error("INVALID_RESET");
+export async function resetPassword(db: any, env: any, token: string, password: string, credential?: { verifier?: unknown; salt?: unknown; iterations?: unknown }) {
+  const clientCredential = validateClientPasswordCredential(credential?.verifier, credential?.salt, credential?.iterations);
+  if (!/^[a-f0-9]{64}$/.test(token) || (!clientCredential && validatePassword(password))) throw Error("INVALID_RESET");
   await ensureRecovery(db);
-  const hashed = await hashPassword(password), tokenHash = await recoveryHash(token);
+  const hashed = clientCredential
+    ? { hash: await storeClientPasswordHash(env, String(credential!.verifier)), salt: String(credential!.salt), iterations: Number(credential!.iterations) }
+    : await hashPassword(password);
+  const tokenHash = await recoveryHash(token);
   const valid = "SELECT user_id FROM password_reset_tokens WHERE token_hash=? AND used_at IS NULL AND expires_at>CURRENT_TIMESTAMP";
   const result = await db.batch([
     db.prepare(`UPDATE users SET password_hash=?,password_salt=?,password_iterations=?,password_set_at=CURRENT_TIMESTAMP,updated_at=CURRENT_TIMESTAMP WHERE id IN (${valid}) AND status='active'`).bind(hashed.hash,hashed.salt,hashed.iterations,tokenHash),

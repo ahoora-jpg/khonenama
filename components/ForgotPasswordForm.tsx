@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPasswordVerifier } from "@/lib/password-verifier-client";
 
 export default function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
@@ -39,8 +40,9 @@ export default function ForgotPasswordForm() {
     }
     setBusy(true);
     try {
+      const credential = token ? await createPasswordVerifier(password, phone) : null;
       const body = token
-        ? { action: "reset", token, password }
+        ? { action: "reset", token, password: "", ...credential }
         : helpMode
           ? { action: "email_access_help", phone }
           : { email, phone };
@@ -91,6 +93,7 @@ export default function ForgotPasswordForm() {
     <h1>{token ? "انتخاب رمز جدید" : helpMode ? "پیگیری بدون دسترسی به ایمیل" : "بازیابی از طریق ایمیل"}</h1>
     <p>{token ? "رمز تازه‌ای انتخاب کنید که فقط خودتان می‌دانید." : helpMode ? "درخواست شما برای رسیدگی انسانی ثبت می‌شود؛ نتیجه در لحظه آماده نیست." : "ایمیل حساب را دقیق وارد کنید. ساده‌ترین و سریع‌ترین راه بازیابی رمز، دریافت لینک در ایمیل است؛ جیمیل هم یک ایمیل معتبر است."}</p>
     {token ? <>
+      <label><span>شماره همراه ثبت‌شده</span><div className="form-input"><input type="tel" autoComplete="tel" required dir="ltr" inputMode="tel" placeholder="09…" value={phone} onChange={(event) => setPhone(event.target.value)} disabled={done} /></div></label>
       <label><span>رمز جدید</span><div className="form-input"><input type="password" autoComplete="new-password" required minLength={8} maxLength={128} value={password} onChange={(event) => setPassword(event.target.value)} disabled={done} /></div></label>
       <label><span>تکرار رمز جدید</span><div className="form-input"><input type="password" autoComplete="new-password" required minLength={8} maxLength={128} value={confirm} onChange={(event) => setConfirm(event.target.value)} disabled={done} /></div></label>
     </> : <>

@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import { createBusinessSession } from "@/lib/server/business-session";
 import { hashPassword, passwordNeedsRehash, verifyPassword } from "@/lib/server/password";
+import { isClientPasswordHash, verifyClientPasswordHash } from "@/lib/server/client-password-verifier";
 
 
 function normalizeDigits(value: string) {
@@ -104,8 +105,9 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => ({}));
     const phone = normalizeIranPhone(typeof body?.phone === "string" ? body.phone : "");
     const password = typeof body?.password === "string" ? body.password : "";
+    const passwordVerifier = typeof body?.passwordVerifier === "string" ? body.passwordVerifier : "";
 
-    if (!/^09\d{9}$/.test(phone) || password.length < 8 || password.length > 128) {
+    if (!/^09\d{9}$/.test(phone) || ((!passwordVerifier || !/^[0-9a-f]{64}$/i.test(passwordVerifier)) && (password.length < 8 || password.length > 128))) {
       return Response.json({ ok: false, error: "INVALID_CREDENTIALS" }, { status: 400 });
     }
 
@@ -139,12 +141,9 @@ export async function POST(request: Request) {
     let verifyRuntimeError = false;
 
     try {
-      valid = await verifyPassword(
-        password,
-        String(user.password_hash),
-        String(user.password_salt || ""),
-        Number(user.password_iterations || 0)
-      );
+      valid = isClientPasswordHash(String(user.password_hash))
+        ? await verifyClientPasswordHash(env, passwordVerifier, String(user.password_hash))
+        : await verifyPassword(password, String(user.password_hash), String(user.password_salt || ""), Number(user.password_iterations || 0));
     } catch (error) {
       verifyRuntimeError = true;
       console.warn("password verification runtime error", error);
@@ -160,7 +159,7 @@ export async function POST(request: Request) {
     await Promise.all(loginKeys.map((key) => clearLoginFailures(db, key)));
 
     const storedIterations = Number(user.password_iterations || 0);
-    if (passwordNeedsRehash(storedIterations)) {
+    if (!isClientPasswordHash(String(user.password_hash)) && passwordNeedsRehash(storedIterations)) {
       try {
         const upgraded = await hashPassword(password);
         await db.prepare(

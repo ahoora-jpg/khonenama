@@ -1,6 +1,7 @@
 "use client";
 
 import { safeNextPath } from "@/lib/public-links";
+import { derivePasswordVerifier, passwordSaltForPhone } from "@/lib/password-verifier-client";
 import { useRef, useState } from "react";
 import { ArrowLeft, Eye, EyeOff, KeyRound, LockKeyhole, Phone, ShieldCheck } from "lucide-react";
 
@@ -50,10 +51,14 @@ export default function BusinessLoginForm() {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 20000);
     try {
+      const passwordSalt = await passwordSaltForPhone(actualPhone);
+      const passwordVerifier = await derivePasswordVerifier(actualPassword, passwordSalt);
       const response = await fetch("/api/auth/business/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: actualPhone, password: actualPassword }),
+        // The Worker receives a verifier for newly-created accounts. Legacy
+        // accounts still receive the password until their next reset.
+        body: JSON.stringify({ phone: actualPhone, password: actualPassword, passwordVerifier }),
         signal: controller.signal,
       });
 
