@@ -31,12 +31,14 @@ function storageFixture({ mode = 'r2', failThumbnail = false, badFolder = false,
   return { api, upload, objects, deletedTemps };
 }
 
-test('R2 persists processed master and thumbnail, removes temporary encoder file', async () => {
+test('R2 persists processed master, thumbnail, and medium image, then removes the temporary encoder file', async () => {
   const f = storageFixture();
   const image = await f.upload();
   assert.equal(image.provider, 'r2');
   assert.match(image.fileId, /^businesses\/1\/[a-f0-9-]{36}\.webp$/);
-  assert.equal(f.objects.size, 2);
+  assert.equal(f.objects.size, 3);
+  assert.ok([...f.objects.keys()].some(key => key.endsWith('-thumb.webp')));
+  assert.ok([...f.objects.keys()].some(key => key.endsWith('-medium.webp')));
   assert.equal(f.deletedTemps.length, 1);
   assert.equal(f.deletedTemps[0], 'temporary');
   assert.equal(image.url, 'https://khonenama.ir/media/' + image.fileId);
@@ -80,18 +82,19 @@ test('Untrusted URLs and oversized downloads never persist to R2', async () => {
   }
 });
 
-function servingFixture({ published = true, paused = false, owner = false, registered = true } = {}) {
+function servingFixture({ published = true, paused = false, owner = false, registered = true, missingMedium = false } = {}) {
   let reads = 0;
+  const keys = [];
   const db = { prepare(sql) { return { bind() { return this; }, async first() { return sql.includes('business_members') ? (owner ? { allowed: 1 } : null) : (registered ? { status: published ? 'published' : 'draft', owner_paused: paused ? 1 : 0 } : null); } }; } };
-  const object = () => { reads++; return { body: new Uint8Array([1, 2]), size: 2, httpEtag: '"test"' }; };
+  const object = key => { keys.push(key); if (missingMedium && key.endsWith('-medium.webp')) return null; reads++; return { body: new Uint8Array([1, 2]), size: 2, httpEtag: '"test"' }; };
   const route = load('app/media/businesses/[businessId]/[fileName]/route.ts', {
-    'cloudflare:workers': { env: { DB: db, BUSINESS_MEDIA: { get: async () => object(), head: async () => object() } } },
+    'cloudflare:workers': { env: { DB: db, BUSINESS_MEDIA: { get: async key => object(key), head: async key => object(key) } } },
     '@/lib/business-video': {VIDEO_LIMITS:{free:0,pro:2,premium:5}},
     '@/lib/business-entitlements': {customPacksForSubscription:async()=>0,planPresentation:{free:{galleryLimit:10},pro:{galleryLimit:30},premium:{galleryLimit:70}},normalizePlanCode:value=>value==='pro'||value==='premium'?value:'free'},
     '@/lib/server/business-session': { getBusinessSession: async () => owner ? { user_id: 9 } : null },
   });
-  const serve = (method = 'GET', headers = {}) => route[method](new Request('https://khonenama.ir/media/businesses/1/00000000-0000-4000-8000-000000000001.webp', { method, headers }), { params: Promise.resolve({ businessId: '1', fileName: '00000000-0000-4000-8000-000000000001.webp' }) });
-  return { serve, reads: () => reads };
+  const serve = (method = 'GET', headers = {}, fileName = '00000000-0000-4000-8000-000000000001.webp') => route[method](new Request('https://khonenama.ir/media/businesses/1/' + fileName, { method, headers }), { params: Promise.resolve({ businessId: '1', fileName }) });
+  return { serve, reads: () => reads, keys };
 }
 test('Published R2 images support GET, HEAD and conditional requests', async () => {
   const f = servingFixture();
@@ -111,4 +114,13 @@ test('Owner draft previews are private and never cacheable', async () => {
   const response = await f.serve();
   assert.equal(response.status, 200);
   assert.equal(response.headers.get('cache-control'), 'private, no-store');
+});
+test('A missing medium derivative safely falls back to the existing master image', async () => {
+  const f = servingFixture({ missingMedium: true });
+  const response = await f.serve('GET', {}, '00000000-0000-4000-8000-000000000001-medium.webp');
+  assert.equal(response.status, 200);
+  assert.deepEqual(f.keys, [
+    'businesses/1/00000000-0000-4000-8000-000000000001-medium.webp',
+    'businesses/1/00000000-0000-4000-8000-000000000001.webp',
+  ]);
 });

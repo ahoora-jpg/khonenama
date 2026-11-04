@@ -6,10 +6,10 @@ import { getBusinessSession } from "@/lib/server/business-session";
 async function serve(request: Request, context: { params: Promise<{ businessId: string; fileName: string }> }) {
   const { businessId, fileName } = await context.params;
   const missing = () => new Response(null, { status: 404, headers: { "Cache-Control": "no-store" } });
-  if (!/^[1-9]\d*$/.test(businessId) || !/^[a-f0-9-]{36}(?:-thumb)?\.webp$|^[a-f0-9-]{36}\.mp4$/.test(fileName)) return missing();
+  if (!/^[1-9]\d*$/.test(businessId) || !/^[a-f0-9-]{36}(?:-(?:thumb|medium))?\.webp$|^[a-f0-9-]{36}\.mp4$/.test(fileName)) return missing();
   const bucket = (env as any).BUSINESS_MEDIA;
   if (!bucket) return missing();
-  const masterName = fileName.replace(/-thumb\.webp$/, ".webp");
+  const masterName = fileName.replace(/-(?:thumb|medium)\.webp$/, ".webp");
   const masterKey = "businesses/" + businessId + "/" + masterName;
   const db = (env as any).DB;
   const media = await db.prepare(
@@ -34,7 +34,7 @@ async function serve(request: Request, context: { params: Promise<{ businessId: 
     const member = await db.prepare("SELECT 1 AS allowed FROM business_members WHERE business_id = ? AND user_id = ? AND status = 'active' AND role IN ('owner','manager') LIMIT 1").bind(Number(businessId), session.user_id).first();
     if (!member) return missing();
   }
-  const key="businesses/"+businessId+"/"+fileName;
+  let key="businesses/"+businessId+"/"+fileName;
   const range=request.method === "GET" && fileName.endsWith(".mp4") ? request.headers.get("range") : null;
   let offset=0, length=0, total=0;
   if(range){
@@ -47,9 +47,13 @@ async function serve(request: Request, context: { params: Promise<{ businessId: 
     }
     if(!match || offset>=total || length<=0 || !Number.isSafeInteger(offset) || !Number.isSafeInteger(length)) return new Response(null,{status:416,headers:{"Content-Range":"bytes */"+total,"Cache-Control":"no-store"}});
   }
-  const object = request.method === "HEAD"
+  let object = request.method === "HEAD"
     ? await bucket.head("businesses/" + businessId + "/" + fileName)
     : await bucket.get(key, range ? {range:{offset,length}} : undefined);
+  if (!object && fileName.endsWith("-medium.webp")) {
+    key = masterKey;
+    object = request.method === "HEAD" ? await bucket.head(masterKey) : await bucket.get(masterKey);
+  }
   if (!object) return missing();
   const headers = new Headers({
     "Content-Type": fileName.endsWith(".mp4") ? "video/mp4" : "image/webp",
