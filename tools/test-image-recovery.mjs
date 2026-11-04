@@ -13,11 +13,10 @@ test('the bundled inline payload is exactly the tested script and cannot termina
   assert.doesNotMatch(payload,/<\/script/i);
 });
 
-function fixture(alwaysFail=false,debug=false){
+function fixture(alwaysFail=false,debug=false,source='/media/businesses/12/11111111-1111-1111-1111-111111111111-thumb.webp'){
   const calls=[];let blob,resolveDone;
   const elements=new Map();
   const done=new Promise(resolve=>resolveDone=resolve);
-  const source='/images/editorial/photo-1602612996819-3cd306f68b4e.webp';
   class Image {
     isConnected=true;complete=false;naturalWidth=0;
     attrs=new Map([['src',source],['srcset',source+' 1x']]);
@@ -73,4 +72,11 @@ test('persistent failure retries finitely and restores the original source and s
   assert.equal(f.calls.length,6);
   assert.equal(f.image.getAttribute('src'),f.source);
   assert.equal(f.image.getAttribute('srcset'),f.source+' 1x');
+});
+
+test('static CDN images never start Worker chunk recovery',async()=>{
+  const f=fixture(false,false,'/images/editorial/photo-1602612996819-3cd306f68b4e.webp');
+  await new Promise(resolve=>setTimeout(resolve,25));
+  assert.equal(f.calls.length,0);
+  assert.equal(f.image.getAttribute('src'),f.source);
 });
