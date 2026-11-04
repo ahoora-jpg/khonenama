@@ -28,8 +28,10 @@
     try {
       const url = new URL(source, location.href);
       if (!["khonenama.ir", "www.khonenama.ir"].includes(url.hostname)) return null;
-      if (!/^\/images\/[a-z0-9/_-]+\.webp$/.test(url.pathname) &&
-          !/^\/media\/businesses\/[1-9]\d*\/[a-f0-9-]{36}(?:-thumb)?\.webp$/.test(url.pathname)) return null;
+      // Static editorial images are already served by the CDN. Rebuilding them
+      // through Worker chunks slows down a cold page load and adds needless CPU.
+      // Keep this emergency path only for R2 business-media while it is migrated.
+      if (!/^\/media\/businesses\/[1-9]\d*\/[a-f0-9-]{36}(?:-thumb)?\.webp$/.test(url.pathname)) return null;
       return url.pathname;
     } catch {
       return null;

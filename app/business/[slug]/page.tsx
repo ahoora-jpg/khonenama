@@ -158,7 +158,7 @@ export default async function BusinessPage({ params, searchParams }: { params: P
       verified: item.verificationStatus === "verified" || item.verificationStatus === "professional",
       rating: item.rating,
       reviewCount: item.reviewCount,
-      coverUrl: item.media.find((media) => media.kind === "cover")?.url || item.media[0]?.url || "",
+      coverUrl: item.media.find((media) => media.kind === "cover")?.thumbnailUrl || item.media.find((media) => media.kind === "cover")?.url || item.media[0]?.thumbnailUrl || item.media[0]?.url || "",
       demo: false,
     }));
   const relatedSlugs = new Set(relatedLive.map((item) => item.slug));

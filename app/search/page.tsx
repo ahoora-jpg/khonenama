@@ -116,7 +116,7 @@ export default async function SearchPage({
       promoted: business.promoted,
       // Search results only need a card-sized preview. Keep the original for the
       // business gallery so a slow connection never has to download it in a list.
-      coverUrl: business.media.find((item) => item.kind === "cover")?.thumbnailUrl || business.media.find((item) => item.kind === "cover")?.url || business.media.find((item) => item.kind === "image")?.thumbnailUrl || business.media[0]?.url || "",
+      coverUrl: business.media.find((item) => item.kind === "cover")?.thumbnailUrl || business.media.find((item) => item.kind === "cover")?.url || business.media.find((item) => item.kind === "image")?.thumbnailUrl || business.media.find((item) => item.kind === "image")?.url || business.media[0]?.thumbnailUrl || business.media[0]?.url || "",
       source: "live" as const,
     })),
   ];
