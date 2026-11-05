@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Building2, CheckCircle2, LockKeyhole, MapPin, Phone, Store } from "lucide-react";
 import { BUSINESS_CATEGORIES, servicesForCategories } from "@/lib/business-taxonomy";
 import BusinessMediaManager from "@/components/BusinessMediaManager";
@@ -17,11 +18,19 @@ const apiErrors: Record<string, string> = {
 function digits(value: string) { return value.replace(/[۰-۹]/g, (c) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(c))).replace(/[٠-٩]/g, (c) => String("٠١٢٣٤٥٦٧٨٩".indexOf(c))).replace(/[\s-]/g, ""); }
 
 export default function BusinessOnboardingWizard() {
+  const search = useSearchParams();
   const [form, setForm] = useState<Form>(initial);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState<{ slug: string; status: string } | null>(null);
   const tracked = useRef(new Set<string>());
+  const source = search.get("source") || "";
+  useEffect(() => {
+    const city = (search.get("city") || "").trim().slice(0, 100);
+    const category = search.get("category") || "";
+    if (!city && !BUSINESS_CATEGORIES.some((item) => item.slug === category)) return;
+    setForm((current) => ({ ...current, city: current.city || city, category: current.category || (BUSINESS_CATEGORIES.some((item) => item.slug === category) ? category : "") }));
+  }, [search]);
   const category = BUSINESS_CATEGORIES.find((item) => item.slug === form.category);
   const services = useMemo(() => form.category ? servicesForCategories([form.category]) : [], [form.category]);
   const validPhone = /^09\d{9}$/.test(digits(form.phone));
@@ -30,7 +39,7 @@ export default function BusinessOnboardingWizard() {
   function track(event: "registration_view" | "registration_submit_attempt" | "registration_submit_failed") {
     if (tracked.current.has(event) || navigator.doNotTrack === "1") return;
     tracked.current.add(event);
-    fetch("/api/seller-acquisition", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event }), keepalive: true }).catch(() => undefined);
+    fetch("/api/seller-acquisition", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event, ...(source ? { source } : {}) }), keepalive: true }).catch(() => undefined);
   }
   useEffect(() => { track("registration_view"); }, []);
   function update<Key extends keyof Form>(key: Key, value: Form[Key]) { setForm((current) => ({ ...current, [key]: value })); }
@@ -47,7 +56,7 @@ export default function BusinessOnboardingWizard() {
     setBusy(true);
     try {
       const credential = await createPasswordVerifier(form.password, form.phone);
-      const response = await fetch("/api/businesses/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, ...credential, password: "", mode: "quick", categories: [form.category], services: [form.service] }) });
+      const response = await fetch("/api/businesses/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, ...credential, password: "", source, mode: "quick", categories: [form.category], services: [form.service] }) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok) throw new Error(apiErrors[result.error] || "ساخت غرفه انجام نشد؛ کمی بعد دوباره تلاش کنید.");
       setSaved({ slug: result.business.slug, status: result.business.status });

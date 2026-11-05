@@ -5,6 +5,7 @@ import { getAiSearchContent } from "@/lib/ai-search-content";
 import { listPublishedBusinesses } from "@/lib/server/public-businesses";
 import { getLocalVisual } from "@/lib/visuals";
 import { ArrowUpLeft, BadgeCheck, BriefcaseBusiness, Crown, MapPin, Star } from "lucide-react";
+import SellerInvitation from "@/components/SellerInvitation";
 
 type Faq = { question: string; answer: string };
 type GuideLink = { title: string; text: string; href: string };
@@ -442,6 +443,8 @@ export default async function LocalSeoLanding({
               </div>
             )}
           </section>
+
+          <SellerInvitation category={categorySlug} categoryLabel={h1.replace(/ در کرج$/, "")} city="کرج" source={`/karaj/${categorySlug}`} empty={matches.length === 0} />
 
           <section className="category-results">
             <div className="section-heading compact-heading">
