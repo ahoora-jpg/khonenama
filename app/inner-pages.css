@@ -36,6 +36,16 @@
 .result-meta .rating { color: #b87828; }
 .category-hero { border-radius: 30px; padding: 38px; min-height: 250px; display: flex; flex-direction: column; justify-content: end; background: linear-gradient(135deg,rgba(250,250,247,.82),rgba(235,234,228,.66)); }
 .category-results { margin-top: 46px; }
+.national-discovery-breadcrumbs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px; color:var(--muted); font-size:14px; }
+.national-discovery-breadcrumbs a { color:inherit; text-decoration:underline; text-underline-offset:3px; }
+.national-discovery-section { margin-top:34px; }
+.national-discovery-section h2 { margin:0 0 14px; font-size:clamp(22px,3vw,30px); }
+.national-discovery-location { color:var(--muted); font-size:14px; }
+.national-discovery-service-list, .national-discovery-link-list { display:grid; gap:8px; padding-inline-start:22px; }
+.national-discovery-city-links, .national-discovery-category-links nav { display:flex; flex-wrap:wrap; gap:8px; }
+.national-discovery-city-links a, .national-discovery-category-links a { display:inline-flex; min-height:42px; align-items:center; padding:7px 12px; border:1px solid var(--line); border-radius:999px; background:var(--surface); font-size:14px; }
+.national-discovery-seller { border:1px solid var(--line); border-radius:22px; padding:clamp(18px,4vw,30px); background:rgba(255,255,255,.55); }
+.national-discovery-seller p { max-width:680px; color:var(--muted); }
 .business-generic { background: linear-gradient(135deg,#8d664e,#dfc7b3); }
 .business-profile-hero { position: relative; margin-bottom: 54px; }
 .profile-cover { height: 370px; border-radius: 32px; overflow: hidden; position: relative; background: linear-gradient(135deg,#754d38,#d6ad8d 56%,#73816f); }

@@ -2,6 +2,7 @@ import { listServiceSitemapEntries } from "@/lib/server/service-sitemap";
 import type { MetadataRoute } from "next";
 import { guides } from "@/lib/guides";
 import { listPublishedBusinessSitemapEntries } from "@/lib/server/business-sitemap";
+import { nationalDiscoveryPath, NATIONAL_DISCOVERY_INDEXABLE_ROUTES } from "@/lib/national-discovery";
 
 const baseUrl = "https://khonenama.ir";
 const seoRefreshDate = "2026-09-25";
@@ -13,6 +14,7 @@ const sixDomainSeoRefreshDate = "2026-10-04";
 // Published PRs 36–39 changed guide discovery, the homepage and acquisition copy.
 // Keep this tied to the content publication date, not the current request date.
 const discoveryAndAcquisitionRefreshDate = "2026-10-18";
+const nationalDiscoveryPublicationDate = "2026-11-05";
 
 // Business profiles change independently of code deploys. Generate the sitemap
 // at request time so search engines see newly publishable profiles without
@@ -75,6 +77,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const liveBusinesses = await listPublishedBusinessSitemapEntries();
+  const nationalDiscoveryPages: MetadataRoute.Sitemap = NATIONAL_DISCOVERY_INDEXABLE_ROUTES.map((page) => ({
+    url: baseUrl + nationalDiscoveryPath(page.citySlug, page.categorySlug),
+    lastModified: nationalDiscoveryPublicationDate,
+    changeFrequency: "weekly",
+    priority: 0.72,
+  }));
   const businessPages: MetadataRoute.Sitemap = liveBusinesses.map((business) => ({
     url: baseUrl + "/business/" + business.slug,
     lastModified: business.updatedAt || undefined,
@@ -82,6 +90,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: business.planCode === "premium" ? 0.86 : 0.78,
   }));
 
-  return [...staticPages, ...guidePages, ...businessPages, ...await listServiceSitemapEntries()];
+  return [...staticPages, ...guidePages, ...businessPages, ...nationalDiscoveryPages, ...await listServiceSitemapEntries()];
 }
 
