@@ -64,6 +64,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   if (!category || !seo) notFound();
 
   const liveBusinesses = await listPublishedBusinesses({ categorySlug: slug, limit: 50 });
+  const nationalCities = [{slug:"tehran",name:"تهران"},{slug:"mashhad",name:"مشهد"},{slug:"isfahan",name:"اصفهان"},{slug:"shiraz",name:"شیراز"},{slug:"tabriz",name:"تبریز"},{slug:"karaj",name:"کرج"},{slug:"rasht",name:"رشت"},{slug:"ahvaz",name:"اهواز"}];
   const matches = liveBusinesses.map((business) => ({
     slug: business.slug,
     name: business.name,
@@ -403,6 +404,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         </div>
       </section>
 
+      <section className="shell" aria-label="جستجوی خدمات در شهرهای ایران"><h2>این خدمات در شهرهای ایران</h2><nav aria-label="انتخاب شهر">{nationalCities.map(city => <a key={city.slug} href={"/discover/"+city.slug+"/"+slug} style={{display:"inline-block",margin:"0.5rem"}}>{seo.h1} در {city.name}</a>)}</nav></section>
       <Footer />
     </main>
   );
