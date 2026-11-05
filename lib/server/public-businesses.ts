@@ -190,6 +190,7 @@ export async function listPublishedBusinesses(options: {
   requirePhoto?: boolean;
   serviceName?: string;
   city?: string;
+  exactCity?: string;
   area?: string;
   location?: string;
   query?: string;
@@ -226,6 +227,11 @@ export async function listPublishedBusinesses(options: {
     if (options.city) {
       where.push("(b.city LIKE ? OR EXISTS (SELECT 1 FROM business_service_areas sc WHERE sc.business_id=b.id AND sc.city LIKE ?))");
       binds.push("%" + options.city + "%", "%" + options.city + "%");
+    }
+
+    if (options.exactCity) {
+      where.push("(TRIM(b.city) = ? OR EXISTS (SELECT 1 FROM business_service_areas sc WHERE sc.business_id = b.id AND TRIM(sc.city) = ?))");
+      binds.push(options.exactCity, options.exactCity);
     }
 
     if (options.area) {
