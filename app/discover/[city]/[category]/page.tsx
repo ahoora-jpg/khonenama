@@ -80,6 +80,16 @@ export default async function CityCategoryPage({ params }: { params: Promise<Par
             <p><Link href={`/category/${data.category.slug}`}>راهنمای دسته و خدمات مرتبط</Link></p>
             <p><Link href="/tools">ابزارهای محاسبه و برنامه‌ریزی</Link></p>
           </section>
+          <section aria-label="شهرهای دیگر">
+            <h2>بررسی این خدمات در شهرهای دیگر</h2>
+            <nav aria-label="انتخاب شهر">
+              {Object.entries(cities).filter(([slug]) => slug !== p.city).slice(0, 12).map(([slug, name]) => (
+                <Link key={slug} href={`/discover/${slug}/${p.category}`} style={{ display: "inline-block", margin: "0.5rem" }}>
+                  {data.category.label} در {name}
+                </Link>
+              ))}
+            </nav>
+          </section>
           <section>
             <h2>فعالیت شما در {data.city} است؟</h2>
             <p>صاحبان کسب‌وکارهای واقعی می‌توانند خدمات و محدوده فعالیت خود را در خونه‌نما معرفی کنند.</p>
