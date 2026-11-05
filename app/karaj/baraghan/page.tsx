@@ -159,6 +159,15 @@ export default async function BaraghanPage() {
               <a className="local-intent-card" href="/category/wallpaper"><h3>کاغذ دیواری</h3><p>جنس، زیرسازی، تکرار طرح و تعداد رول موردنیاز را قبل از خرید مشخص کنید.</p></a>
               <a className="local-intent-card" href="/tools"><h3>ابزارهای محاسبه</h3><p>متراژ پرده، موکت، تعداد رول کاغذ دیواری و Scope اولیه خانه هوشمند را برآورد کنید.</p></a>
             </div>
+            <p>
+              اگر محدوده جستجوی شما فراتر از خیابان برغان است، راهنماهای محلی
+              {" "}<a href="/karaj/curtain">پرده در کرج</a>،
+              {" "}<a href="/karaj/flooring">کفپوش و پارکت در کرج</a>،
+              {" "}<a href="/karaj/carpet">موکت در کرج</a> و
+              {" "}<a href="/karaj/wallpaper">کاغذ دیواری در کرج</a>
+              {" "}را ببینید. این راهنماها به مقایسه خدمات و انتخاب فروشنده کمک می‌کنند؛
+              محدوده خدمت و موجودی را پیش از سفارش از همان کسب‌وکار تأیید کنید.
+            </p>
           </section>
 
           <div className="category-results">
