@@ -11,7 +11,12 @@ export async function POST(request: Request) {
     if (!event || Object.keys(body).some(key => key !== "event" && key !== "source") || (body.source !== undefined && !sellerSource(body.source))) return Response.json({ ok: false }, { status: 400, headers });
     const db = (env as any).DB;
     if (!db || !(await recordConversion(db, event))) return Response.json({ ok: false }, { status: 503, headers });
-    await recordSellerSource(db, event, body.source);
+    // Older seller pages send the aggregate event without a route source.
+    // Keep that privacy-safe metric working; contextual invitations additionally
+    // persist their validated source for the acquisition report.
+    if (body.source !== undefined && !(await recordSellerSource(db, event, body.source))) {
+      return Response.json({ ok: false }, { status: 503, headers });
+    }
     return new Response(null, { status: 204, headers });
   } catch { return Response.json({ ok: false }, { status: 400, headers }); }
 }
