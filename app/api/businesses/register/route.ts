@@ -3,7 +3,7 @@ import {recordAcquisitionStage,recordAcquisitionConversion} from '@/lib/server/s
 import { ensureBusinessCoverage } from "@/lib/server/business-coverage";
 import { parseServiceArea } from "@/lib/service-area";
 import { env } from "cloudflare:workers";
-import { recordConversion } from "@/lib/server/conversion-metrics";
+import { recordConversion, recordSellerSource } from "@/lib/server/conversion-metrics";
 import { createBusinessSession, getBusinessSession } from "@/lib/server/business-session";
 import {
   BUSINESS_CATEGORIES,
@@ -356,6 +356,7 @@ export async function POST(request: Request) {
     // All new businesses start on the free plan; upgrades happen after registration.
     const session = await createBusinessSession(userId, request);
     await recordConversion(db, "business_registered");
+    await recordSellerSource(db, "business_registered", body.source);
     if (publicationStatus === "published") await recordConversion(db, "booth_published");
     await recordAcquisitionConversion(db,request,{userId:String(userId),businessId:Number(createdBusinessId),phone,newAccount:!existingUser,published:publicationStatus==='published',complete:categories.length>0&&selectedServices.length>0},{queue:(env as any).SMS_EVENTS}).catch(()=>console.warn('SMS_CONVERSION_UNAVAILABLE'));
 

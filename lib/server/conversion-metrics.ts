@@ -7,3 +7,14 @@ export async function recordConversion(db: any, event: "registration_start" | "b
     return true;
   } catch { console.warn("conversion count unavailable"); return false; }
 }
+export function sellerSource(value: unknown) {
+  return typeof value === "string" && /^\/(?:category|karaj)\/[a-z0-9-]+$/.test(value) ? value : "";
+}
+export async function recordSellerSource(db: any, event: string, source: unknown) {
+  const safe = sellerSource(source);
+  if (!safe) return false;
+  try {
+    await db.prepare("INSERT INTO seller_acquisition_daily(event_date,source,event,count) VALUES(date('now'),?,?,1) ON CONFLICT(event_date,source,event) DO UPDATE SET count=count+1").bind(safe,event).run();
+    return true;
+  } catch { return false; }
+}

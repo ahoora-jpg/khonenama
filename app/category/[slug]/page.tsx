@@ -14,6 +14,7 @@ import { nationalDiscoveryCitiesForCategory, nationalDiscoveryPath } from "@/lib
 import { getCategoryVisual, getGuideVisual } from "@/lib/visuals";
 import { ArrowUpLeft, BadgeCheck, BookOpen, BriefcaseBusiness, Calculator, Crown, MapPin, Star } from "lucide-react";
 import { notFound } from "next/navigation";
+import SellerInvitation from "@/components/SellerInvitation";
 
 // Published booths must appear without rebuilding a category page.
 export const dynamic = "force-dynamic";
@@ -384,6 +385,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               </div>
             )}
           </section>
+
+          <SellerInvitation category={slug} categoryLabel={category.name} source={`/category/${slug}`} empty={matches.length === 0} />
 
           <section className="category-results category-faq-block">
             <div className="section-heading compact-heading">
