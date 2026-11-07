@@ -11,7 +11,7 @@ export async function saveBrandSuggestions(db: Database, businessId: number, nam
 }
 
 export async function resolveBrandSuggestion(db: Database, input: { id: number; action: "approve" | "reject"; name?: string; reviewedBy: string }) {
-  const suggestion = await db.prepare("SELECT * FROM brand_suggestions WHERE id=? AND status='pending' LIMIT 1").bind(input.id).first<any>();
+  const suggestion = await db.prepare("SELECT * FROM brand_suggestions WHERE id=? AND status='pending' LIMIT 1").bind(input.id).first();
   if (!suggestion) return null;
 
   if (input.action === "reject") {
@@ -22,12 +22,12 @@ export async function resolveBrandSuggestion(db: Database, input: { id: number; 
   const name = normalizeBrandName(input.name || suggestion.proposed_name);
   if (name.length < 2) return null;
   const normalized = name.toLocaleLowerCase("fa");
-  let brand = await db.prepare("SELECT id FROM brands WHERE normalized_name=? LIMIT 1").bind(normalized).first<any>();
+  let brand = await db.prepare("SELECT id FROM brands WHERE normalized_name=? LIMIT 1").bind(normalized).first();
   if (!brand) {
     const baseSlug = brandSlug(name) || "brand";
     const suffix = Math.abs([...normalized].reduce((sum, char) => ((sum * 31) + char.charCodeAt(0)) | 0, 7));
     brand = await db.prepare("INSERT INTO brands(slug,name,normalized_name,status) VALUES(?,?,?,'approved') RETURNING id")
-      .bind(`${baseSlug}-${suffix}`, name, normalized).first<any>();
+      .bind(`${baseSlug}-${suffix}`, name, normalized).first();
   }
   if (!brand?.id) return null;
 
