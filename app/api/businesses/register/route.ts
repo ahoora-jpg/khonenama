@@ -17,8 +17,8 @@ import { storeClientPasswordHash, validateClientPasswordCredential } from "@/lib
 import { createUniqueBusinessSlug } from "@/lib/business-slug";
 import { taxonomySuggestions } from "@/lib/taxonomy-suggestions";
 import { saveTaxonomySuggestions } from "@/lib/server/taxonomy-suggestions";
-import { brandNamesFromInput, brandRelationship } from "@/lib/brand-directory";
-import { saveBrandSuggestions } from "@/lib/server/brand-directory";
+import { brandIdsFromInput, brandNamesFromInput, brandRelationship } from "@/lib/brand-directory";
+import { saveBrandClaims, saveBrandSuggestions } from "@/lib/server/brand-directory";
 
 
 function normalizeDigits(value: string) {
@@ -79,6 +79,7 @@ export async function POST(request: Request) {
     const website = cleanText(body?.website, 240);
     let description = cleanText(body?.description, 2000);
     const brandNames = brandNamesFromInput(body?.brandNames);
+    const brandIds = brandIdsFromInput(body?.brandIds);
     const relationship = brandRelationship(body?.brandRelationship);
 
     const requestedCategories: string[] = Array.isArray(body?.categories)
@@ -347,8 +348,9 @@ export async function POST(request: Request) {
     // a business as an official representative and never creates a public page.
     // The optional directory must never block a core business registration if
     // its additive migration has not reached a deployment yet.
-    if (brandNames.length) {
+    if (brandNames.length || brandIds.length) {
       try {
+        await saveBrandClaims(db, createdBusinessId, brandIds, relationship);
         await saveBrandSuggestions(db, createdBusinessId, brandNames, relationship);
       } catch (error) {
         console.error("brand suggestions unavailable; registration continues", error);

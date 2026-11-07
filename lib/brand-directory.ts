@@ -28,6 +28,11 @@ export function brandNamesFromInput(value: unknown) {
   return [...unique.values()].slice(0, 5);
 }
 
+export function brandIdsFromInput(value: unknown) {
+  const source = Array.isArray(value) ? value : [];
+  return [...new Set(source.map((item) => Number(item)).filter((id) => Number.isSafeInteger(id) && id > 0))].slice(0, 5);
+}
+
 export function brandRelationship(value: unknown): BrandRelationship {
   return typeof value === "string" && RELATIONSHIPS.has(value as BrandRelationship)
     ? value as BrandRelationship

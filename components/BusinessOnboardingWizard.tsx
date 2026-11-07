@@ -7,8 +7,9 @@ import { BUSINESS_CATEGORIES, servicesForCategories } from "@/lib/business-taxon
 import BusinessMediaManager from "@/components/BusinessMediaManager";
 import { createPasswordVerifier } from "@/lib/password-verifier-client";
 
-type Form = { phone: string; password: string; businessName: string; city: string; category: string; service: string; businessType: "store" | "company" | "individual"; brandNames: string; brandRelationship: "seller" | "installer" | "representative" };
-const initial: Form = { phone: "", password: "", businessName: "", city: "", category: "", service: "", businessType: "store", brandNames: "", brandRelationship: "seller" };
+type Form = { phone: string; password: string; businessName: string; city: string; category: string; service: string; businessType: "store" | "company" | "individual"; brandIds: number[]; brandNames: string; brandRelationship: "seller" | "installer" | "representative" };
+type Brand = { id: number; name: string };
+const initial: Form = { phone: "", password: "", businessName: "", city: "", category: "", service: "", businessType: "store", brandIds: [], brandNames: "", brandRelationship: "seller" };
 const apiErrors: Record<string, string> = {
   INVALID_EXISTING_PASSWORD: "این شماره قبلاً در خونه‌نما ثبت شده است. با رمز همان حساب وارد شوید یا رمزتان را بازیابی کنید.",
   PHONE_IN_USE: "این شماره قبلاً ثبت شده است. وارد حساب شوید یا رمز را بازیابی کنید.",
@@ -23,6 +24,7 @@ export default function BusinessOnboardingWizard() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState<{ slug: string; status: string } | null>(null);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const tracked = useRef(new Set<string>());
   const source = search.get("source") || "";
   useEffect(() => {
@@ -42,7 +44,17 @@ export default function BusinessOnboardingWizard() {
     fetch("/api/seller-acquisition", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event, ...(source ? { source } : {}) }), keepalive: true }).catch(() => undefined);
   }
   useEffect(() => { track("registration_view"); }, []);
+  useEffect(() => {
+    if (!form.category) { setBrands([]); return; }
+    const controller = new AbortController();
+    fetch(`/api/brands/onboarding?category=${encodeURIComponent(form.category)}`, { signal: controller.signal })
+      .then((response) => response.json())
+      .then((data) => { if (data?.ok) setBrands(Array.isArray(data.brands) ? data.brands : []); })
+      .catch(() => undefined);
+    return () => controller.abort();
+  }, [form.category]);
   function update<Key extends keyof Form>(key: Key, value: Form[Key]) { setForm((current) => ({ ...current, [key]: value })); }
+  function toggleBrand(id: number) { setForm((current) => ({ ...current, brandIds: current.brandIds.includes(id) ? current.brandIds.filter((item) => item !== id) : current.brandIds.length < 5 ? [...current.brandIds, id] : current.brandIds })); }
   function invalidMessage() {
     if (!validPhone) return "شماره همراه را به‌صورت ۰۹xxxxxxxxx وارد کنید.";
     if (form.password.length < 8) return "رمز عبور باید حداقل ۸ کاراکتر باشد.";
@@ -78,11 +90,12 @@ export default function BusinessOnboardingWizard() {
     <div className="form-row"><label><span>نام کسب‌وکار</span><div className="form-input"><Building2 size={17} /><input autoComplete="organization" value={form.businessName} onChange={(e) => update("businessName", e.target.value)} placeholder="مثلاً پرده‌سرای ..." /></div></label></div>
     <div className="form-row"><label><span>شهر</span><div className="form-input"><MapPin size={17} /><input autoComplete="address-level2" value={form.city} onChange={(e) => update("city", e.target.value)} placeholder="مثلاً اصفهان" /></div></label></div>
     <div className="choice-block"><strong>نوع فعالیت</strong><div className="category-choice-grid">{([ ["store", "فروشگاه"], ["company", "شرکت طراحی و اجرا"], ["individual", "نصاب یا متخصص"] ] as const).map(([value, label]) => <button type="button" key={value} className={form.businessType === value ? "category-choice-card is-selected" : "category-choice-card"} onClick={() => update("businessType", value)}>{label}</button>)}</div></div>
-    <div className="choice-block"><strong>دسته فعالیت</strong><div className="category-choice-grid">{BUSINESS_CATEGORIES.map((item) => <button type="button" key={item.slug} className={form.category === item.slug ? "category-choice-card is-selected" : "category-choice-card"} onClick={() => { update("category", item.slug); update("service", ""); }}>{item.label}</button>)}</div></div>
+    <div className="choice-block"><strong>دسته فعالیت</strong><div className="category-choice-grid">{BUSINESS_CATEGORIES.map((item) => <button type="button" key={item.slug} className={form.category === item.slug ? "category-choice-card is-selected" : "category-choice-card"} onClick={() => setForm((current) => ({ ...current, category: item.slug, service: "", brandIds: [] }))}>{item.label}</button>)}</div></div>
     {category && <div className="choice-block"><strong>خدمت اصلی در {category.label}</strong><div className="service-chips">{services.map((service) => <button type="button" className={form.service === service ? "is-selected" : ""} key={service} onClick={() => update("service", service)}>{service}</button>)}</div></div>}
     <details className="choice-block">
       <summary>برندهایی که با آن‌ها کار می‌کنید <small>اختیاری</small></summary>
-      <p className="field-hint">نام برندها را با ویرگول جدا کنید. برند تازه اول بررسی می‌شود؛ انتخاب این بخش به‌تنهایی «نمایندگی رسمی» محسوب نمی‌شود.</p>
+      <p className="field-hint">برندهای شناخته‌شده را انتخاب کنید یا نام تازه را بنویسید. هیچ انتخابی به‌تنهایی «نمایندگی رسمی» محسوب نمی‌شود.</p>
+      {brands.length > 0 && <div className="service-chips">{brands.map((brand) => <button type="button" key={brand.id} className={form.brandIds.includes(brand.id) ? "is-selected" : ""} onClick={() => toggleBrand(brand.id)}>{brand.name}</button>)}</div>}
       <label><span>نام برندها</span><input value={form.brandNames} maxLength={420} onChange={(e) => update("brandNames", e.target.value)} placeholder="مثلاً ظریف مصور، ایزوفام" /></label>
       <label><span>نوع همکاری</span><select value={form.brandRelationship} onChange={(e) => update("brandRelationship", e.target.value as Form["brandRelationship"])}><option value="seller">فروشنده</option><option value="installer">مجری / نصاب</option><option value="representative">نمایندگی (نیازمند بررسی)</option></select></label>
     </details>

@@ -10,6 +10,17 @@ export async function saveBrandSuggestions(db: Database, businessId: number, nam
   ).bind(businessId, name, normalizeBrandName(name).toLocaleLowerCase("fa"), relationship)));
 }
 
+export async function saveBrandClaims(db: Database, businessId: number, brandIds: number[], relationship: BrandRelationship = "seller") {
+  if (!brandIds.length) return;
+  const placeholders = brandIds.map(() => "?").join(",");
+  const result = await db.prepare("SELECT id FROM brands WHERE status IN ('approved','published') AND id IN (" + placeholders + ")").bind(...brandIds).all();
+  const approvedIds = (result.results || []).map((row: any) => Number(row.id)).filter(Number.isSafeInteger);
+  if (!approvedIds.length) return;
+  await db.batch(approvedIds.map((brandId: number) => db.prepare(
+    "INSERT OR IGNORE INTO business_brand_claims(business_id,brand_id,relationship_type,verification_status) VALUES(?,?,?,'self_declared')"
+  ).bind(businessId, brandId, relationship)));
+}
+
 export async function resolveBrandSuggestion(db: Database, input: { id: number; action: "approve" | "reject"; name?: string; reviewedBy: string }) {
   const suggestion = await db.prepare("SELECT * FROM brand_suggestions WHERE id=? AND status='pending' LIMIT 1").bind(input.id).first();
   if (!suggestion) return null;
