@@ -6,6 +6,7 @@ import AdminLaunchOffer from "@/components/AdminLaunchOffer";
 import AdminStoryTemplates from "@/components/AdminStoryTemplates";
 import AdminPayments from "@/components/AdminPayments";
 import AdminTaxonomySuggestions from "@/components/AdminTaxonomySuggestions";
+import AdminBrandSuggestions from "@/components/AdminBrandSuggestions";
 
 export const metadata: Metadata = {
   title: "مدیریت کسب‌وکارها | خونه نما",
@@ -20,6 +21,7 @@ export default function AdminBusinessesPage() {
         <div className="shell">
           <AdminBusinessModeration />
           <AdminTaxonomySuggestions />
+          <AdminBrandSuggestions />
           <AdminLaunchOffer />
           <AdminStoryTemplates />
           <AdminPayments />

@@ -7,8 +7,8 @@ import { BUSINESS_CATEGORIES, servicesForCategories } from "@/lib/business-taxon
 import BusinessMediaManager from "@/components/BusinessMediaManager";
 import { createPasswordVerifier } from "@/lib/password-verifier-client";
 
-type Form = { phone: string; password: string; businessName: string; city: string; category: string; service: string; businessType: "store" | "company" | "individual" };
-const initial: Form = { phone: "", password: "", businessName: "", city: "", category: "", service: "", businessType: "store" };
+type Form = { phone: string; password: string; businessName: string; city: string; category: string; service: string; businessType: "store" | "company" | "individual"; brandNames: string; brandRelationship: "seller" | "installer" | "representative" };
+const initial: Form = { phone: "", password: "", businessName: "", city: "", category: "", service: "", businessType: "store", brandNames: "", brandRelationship: "seller" };
 const apiErrors: Record<string, string> = {
   INVALID_EXISTING_PASSWORD: "این شماره قبلاً در خونه‌نما ثبت شده است. با رمز همان حساب وارد شوید یا رمزتان را بازیابی کنید.",
   PHONE_IN_USE: "این شماره قبلاً ثبت شده است. وارد حساب شوید یا رمز را بازیابی کنید.",
@@ -80,6 +80,12 @@ export default function BusinessOnboardingWizard() {
     <div className="choice-block"><strong>نوع فعالیت</strong><div className="category-choice-grid">{([ ["store", "فروشگاه"], ["company", "شرکت طراحی و اجرا"], ["individual", "نصاب یا متخصص"] ] as const).map(([value, label]) => <button type="button" key={value} className={form.businessType === value ? "category-choice-card is-selected" : "category-choice-card"} onClick={() => update("businessType", value)}>{label}</button>)}</div></div>
     <div className="choice-block"><strong>دسته فعالیت</strong><div className="category-choice-grid">{BUSINESS_CATEGORIES.map((item) => <button type="button" key={item.slug} className={form.category === item.slug ? "category-choice-card is-selected" : "category-choice-card"} onClick={() => { update("category", item.slug); update("service", ""); }}>{item.label}</button>)}</div></div>
     {category && <div className="choice-block"><strong>خدمت اصلی در {category.label}</strong><div className="service-chips">{services.map((service) => <button type="button" className={form.service === service ? "is-selected" : ""} key={service} onClick={() => update("service", service)}>{service}</button>)}</div></div>}
+    <details className="choice-block">
+      <summary>برندهایی که با آن‌ها کار می‌کنید <small>اختیاری</small></summary>
+      <p className="field-hint">نام برندها را با ویرگول جدا کنید. برند تازه اول بررسی می‌شود؛ انتخاب این بخش به‌تنهایی «نمایندگی رسمی» محسوب نمی‌شود.</p>
+      <label><span>نام برندها</span><input value={form.brandNames} maxLength={420} onChange={(e) => update("brandNames", e.target.value)} placeholder="مثلاً ظریف مصور، ایزوفام" /></label>
+      <label><span>نوع همکاری</span><select value={form.brandRelationship} onChange={(e) => update("brandRelationship", e.target.value as Form["brandRelationship"])}><option value="seller">فروشنده</option><option value="installer">مجری / نصاب</option><option value="representative">نمایندگی (نیازمند بررسی)</option></select></label>
+    </details>
     <p className="field-hint">با ساخت غرفه، محدوده فعالیت شما «تمام {form.city || "شهر"}» ثبت می‌شود و بعداً قابل ویرایش است.</p>
     {error && <p className="onboarding-error" role="alert">{error}</p>}
     <button type="button" className="pill-button dark" disabled={busy} onClick={submit}>{busy ? "در حال ساخت غرفه…" : "ساخت رایگان غرفه"}<Store size={17} /></button>

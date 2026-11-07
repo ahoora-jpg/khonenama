@@ -17,6 +17,8 @@ import { storeClientPasswordHash, validateClientPasswordCredential } from "@/lib
 import { createUniqueBusinessSlug } from "@/lib/business-slug";
 import { taxonomySuggestions } from "@/lib/taxonomy-suggestions";
 import { saveTaxonomySuggestions } from "@/lib/server/taxonomy-suggestions";
+import { brandNamesFromInput, brandRelationship } from "@/lib/brand-directory";
+import { saveBrandSuggestions } from "@/lib/server/brand-directory";
 
 
 function normalizeDigits(value: string) {
@@ -76,6 +78,8 @@ export async function POST(request: Request) {
     const instagram = cleanText(body?.instagram, 160);
     const website = cleanText(body?.website, 240);
     let description = cleanText(body?.description, 2000);
+    const brandNames = brandNamesFromInput(body?.brandNames);
+    const relationship = brandRelationship(body?.brandRelationship);
 
     const requestedCategories: string[] = Array.isArray(body?.categories)
       ? body.categories.map((item: unknown) => cleanText(item, 80))
@@ -339,6 +343,9 @@ export async function POST(request: Request) {
 
     stage = "subscription-save";
     await saveTaxonomySuggestions(db, createdBusinessId, body, categories);
+    // A typed brand is always a private moderation suggestion. It never marks
+    // a business as an official representative and never creates a public page.
+    if (brandNames.length) await saveBrandSuggestions(db, createdBusinessId, brandNames, relationship);
     const freePlan = await db
       .prepare("SELECT id FROM plans WHERE code = 'free' AND is_active = 1 LIMIT 1")
       .first();
