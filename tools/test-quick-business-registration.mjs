@@ -35,3 +35,11 @@ test("first-media conversion is server-side aggregate-only and can fire once per
   assert.match(upload, /recordConversion\(owned\.db, "first_media_added"\)/);
   assert.doesNotMatch(upload, /phone|email|customerName/);
 });
+
+test("short-form funnel records anonymous progress without restoring removed steps", () => {
+  for (const event of ["registration_form_started", "registration_identity_ready", "registration_category_selected", "registration_service_selected"]) {
+    assert.match(wizard, new RegExp(`track\\("${event}"\\)`));
+  }
+  assert.doesNotMatch(wizard, /registration_account_step|registration_business_step|registration_service_step|registration_media_step|registration_review_step/);
+  assert.match(wizard, /body: JSON\.stringify\(\{ event \}\)/);
+});

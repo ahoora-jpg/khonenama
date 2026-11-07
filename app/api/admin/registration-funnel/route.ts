@@ -4,15 +4,16 @@ import { isAdminRequest } from "@/lib/server/admin-session";
 const headers = { "Cache-Control": "no-store", "X-Robots-Tag": "noindex" };
 
 const stages = [
+  ["seller_registration_click", "کلیک برای ساخت غرفه"],
   ["registration_view", "باز شدن فرم"],
-  ["registration_account_step", "مرحله حساب"],
-  ["registration_business_step", "مشخصات کسب‌وکار"],
-  ["registration_service_step", "خدمات و محدوده"],
-  ["registration_media_step", "معرفی و رسانه"],
-  ["registration_review_step", "مرور نهایی"],
+  ["registration_form_started", "شروع واردکردن اطلاعات"],
+  ["registration_identity_ready", "اطلاعات پایه کامل"],
+  ["registration_category_selected", "انتخاب دسته"],
+  ["registration_service_selected", "انتخاب خدمت اصلی"],
   ["registration_submit_attempt", "تلاش برای ثبت"],
   ["business_registered", "حساب و غرفه ثبت شد"],
   ["booth_published", "غرفه منتشر شد"],
+  ["first_media_added", "افزودن اولین عکس یا ویدیو"],
 ] as const;
 
 export async function GET(request: Request) {
