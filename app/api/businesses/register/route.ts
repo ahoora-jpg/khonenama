@@ -345,7 +345,15 @@ export async function POST(request: Request) {
     await saveTaxonomySuggestions(db, createdBusinessId, body, categories);
     // A typed brand is always a private moderation suggestion. It never marks
     // a business as an official representative and never creates a public page.
-    if (brandNames.length) await saveBrandSuggestions(db, createdBusinessId, brandNames, relationship);
+    // The optional directory must never block a core business registration if
+    // its additive migration has not reached a deployment yet.
+    if (brandNames.length) {
+      try {
+        await saveBrandSuggestions(db, createdBusinessId, brandNames, relationship);
+      } catch (error) {
+        console.error("brand suggestions unavailable; registration continues", error);
+      }
+    }
     const freePlan = await db
       .prepare("SELECT id FROM plans WHERE code = 'free' AND is_active = 1 LIMIT 1")
       .first();
