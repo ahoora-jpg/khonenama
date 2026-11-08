@@ -15,6 +15,7 @@ const categories = [
 
 const links = [
   ["یافتن متخصص", "/search"],
+  ["برندها", "/brands"],
   ["ایده‌ها", "/ideas"],
   ["مجله و راهنماها", "/magazine"],
   ["ابزارها", "/tools"],

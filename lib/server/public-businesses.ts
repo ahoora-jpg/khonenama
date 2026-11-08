@@ -186,6 +186,7 @@ export async function getPublishedBusiness(slug: string): Promise<PublicBusiness
 }
 
 export async function listPublishedBusinesses(options: {
+  businessIds?: number[];
   categorySlug?: string;
   requirePhoto?: boolean;
   serviceName?: string;
@@ -206,6 +207,13 @@ export async function listPublishedBusinesses(options: {
       "b.slug NOT IN (" + Array.from(INTERNAL_TEST_BUSINESS_SLUGS).map(() => "?").join(",") + ")",
     ];
     const binds: any[] = [...INTERNAL_TEST_BUSINESS_SLUGS];
+
+    if (options.businessIds) {
+      const ids = [...new Set(options.businessIds.filter((id) => Number.isSafeInteger(id) && id > 0))].slice(0, 50);
+      if (!ids.length) return [];
+      where.push("b.id IN (" + ids.map(() => "?").join(",") + ")");
+      binds.push(...ids);
+    }
 
     if (options.requirePhoto) {
       where.push("EXISTS (SELECT 1 FROM business_media pm WHERE pm.business_id=b.id AND pm.kind IN ('cover','image') AND COALESCE(pm.media_type,'image')<>'video' AND length(trim(COALESCE(pm.file_url,'')))>0)");
