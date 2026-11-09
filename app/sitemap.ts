@@ -34,7 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/karaj/interior-design", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.9 },
     { url: baseUrl + "/karaj/smart-home", lastModified: seoRefreshDate, changeFrequency: "weekly", priority: 0.9 },
     { url: baseUrl + "/karaj/baraghan", lastModified: seoRefreshDate, changeFrequency: "daily", priority: 0.92 },
-    { url: baseUrl + "/category/lighting", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
+    { url: baseUrl + "/category/lighting", lastModified: "2026-11-09", changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/category/curtain", lastModified: discoveryAndAcquisitionRefreshDate, changeFrequency: "weekly", priority: 0.9 },
     { url: baseUrl + "/category/flooring", lastModified: "2026-10-16", changeFrequency: "weekly", priority: 0.88 },
     { url: baseUrl + "/category/carpet", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
