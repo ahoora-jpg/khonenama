@@ -24,3 +24,13 @@ test('Service sitemap requires exact selection and published complete unpaused b
 test('Public listing uses an exact selected service rather than profile text matching',()=>{const src=fs.readFileSync('lib/server/public-businesses.ts','utf8');assert.ok(src.includes('ss.name = ?'));assert.ok(src.includes('binds.push(options.serviceName)'));});
 
 test('All registration services have searchable destinations including minimalist curtains',()=>{for(const category of taxonomy.BUSINESS_CATEGORIES)for(const name of category.services)assert.ok(catalog.serviceCatalog.some(item=>item.category===category.slug&&item.name===name));assert.equal(catalog.serviceCatalog.find(item=>item.name==='پرده مینیمال').guide,'minimalist-curtain-guide');});
+
+test('Lighting service pages answer real installation and compatibility questions',()=>{
+ const lighting=catalog.serviceCatalog.filter(item=>item.category==='lighting');
+ assert.ok(lighting.length>0);
+ for(const item of lighting){
+  assert.equal(item.guide,'interior-lighting-guide');
+  assert.match(item.description,/سازگاری چراغ، ریل، درایور و دیمر/);
+  assert.match(item.description,/هزینه طراحی، تجهیزات، نصب و تنظیم/);
+ }
+});
