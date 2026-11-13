@@ -120,6 +120,9 @@ export default function KarajPage() {
                 </a>
               ))}
             </div>
+            <p>
+              برای انتخاب چراغ و اجرای روشنایی، <a href="/category/lighting">راهنمای عمومی نورپردازی داخلی</a> و <a href="/magazine/interior-lighting-guide">راهنمای چراغ، ریل و دیمر</a> را بخوانید. این راهنماها فهرست فروشندگان نورپردازی در کرج نیستند؛ محدوده خدمات هر غرفه را جداگانه بررسی کنید.
+            </p>
           </section>
 
           <section className="category-results">
