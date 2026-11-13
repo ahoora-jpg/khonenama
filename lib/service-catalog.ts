@@ -26,7 +26,7 @@ export const serviceCatalog: ServiceEntry[] = [{"category":"curtain","name":"پ�
 for (const category of BUSINESS_CATEGORIES) {
  for (const name of category.services) {
   if (!serviceCatalog.some(item => item.category === category.slug && item.name === name)) {
-   serviceCatalog.push({category:category.slug,name,group:category.label,guide:supportingGuide(category.slug,name),description:`برای ${name}، شرایط محل، ابعاد و نتیجه موردنیاز را مشخص کنید. خدمات اعلام‌شده و محدوده فعالیت غرفه را بررسی کنید و پیش از توافق، اقلام شامل قیمت و زمان اجرا را بپرسید.`});
+   serviceCatalog.push({category:category.slug,name,group:category.label,guide:supportingGuide(category.slug,name),description:category.slug === "lighting" ? `برای ${name}، کاربری فضا، محل نصب، نور موردنیاز و وضعیت سیم‌کشی را مشخص کنید. سازگاری چراغ، ریل، درایور و دیمر را برای مدل انتخابی تأیید کنید؛ هزینه طراحی، تجهیزات، نصب و تنظیم را جداگانه از مجری بپرسید.` : `برای ${name}، شرایط محل، ابعاد و نتیجه موردنیاز را مشخص کنید. خدمات اعلام‌شده و محدوده فعالیت غرفه را بررسی کنید و پیش از توافق، اقلام شامل قیمت و زمان اجرا را بپرسید.`});
   }
  }
 }
