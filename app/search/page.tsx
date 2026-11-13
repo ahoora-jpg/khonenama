@@ -28,6 +28,7 @@ function normalizeSearchText(value: string) {
 }
 
 const categoryAliases: Record<string, string[]> = {
+  lighting: ["نورپردازی", "روشنایی", "چراغ خطی", "چراغ ریلی", "چراغ مگنتی"],
   curtain: ["پرده", "پرده زبرا", "زبرا", "شید", "بلک اوت", "بلک‌اوت"],
   flooring: ["پارکت", "لمینت", "کفپوش", "pvc"],
   carpet: ["موکت", "موکت تایلی"],
@@ -91,6 +92,12 @@ export default async function SearchPage({
   const exactService = BUSINESS_CATEGORIES.flatMap(category => category.services).find(service => normalizeSearchText(service) === query);
   const matchingServices=query?serviceCatalog.filter(service=>normalizeServiceQuery(service.name).includes(normalizeServiceQuery(query))).filter((service,index,all)=>all.findIndex(item=>item.name===service.name)===index).sort((a,b)=>Number(normalizeServiceQuery(b.name)===normalizeServiceQuery(query))-Number(normalizeServiceQuery(a.name)===normalizeServiceQuery(query))).slice(0,12):[];
   const matchingGuides=query?guides.filter(guide=>normalizeSearchText([guide.title,...guide.keywords].join(" ")).includes(query)).slice(0,6):[];
+  // When no booth matches, point visitors to existing decision guides instead of an empty end.
+  const matchingCategories = query.length >= 2 ? BUSINESS_CATEGORIES.filter((category) =>
+    [category.label, ...(categoryAliases[category.slug] || [])]
+      .map(normalizeSearchText)
+      .some((label) => label === query || label.includes(query) || query.includes(label))
+  ).slice(0, 3) : [];
 
   const liveBusinesses = await listPublishedBusinesses({
     query: query || undefined,
@@ -210,6 +217,14 @@ export default async function SearchPage({
                   <strong>نتیجه‌ای پیدا نشد.</strong>
                   <p>عبارت جستجو یا محدوده را کمی عمومی‌تر امتحان کنید.</p>
                   <a className="pill-button" href="/search">حذف فیلترها و جستجوی دوباره</a>
+                  {matchingCategories.length > 0 && (
+                    <div className="search-related-content" aria-label="راهنماهای مرتبط با جستجو">
+                      <p>برای شناخت گزینه‌ها و آماده‌کردن پرسش‌های استعلام، راهنمای مرتبط را بخوانید؛ نمایش این راهنما به معنی وجود فروشنده در نتایج فعلی نیست.</p>
+                      <div>{matchingCategories.map((category) => (
+                        <a key={category.slug} href={"/category/" + category.slug}>راهنمای {category.label}</a>
+                      ))}</div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
