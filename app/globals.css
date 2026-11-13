@@ -2088,3 +2088,27 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .marketplace-panel th, .marketplace-panel td { text-align: right; padding: 1rem; border-bottom: 1px solid #ded8cc; vertical-align: top; }
 .marketplace-panel summary { cursor: pointer; padding-block: .6rem; }
 .public-review-card blockquote { margin: 1rem 0; padding: .75rem; border-inline-start: 3px solid #bb8844; background: #f6f2e8; border-radius: 8px; }
+
+/* Public brand directory: text and outbound source links only; brand assets are never mirrored. */
+.brands-page,.brand-detail-page { padding-top:110px; padding-bottom:64px; }
+.brands-hero,.brand-detail-hero { padding:clamp(24px,4vw,48px); margin-bottom:28px; }
+.brands-hero h1,.brand-detail-hero h1 { margin:8px 0 12px; font-size:clamp(34px,5vw,54px); line-height:1.35; }
+.brands-hero p,.brand-detail-hero p,.brand-source-note { max-width:760px; margin:0; color:var(--muted); line-height:2; }
+.brands-grid,.brand-reference-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.brand-card,.brand-reference-card { display:flex; flex-direction:column; min-height:220px; padding:22px; border:1px solid var(--line); border-radius:20px; color:var(--ink); transition:transform .2s ease,box-shadow .2s ease; }
+.brand-card:hover,.brand-reference-card:hover { transform:translateY(-3px); box-shadow:0 15px 32px rgba(33,28,22,.1); }
+.brand-card-icon { display:grid; place-items:center; width:46px; height:46px; margin-bottom:18px; border-radius:15px; background:var(--surface-soft); color:var(--terracotta); }
+.brand-card h2,.brand-reference-card h3 { margin:0 0 7px; font-size:21px; }
+.brand-card p { margin:0; color:var(--muted); line-height:1.9; font-size:14px; }
+.brand-card-tags,.brand-category-links { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+.brand-card-tags span,.brand-category-links a { display:inline-flex; align-items:center; gap:5px; padding:6px 10px; border-radius:999px; background:var(--surface-soft); color:var(--muted); font-size:13px; }
+.brand-category-links a:hover { color:var(--terracotta); }
+.brand-card-link,.brand-reference-card > span { display:inline-flex; align-items:center; gap:6px; margin-top:auto; padding-top:18px; color:var(--terracotta-hover); font-size:14px; font-weight:800; }
+.brand-detail-hero .pill-button { display:inline-flex; margin-top:22px; }
+.brand-references,.brand-booths { margin-top:42px; }
+.brand-reference-card { min-height:160px; }
+.brand-reference-card small { color:var(--terracotta); font-weight:800; }
+.brand-reference-card h3 { margin-top:9px; line-height:1.7; }
+.brand-source-note { margin-top:14px; font-size:14px; }
+@media(max-width:900px) { .brands-grid,.brand-reference-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:620px) { .brands-page,.brand-detail-page { padding-top:96px; padding-bottom:42px; } .brands-grid,.brand-reference-grid { grid-template-columns:1fr; } .brand-card { min-height:190px; } }
