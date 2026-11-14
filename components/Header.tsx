@@ -1,7 +1,4 @@
-"use client";
-
 import { Download, Menu, Store, X } from "lucide-react";
-import { useState } from "react";
 
 const categories = [
   ["نورپردازی داخلی", "/category/lighting"],
@@ -24,21 +21,58 @@ const links = [
 const androidDownloadUrl = "/download-app";
 
 export default function Header() {
-  const [open, setOpen] = useState(false);
-
   return (
     <header className="site-header-wrap">
       <div className="site-header shell glass-panel premium-header">
         <div className="header-actions">
-          <button
-            className="site-menu-button"
-            aria-label={open ? "بستن منو" : "باز کردن منو"}
-            aria-expanded={open}
-            onClick={() => setOpen((value) => !value)}
-          >
-            {open ? <X size={21} /> : <Menu size={21} />}
-            <span>{open ? "بستن" : "منو"}</span>
-          </button>
+          <details className="site-menu-root">
+            <summary className="site-menu-button" aria-label="باز یا بستن منو">
+              <Menu className="site-menu-open-icon" size={21} />
+              <X className="site-menu-close-icon" size={21} />
+              <span className="site-menu-open-label">منو</span>
+              <span className="site-menu-close-label">بستن</span>
+            </summary>
+            <div className="site-menu-backdrop" aria-hidden="true" />
+            <aside className="site-menu-panel premium-mobile-nav" aria-label="منوی اصلی">
+              <div className="site-menu-panel-intro">
+                <span>خونه‌نما</span>
+                <strong>برای خانه‌ات، یک انتخاب مطمئن بساز.</strong>
+                <p>متخصص، ایده و راهنمای مورد نیازت را از همین‌جا پیدا کن.</p>
+              </div>
+              <a className="site-menu-home" href="/">صفحه اصلی</a>
+              <a className="site-menu-primary-link" href="/search">یافتن متخصص و غرفه‌ها</a>
+              <details className="site-menu-details">
+                <summary>دسته‌بندی‌ها</summary>
+                <div className="site-menu-details-links">
+                {categories.map(([label, href]) => (
+                  <a key={href} href={href}>{label}</a>
+                ))}
+                </div>
+              </details>
+              <details className="site-menu-details">
+                <summary>ایده و راهنما</summary>
+                <div className="site-menu-details-links">
+                  {links.filter(([label]) => label !== "یافتن متخصص").map(([label, href]) => (
+                    <a key={href} href={href}>{label}</a>
+                  ))}
+                  <a href="/about">درباره خونه‌نما</a>
+                  <a href="/request-status">پیگیری درخواست</a>
+                </div>
+              </details>
+              <details className="site-menu-details site-menu-business">
+                <summary>برای کسب‌وکارها</summary>
+                <div className="site-menu-details-links">
+                  <a href="/for-business">راهنمای حضور در خونه‌نما</a>
+                  <a href="/business/login">ورود کسب‌وکار</a>
+                  <a className="pill-button dark" href="/register-business">ساخت رایگان غرفه</a>
+                </div>
+              </details>
+              <a className="site-menu-download" href={androidDownloadUrl}>
+                <Download size={17} />
+                دانلود اپلیکیشن اندروید
+              </a>
+            </aside>
+          </details>
           <a className="pill-button dark desktop-cta premium-cta-button" href="/register-business">
             <Store size={17} />
             ساخت رایگان غرفه
@@ -51,50 +85,6 @@ export default function Header() {
         </a>
       </div>
 
-      {open && (
-        <>
-          <button className="site-menu-backdrop" type="button" aria-label="بستن منو" onClick={() => setOpen(false)} />
-          <aside className="site-menu-panel premium-mobile-nav" aria-label="منوی اصلی">
-            <div className="site-menu-panel-intro">
-              <span>خونه‌نما</span>
-              <strong>برای خانه‌ات، یک انتخاب مطمئن بساز.</strong>
-              <p>متخصص، ایده و راهنمای مورد نیازت را از همین‌جا پیدا کن.</p>
-            </div>
-            <a className="site-menu-home" href="/" onClick={() => setOpen(false)}>صفحه اصلی</a>
-            <a className="site-menu-primary-link" href="/search" onClick={() => setOpen(false)}>یافتن متخصص و غرفه‌ها</a>
-            <details className="site-menu-details">
-              <summary>دسته‌بندی‌ها</summary>
-              <div className="site-menu-details-links">
-              {categories.map(([label, href]) => (
-                <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
-              ))}
-              </div>
-            </details>
-            <details className="site-menu-details">
-              <summary>ایده و راهنما</summary>
-              <div className="site-menu-details-links">
-                {links.filter(([label]) => label !== "یافتن متخصص").map(([label, href]) => (
-                  <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>
-                ))}
-                <a href="/about" onClick={() => setOpen(false)}>درباره خونه‌نما</a>
-                <a href="/request-status" onClick={() => setOpen(false)}>پیگیری درخواست</a>
-              </div>
-            </details>
-            <details className="site-menu-details site-menu-business">
-              <summary>برای کسب‌وکارها</summary>
-              <div className="site-menu-details-links">
-                <a href="/for-business" onClick={() => setOpen(false)}>راهنمای حضور در خونه‌نما</a>
-                <a href="/business/login" onClick={() => setOpen(false)}>ورود کسب‌وکار</a>
-                <a className="pill-button dark" href="/register-business" onClick={() => setOpen(false)}>ساخت رایگان غرفه</a>
-              </div>
-            </details>
-            <a className="site-menu-download" href={androidDownloadUrl} onClick={() => setOpen(false)}>
-              <Download size={17} />
-              دانلود اپلیکیشن اندروید
-            </a>
-          </aside>
-        </>
-      )}
     </header>
   );
 }
