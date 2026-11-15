@@ -13,7 +13,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function BrandPage({ params }: { params: Promise<{ slug: string }> }) {
   const brand = await getPublicBrand((await params).slug); if (!brand) notFound();
   const businesses = await listBusinessesForBrand(brand.id);
-  return <main><Header /><section className="inner-page brand-detail-page"><div className="shell">
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "خونه نما", item: "https://khonenama.ir/" },
+      { "@type": "ListItem", position: 2, name: "برندها", item: "https://khonenama.ir/brands" },
+      { "@type": "ListItem", position: 3, name: brand.name, item: "https://khonenama.ir/brands/" + brand.slug },
+    ],
+  };
+  return <main><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, "\\u003c") }} /><Header /><section className="inner-page brand-detail-page"><div className="shell">
     <nav className="guide-breadcrumb" aria-label="مسیر صفحه"><a href="/">خونه نما</a><span>/</span><a href="/brands">برندها</a><span>/</span><span>{brand.name}</span></nav>
     <section className="brand-detail-hero glass-panel"><span className="section-kicker">برند دکوراسیون</span><h1>{brand.name}</h1><p>{brand.description || "اطلاعات اولیه این برند و مسیرهای رسمی آن."}</p><div className="brand-category-links">{brand.categories.map((category) => <a key={category.slug} href={"/category/" + category.slug}>{category.name}</a>)}</div>{brand.officialUrl && <a className="pill-button dark" href={brand.officialUrl} target="_blank" rel="nofollow noopener noreferrer">وب‌سایت رسمی <ExternalLink size={16} /></a>}</section>
     {brand.references.length > 0 && <section className="brand-references"><div className="section-heading compact-heading"><div><span className="section-kicker">منابع رسمی</span><h2>محصولات و کاتالوگ‌ها</h2></div></div><div className="brand-reference-grid">{brand.references.map((reference) => <a key={reference.sourceUrl} className="brand-reference-card glass-panel" href={reference.sourceUrl} target="_blank" rel="nofollow noopener noreferrer"><small>{reference.type === "catalogue" ? "کاتالوگ رسمی" : reference.type === "product_page" ? "محصول" : reference.type === "category_page" ? "دسته محصول" : "وب‌سایت رسمی"}</small><h3>{reference.title}</h3><span>مشاهده منبع <ExternalLink size={15} /></span></a>)}</div><p className="brand-source-note">این صفحه فایل، تصویر یا کاتالوگ برند را بازنشر نمی‌کند؛ پیوندها شما را به منبع رسمی می‌برند.</p></section>}
