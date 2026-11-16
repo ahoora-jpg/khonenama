@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const page = await getPageData(await params);
   if (!page) return { robots: { index: false, follow: false } };
   const title = `${page.category.label} در ${page.city.name} | خونه‌نما`;
-  const description = `کسب‌وکارهای منتشرشدهٔ ${page.category.label} در ${page.city.name}؛ بررسی خدمات، محدودهٔ فعالیت و نمونه‌کارهای واقعی در خونه‌نما.`;
+  const description = `راهنمای انتخاب ${page.category.label} در ${page.city.name}، نکات مقایسه خدمات و ابزارهای برآورد؛ مشاهده غرفه‌های واقعی منتشرشده در صورت وجود.`;
   return {
     title,
     description,
