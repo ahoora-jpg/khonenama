@@ -36,3 +36,24 @@ export async function listBusinessesForBrand(brandId: number): Promise<PublicBus
     return listPublishedBusinesses({ businessIds: ids, limit: 50 });
   } catch { return []; }
 }
+
+/**
+ * Sitemap-only lookup: mirror the published brands visible in /brands without
+ * hydrating their categories, reference links or related business profiles.
+ */
+export async function listPublishedBrandSitemapSlugs(): Promise<string[]> {
+  try {
+    const database = db();
+    if (!database) return [];
+    const result = await database.prepare(
+      "SELECT slug FROM brands WHERE status='published' " +
+      "AND length(trim(COALESCE(slug, ''))) > 2 " +
+      "ORDER BY name COLLATE NOCASE LIMIT 100"
+    ).all();
+    return (result.results || [])
+      .map((row: any) => String(row.slug || "").trim())
+      .filter((slug: string) => slug.length > 2);
+  } catch {
+    return [];
+  }
+}

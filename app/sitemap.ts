@@ -2,6 +2,7 @@ import { listServiceSitemapEntries } from "@/lib/server/service-sitemap";
 import type { MetadataRoute } from "next";
 import { guides } from "@/lib/guides";
 import { listPublishedBusinessSitemapEntries } from "@/lib/server/business-sitemap";
+import { listPublishedBrandSitemapSlugs } from "@/lib/server/public-brands";
 import { nationalDiscoveryPath, NATIONAL_DISCOVERY_INDEXABLE_ROUTES } from "@/lib/national-discovery";
 
 const baseUrl = "https://khonenama.ir";
@@ -41,6 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: baseUrl + "/category/wallpaper", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/category/interior-design", lastModified: "2026-10-16", changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/category/smart-home", lastModified: categoryRefreshDate, changeFrequency: "weekly", priority: 0.86 },
+    { url: baseUrl + "/brands", lastModified: "2026-11-13", changeFrequency: "weekly", priority: 0.76 },
     { url: baseUrl + "/magazine", lastModified: discoveryAndAcquisitionRefreshDate, changeFrequency: "weekly", priority: 0.86 },
     { url: baseUrl + "/tools", lastModified: discoveryAndAcquisitionRefreshDate, changeFrequency: "weekly", priority: 0.8 },
     { url: baseUrl + "/tools/wallpaper-calculator", lastModified: "2026-10-15", changeFrequency: "monthly", priority: 0.84 },
@@ -77,7 +79,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: guide.category === "راهنمای محلی" ? 0.82 : 0.76,
   }));
 
-  const liveBusinesses = await listPublishedBusinessSitemapEntries();
+  const [liveBusinesses, publishedBrandSlugs] = await Promise.all([
+    listPublishedBusinessSitemapEntries(),
+    listPublishedBrandSitemapSlugs(),
+  ]);
+  const brandPages: MetadataRoute.Sitemap = publishedBrandSlugs.map((slug) => ({
+    url: baseUrl + "/brands/" + encodeURIComponent(slug),
+    changeFrequency: "weekly",
+    priority: 0.72,
+  }));
   const nationalDiscoveryPages: MetadataRoute.Sitemap = NATIONAL_DISCOVERY_INDEXABLE_ROUTES.map((page) => ({
     url: baseUrl + nationalDiscoveryPath(page.citySlug, page.categorySlug),
     lastModified: nationalDiscoveryPublicationDate,
@@ -91,6 +101,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: business.planCode === "premium" ? 0.86 : 0.78,
   }));
 
-  return [...staticPages, ...guidePages, ...businessPages, ...nationalDiscoveryPages, ...await listServiceSitemapEntries()];
+  return [...staticPages, ...guidePages, ...brandPages, ...businessPages, ...nationalDiscoveryPages, ...await listServiceSitemapEntries()];
 }
 
